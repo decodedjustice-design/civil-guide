@@ -3,131 +3,336 @@ import { Link } from "react-router-dom";
 import { 
   ArrowRight, 
   ArrowLeft,
-  Building2,
+  ShieldAlert,
   Briefcase,
   Home,
   GraduationCap,
   Stethoscope,
   Scale,
   Building,
-  Users,
-  AlertCircle,
+  Landmark,
+  HelpCircle,
   FileText,
   FolderOpen,
   Phone,
   BookOpen,
   UserSearch,
-  CheckCircle2
+  Heart
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 
-// System categories for the first question
-const systemCategories = [
-  { id: "police", label: "Police / Law Enforcement", icon: Building2, description: "Interactions with police, arrests, use of force, traffic stops" },
-  { id: "employer", label: "Employer / Workplace", icon: Briefcase, description: "Discrimination, harassment, retaliation, wrongful termination" },
-  { id: "housing", label: "Housing / Landlord", icon: Home, description: "Eviction, discrimination, habitability, lease disputes" },
-  { id: "school", label: "School / Education", icon: GraduationCap, description: "Student rights, discrimination, disciplinary actions, IEP/504" },
-  { id: "healthcare", label: "Healthcare Provider", icon: Stethoscope, description: "Medical negligence, discrimination, privacy violations" },
-  { id: "courts", label: "Courts / Legal System", icon: Scale, description: "Due process, access to justice, court procedures" },
-  { id: "jail", label: "Jail / Prison", icon: Building, description: "Conditions, medical care, visitation, reentry" },
-  { id: "government", label: "Government Agency", icon: Users, description: "Benefits, licensing, permits, administrative actions" },
+type SystemId = 
+  | "police" 
+  | "employer" 
+  | "housing" 
+  | "school" 
+  | "healthcare" 
+  | "courts" 
+  | "jail" 
+  | "government" 
+  | "unsure";
+
+interface SystemCategory {
+  id: SystemId;
+  label: string;
+  icon: React.ElementType;
+  description: string;
+}
+
+interface FollowUpQuestion {
+  id: string;
+  question: string;
+  options: { id: string; label: string }[];
+}
+
+interface SystemResult {
+  summary: string;
+  explanation: string;
+  rightsInsightFilter: string;
+  supportNetworkFilter: string;
+}
+
+// System categories for Step 1
+const systemCategories: SystemCategory[] = [
+  { 
+    id: "police", 
+    label: "Police or Sheriff", 
+    icon: ShieldAlert, 
+    description: "Interactions with law enforcement, arrests, use of force, searches" 
+  },
+  { 
+    id: "employer", 
+    label: "Employer or Workplace", 
+    icon: Briefcase, 
+    description: "Discrimination, harassment, retaliation, termination, accommodations" 
+  },
+  { 
+    id: "housing", 
+    label: "Housing or Landlord", 
+    icon: Home, 
+    description: "Eviction, discrimination, habitability, repairs, lease issues" 
+  },
+  { 
+    id: "school", 
+    label: "School or Education Program", 
+    icon: GraduationCap, 
+    description: "Student rights, discipline, discrimination, IEP/504 plans" 
+  },
+  { 
+    id: "healthcare", 
+    label: "Healthcare Provider", 
+    icon: Stethoscope, 
+    description: "Medical care, discrimination, privacy, access to records" 
+  },
+  { 
+    id: "courts", 
+    label: "Court or Prosecutor", 
+    icon: Scale, 
+    description: "Due process, access to justice, court procedures, appeals" 
+  },
+  { 
+    id: "jail", 
+    label: "Jail or Prison", 
+    icon: Building, 
+    description: "Conditions, medical care, visitation, reentry, communication" 
+  },
+  { 
+    id: "government", 
+    label: "Government Agency", 
+    icon: Landmark, 
+    description: "Benefits, licensing, permits, administrative decisions" 
+  },
+  { 
+    id: "unsure", 
+    label: "Not sure yet", 
+    icon: HelpCircle, 
+    description: "I'm not sure which system applies to my situation" 
+  },
 ];
 
-// Follow-up questions based on system
-const followUpQuestions: Record<string, { question: string; options: { id: string; label: string }[] }[]> = {
+// Conditional follow-up questions based on system
+const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
   police: [
     {
-      question: "What type of interaction occurred?",
+      id: "incident-type",
+      question: "What best describes what happened?",
       options: [
+        { id: "force", label: "Use of force or physical contact" },
         { id: "arrest", label: "Arrest or detention" },
-        { id: "force", label: "Use of force" },
-        { id: "search", label: "Search of person or property" },
-        { id: "stop", label: "Traffic or pedestrian stop" },
+        { id: "search", label: "Search of person, vehicle, or property" },
+        { id: "stop", label: "Stop, questioning, or harassment" },
+        { id: "retaliation", label: "Retaliation for a complaint or recording" },
         { id: "other", label: "Other interaction" },
       ]
     },
     {
-      question: "When did this occur?",
+      id: "injury",
+      question: "Did this involve an injury or need for medical attention?",
       options: [
-        { id: "recent", label: "Within the last week" },
-        { id: "month", label: "Within the last month" },
-        { id: "year", label: "Within the last year" },
-        { id: "older", label: "More than a year ago" },
+        { id: "yes", label: "Yes" },
+        { id: "no", label: "No" },
       ]
     }
   ],
   employer: [
     {
-      question: "What type of workplace issue is this?",
+      id: "issue-type",
+      question: "What issue best fits your situation?",
       options: [
-        { id: "discrimination", label: "Discrimination" },
-        { id: "harassment", label: "Harassment" },
-        { id: "retaliation", label: "Retaliation for reporting" },
-        { id: "termination", label: "Wrongful termination" },
-        { id: "wages", label: "Wage or hour violations" },
+        { id: "discrimination", label: "Discrimination (race, gender, age, disability, etc.)" },
+        { id: "retaliation", label: "Retaliation for reporting or whistleblowing" },
+        { id: "termination", label: "Wrongful termination or demotion" },
+        { id: "harassment", label: "Harassment or hostile work environment" },
+        { id: "accommodation", label: "Denied accommodation or leave" },
         { id: "other", label: "Other workplace issue" },
       ]
     },
     {
-      question: "Are you currently employed at this workplace?",
+      id: "timing",
+      question: "Is this ongoing or in the past?",
       options: [
-        { id: "yes", label: "Yes, still employed" },
-        { id: "no", label: "No longer employed" },
-        { id: "leave", label: "On leave or suspended" },
+        { id: "ongoing", label: "Ongoing — still happening" },
+        { id: "past", label: "Past — already occurred" },
       ]
     }
   ],
-  // Default follow-up for other systems
-  default: [
+  housing: [
     {
-      question: "How would you describe the situation?",
+      id: "issue-type",
+      question: "What issue best fits your situation?",
       options: [
-        { id: "ongoing", label: "This is ongoing" },
-        { id: "recent", label: "This happened recently" },
-        { id: "past", label: "This happened in the past" },
-      ]
-    },
-    {
-      question: "Have you documented what happened?",
-      options: [
-        { id: "yes", label: "Yes, I have documentation" },
-        { id: "some", label: "Some, but not complete" },
-        { id: "no", label: "Not yet" },
+        { id: "discrimination", label: "Discrimination in housing" },
+        { id: "eviction", label: "Eviction or threat of eviction" },
+        { id: "retaliation", label: "Retaliation for complaints or organizing" },
+        { id: "habitability", label: "Habitability or repair issues" },
+        { id: "accommodation", label: "Denied accommodation for disability" },
+        { id: "other", label: "Other housing issue" },
       ]
     }
-  ]
+  ],
+  school: [
+    {
+      id: "issue-type",
+      question: "What issue best fits your situation?",
+      options: [
+        { id: "discrimination", label: "Discrimination or unequal treatment" },
+        { id: "discipline", label: "Suspension, expulsion, or discipline" },
+        { id: "iep", label: "IEP, 504 plan, or special education" },
+        { id: "harassment", label: "Bullying or harassment" },
+        { id: "retaliation", label: "Retaliation for complaints" },
+        { id: "other", label: "Other school issue" },
+      ]
+    }
+  ],
+  healthcare: [
+    {
+      id: "issue-type",
+      question: "What issue best fits your situation?",
+      options: [
+        { id: "discrimination", label: "Discrimination in care" },
+        { id: "access", label: "Denied care or treatment" },
+        { id: "privacy", label: "Privacy or records violation" },
+        { id: "billing", label: "Billing or insurance dispute" },
+        { id: "other", label: "Other healthcare issue" },
+      ]
+    }
+  ],
+  courts: [
+    {
+      id: "issue-type",
+      question: "What issue best fits your situation?",
+      options: [
+        { id: "due-process", label: "Due process violation" },
+        { id: "representation", label: "Denied or inadequate representation" },
+        { id: "procedure", label: "Procedural error or unfairness" },
+        { id: "appeal", label: "Appeal or post-conviction issue" },
+        { id: "other", label: "Other court issue" },
+      ]
+    }
+  ],
+  jail: [
+    {
+      id: "issue-type",
+      question: "What issue best fits your situation?",
+      options: [
+        { id: "conditions", label: "Conditions of confinement" },
+        { id: "medical", label: "Medical care or mental health" },
+        { id: "communication", label: "Mail, phone, or visitation" },
+        { id: "discipline", label: "Disciplinary action or solitary" },
+        { id: "reentry", label: "Reentry or release issues" },
+        { id: "other", label: "Other incarceration issue" },
+      ]
+    }
+  ],
+  government: [
+    {
+      id: "issue-type",
+      question: "What issue best fits your situation?",
+      options: [
+        { id: "benefits", label: "Denied or terminated benefits" },
+        { id: "discrimination", label: "Discrimination by agency" },
+        { id: "license", label: "Licensing or permit issue" },
+        { id: "records", label: "Records or FOIA request" },
+        { id: "other", label: "Other government agency issue" },
+      ]
+    }
+  ],
+  unsure: [
+    {
+      id: "describe",
+      question: "Can you describe what happened in general terms?",
+      options: [
+        { id: "authority", label: "Someone in authority treated me unfairly" },
+        { id: "denied", label: "I was denied something I believe I'm entitled to" },
+        { id: "harmed", label: "I was harmed or my rights were violated" },
+        { id: "retaliation", label: "I faced consequences for speaking up" },
+        { id: "confused", label: "I'm still trying to understand what happened" },
+      ]
+    }
+  ],
 };
 
-const resultActions = [
-  { icon: FileText, label: "Document what happened", description: "Create a secure record of events", href: "/self-help" },
-  { icon: FolderOpen, label: "Gather evidence", description: "Organize documents, photos, and records", href: "/self-help" },
-  { icon: Phone, label: "Contact oversight agencies", description: "Find relevant complaint bodies", href: "/support-network" },
-  { icon: BookOpen, label: "Learn how the system works", description: "Educational guides and resources", href: "/rights-insight" },
-  { icon: UserSearch, label: "Find legal help", description: "Attorneys and legal aid services", href: "/find-help" },
-];
+// System-specific result content
+const systemResults: Record<SystemId, SystemResult> = {
+  police: {
+    summary: "issues related to police or law enforcement",
+    explanation: "Interactions with police can raise questions about constitutional rights, use of force policies, complaint procedures, and oversight agencies. Documentation and understanding timelines for complaints are often important first steps.",
+    rightsInsightFilter: "police",
+    supportNetworkFilter: "police",
+  },
+  employer: {
+    summary: "workplace or employment-related issues",
+    explanation: "Employment issues may involve federal or state anti-discrimination laws, internal HR processes, or external agencies like the EEOC. Understanding relevant deadlines and documentation requirements can be important.",
+    rightsInsightFilter: "employment",
+    supportNetworkFilter: "employment",
+  },
+  housing: {
+    summary: "housing or landlord-related issues",
+    explanation: "Housing issues may involve fair housing laws, tenant rights, habitability standards, or eviction procedures. Understanding local laws and available advocacy resources can help you navigate the situation.",
+    rightsInsightFilter: "housing",
+    supportNetworkFilter: "housing",
+  },
+  school: {
+    summary: "school or education-related issues",
+    explanation: "Education issues may involve student rights, due process for discipline, special education laws (IDEA, Section 504), or anti-discrimination protections. Understanding your rights and the school's obligations is often a key first step.",
+    rightsInsightFilter: "education",
+    supportNetworkFilter: "education",
+  },
+  healthcare: {
+    summary: "healthcare provider-related issues",
+    explanation: "Healthcare issues may involve patient rights, medical privacy (HIPAA), non-discrimination in care, or access to medical records. Understanding complaint processes and patient advocacy resources can be helpful.",
+    rightsInsightFilter: "healthcare",
+    supportNetworkFilter: "healthcare",
+  },
+  courts: {
+    summary: "court or legal system issues",
+    explanation: "Court-related issues may involve due process rights, access to counsel, procedural requirements, or appeal processes. Understanding court procedures and available legal resources is often essential.",
+    rightsInsightFilter: "courts",
+    supportNetworkFilter: "courts",
+  },
+  jail: {
+    summary: "jail or prison-related issues",
+    explanation: "Incarceration issues may involve conditions of confinement, access to medical care, communication rights, or grievance procedures. Understanding available advocacy channels and oversight bodies can be important.",
+    rightsInsightFilter: "incarceration",
+    supportNetworkFilter: "incarceration",
+  },
+  government: {
+    summary: "government agency-related issues",
+    explanation: "Government agency issues may involve administrative procedures, benefit determinations, licensing decisions, or records requests. Understanding appeal processes and relevant deadlines is often critical.",
+    rightsInsightFilter: "government",
+    supportNetworkFilter: "government",
+  },
+  unsure: {
+    summary: "a situation that may involve multiple systems or issues",
+    explanation: "It's okay not to be sure which system applies. Many situations involve overlapping issues or multiple institutions. Gathering information and documenting what happened can help clarify next steps.",
+    rightsInsightFilter: "general",
+    supportNetworkFilter: "general",
+  },
+};
 
 export default function Analyzer() {
   const [step, setStep] = useState(0);
-  const [selectedSystem, setSelectedSystem] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [selectedSystem, setSelectedSystem] = useState<SystemId | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
 
-  const currentFollowUps = selectedSystem 
-    ? (followUpQuestions[selectedSystem] || followUpQuestions.default)
-    : [];
+  const currentFollowUps = selectedSystem ? followUpQuestions[selectedSystem] : [];
+  const totalSteps = currentFollowUps.length + 1; // +1 for system selection
 
-  const handleSystemSelect = (systemId: string) => {
+  const handleSystemSelect = (systemId: SystemId) => {
     setSelectedSystem(systemId);
+    setAnswers({});
     setStep(1);
   };
 
-  const handleAnswer = (answerId: string) => {
-    const newAnswers = [...answers, answerId];
+  const handleAnswer = (questionId: string, answerId: string) => {
+    const newAnswers = { ...answers, [questionId]: answerId };
     setAnswers(newAnswers);
     
-    if (step < currentFollowUps.length) {
+    const currentQuestionIndex = step - 1;
+    if (currentQuestionIndex < currentFollowUps.length - 1) {
       setStep(step + 1);
     } else {
       setShowResults(true);
@@ -139,22 +344,68 @@ export default function Analyzer() {
       setShowResults(false);
     } else if (step > 1) {
       setStep(step - 1);
-      setAnswers(answers.slice(0, -1));
+      // Remove the last answer
+      const currentQuestion = currentFollowUps[step - 2];
+      if (currentQuestion) {
+        const { [currentQuestion.id]: _, ...remaining } = answers;
+        setAnswers(remaining);
+      }
     } else if (step === 1) {
       setStep(0);
       setSelectedSystem(null);
-      setAnswers([]);
+      setAnswers({});
     }
   };
 
   const handleRestart = () => {
     setStep(0);
     setSelectedSystem(null);
-    setAnswers([]);
+    setAnswers({});
     setShowResults(false);
   };
 
   const selectedSystemInfo = systemCategories.find(s => s.id === selectedSystem);
+  const resultInfo = selectedSystem ? systemResults[selectedSystem] : null;
+  const currentQuestion = step > 0 && step <= currentFollowUps.length ? currentFollowUps[step - 1] : null;
+
+  // Build next action links with filters
+  const getResultActions = () => {
+    const filter = resultInfo?.rightsInsightFilter || "general";
+    return [
+      { 
+        icon: FileText, 
+        label: "Document what happened", 
+        description: "Create a secure record of events and details", 
+        href: "/self-help",
+        requiresAuth: true
+      },
+      { 
+        icon: FolderOpen, 
+        label: "Gather evidence", 
+        description: "Organize documents, photos, and records in your vault", 
+        href: "/self-help",
+        requiresAuth: true
+      },
+      { 
+        icon: Phone, 
+        label: "Contact oversight agencies", 
+        description: "Find relevant complaint bodies and oversight agencies", 
+        href: `/support-network?filter=${filter}`
+      },
+      { 
+        icon: BookOpen, 
+        label: "Learn how this system works", 
+        description: "Educational guides about your rights and processes", 
+        href: `/rights-insight?filter=${filter}`
+      },
+      { 
+        icon: UserSearch, 
+        label: "Find legal help", 
+        description: "Attorneys, legal aid, and referral services", 
+        href: "/find-help"
+      },
+    ];
+  };
 
   return (
     <Layout>
@@ -166,18 +417,18 @@ export default function Analyzer() {
               Civil Rights Analyzer
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Answer a few questions to understand your situation and discover what resources may help you.
+              Answer a few questions to understand your situation and discover resources that may help.
             </p>
           </div>
 
           {/* Progress indicator */}
           {!showResults && (
             <div className="flex items-center justify-center gap-2 mb-8">
-              {[0, 1, 2].map((s) => (
+              {Array.from({ length: Math.min(totalSteps, 3) }).map((_, i) => (
                 <div
-                  key={s}
+                  key={i}
                   className={`h-2 rounded-full transition-all duration-300 ${
-                    s <= step ? "bg-primary w-8" : "bg-muted w-4"
+                    i < step ? "bg-primary w-8" : i === step ? "bg-primary/60 w-6" : "bg-muted w-4"
                   }`}
                 />
               ))}
@@ -187,8 +438,8 @@ export default function Analyzer() {
           {/* Step 0: System Selection */}
           {step === 0 && !showResults && (
             <div className="space-y-4 animate-fade-up">
-              <h2 className="text-lg font-medium text-foreground text-center mb-6">
-                Which system or institution is involved?
+              <h2 className="text-xl font-semibold text-foreground text-center mb-6">
+                Which system was involved in what you experienced?
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {systemCategories.map((system) => (
@@ -217,7 +468,7 @@ export default function Analyzer() {
           )}
 
           {/* Follow-up Questions */}
-          {step > 0 && step <= currentFollowUps.length && !showResults && (
+          {step > 0 && currentQuestion && !showResults && (
             <div className="animate-fade-up">
               <button
                 onClick={handleBack}
@@ -238,14 +489,14 @@ export default function Analyzer() {
                 </div>
 
                 <h2 className="text-xl font-semibold text-foreground mb-6">
-                  {currentFollowUps[step - 1]?.question}
+                  {currentQuestion.question}
                 </h2>
 
                 <div className="space-y-3">
-                  {currentFollowUps[step - 1]?.options.map((option) => (
+                  {currentQuestion.options.map((option) => (
                     <button
                       key={option.id}
-                      onClick={() => handleAnswer(option.id)}
+                      onClick={() => handleAnswer(currentQuestion.id, option.id)}
                       className="w-full p-4 rounded-xl bg-secondary/50 border border-transparent hover:border-primary/50 hover:bg-secondary text-left transition-all duration-200 group"
                     >
                       <span className="font-medium text-foreground group-hover:text-primary transition-colors">
@@ -258,8 +509,8 @@ export default function Analyzer() {
             </div>
           )}
 
-          {/* Results */}
-          {showResults && (
+          {/* Results Page */}
+          {showResults && resultInfo && (
             <div className="animate-fade-up">
               <button
                 onClick={handleBack}
@@ -269,43 +520,34 @@ export default function Analyzer() {
                 Go back
               </button>
 
-              {/* Summary Card */}
+              {/* Plain-Language Summary */}
               <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 mb-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-foreground mb-2">
-                      Analysis Complete
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Based on your answers, here's what may be relevant to your situation involving{" "}
-                      <span className="text-foreground font-medium">{selectedSystemInfo?.label.toLowerCase()}</span>.
-                    </p>
-                  </div>
-                </div>
+                <h2 className="text-xl font-semibold text-foreground mb-3">
+                  Based on what you shared
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Your situation may involve {resultInfo.summary}. The information below can help you 
+                  understand your options and take steps at your own pace.
+                </p>
               </div>
 
-              {/* What This May Involve */}
+              {/* What This Usually Involves */}
               <div className="p-6 rounded-2xl bg-card border border-border mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
-                  What This May Involve
+                  What This Usually Involves
                 </h3>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  Issues with {selectedSystemInfo?.label.toLowerCase()} can involve various rights and procedures. 
-                  Understanding the relevant laws, agencies, and timelines is often an important first step.
+                <p className="text-muted-foreground leading-relaxed">
+                  {resultInfo.explanation}
                 </p>
-                <Disclaimer variant="prominent" />
               </div>
 
               {/* Next Actions */}
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Recommended Next Steps
+                  Next Steps You Can Take
                 </h3>
                 <div className="space-y-3">
-                  {resultActions.map((action) => (
+                  {getResultActions().map((action) => (
                     <Link
                       key={action.label}
                       to={action.href}
@@ -317,6 +559,9 @@ export default function Analyzer() {
                       <div className="flex-1">
                         <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                           {action.label}
+                          {action.requiresAuth && (
+                            <span className="ml-2 text-xs text-muted-foreground font-normal">(account required)</span>
+                          )}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {action.description}
@@ -329,12 +574,21 @@ export default function Analyzer() {
               </div>
 
               {/* Wellbeing Note */}
-              <div className="p-4 rounded-xl bg-muted/50 border border-border mb-8">
-                <p className="text-sm text-muted-foreground text-center">
-                  <strong className="text-foreground">Take your time.</strong> You can pause, skip sections, or return to this later. 
-                  There's no rush.
-                </p>
+              <div className="p-5 rounded-xl bg-muted/50 border border-border mb-8">
+                <div className="flex items-start gap-3">
+                  <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-foreground font-medium mb-1">Take your time</p>
+                    <p className="text-sm text-muted-foreground">
+                      Some experiences are difficult to revisit. You can pause, save, or return at any time. 
+                      There's no pressure to do everything at once.
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              {/* Micro-Disclaimer */}
+              <Disclaimer variant="prominent" className="mb-8" />
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
