@@ -24,88 +24,91 @@ const footerLinks = {
 export function Footer() {
   return (
     <footer className="border-t border-border bg-card/50">
-      <div className="container py-12 lg:py-16">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+      <div className="container py-8 lg:py-10">
+        {/* Main Footer Content - Horizontal Layout */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-6">
           {/* Brand Column */}
-          <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-primary">
-                <Shield className="w-5 h-5 text-primary-foreground" />
+          <div className="lg:w-[280px] shrink-0">
+            <Link to="/" className="flex items-center gap-2 mb-3">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-primary">
+                <Shield className="w-4 h-4 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-semibold text-foreground leading-tight">
+                <span className="text-base font-semibold text-foreground leading-tight">
                   Decoded
                 </span>
-                <span className="text-xs text-primary font-medium -mt-1">
+                <span className="text-[10px] text-primary font-medium -mt-0.5">
                   Justice
                 </span>
               </div>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+            <p className="text-xs text-muted-foreground leading-relaxed mb-3">
               A supportive place to regain clarity, organize what matters, and move forward with purpose.
             </p>
-            <div className="flex items-center gap-2 text-xs text-text-softer">
-              <Heart className="w-3 h-3 text-primary" />
+            <div className="flex items-center gap-1.5 text-[10px] text-text-softer">
+              <Heart className="w-2.5 h-2.5 text-primary" />
               <span>Built with care for those who need it most</span>
             </div>
           </div>
 
-          {/* Platform Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">Platform</h3>
-            <ul className="space-y-3">
-              {footerLinks.platform.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Links Columns Container */}
+          <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-6 lg:gap-8">
+            {/* Platform Links */}
+            <div>
+              <h3 className="text-xs font-semibold text-foreground mb-3">Platform</h3>
+              <ul className="space-y-2">
+                {footerLinks.platform.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.href}
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* About Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">About</h3>
-            <ul className="space-y-3">
-              {footerLinks.about.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* About Links */}
+            <div>
+              <h3 className="text-xs font-semibold text-foreground mb-3">About</h3>
+              <ul className="space-y-2">
+                {footerLinks.about.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.href}
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Legal Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">Legal</h3>
-            <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* Legal Links */}
+            <div>
+              <h3 className="text-xs font-semibold text-foreground mb-3">Legal</h3>
+              <ul className="space-y-2">
+                {footerLinks.legal.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.href}
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
         {/* Disclaimer Banner */}
-        <div className="mt-12 p-4 rounded-xl bg-muted/50 border border-border">
-          <p className="text-xs text-muted-foreground text-center leading-relaxed">
+        <div className="mt-6 p-3 rounded-lg bg-muted/50 border border-border">
+          <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
             <strong className="text-foreground">Educational Use Only.</strong> Decoded Justice is not a law firm and does not provide legal advice. 
             The information provided is for educational purposes only and should not be construed as legal advice. 
             For legal concerns, please consult with a qualified attorney.
@@ -113,8 +116,8 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-8 pt-8 border-t border-border">
-          <p className="text-xs text-text-softer text-center">
+        <div className="mt-4 pt-4 border-t border-border">
+          <p className="text-[10px] text-text-softer text-center">
             © {new Date().getFullYear()} Decoded Justice. All rights reserved.
           </p>
         </div>

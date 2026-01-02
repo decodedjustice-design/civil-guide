@@ -9,6 +9,7 @@ import LegalDecoder from "./pages/LegalDecoder";
 import SelfHelpTools from "./pages/SelfHelpTools";
 import RightsInsight from "./pages/RightsInsight";
 import FindLegalHelp from "./pages/FindLegalHelp";
+import SupportNetwork from "./pages/SupportNetwork";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
@@ -27,10 +28,10 @@ const App = () => (
           <Route path="/self-help" element={<SelfHelpTools />} />
           <Route path="/rights-insight" element={<RightsInsight />} />
           <Route path="/find-help" element={<FindLegalHelp />} />
+          <Route path="/support-network" element={<SupportNetwork />} />
           <Route path="/about" element={<About />} />
           <Route path="/founders-story" element={<About />} />
           <Route path="/what-we-are" element={<About />} />
-          <Route path="/support-network" element={<FindLegalHelp />} />
           <Route path="/signin" element={<SelfHelpTools />} />
           <Route path="/signup" element={<SelfHelpTools />} />
           <Route path="/privacy" element={<About />} />
