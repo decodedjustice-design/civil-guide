@@ -13,204 +13,68 @@ import {
   Home,
   GraduationCap,
   Stethoscope,
+  Heart,
+  FileText,
   ArrowRight,
-  Info
+  Info,
+  MapPin
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { 
+  supportResources, 
+  systemFilterOptions,
+  type SupportResource,
+  type SystemTag 
+} from "@/data/supportNetworkResources";
 
-type SystemFilter = "all" | "police" | "employment" | "housing" | "education" | "healthcare" | "courts" | "incarceration" | "government" | "general";
+type FilterId = "all" | SystemTag;
 
-interface Resource {
-  name: string;
-  type: "official" | "informational";
-  category: SystemFilter[];
-  description: string;
-  website?: string;
-  phone?: string;
-}
-
-const filterOptions: { id: SystemFilter; label: string; icon: React.ElementType }[] = [
-  { id: "all", label: "All", icon: Shield },
-  { id: "police", label: "Police", icon: Shield },
-  { id: "employment", label: "Employment", icon: Briefcase },
-  { id: "housing", label: "Housing", icon: Home },
-  { id: "education", label: "Education", icon: GraduationCap },
-  { id: "healthcare", label: "Healthcare", icon: Stethoscope },
-  { id: "courts", label: "Courts", icon: Scale },
-  { id: "incarceration", label: "Incarceration", icon: Building2 },
-  { id: "government", label: "Government", icon: Building2 },
-];
-
-const resources: Resource[] = [
-  // Police & Law Enforcement
-  {
-    name: "Department of Justice - Civil Rights Division",
-    type: "official",
-    category: ["police", "general"],
-    description: "Federal oversight of civil rights violations, pattern-or-practice investigations of police departments.",
-    website: "https://www.justice.gov/crt",
-    phone: "202-514-4609",
-  },
-  {
-    name: "Police Civilian Oversight Boards",
-    type: "official",
-    category: ["police"],
-    description: "Local civilian review boards that investigate complaints against police officers.",
-    website: "#",
-    phone: "Contact your local agency",
-  },
-  {
-    name: "ACLU - Police Practices",
-    type: "informational",
-    category: ["police", "general"],
-    description: "Resources on police accountability, know your rights guides, and legal advocacy.",
-    website: "https://www.aclu.org/issues/criminal-law-reform/reforming-police",
-  },
-  
-  // Employment
-  {
-    name: "Equal Employment Opportunity Commission (EEOC)",
-    type: "official",
-    category: ["employment"],
-    description: "Federal agency that enforces laws against workplace discrimination.",
-    website: "https://www.eeoc.gov",
-    phone: "1-800-669-4000",
-  },
-  {
-    name: "Department of Labor - Wage & Hour Division",
-    type: "official",
-    category: ["employment"],
-    description: "Enforces federal labor laws including minimum wage, overtime, and family leave.",
-    website: "https://www.dol.gov/agencies/whd",
-    phone: "1-866-487-9243",
-  },
-  {
-    name: "National Labor Relations Board",
-    type: "official",
-    category: ["employment"],
-    description: "Protects employees' rights to organize and to decide whether to have unions.",
-    website: "https://www.nlrb.gov",
-  },
-  
-  // Housing
-  {
-    name: "HUD - Fair Housing Office",
-    type: "official",
-    category: ["housing"],
-    description: "Investigates housing discrimination complaints under the Fair Housing Act.",
-    website: "https://www.hud.gov/program_offices/fair_housing_equal_opp",
-    phone: "1-800-669-9777",
-  },
-  {
-    name: "Local Tenant Rights Organizations",
-    type: "informational",
-    category: ["housing"],
-    description: "Community organizations that help tenants understand their rights and options.",
-  },
-  
-  // Education
-  {
-    name: "Office for Civil Rights (OCR) - Department of Education",
-    type: "official",
-    category: ["education"],
-    description: "Investigates discrimination complaints in schools receiving federal funding.",
-    website: "https://www2.ed.gov/about/offices/list/ocr/index.html",
-    phone: "1-800-421-3481",
-  },
-  {
-    name: "Parent Training & Information Centers",
-    type: "informational",
-    category: ["education"],
-    description: "Help parents of children with disabilities understand their rights under IDEA.",
-    website: "https://www.parentcenterhub.org",
-  },
-  
-  // Healthcare
-  {
-    name: "HHS Office for Civil Rights",
-    type: "official",
-    category: ["healthcare"],
-    description: "Enforces civil rights laws in healthcare, including HIPAA and Section 1557.",
-    website: "https://www.hhs.gov/ocr",
-    phone: "1-800-368-1019",
-  },
-  {
-    name: "State Medical Boards",
-    type: "official",
-    category: ["healthcare"],
-    description: "License and discipline physicians; handle complaints about medical practice.",
-  },
-  
-  // Courts
-  {
-    name: "State Bar Associations",
-    type: "informational",
-    category: ["courts"],
-    description: "Can address attorney misconduct and provide lawyer referral services.",
-  },
-  {
-    name: "Court Self-Help Centers",
-    type: "informational",
-    category: ["courts"],
-    description: "Many courts offer free assistance navigating court procedures.",
-  },
-  
-  // Incarceration
-  {
-    name: "Prison Policy Initiative",
-    type: "informational",
-    category: ["incarceration"],
-    description: "Research and advocacy organization focused on mass incarceration issues.",
-    website: "https://www.prisonpolicy.org",
-  },
-  {
-    name: "State Departments of Corrections - Ombudsman",
-    type: "official",
-    category: ["incarceration"],
-    description: "Many states have ombudsman offices that investigate complaints about incarceration conditions.",
-  },
-  
-  // Government
-  {
-    name: "State/Federal Ombudsman Offices",
-    type: "official",
-    category: ["government", "general"],
-    description: "Independent offices that investigate complaints about government agencies.",
-  },
-  {
-    name: "Administrative Law Judge Offices",
-    type: "official",
-    category: ["government"],
-    description: "Handle appeals of agency decisions on benefits, licenses, and other matters.",
-  },
-];
+const filterIcons: Record<string, React.ElementType> = {
+  all: Shield,
+  police: Shield,
+  employment: Briefcase,
+  housing: Home,
+  disability: Heart,
+  courts: Scale,
+  incarceration: Building2,
+  education: GraduationCap,
+  healthcare: Stethoscope,
+  government: Building2,
+  "public-records": FileText,
+};
 
 export default function SupportNetwork() {
   const [searchParams] = useSearchParams();
-  const [activeFilter, setActiveFilter] = useState<SystemFilter>("all");
+  const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Read filter from URL on mount
   useEffect(() => {
     const filterParam = searchParams.get("filter");
-    if (filterParam && filterOptions.some(f => f.id === filterParam)) {
-      setActiveFilter(filterParam as SystemFilter);
+    // Handle "general" filter from Analyzer as "all"
+    if (filterParam === "general") {
+      setActiveFilter("all");
+    } else if (filterParam && systemFilterOptions.some(f => f.id === filterParam)) {
+      setActiveFilter(filterParam as FilterId);
     }
   }, [searchParams]);
 
-  const filteredResources = resources.filter(resource => {
+  const filteredResources = supportResources.filter(resource => {
     const matchesFilter = activeFilter === "all" || 
-      resource.category.includes(activeFilter) || 
-      resource.category.includes("general");
-    const matchesSearch = resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         resource.description.toLowerCase().includes(searchQuery.toLowerCase());
+      resource.systemTags.includes(activeFilter as SystemTag);
+    const matchesSearch = 
+      resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resource.whatTheyDo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resource.whenToContact.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
-  const officialResources = filteredResources.filter(r => r.type === "official");
-  const informationalResources = filteredResources.filter(r => r.type === "informational");
+  const officialResources = filteredResources.filter(r => r.officialStatus === "official");
+  const informationalResources = filteredResources.filter(r => r.officialStatus === "informational");
+
+  const activeFilterLabel = systemFilterOptions.find(f => f.id === activeFilter)?.label || "All Resources";
 
   return (
     <Layout>
@@ -224,13 +88,19 @@ export default function SupportNetwork() {
             Support Network
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Oversight agencies, complaint bodies, and support organizations that may be relevant to your situation.
+            Oversight agencies, enforcement bodies, and complaint offices that may help with your situation. 
+            Washington State and federal resources.
           </p>
         </div>
 
-        {/* Disclaimer at top */}
+        {/* Wellbeing Note */}
         <div className="max-w-4xl mx-auto mb-8">
-          <Disclaimer variant="prominent" />
+          <div className="p-4 rounded-xl bg-secondary/50 border border-border">
+            <p className="text-sm text-muted-foreground text-center">
+              You don't need to have everything figured out before reaching out. 
+              Many of these offices can help you understand if your concern falls under their authority.
+            </p>
+          </div>
         </div>
 
         {/* Search and Filter */}
@@ -249,21 +119,34 @@ export default function SupportNetwork() {
 
           {/* Filters */}
           <div className="flex flex-wrap gap-2">
-            {filterOptions.map((filter) => (
-              <button
-                key={filter.id}
-                onClick={() => setActiveFilter(filter.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
-                  activeFilter === filter.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
+            {systemFilterOptions.map((filter) => {
+              const Icon = filterIcons[filter.id] || Shield;
+              return (
+                <button
+                  key={filter.id}
+                  onClick={() => setActiveFilter(filter.id as FilterId)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                    activeFilter === filter.id
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  }`}
+                >
+                  <Icon className="w-3 h-3" />
+                  {filter.label.split(" / ")[0]}
+                </button>
+              );
+            })}
           </div>
         </div>
+
+        {/* Active filter indicator */}
+        {activeFilter !== "all" && (
+          <div className="max-w-4xl mx-auto mb-6">
+            <p className="text-sm text-muted-foreground">
+              Showing resources for: <span className="text-foreground font-medium">{activeFilterLabel}</span>
+            </p>
+          </div>
+        )}
 
         {/* Resources */}
         <div className="max-w-4xl mx-auto space-y-8">
@@ -274,9 +157,12 @@ export default function SupportNetwork() {
                 <Building2 className="w-5 h-5 text-primary" />
                 <h2 className="text-lg font-semibold text-foreground">Official Oversight & Complaint Bodies</h2>
               </div>
-              <div className="space-y-3">
+              <p className="text-sm text-muted-foreground mb-4">
+                Government agencies with authority to investigate complaints, enforce laws, or require corrective action.
+              </p>
+              <div className="space-y-4">
                 {officialResources.map((resource) => (
-                  <ResourceCard key={resource.name} resource={resource} />
+                  <ResourceCard key={resource.id} resource={resource} />
                 ))}
               </div>
             </div>
@@ -289,9 +175,12 @@ export default function SupportNetwork() {
                 <Info className="w-5 h-5 text-muted-foreground" />
                 <h2 className="text-lg font-semibold text-foreground">Informational & Advocacy Resources</h2>
               </div>
-              <div className="space-y-3">
+              <p className="text-sm text-muted-foreground mb-4">
+                Organizations that provide information, guidance, or advocacy but may not have direct enforcement authority.
+              </p>
+              <div className="space-y-4">
                 {informationalResources.map((resource) => (
-                  <ResourceCard key={resource.name} resource={resource} />
+                  <ResourceCard key={resource.id} resource={resource} />
                 ))}
               </div>
             </div>
@@ -311,12 +200,19 @@ export default function SupportNetwork() {
           <p className="text-muted-foreground mb-6">
             Not sure which agencies apply to your situation?
           </p>
-          <Button variant="hero" size="lg" asChild>
-            <Link to="/analyzer">
-              Start the Analyzer
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button variant="hero" size="lg" asChild>
+              <Link to="/analyzer">
+                Start the Analyzer
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </Button>
+            <Button variant="soft" size="lg" asChild>
+              <Link to="/rights-insight">
+                Learn About Systems
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Bottom Disclaimer */}
@@ -328,14 +224,16 @@ export default function SupportNetwork() {
   );
 }
 
-function ResourceCard({ resource }: { resource: Resource }) {
+function ResourceCard({ resource }: { resource: SupportResource }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <div className="p-5 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-200">
       <div className="flex items-start gap-3">
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-          resource.type === "official" ? "bg-primary/20" : "bg-secondary"
+          resource.officialStatus === "official" ? "bg-primary/20" : "bg-secondary"
         }`}>
-          {resource.type === "official" ? (
+          {resource.officialStatus === "official" ? (
             <Building2 className="w-5 h-5 text-primary" />
           ) : (
             <Globe className="w-5 h-5 text-muted-foreground" />
@@ -344,25 +242,37 @@ function ResourceCard({ resource }: { resource: Resource }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
             <h3 className="font-medium text-foreground">{resource.name}</h3>
-            <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 ${
-              resource.type === "official" 
-                ? "bg-primary/20 text-primary" 
-                : "bg-secondary text-muted-foreground"
-            }`}>
-              {resource.type === "official" ? "Official" : "Informational"}
-            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                resource.jurisdiction === "washington" 
+                  ? "bg-accent/20 text-accent-foreground" 
+                  : "bg-secondary text-muted-foreground"
+              }`}>
+                {resource.jurisdiction === "washington" ? "WA" : "Federal"}
+              </span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                resource.officialStatus === "official" 
+                  ? "bg-primary/20 text-primary" 
+                  : "bg-secondary text-muted-foreground"
+              }`}>
+                {resource.officialStatus === "official" ? "Official" : "Informational"}
+              </span>
+            </div>
           </div>
+          
           <p className="text-sm text-muted-foreground mb-3">
-            {resource.description}
+            {resource.whatTheyDo}
           </p>
-          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+
+          {/* Contact info */}
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-3">
             {resource.phone && (
               <span className="flex items-center gap-1">
                 <Phone className="w-3 h-3" />
                 {resource.phone}
               </span>
             )}
-            {resource.website && resource.website !== "#" && (
+            {resource.website && (
               <a
                 href={resource.website}
                 target="_blank"
@@ -375,6 +285,37 @@ function ResourceCard({ resource }: { resource: Resource }) {
               </a>
             )}
           </div>
+
+          {/* Expand/Collapse */}
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-xs text-primary hover:underline"
+          >
+            {expanded ? "Show less" : "Show more details"}
+          </button>
+
+          {/* Expanded content */}
+          {expanded && (
+            <div className="mt-4 pt-4 border-t border-border space-y-3">
+              <div>
+                <h4 className="text-xs font-medium text-foreground mb-1">When to Contact</h4>
+                <p className="text-sm text-muted-foreground">{resource.whenToContact}</p>
+              </div>
+              <div>
+                <h4 className="text-xs font-medium text-foreground mb-1">What They Can Do</h4>
+                <p className="text-sm text-muted-foreground">{resource.whatTheyCan}</p>
+              </div>
+              <div>
+                <h4 className="text-xs font-medium text-foreground mb-1">What They Cannot Do</h4>
+                <p className="text-sm text-muted-foreground">{resource.whatTheyCannot}</p>
+              </div>
+              {resource.notes && (
+                <div className="p-3 rounded-lg bg-secondary/50">
+                  <p className="text-xs text-muted-foreground italic">{resource.notes}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

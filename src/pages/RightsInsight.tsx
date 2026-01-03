@@ -9,203 +9,55 @@ import {
   Home, 
   GraduationCap,
   Stethoscope,
+  Heart,
   ArrowRight,
   Search,
   Bookmark,
-  BookmarkCheck
+  BookmarkCheck,
+  ChevronDown,
+  ChevronUp,
+  Users,
+  HelpCircle
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import {
+  rightsInsightGuides,
+  systemCategories,
+  type RightsInsightGuide,
+  type SystemId
+} from "@/data/rightsInsightContent";
 
-type SystemFilter = "all" | "police" | "employment" | "housing" | "education" | "healthcare" | "courts" | "incarceration" | "government" | "general";
+type FilterId = "all" | SystemId;
 
-interface Category {
-  id: SystemFilter;
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  articles: number;
-}
-
-interface Guide {
-  id: string;
-  title: string;
-  category: SystemFilter;
-  categoryLabel: string;
-  readTime: string;
-  description: string;
-}
-
-const categories: Category[] = [
-  {
-    id: "police",
-    icon: Shield,
-    title: "Police & Law Enforcement",
-    description: "Understanding your rights during police encounters, arrests, and investigations.",
-    articles: 12,
-  },
-  {
-    id: "employment",
-    icon: Briefcase,
-    title: "Workplace Rights",
-    description: "Discrimination, harassment, wages, and employment protections.",
-    articles: 15,
-  },
-  {
-    id: "housing",
-    icon: Home,
-    title: "Housing & Tenant Rights",
-    description: "Eviction procedures, fair housing, habitability, and lease rights.",
-    articles: 10,
-  },
-  {
-    id: "education",
-    icon: GraduationCap,
-    title: "Education & Student Rights",
-    description: "Title IX, disciplinary procedures, IEP/504, and student protections.",
-    articles: 8,
-  },
-  {
-    id: "healthcare",
-    icon: Stethoscope,
-    title: "Healthcare Rights",
-    description: "Patient rights, medical privacy, and access to care.",
-    articles: 9,
-  },
-  {
-    id: "courts",
-    icon: Scale,
-    title: "Courts & Legal Process",
-    description: "Understanding court procedures, due process, and navigating the system.",
-    articles: 14,
-  },
-  {
-    id: "incarceration",
-    icon: Building2,
-    title: "Incarceration Rights",
-    description: "Rights while incarcerated, grievance procedures, and reentry.",
-    articles: 7,
-  },
-  {
-    id: "government",
-    icon: Building2,
-    title: "Government Agencies",
-    description: "Benefits, licensing, appeals, and administrative procedures.",
-    articles: 6,
-  },
-];
-
-const allGuides: Guide[] = [
-  {
-    id: "police-encounter",
-    title: "What to Do After a Police Encounter",
-    category: "police",
-    categoryLabel: "Police & Law Enforcement",
-    readTime: "8 min read",
-    description: "Step-by-step guidance on documenting an incident and understanding your options."
-  },
-  {
-    id: "police-rights",
-    title: "Your Rights During Police Stops",
-    category: "police",
-    categoryLabel: "Police & Law Enforcement",
-    readTime: "6 min read",
-    description: "Know what you're required to do and what rights you can assert."
-  },
-  {
-    id: "employment-discrimination",
-    title: "Understanding Employment Discrimination",
-    category: "employment",
-    categoryLabel: "Workplace Rights",
-    readTime: "10 min read",
-    description: "Learn about protected classes, filing complaints, and workplace retaliation."
-  },
-  {
-    id: "wrongful-termination",
-    title: "Wrongful Termination Basics",
-    category: "employment",
-    categoryLabel: "Workplace Rights",
-    readTime: "7 min read",
-    description: "Understanding when termination may violate the law."
-  },
-  {
-    id: "tenant-rights",
-    title: "Tenant Rights: A Plain-Language Guide",
-    category: "housing",
-    categoryLabel: "Housing & Tenant Rights",
-    readTime: "12 min read",
-    description: "Know your rights as a renter, from security deposits to eviction procedures."
-  },
-  {
-    id: "eviction-process",
-    title: "Understanding the Eviction Process",
-    category: "housing",
-    categoryLabel: "Housing & Tenant Rights",
-    readTime: "9 min read",
-    description: "What to expect and how to respond to an eviction notice."
-  },
-  {
-    id: "student-discipline",
-    title: "Student Discipline Rights",
-    category: "education",
-    categoryLabel: "Education & Student Rights",
-    readTime: "8 min read",
-    description: "Due process rights for students facing suspension or expulsion."
-  },
-  {
-    id: "iep-504",
-    title: "IEP and 504 Plan Basics",
-    category: "education",
-    categoryLabel: "Education & Student Rights",
-    readTime: "11 min read",
-    description: "Understanding special education rights and accommodations."
-  },
-  {
-    id: "hipaa-basics",
-    title: "HIPAA and Medical Privacy",
-    category: "healthcare",
-    categoryLabel: "Healthcare Rights",
-    readTime: "7 min read",
-    description: "Your rights regarding medical records and privacy."
-  },
-  {
-    id: "court-process",
-    title: "Navigating Court: A Beginner's Guide",
-    category: "courts",
-    categoryLabel: "Courts & Legal Process",
-    readTime: "14 min read",
-    description: "Understanding court procedures, filings, and what to expect."
-  },
-  {
-    id: "inmate-rights",
-    title: "Rights While Incarcerated",
-    category: "incarceration",
-    categoryLabel: "Incarceration Rights",
-    readTime: "10 min read",
-    description: "Understanding your rights regarding conditions, medical care, and communication."
-  },
-  {
-    id: "benefits-appeals",
-    title: "Appealing a Benefits Denial",
-    category: "government",
-    categoryLabel: "Government Agencies",
-    readTime: "9 min read",
-    description: "How to challenge a denial of government benefits."
-  },
-];
+const systemIcons: Record<string, React.ElementType> = {
+  police: Shield,
+  employment: Briefcase,
+  housing: Home,
+  disability: Heart,
+  courts: Scale,
+  incarceration: Building2,
+  education: GraduationCap,
+  healthcare: Stethoscope,
+  government: Building2,
+};
 
 export default function RightsInsight() {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<SystemFilter>("all");
+  const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [bookmarkedGuides, setBookmarkedGuides] = useState<Set<string>>(new Set());
+  const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
 
   // Read filter from URL on mount
   useEffect(() => {
     const filterParam = searchParams.get("filter");
-    if (filterParam && categories.some(c => c.id === filterParam)) {
-      setActiveFilter(filterParam as SystemFilter);
+    // Handle "general" filter from Analyzer as "all"
+    if (filterParam === "general") {
+      setActiveFilter("all");
+    } else if (filterParam && systemCategories.some(c => c.id === filterParam)) {
+      setActiveFilter(filterParam as FilterId);
     }
   }, [searchParams]);
 
@@ -230,16 +82,15 @@ export default function RightsInsight() {
     });
   };
 
-  const filteredGuides = allGuides.filter(guide => {
-    const matchesFilter = activeFilter === "all" || guide.category === activeFilter;
-    const matchesSearch = guide.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         guide.description.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredGuides = rightsInsightGuides.filter(guide => {
+    const matchesFilter = activeFilter === "all" || guide.systemId === activeFilter;
+    const matchesSearch = 
+      guide.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      guide.orientation.whatThisSystemIs.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
-  const filteredCategories = activeFilter === "all" 
-    ? categories 
-    : categories.filter(c => c.id === activeFilter);
+  const activeCategory = systemCategories.find(c => c.id === activeFilter);
 
   return (
     <Layout>
@@ -253,7 +104,8 @@ export default function RightsInsight() {
             Rights Insight
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-            Learn about your rights and how different systems work — at your own pace, in plain language.
+            Understand how different systems work, what usually matters, and where people often lose time or focus. 
+            Plain language, at your pace.
           </p>
 
           {/* Search */}
@@ -263,9 +115,19 @@ export default function RightsInsight() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search guides and resources..."
+              placeholder="Search guides..."
               className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
+          </div>
+        </div>
+
+        {/* Wellbeing Note */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <div className="p-4 rounded-xl bg-secondary/50 border border-border">
+            <p className="text-sm text-muted-foreground text-center">
+              Some of this information may relate to difficult experiences. You can pause, bookmark, or return later. 
+              Understanding systems takes time, and that's okay.
+            </p>
           </div>
         </div>
 
@@ -282,57 +144,48 @@ export default function RightsInsight() {
             >
               All Topics
             </button>
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveFilter(category.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
-                  activeFilter === category.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
-              >
-                {category.title.split(" ")[0]}
-              </button>
-            ))}
+            {systemCategories.map((category) => {
+              const Icon = systemIcons[category.id] || Shield;
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveFilter(category.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                    activeFilter === category.id
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  }`}
+                >
+                  <Icon className="w-3 h-3" />
+                  {category.label.split(" & ")[0]}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Featured Guides */}
-        <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="text-xl font-semibold text-foreground mb-6">
-            {activeFilter === "all" ? "Featured Guides" : `Guides: ${categories.find(c => c.id === activeFilter)?.title || ""}`}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredGuides.slice(0, 6).map((guide) => (
-              <article
-                key={guide.id}
-                className="group p-5 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-glow transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <p className="text-xs text-primary font-medium">{guide.categoryLabel}</p>
-                  <button 
-                    onClick={() => toggleBookmark(guide.id)}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                    aria-label={bookmarkedGuides.has(guide.id) ? "Remove bookmark" : "Add bookmark"}
-                  >
-                    {bookmarkedGuides.has(guide.id) ? (
-                      <BookmarkCheck className="w-4 h-4 text-primary" />
-                    ) : (
-                      <Bookmark className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors cursor-pointer">
-                  {guide.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  {guide.description}
-                </p>
-                <p className="text-xs text-text-softer">{guide.readTime}</p>
-              </article>
-            ))}
+        {/* Active filter context */}
+        {activeCategory && (
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="p-4 rounded-xl bg-card border border-border">
+              <h2 className="font-semibold text-foreground mb-1">{activeCategory.label}</h2>
+              <p className="text-sm text-muted-foreground">{activeCategory.description}</p>
+            </div>
           </div>
+        )}
+
+        {/* Guides */}
+        <div className="max-w-4xl mx-auto space-y-4">
+          {filteredGuides.map((guide) => (
+            <GuideCard
+              key={guide.id}
+              guide={guide}
+              isBookmarked={bookmarkedGuides.has(guide.id)}
+              isExpanded={expandedGuide === guide.id}
+              onToggleBookmark={() => toggleBookmark(guide.id)}
+              onToggleExpand={() => setExpandedGuide(expandedGuide === guide.id ? null : guide.id)}
+            />
+          ))}
 
           {filteredGuides.length === 0 && (
             <div className="text-center py-12">
@@ -343,38 +196,66 @@ export default function RightsInsight() {
           )}
         </div>
 
-        {/* Categories */}
+        {/* Browse by Topic (when showing all) */}
         {activeFilter === "all" && (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto mt-16">
             <h2 className="text-xl font-semibold text-foreground mb-6">Browse by Topic</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredCategories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveFilter(category.id)}
-                  className="group p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-glow transition-all duration-300 text-left"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <category.icon className="w-6 h-6 text-foreground group-hover:text-primary transition-colors" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {category.title}
-                        </h3>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {systemCategories.map((category) => {
+                const Icon = systemIcons[category.id] || Shield;
+                const guideCount = rightsInsightGuides.filter(g => g.systemId === category.id).length;
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveFilter(category.id)}
+                    className="group p-5 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-glow transition-all duration-300 text-left"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                        <Icon className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" />
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {category.description}
-                      </p>
-                      <p className="text-xs text-text-softer">
-                        {category.articles} articles
-                      </p>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors mb-1">
+                          {category.label}
+                        </h3>
+                        <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                          {category.description}
+                        </p>
+                        <p className="text-xs text-text-softer">
+                          {guideCount} {guideCount === 1 ? "guide" : "guides"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Related links when filtered */}
+        {activeFilter !== "all" && (
+          <div className="max-w-4xl mx-auto mt-12 p-6 rounded-xl bg-card border border-border">
+            <h3 className="font-semibold text-foreground mb-4">Related Resources</h3>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button variant="soft" size="sm" asChild>
+                <Link to={`/support-network?filter=${activeFilter}`}>
+                  <Users className="w-4 h-4 mr-2" />
+                  Find Agencies for {activeCategory?.label}
+                </Link>
+              </Button>
+              <Button variant="soft" size="sm" asChild>
+                <Link to="/find-help">
+                  <HelpCircle className="w-4 h-4 mr-2" />
+                  Find Legal Help
+                </Link>
+              </Button>
+              <Button variant="soft" size="sm" asChild>
+                <Link to="/analyzer">
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Start the Analyzer
+                </Link>
+              </Button>
             </div>
           </div>
         )}
@@ -382,7 +263,7 @@ export default function RightsInsight() {
         {/* CTA */}
         <div className="max-w-2xl mx-auto mt-16 text-center">
           <p className="text-muted-foreground mb-6">
-            Have a specific question? The Analyzer can help point you to relevant resources.
+            Have a specific situation? The Analyzer can help point you to relevant resources.
           </p>
           <Button variant="hero" size="lg" asChild>
             <Link to="/analyzer">
@@ -398,5 +279,193 @@ export default function RightsInsight() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+function GuideCard({ 
+  guide, 
+  isBookmarked, 
+  isExpanded,
+  onToggleBookmark,
+  onToggleExpand 
+}: { 
+  guide: RightsInsightGuide;
+  isBookmarked: boolean;
+  isExpanded: boolean;
+  onToggleBookmark: () => void;
+  onToggleExpand: () => void;
+}) {
+  const Icon = systemIcons[guide.systemId] || Shield;
+  const categoryLabel = systemCategories.find(c => c.id === guide.systemId)?.label || "";
+
+  return (
+    <article className="rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-200 overflow-hidden">
+      {/* Header */}
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+              <Icon className="w-4 h-4 text-foreground" />
+            </div>
+            <span className="text-xs text-primary font-medium">{categoryLabel}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{guide.readTime}</span>
+            <button 
+              onClick={onToggleBookmark}
+              className="text-muted-foreground hover:text-primary transition-colors p-1"
+              aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+            >
+              {isBookmarked ? (
+                <BookmarkCheck className="w-4 h-4 text-primary" />
+              ) : (
+                <Bookmark className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <h3 className="font-semibold text-foreground text-lg mb-2">
+          {guide.title}
+        </h3>
+
+        {/* Quick Orientation Summary */}
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+          {guide.orientation.whatThisSystemIs}
+        </p>
+
+        <button
+          onClick={onToggleExpand}
+          className="flex items-center gap-1 text-sm text-primary hover:underline"
+        >
+          {isExpanded ? (
+            <>
+              <ChevronUp className="w-4 h-4" />
+              Show less
+            </>
+          ) : (
+            <>
+              <ChevronDown className="w-4 h-4" />
+              Read full guide
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Expanded Content */}
+      {isExpanded && (
+        <div className="px-5 pb-5 pt-0 space-y-6 border-t border-border mt-0 pt-5">
+          {/* Quick Orientation */}
+          <section>
+            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center">1</span>
+              Quick Orientation
+            </h4>
+            <div className="space-y-3 pl-8">
+              <div>
+                <h5 className="text-xs font-medium text-foreground mb-1">What this system is</h5>
+                <p className="text-sm text-muted-foreground">{guide.orientation.whatThisSystemIs}</p>
+              </div>
+              <div>
+                <h5 className="text-xs font-medium text-foreground mb-1">Who holds power</h5>
+                <p className="text-sm text-muted-foreground">{guide.orientation.whoHoldsPower}</p>
+              </div>
+              <div>
+                <h5 className="text-xs font-medium text-foreground mb-1">Why it feels confusing</h5>
+                <p className="text-sm text-muted-foreground">{guide.orientation.whyItFeelsConfusing}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Common Situations */}
+          <section>
+            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center">2</span>
+              Common Situations
+            </h4>
+            <ul className="space-y-1.5 pl-8">
+              {guide.commonSituations.map((situation, idx) => (
+                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                  <span className="text-primary mt-1">•</span>
+                  {situation}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* What Usually Matters */}
+          <section>
+            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center">3</span>
+              What Usually Matters
+            </h4>
+            <ul className="space-y-1.5 pl-8">
+              {guide.whatMatters.map((item, idx) => (
+                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                  <span className="text-primary mt-1">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* What Often Doesn't */}
+          <section>
+            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-secondary text-muted-foreground text-xs flex items-center justify-center">4</span>
+              What Often Doesn't Matter (as much as people think)
+            </h4>
+            <ul className="space-y-1.5 pl-8">
+              {guide.whatDoesntMatter.map((item, idx) => (
+                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                  <span className="text-muted-foreground mt-1">○</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Key Deadlines */}
+          {guide.keyDeadlines && (
+            <section className="p-4 rounded-lg bg-secondary/50 border border-border">
+              <h4 className="text-xs font-semibold text-foreground mb-2">⏱ Key Deadlines</h4>
+              <p className="text-sm text-muted-foreground">{guide.keyDeadlines}</p>
+            </section>
+          )}
+
+          {/* Trauma-Aware Note */}
+          {guide.traumaAwareNote && (
+            <section className="p-4 rounded-lg bg-accent/10 border border-accent/20">
+              <p className="text-sm text-muted-foreground italic">{guide.traumaAwareNote}</p>
+            </section>
+          )}
+
+          {/* Related Links */}
+          <section className="pt-4 border-t border-border">
+            <h4 className="text-xs font-semibold text-foreground mb-3">Related Resources</h4>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="soft" size="sm" asChild>
+                <Link to={`/support-network?filter=${guide.systemId}`}>
+                  <Users className="w-3 h-3 mr-1.5" />
+                  Find Agencies
+                </Link>
+              </Button>
+              <Button variant="soft" size="sm" asChild>
+                <Link to="/find-help">
+                  <HelpCircle className="w-3 h-3 mr-1.5" />
+                  Legal Help
+                </Link>
+              </Button>
+              <Button variant="soft" size="sm" asChild>
+                <Link to="/analyzer">
+                  <ArrowRight className="w-3 h-3 mr-1.5" />
+                  Analyzer
+                </Link>
+              </Button>
+            </div>
+          </section>
+        </div>
+      )}
+    </article>
   );
 }
