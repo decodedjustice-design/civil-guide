@@ -87,7 +87,7 @@ const Index = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-              A supportive place to{" "}
+              A supportive space to{" "}
               <span className="gradient-text">regain clarity</span>
             </h1>
             

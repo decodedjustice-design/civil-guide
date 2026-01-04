@@ -1,16 +1,19 @@
-import { useState } from "react";
-import { FileText, Sparkles, HelpCircle, AlertTriangle, Copy, Check, BookOpen } from "lucide-react";
+import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
+import { FileText, Sparkles, HelpCircle, AlertTriangle, Copy, Check, BookOpen, Upload, Calendar, ArrowRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { useToast } from "@/hooks/use-toast";
 
-// Sample decoded output structure
 interface DecodedResult {
   plainLanguage: string;
   keyTerms: { term: string; definition: string }[];
   documentType: string;
+  datesAndDeadlines: string[];
   commonMisunderstandings: string[];
   questionsToAsk: string[];
+  nextActions: { label: string; href: string }[];
 }
 
 export default function LegalDecoder() {
@@ -18,14 +21,53 @@ export default function LegalDecoder() {
   const [isDecoding, setIsDecoding] = useState(false);
   const [result, setResult] = useState<DecodedResult | null>(null);
   const [copied, setCopied] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      toast({ title: "Invalid file", description: "Please upload a PDF file", variant: "destructive" });
+      return;
+    }
+
+    toast({ title: "Processing PDF", description: "Extracting text from your document..." });
+
+    try {
+      const pdfjsLib = await import("pdfjs-dist");
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      let fullText = "";
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item: any) => item.str).join(" ");
+        fullText += pageText + "\n\n";
+      }
+
+      setInputText(fullText.trim());
+      toast({ title: "PDF processed", description: "Text extracted successfully. Click 'Decode Text' to analyze." });
+    } catch (err) {
+      toast({ title: "Error", description: "Could not extract text from PDF", variant: "destructive" });
+    }
+  };
 
   const handleDecode = async () => {
     if (!inputText.trim()) return;
     
     setIsDecoding(true);
     
-    // Simulate decoding (in real app, this would call an API)
+    // Simulate decoding with enhanced output
     await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Extract potential dates from text
+    const datePatterns = inputText.match(/(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\w+ \d{1,2},? \d{4}|within \d+ days?|by \w+ \d{1,2})/gi) || [];
+    const deadlinePhrases = inputText.match(/(must respond|deadline|due date|within \d+ days|no later than|expires?|by \w+ \d{1,2})/gi) || [];
     
     setResult({
       plainLanguage: "This document appears to be a formal notice regarding your legal rights. It outlines specific timelines and procedures you may need to follow. The language indicates this is likely an official document from a government agency or court.",
@@ -33,8 +75,12 @@ export default function LegalDecoder() {
         { term: "Due Process", definition: "Your right to fair treatment through the judicial system, including notice and an opportunity to be heard." },
         { term: "Statute of Limitations", definition: "The time limit within which legal action must be taken." },
         { term: "Notice", definition: "Formal communication informing you of something important." },
+        { term: "Service", definition: "The legal delivery of documents to a person or party involved in a case." },
       ],
       documentType: "Official Legal Notice",
+      datesAndDeadlines: datePatterns.length > 0 || deadlinePhrases.length > 0
+        ? [...new Set([...datePatterns, ...deadlinePhrases])].slice(0, 5)
+        : ["No specific dates detected — review carefully for any mentioned deadlines"],
       commonMisunderstandings: [
         "This notice does not mean you've lost your case — it's informing you of a process.",
         "Timelines in legal documents are usually strict deadlines, not suggestions.",
@@ -45,6 +91,13 @@ export default function LegalDecoder() {
         "What happens if I don't respond by the deadline?",
         "Is there a way to request an extension?",
         "Should I respond in writing or is there another method?",
+        "Are there any costs or fees associated with responding?",
+      ],
+      nextActions: [
+        { label: "Document your response notes", href: "/notes" },
+        { label: "Add to your timeline", href: "/timeline" },
+        { label: "Learn about your rights", href: "/rights-insight" },
+        { label: "Find legal help", href: "/find-help" },
       ],
     });
     
@@ -62,6 +115,9 @@ Plain Language Explanation:
 ${result.plainLanguage}
 
 Document Type: ${result.documentType}
+
+Dates & Deadline Phrases Found:
+${result.datesAndDeadlines.map(d => `• ${d}`).join('\n')}
 
 Key Terms:
 ${result.keyTerms.map(t => `• ${t.term}: ${t.definition}`).join('\n')}
@@ -99,16 +155,35 @@ Educational use only. Not legal advice.
               Legal Decoder
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Paste official documents or legal language to get plain-English explanations of what they mean.
+              Paste text or upload a PDF to get plain-English explanations, key terms, and questions to ask professionals.
             </p>
           </div>
 
           {/* Input Section */}
           <div className="mb-8">
             <div className="p-6 rounded-2xl bg-card border border-border">
-              <label className="block text-sm font-medium text-foreground mb-3">
-                Paste your text here
-              </label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-medium text-foreground">
+                  Paste your text or upload a PDF
+                </label>
+                <div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept=".pdf"
+                    onChange={handlePdfUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="w-4 h-4" />
+                    Upload PDF
+                  </Button>
+                </div>
+              </div>
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
@@ -179,6 +254,25 @@ Educational use only. Not legal advice.
                 </p>
               </div>
 
+              {/* Dates and Deadlines */}
+              <div className="p-6 rounded-2xl bg-card border border-border">
+                <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-warning" />
+                  Dates & Deadline Phrases Found
+                </h2>
+                <p className="text-xs text-muted-foreground mb-4">
+                  These are phrases that may indicate important dates. Always verify exact deadlines in the original document.
+                </p>
+                <div className="space-y-2">
+                  {result.datesAndDeadlines.map((item, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-warning/10 border border-warning/20">
+                      <span className="text-warning">•</span>
+                      <span className="text-foreground">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Key Terms */}
               <div className="p-6 rounded-2xl bg-card border border-border">
                 <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -228,6 +322,25 @@ Educational use only. Not legal advice.
                 </ul>
               </div>
 
+              {/* Next Actions */}
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-card to-card/50 border border-border">
+                <h2 className="text-lg font-semibold text-foreground mb-4">
+                  Suggested Next Steps
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {result.nextActions.map((action, index) => (
+                    <Link
+                      key={index}
+                      to={action.href}
+                      className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors group"
+                    >
+                      <span className="text-foreground group-hover:text-primary transition-colors">{action.label}</span>
+                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
               {/* Disclaimer */}
               <Disclaimer variant="prominent" />
             </div>
@@ -237,7 +350,7 @@ Educational use only. Not legal advice.
           {!result && !isDecoding && (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                Paste text above to see a plain-language explanation.
+                Paste text or upload a PDF above to see a plain-language explanation.
               </p>
             </div>
           )}
