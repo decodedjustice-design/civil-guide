@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Shield, User } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,11 @@ export function Header() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-primary shadow-glow">
-            <Shield className="w-5 h-5 text-primary-foreground" />
+            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" xmlns="http://www.w3.org/2000/svg">
+              {/* Scales of Justice with puzzle piece */}
+              <path d="M12 2L12 4M12 4L6 8L2 6L6 12L2 18L12 14M12 4L18 8L22 6L18 12L22 18L12 14M12 14L12 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary-foreground"/>
+              <circle cx="12" cy="14" r="2" fill="currentColor" className="text-primary-foreground"/>
+            </svg>
           </div>
           <div className="flex flex-col">
             <span className="text-lg font-semibold text-foreground leading-tight">
