@@ -18,7 +18,7 @@ export default function About() {
               About Decoded Justice
             </h1>
             <p className="text-xl text-muted-foreground">
-              A supportive place to regain clarity, organize what matters, and move forward with purpose.
+              A supportive space to regain clarity, organize what matters, and move forward with purpose.
             </p>
           </div>
 

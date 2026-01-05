@@ -245,6 +245,7 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                   <Button
                     variant="outline"
                     size="sm"
+                    className="hover:border-primary/50"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Upload className="w-4 h-4" />
@@ -438,7 +439,7 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Button
-                    variant="outline"
+                    variant="hero"
                     className="justify-start gap-2"
                     onClick={handleSaveToNotes}
                   >
@@ -446,7 +447,7 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                     Save summary to Notes
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="default"
                     className="justify-start gap-2"
                     onClick={handleAddToEvidence}
                   >
@@ -481,17 +482,17 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Link
                     to="/rights-insight"
-                    className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors group"
+                    className="flex items-center justify-between p-4 rounded-xl bg-secondary hover:bg-secondary/80 border-2 border-transparent hover:border-primary/50 transition-all group"
                   >
-                    <span className="text-foreground group-hover:text-primary transition-colors">Learn about your rights</span>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="text-foreground font-medium group-hover:text-primary transition-colors">Learn about your rights</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </Link>
                   <Link
                     to="/find-help"
-                    className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors group"
+                    className="flex items-center justify-between p-4 rounded-xl bg-secondary hover:bg-secondary/80 border-2 border-transparent hover:border-primary/50 transition-all group"
                   >
-                    <span className="text-foreground group-hover:text-primary transition-colors">Find legal help</span>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <span className="text-foreground font-medium group-hover:text-primary transition-colors">Find legal help</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </Link>
                 </div>
               </div>

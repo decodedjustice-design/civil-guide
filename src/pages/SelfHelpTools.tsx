@@ -10,7 +10,8 @@ import {
   Download,
   Lock,
   ArrowRight,
-  LogOut
+  LogOut,
+  ChevronRight
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -143,17 +144,17 @@ export default function SelfHelpTools() {
                 key={tool.title}
                 onClick={() => handleToolClick(tool)}
                 disabled={tool.status === "coming-soon"}
-                className={`group p-6 rounded-2xl bg-card border border-border text-left transition-all duration-300 ${
+                className={`group p-6 rounded-2xl bg-card border-2 text-left transition-all duration-300 ${
                   tool.status === "coming-soon" 
-                    ? "opacity-60 cursor-not-allowed" 
-                    : "hover:border-primary/30 hover:shadow-glow cursor-pointer"
+                    ? "opacity-60 cursor-not-allowed border-border" 
+                    : "border-border hover:border-primary/50 hover:shadow-glow cursor-pointer active:scale-[0.98]"
                 }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                     tool.status === "coming-soon" 
                       ? "bg-muted" 
-                      : "bg-secondary group-hover:bg-primary/20"
+                      : "bg-secondary group-hover:bg-primary/20 group-hover:scale-105"
                   }`}>
                     <tool.icon className={`w-6 h-6 transition-colors ${
                       tool.status === "coming-soon" 
@@ -161,8 +162,8 @@ export default function SelfHelpTools() {
                         : "text-foreground group-hover:text-primary"
                     }`} />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between gap-2 mb-1">
                       <h3 className={`font-semibold transition-colors ${
                         tool.status === "coming-soon" 
                           ? "text-muted-foreground" 
@@ -170,10 +171,12 @@ export default function SelfHelpTools() {
                       }`}>
                         {tool.title}
                       </h3>
-                      {tool.status === "coming-soon" && (
+                      {tool.status === "coming-soon" ? (
                         <span className="px-2 py-0.5 text-xs rounded bg-muted text-muted-foreground">
                           Coming Soon
                         </span>
+                      ) : (
+                        <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">

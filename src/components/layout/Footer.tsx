@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { Shield, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
+import decodedJusticeLogo from "@/assets/decoded-justice-logo.png";
 
 const footerLinks = {
   platform: [
     { name: "Civil Rights Analyzer", href: "/analyzer" },
-    { name: "Legal Decoder", href: "/legal-decoder" },
+    { name: "Justice Decoder", href: "/legal-decoder" },
     { name: "Rights Insight", href: "/rights-insight" },
     { name: "Find Legal Help", href: "/find-help" },
     { name: "Support Network", href: "/support-network" },
@@ -29,21 +30,15 @@ export function Footer() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-6">
           {/* Brand Column */}
           <div className="lg:w-[280px] shrink-0">
-            <Link to="/" className="flex items-center gap-2 mb-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-primary">
-                <Shield className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-base font-semibold text-foreground leading-tight">
-                  Decoded
-                </span>
-                <span className="text-[10px] text-primary font-medium -mt-0.5">
-                  Justice
-                </span>
-              </div>
+            <Link to="/" className="flex items-center gap-2 mb-3 hover:opacity-80 transition-opacity">
+              <img 
+                src={decodedJusticeLogo} 
+                alt="Decoded Justice" 
+                className="h-6 w-auto opacity-70"
+              />
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-              A supportive place to regain clarity, organize what matters, and move forward with purpose.
+              A supportive space to regain clarity, organize what matters, and move forward with purpose.
             </p>
             <div className="flex items-center gap-1.5 text-[10px] text-text-softer">
               <Heart className="w-2.5 h-2.5 text-primary" />

@@ -446,16 +446,19 @@ export default function Analyzer() {
                   <button
                     key={system.id}
                     onClick={() => handleSystemSelect(system.id)}
-                    className="group p-4 rounded-xl bg-card border border-border hover:border-primary/50 hover:shadow-glow text-left transition-all duration-200"
+                    className="group p-4 rounded-xl bg-card border-2 border-border hover:border-primary/50 hover:shadow-glow text-left transition-all duration-200 cursor-pointer active:scale-[0.98]"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-105 transition-all">
                         <system.icon className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" />
                       </div>
-                      <div>
-                        <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                          {system.label}
-                        </p>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                            {system.label}
+                          </p>
+                          <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1">
                           {system.description}
                         </p>
@@ -497,11 +500,14 @@ export default function Analyzer() {
                     <button
                       key={option.id}
                       onClick={() => handleAnswer(currentQuestion.id, option.id)}
-                      className="w-full p-4 rounded-xl bg-secondary/50 border border-transparent hover:border-primary/50 hover:bg-secondary text-left transition-all duration-200 group"
+                      className="w-full p-4 rounded-xl bg-secondary border-2 border-transparent hover:border-primary/50 hover:bg-secondary/80 text-left transition-all duration-200 group cursor-pointer active:scale-[0.99]"
                     >
-                      <span className="font-medium text-foreground group-hover:text-primary transition-colors">
-                        {option.label}
-                      </span>
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                          {option.label}
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -551,9 +557,9 @@ export default function Analyzer() {
                     <Link
                       key={action.label}
                       to={action.href}
-                      className="group flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/50 hover:shadow-glow transition-all duration-200"
+                      className="group flex items-center gap-4 p-4 rounded-xl bg-card border-2 border-border hover:border-primary/50 hover:shadow-glow transition-all duration-200 cursor-pointer active:scale-[0.99]"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-105 transition-all">
                         <action.icon className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" />
                       </div>
                       <div className="flex-1">
@@ -567,7 +573,7 @@ export default function Analyzer() {
                           {action.description}
                         </p>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-all" />
                     </Link>
                   ))}
                 </div>
