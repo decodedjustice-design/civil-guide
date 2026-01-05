@@ -258,10 +258,10 @@ export default function FindLegalHelp() {
               <button
                 key={type.id}
                 onClick={() => setActiveFilter(type.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                   activeFilter === type.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    ? "bg-primary text-primary-foreground shadow-glow"
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-2 border-transparent hover:border-primary/30"
                 }`}
               >
                 {type.label}
@@ -278,7 +278,7 @@ export default function FindLegalHelp() {
               return (
                 <div
                   key={resource.name}
-                  className="p-6 rounded-2xl bg-card border border-border hover:border-primary/30 transition-all duration-200"
+                  className="p-6 rounded-2xl bg-card border-2 border-border hover:border-primary/30 transition-all duration-200"
                 >
                   <div className="flex flex-col md:flex-row md:items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center shrink-0">
@@ -289,10 +289,10 @@ export default function FindLegalHelp() {
                         <h3 className="text-lg font-semibold text-foreground">
                           {resource.name}
                         </h3>
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
                           resource.serviceType === "legal" 
-                            ? "bg-primary/20 text-primary" 
-                            : "bg-muted text-muted-foreground"
+                            ? "bg-primary/20 text-primary border border-primary/30" 
+                            : "bg-muted text-muted-foreground border border-border"
                         }`}>
                           {resource.serviceType === "legal" ? "Legal Services" : "Informational"}
                         </span>
@@ -314,7 +314,7 @@ export default function FindLegalHelp() {
                             href={resource.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-primary hover:underline"
+                            className="flex items-center gap-1 text-primary font-medium hover:underline px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors"
                           >
                             <Globe className="w-4 h-4" />
                             Visit Website
@@ -382,7 +382,7 @@ export default function FindLegalHelp() {
           <p className="text-muted-foreground mb-6">
             Need help organizing your information before contacting an attorney?
           </p>
-          <Button variant="hero" size="lg" asChild>
+          <Button variant="hero" size="lg" className="shadow-glow" asChild>
             <Link to="/self-help">
               Use Self-Help Tools
               <ArrowRight className="w-5 h-5" />

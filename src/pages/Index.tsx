@@ -26,7 +26,7 @@ const features = [
   },
   {
     icon: FileText,
-    title: "Legal Decoder",
+    title: "Justice Decoder",
     description: "Paste official documents or legal language to get plain-English explanations of what they mean.",
     href: "/legal-decoder",
     cta: "Decode Text",
@@ -132,17 +132,17 @@ const Index = () => {
               <Link
                 key={feature.title}
                 to={feature.href}
-                className="group p-6 lg:p-8 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-glow transition-all duration-300 animate-fade-up"
+                className="group p-6 lg:p-8 rounded-2xl bg-card border-2 border-border hover:border-primary/50 hover:shadow-glow transition-all duration-300 animate-fade-up cursor-pointer"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`flex items-center justify-center w-12 h-12 rounded-xl shrink-0 ${
+                  <div className={`flex items-center justify-center w-12 h-12 rounded-xl shrink-0 transition-all group-hover:scale-105 ${
                     feature.primary 
-                      ? "bg-gradient-to-br from-primary to-primary/70" 
-                      : "bg-secondary"
+                      ? "bg-gradient-to-br from-primary to-primary/70 shadow-glow" 
+                      : "bg-secondary group-hover:bg-primary/20"
                   }`}>
-                    <feature.icon className={`w-6 h-6 ${
-                      feature.primary ? "text-primary-foreground" : "text-foreground"
+                    <feature.icon className={`w-6 h-6 transition-colors ${
+                      feature.primary ? "text-primary-foreground" : "text-foreground group-hover:text-primary"
                     }`} />
                   </div>
                   <div className="flex-1">
@@ -152,7 +152,7 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                       {feature.description}
                     </p>
-                    <span className="inline-flex items-center gap-2 text-sm font-medium text-primary">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-lg group-hover:bg-primary/20 transition-all">
                       {feature.cta}
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>

@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer active:scale-[0.98]",
   {
     variants: {
       variant: {
@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-border bg-transparent hover:bg-secondary hover:text-secondary-foreground",
+          "border-2 border-border bg-transparent hover:bg-secondary hover:border-primary/50 hover:text-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost:
@@ -27,7 +27,7 @@ const buttonVariants = cva(
         accent:
           "bg-accent text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 hover:shadow-md",
         soft:
-          "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+          "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 hover:border-primary/40",
         glass:
           "bg-card/70 backdrop-blur-sm border border-border/50 text-foreground hover:bg-card/90",
       },
