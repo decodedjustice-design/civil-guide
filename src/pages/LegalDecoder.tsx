@@ -1,19 +1,22 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import { FileText, Sparkles, HelpCircle, AlertTriangle, Copy, Check, BookOpen, Upload, Calendar, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { FileText, Sparkles, HelpCircle, Copy, Check, BookOpen, Upload, Calendar, ArrowRight, Save, FileBox, Bookmark, Eye, EyeOff, Lightbulb, Heart } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface DecodedResult {
-  plainLanguage: string;
-  keyTerms: { term: string; definition: string }[];
+  plainLanguageSummary: string;
+  bulletPoints: string[];
   documentType: string;
-  datesAndDeadlines: string[];
-  commonMisunderstandings: string[];
-  questionsToAsk: string[];
-  nextActions: { label: string; href: string }[];
+  keyTerms: { term: string; explanation: string }[];
+  datesAndDeadlines: { phrase: string; context: string }[];
+  systemInsights: string[];
+  questionsForProfessional: string[];
 }
 
 export default function LegalDecoder() {
@@ -21,8 +24,13 @@ export default function LegalDecoder() {
   const [isDecoding, setIsDecoding] = useState(false);
   const [result, setResult] = useState<DecodedResult | null>(null);
   const [copied, setCopied] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [showExtractedText, setShowExtractedText] = useState(false);
+  const [extractedFromPdf, setExtractedFromPdf] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -51,7 +59,8 @@ export default function LegalDecoder() {
       }
 
       setInputText(fullText.trim());
-      toast({ title: "PDF processed", description: "Text extracted successfully. Click 'Decode Text' to analyze." });
+      setExtractedFromPdf(true);
+      toast({ title: "PDF processed", description: "Text extracted successfully. Click 'Decode Document' to analyze." });
     } catch (err) {
       toast({ title: "Error", description: "Could not extract text from PDF", variant: "destructive" });
     }
@@ -61,72 +70,62 @@ export default function LegalDecoder() {
     if (!inputText.trim()) return;
     
     setIsDecoding(true);
+    setResult(null);
     
-    // Simulate decoding with enhanced output
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Extract potential dates from text
-    const datePatterns = inputText.match(/(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}|\w+ \d{1,2},? \d{4}|within \d+ days?|by \w+ \d{1,2})/gi) || [];
-    const deadlinePhrases = inputText.match(/(must respond|deadline|due date|within \d+ days|no later than|expires?|by \w+ \d{1,2})/gi) || [];
-    
-    setResult({
-      plainLanguage: "This document appears to be a formal notice regarding your legal rights. It outlines specific timelines and procedures you may need to follow. The language indicates this is likely an official document from a government agency or court.",
-      keyTerms: [
-        { term: "Due Process", definition: "Your right to fair treatment through the judicial system, including notice and an opportunity to be heard." },
-        { term: "Statute of Limitations", definition: "The time limit within which legal action must be taken." },
-        { term: "Notice", definition: "Formal communication informing you of something important." },
-        { term: "Service", definition: "The legal delivery of documents to a person or party involved in a case." },
-      ],
-      documentType: "Official Legal Notice",
-      datesAndDeadlines: datePatterns.length > 0 || deadlinePhrases.length > 0
-        ? [...new Set([...datePatterns, ...deadlinePhrases])].slice(0, 5)
-        : ["No specific dates detected — review carefully for any mentioned deadlines"],
-      commonMisunderstandings: [
-        "This notice does not mean you've lost your case — it's informing you of a process.",
-        "Timelines in legal documents are usually strict deadlines, not suggestions.",
-        "Receiving this document does not mean you need to hire an attorney immediately, but you may want to consult one.",
-      ],
-      questionsToAsk: [
-        "What is the deadline mentioned in this document?",
-        "What happens if I don't respond by the deadline?",
-        "Is there a way to request an extension?",
-        "Should I respond in writing or is there another method?",
-        "Are there any costs or fees associated with responding?",
-      ],
-      nextActions: [
-        { label: "Document your response notes", href: "/notes" },
-        { label: "Add to your timeline", href: "/timeline" },
-        { label: "Learn about your rights", href: "/rights-insight" },
-        { label: "Find legal help", href: "/find-help" },
-      ],
-    });
-    
-    setIsDecoding(false);
+    try {
+      const { data, error } = await supabase.functions.invoke("decode-document", {
+        body: { documentText: inputText },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setResult(data);
+    } catch (err: any) {
+      console.error("Decode error:", err);
+      toast({
+        title: "Analysis failed",
+        description: err.message || "Could not analyze the document. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDecoding(false);
+    }
   };
 
   const handleCopy = () => {
     if (!result) return;
     
     const text = `
-LEGAL DECODER SUMMARY
-=====================
+JUSTICE DECODER SUMMARY
+=======================
 
-Plain Language Explanation:
-${result.plainLanguage}
+Plain Language Summary:
+${result.plainLanguageSummary}
+
+Key Points:
+${result.bulletPoints.map(p => `• ${p}`).join('\n')}
 
 Document Type: ${result.documentType}
 
 Dates & Deadline Phrases Found:
-${result.datesAndDeadlines.map(d => `• ${d}`).join('\n')}
+${result.datesAndDeadlines.length > 0 
+  ? result.datesAndDeadlines.map(d => `• "${d.phrase}" — ${d.context}`).join('\n')
+  : '• No specific dates detected'}
 
 Key Terms:
-${result.keyTerms.map(t => `• ${t.term}: ${t.definition}`).join('\n')}
+${result.keyTerms.map(t => `• ${t.term}: ${t.explanation}`).join('\n')}
 
-Common Misunderstandings:
-${result.commonMisunderstandings.map(m => `• ${m}`).join('\n')}
+What the System Knows (But People Often Don't):
+${result.systemInsights.map(i => `• ${i}`).join('\n')}
 
-Questions to Ask a Professional:
-${result.questionsToAsk.map(q => `• ${q}`).join('\n')}
+Questions You May Want to Ask a Professional:
+${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
 
 ---
 Educational use only. Not legal advice.
@@ -134,12 +133,73 @@ Educational use only. Not legal advice.
     
     navigator.clipboard.writeText(text);
     setCopied(true);
+    toast({ title: "Copied", description: "Summary copied to clipboard" });
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSaveToNotes = async () => {
+    if (!user) {
+      navigate("/auth?redirect=/legal-decoder");
+      return;
+    }
+    if (!result) return;
+
+    const noteContent = `
+## Document Type: ${result.documentType}
+
+### Summary
+${result.plainLanguageSummary}
+
+### Key Points
+${result.bulletPoints.map(p => `- ${p}`).join('\n')}
+
+### Key Terms
+${result.keyTerms.map(t => `**${t.term}**: ${t.explanation}`).join('\n\n')}
+
+### Dates & Deadlines
+${result.datesAndDeadlines.length > 0 
+  ? result.datesAndDeadlines.map(d => `- "${d.phrase}" — ${d.context}`).join('\n')
+  : 'No specific dates detected'}
+
+### Questions for a Professional
+${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
+
+---
+*Decoded on ${new Date().toLocaleDateString()}*
+    `.trim();
+
+    try {
+      const { error } = await supabase.from("notes").insert({
+        user_id: user.id,
+        title: `Decoded: ${result.documentType}`,
+        content: noteContent,
+      });
+
+      if (error) throw error;
+      toast({ title: "Saved", description: "Summary saved to your Notes" });
+    } catch (err) {
+      toast({ title: "Error", description: "Could not save to Notes", variant: "destructive" });
+    }
+  };
+
+  const handleAddToEvidence = () => {
+    if (!user) {
+      navigate("/auth?redirect=/legal-decoder");
+      return;
+    }
+    navigate("/evidence-vault");
+  };
+
+  const handleBookmark = () => {
+    setBookmarked(true);
+    toast({ title: "Bookmarked", description: "Explanation saved for this session" });
   };
 
   const handleClear = () => {
     setInputText("");
     setResult(null);
+    setExtractedFromPdf(false);
+    setBookmarked(false);
   };
 
   return (
@@ -152,10 +212,18 @@ Educational use only. Not legal advice.
               <FileText className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Legal Decoder
+              Justice Decoder
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Paste text or upload a PDF to get plain-English explanations, key terms, and questions to ask professionals.
+              Paste text or upload a PDF to get plain-language explanations, key terms, and preparation questions for professionals.
+            </p>
+          </div>
+
+          {/* Wellbeing Note */}
+          <div className="mb-8 p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-3">
+            <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <p className="text-sm text-muted-foreground">
+              You can pause at any time. This is educational only, and there's no pressure to act right now.
             </p>
           </div>
 
@@ -184,9 +252,30 @@ Educational use only. Not legal advice.
                   </Button>
                 </div>
               </div>
+              
+              {/* Extracted Text Preview (for PDF uploads) */}
+              {extractedFromPdf && inputText && (
+                <Collapsible open={showExtractedText} onOpenChange={setShowExtractedText} className="mb-4">
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="w-full justify-between">
+                      <span className="text-muted-foreground text-xs">Extracted text preview</span>
+                      {showExtractedText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="mt-2 p-3 rounded-lg bg-secondary/50 max-h-32 overflow-y-auto">
+                      <p className="text-xs text-muted-foreground whitespace-pre-wrap">{inputText.slice(0, 1000)}{inputText.length > 1000 && "..."}</p>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+
               <textarea
                 value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  setExtractedFromPdf(false);
+                }}
                 placeholder="Paste a legal document, notice, contract clause, or any official language you'd like explained in plain terms..."
                 className="w-full h-48 p-4 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
               />
@@ -208,12 +297,12 @@ Educational use only. Not legal advice.
                     {isDecoding ? (
                       <>
                         <Sparkles className="w-4 h-4 animate-pulse" />
-                        Decoding...
+                        Analyzing...
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4" />
-                        Decode Text
+                        Decode Document
                       </>
                     )}
                   </Button>
@@ -225,93 +314,113 @@ Educational use only. Not legal advice.
           {/* Results Section */}
           {result && (
             <div className="space-y-6 animate-fade-up">
-              {/* Plain Language */}
+              {/* Plain Language Summary */}
               <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-primary" />
-                    In Plain Language
+                    Plain-Language Summary
                   </h2>
-                  <Button variant="ghost" size="sm" onClick={handleCopy}>
-                    {copied ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        Copy Summary
-                      </>
-                    )}
-                  </Button>
                 </div>
-                <p className="text-foreground leading-relaxed">
-                  {result.plainLanguage}
+                <p className="text-foreground leading-relaxed mb-4">
+                  {result.plainLanguageSummary}
                 </p>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  <strong>Document Type:</strong> {result.documentType}
+                {result.bulletPoints.length > 0 && (
+                  <ul className="space-y-2 mt-4">
+                    {result.bulletPoints.map((point, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                        <span className="text-muted-foreground">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Document Type */}
+              <div className="p-6 rounded-2xl bg-card border border-border">
+                <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  What This Document Is
+                </h2>
+                <p className="text-foreground">{result.documentType}</p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  This is a best-effort classification based on the document's content and language.
                 </p>
               </div>
+
+              {/* Key Terms */}
+              {result.keyTerms.length > 0 && (
+                <div className="p-6 rounded-2xl bg-card border border-border">
+                  <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <HelpCircle className="w-5 h-5 text-primary" />
+                    Key Terms & Phrases
+                  </h2>
+                  <div className="space-y-4">
+                    {result.keyTerms.map((item, index) => (
+                      <div key={index} className="p-4 rounded-xl bg-secondary/50">
+                        <p className="font-medium text-foreground mb-1">{item.term}</p>
+                        <p className="text-sm text-muted-foreground">{item.explanation}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Dates and Deadlines */}
               <div className="p-6 rounded-2xl bg-card border border-border">
                 <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-warning" />
-                  Dates & Deadline Phrases Found
+                  Dates & Time-Sensitive Language
                 </h2>
                 <p className="text-xs text-muted-foreground mb-4">
-                  These are phrases that may indicate important dates. Always verify exact deadlines in the original document.
+                  These phrases may indicate important dates. We do not calculate deadlines — always verify in the original document.
                 </p>
-                <div className="space-y-2">
-                  {result.datesAndDeadlines.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-warning/10 border border-warning/20">
-                      <span className="text-warning">•</span>
-                      <span className="text-foreground">{item}</span>
-                    </div>
-                  ))}
-                </div>
+                {result.datesAndDeadlines.length > 0 ? (
+                  <div className="space-y-3">
+                    {result.datesAndDeadlines.map((item, index) => (
+                      <div key={index} className="p-4 rounded-xl bg-warning/10 border border-warning/20">
+                        <p className="font-medium text-foreground">"{item.phrase}"</p>
+                        <p className="text-sm text-muted-foreground mt-1">{item.context}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">No specific dates or deadline phrases detected in this document.</p>
+                )}
               </div>
 
-              {/* Key Terms */}
-              <div className="p-6 rounded-2xl bg-card border border-border">
-                <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <HelpCircle className="w-5 h-5 text-primary" />
-                  Key Terms Explained
-                </h2>
-                <div className="space-y-4">
-                  {result.keyTerms.map((item, index) => (
-                    <div key={index} className="p-4 rounded-xl bg-secondary/50">
-                      <p className="font-medium text-foreground mb-1">{item.term}</p>
-                      <p className="text-sm text-muted-foreground">{item.definition}</p>
-                    </div>
-                  ))}
+              {/* System Insights */}
+              {result.systemInsights.length > 0 && (
+                <div className="p-6 rounded-2xl bg-card border border-border">
+                  <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-primary" />
+                    What the System Knows (But People Often Don't)
+                  </h2>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Educational context about how these processes typically work.
+                  </p>
+                  <ul className="space-y-3">
+                    {result.systemInsights.map((insight, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                        <span className="text-muted-foreground">{insight}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-
-              {/* Common Misunderstandings */}
-              <div className="p-6 rounded-2xl bg-card border border-border">
-                <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-warning" />
-                  Common Misunderstandings
-                </h2>
-                <ul className="space-y-3">
-                  {result.commonMisunderstandings.map((item, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-warning mt-2 shrink-0" />
-                      <span className="text-muted-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              )}
 
               {/* Questions to Ask */}
               <div className="p-6 rounded-2xl bg-card border border-border">
                 <h2 className="text-lg font-semibold text-foreground mb-4">
-                  Questions to Ask a Professional
+                  Questions You May Want to Ask a Professional
                 </h2>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Neutral, preparation-focused questions to help you have informed conversations.
+                </p>
                 <ul className="space-y-3">
-                  {result.questionsToAsk.map((item, index) => (
+                  {result.questionsForProfessional.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-medium shrink-0">
                         {index + 1}
@@ -322,22 +431,68 @@ Educational use only. Not legal advice.
                 </ul>
               </div>
 
-              {/* Next Actions */}
+              {/* Organization Actions */}
               <div className="p-6 rounded-2xl bg-gradient-to-br from-card to-card/50 border border-border">
                 <h2 className="text-lg font-semibold text-foreground mb-4">
-                  Suggested Next Steps
+                  Suggested Organization Actions
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {result.nextActions.map((action, index) => (
-                    <Link
-                      key={index}
-                      to={action.href}
-                      className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors group"
-                    >
-                      <span className="text-foreground group-hover:text-primary transition-colors">{action.label}</span>
-                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </Link>
-                  ))}
+                  <Button
+                    variant="outline"
+                    className="justify-start gap-2"
+                    onClick={handleSaveToNotes}
+                  >
+                    <Save className="w-4 h-4" />
+                    Save summary to Notes
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="justify-start gap-2"
+                    onClick={handleAddToEvidence}
+                  >
+                    <FileBox className="w-4 h-4" />
+                    Add document to Evidence Vault
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="justify-start gap-2"
+                    onClick={handleBookmark}
+                    disabled={bookmarked}
+                  >
+                    <Bookmark className="w-4 h-4" />
+                    {bookmarked ? "Bookmarked" : "Bookmark explanation"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="justify-start gap-2"
+                    onClick={handleCopy}
+                  >
+                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    {copied ? "Copied" : "Copy summary"}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Next Steps Navigation */}
+              <div className="p-6 rounded-2xl bg-card border border-border">
+                <h2 className="text-lg font-semibold text-foreground mb-4">
+                  Continue Your Research
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Link
+                    to="/rights-insight"
+                    className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors group"
+                  >
+                    <span className="text-foreground group-hover:text-primary transition-colors">Learn about your rights</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </Link>
+                  <Link
+                    to="/find-help"
+                    className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors group"
+                  >
+                    <span className="text-foreground group-hover:text-primary transition-colors">Find legal help</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </Link>
                 </div>
               </div>
 
