@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import heroImage from "@/assets/hero-decoder.jpg";
 
 interface DecodedResult {
   plainLanguageSummary: string;
@@ -204,21 +205,37 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
 
   return (
     <Layout>
-      <div className="container py-12 lg:py-20">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
-              <FileText className="w-8 h-8 text-primary" />
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-hero">
+        <div className="absolute inset-0">
+          <img 
+            src={heroImage} 
+            alt="" 
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/60" />
+        </div>
+        
+        <div className="container relative py-12 lg:py-16">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
+                <FileText className="w-4 h-4" />
+                <span>Plain-Language Explanations</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Justice Decoder
+              </h1>
+              <p className="text-muted-foreground max-w-xl">
+                Paste text or upload a PDF to get plain-language explanations, key terms, and preparation questions for professionals.
+              </p>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Justice Decoder
-            </h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Paste text or upload a PDF to get plain-language explanations, key terms, and preparation questions for professionals.
-            </p>
           </div>
+        </div>
+      </section>
 
+      <div className="container py-12 lg:py-16">
+        <div className="max-w-4xl mx-auto">
           {/* Wellbeing Note */}
           <div className="mb-8 p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-3">
             <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />

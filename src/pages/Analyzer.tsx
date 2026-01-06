@@ -17,11 +17,13 @@ import {
   Phone,
   BookOpen,
   UserSearch,
-  Heart
+  Heart,
+  Search
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import heroImage from "@/assets/hero-analyzer.jpg";
 
 type SystemId = 
   | "police" 
@@ -409,18 +411,37 @@ export default function Analyzer() {
 
   return (
     <Layout>
-      <div className="container py-12 lg:py-20">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Civil Rights Analyzer
-            </h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Answer a few questions to understand your situation and discover resources that may help.
-            </p>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-hero">
+        <div className="absolute inset-0">
+          <img 
+            src={heroImage} 
+            alt="" 
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/60" />
+        </div>
+        
+        <div className="container relative py-12 lg:py-16">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
+                <Search className="w-4 h-4" />
+                <span>Understand Your Situation</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Civil Rights Analyzer
+              </h1>
+              <p className="text-muted-foreground max-w-xl">
+                Answer a few questions to understand your situation and discover resources that may help.
+              </p>
+            </div>
           </div>
+        </div>
+      </section>
 
+      <div className="container py-12 lg:py-16">
+        <div className="max-w-3xl mx-auto">
           {/* Progress indicator */}
           {!showResults && (
             <div className="flex items-center justify-center gap-2 mb-8">

@@ -14,6 +14,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import heroImage from "@/assets/hero-home.jpg";
 
 const features = [
   {
@@ -73,44 +74,67 @@ const principles = [
 const Index = () => {
   return (
     <Layout>
-      {/* Hero Section */}
+      {/* Hero Section with Image */}
       <section className="relative overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-hero" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(var(--primary)/0.1)_0%,_transparent_50%)]" />
         
-        <div className="container relative py-20 lg:py-32">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8 animate-fade-up">
-              <Shield className="w-4 h-4" />
-              <span>Education & Preparation — Not Legal Advice</span>
+        <div className="container relative py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Mobile: Image above text */}
+            <div className="lg:hidden relative rounded-2xl overflow-hidden aspect-[16/10]">
+              <img 
+                src={heroImage} 
+                alt="" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
             </div>
-            
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-              A supportive space to{" "}
-              <span className="gradient-text">regain clarity</span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
-              Organize what matters and move forward with purpose. Decoded Justice helps everyday people understand their rights, 
-              prepare their information, and find the resources they need.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 animate-fade-up" style={{ animationDelay: "0.3s" }}>
-              <Button variant="hero" size="xl" asChild>
-                <Link to="/analyzer">
-                  Start the Analyzer
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/rights-insight">
-                  Learn About Your Rights
-                </Link>
-              </Button>
+
+            {/* Text Content */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6 animate-fade-up">
+                <Shield className="w-4 h-4" />
+                <span>Education & Preparation — Not Legal Advice</span>
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+                A supportive space to{" "}
+                <span className="gradient-text">regain clarity</span>
+              </h1>
+              
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 animate-fade-up" style={{ animationDelay: "0.2s" }}>
+                Organize what matters and move forward with purpose. Decoded Justice helps everyday people understand their rights, 
+                prepare their information, and find the resources they need.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-8 animate-fade-up" style={{ animationDelay: "0.3s" }}>
+                <Button variant="hero" size="xl" asChild>
+                  <Link to="/analyzer">
+                    Start the Analyzer
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <Link to="/rights-insight">
+                    Learn About Your Rights
+                  </Link>
+                </Button>
+              </div>
+              
+              <Disclaimer className="justify-center lg:justify-start" />
             </div>
-            
-            <Disclaimer className="justify-center" />
+
+            {/* Desktop: Image on right */}
+            <div className="hidden lg:block relative rounded-2xl overflow-hidden aspect-square">
+              <img 
+                src={heroImage} 
+                alt="" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-background/20 to-background/60" />
+            </div>
           </div>
         </div>
       </section>
@@ -132,11 +156,11 @@ const Index = () => {
               <Link
                 key={feature.title}
                 to={feature.href}
-                className="group p-6 lg:p-8 rounded-2xl bg-card border-2 border-border hover:border-primary/50 hover:shadow-glow transition-all duration-300 animate-fade-up cursor-pointer"
+                className="group p-6 lg:p-8 rounded-2xl bg-card border-2 border-border hover:border-primary/50 hover:shadow-glow hover:-translate-y-1 transition-all duration-300 animate-fade-up cursor-pointer"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`flex items-center justify-center w-12 h-12 rounded-xl shrink-0 transition-all group-hover:scale-105 ${
+                  <div className={`flex items-center justify-center w-12 h-12 rounded-xl shrink-0 transition-all group-hover:scale-110 ${
                     feature.primary 
                       ? "bg-gradient-to-br from-primary to-primary/70 shadow-glow" 
                       : "bg-secondary group-hover:bg-primary/20"
@@ -152,7 +176,7 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                       {feature.description}
                     </p>
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-lg group-hover:bg-primary/20 transition-all">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary bg-primary/10 px-4 py-2 rounded-lg group-hover:bg-primary/20 transition-all">
                       {feature.cta}
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </span>
@@ -180,7 +204,7 @@ const Index = () => {
             {principles.map((principle, index) => (
               <div
                 key={principle.title}
-                className="text-center p-6 rounded-2xl bg-card/50 border border-border/50 animate-fade-up"
+                className="text-center p-6 rounded-2xl bg-card/50 border border-border/50 hover:border-primary/30 transition-all duration-300 animate-fade-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-4">
