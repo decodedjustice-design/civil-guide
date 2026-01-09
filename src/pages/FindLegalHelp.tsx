@@ -3,7 +3,6 @@ import {
   Search, 
   Scale, 
   Users, 
-  Building, 
   ExternalLink,
   MapPin,
   Phone,
@@ -13,7 +12,8 @@ import {
   Shield,
   Home,
   Briefcase,
-  Accessibility
+  Accessibility,
+  Clock
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -58,6 +58,15 @@ const resources = [
     location: "Washington State",
     website: "https://columbialegal.org/",
     phone: "(206) 464-5911",
+  },
+  {
+    name: "U.S. Department of Justice - Civil Rights Division",
+    type: "civil-rights",
+    serviceType: "informational",
+    description: "Federal agency that enforces civil rights laws. File complaints about discrimination, police misconduct, or voting rights violations.",
+    location: "Federal",
+    website: "https://www.justice.gov/crt",
+    phone: "(202) 514-4609",
   },
   // Housing
   {
@@ -162,6 +171,15 @@ const resources = [
     website: "https://www.thehotline.org/",
     phone: "1-800-799-7233",
   },
+  {
+    name: "RAINN (Rape, Abuse & Incest National Network)",
+    type: "trauma-informed",
+    serviceType: "informational",
+    description: "24/7 hotline and online chat for survivors of sexual violence. Connects to local service providers.",
+    location: "Nationwide",
+    website: "https://www.rainn.org/",
+    phone: "1-800-656-4673",
+  },
   // Legal Aid
   {
     name: "Washington LawHelp",
@@ -234,6 +252,30 @@ export default function FindLegalHelp() {
         {/* Disclaimer at top */}
         <div className="max-w-4xl mx-auto mb-8">
           <Disclaimer variant="prominent" />
+        </div>
+
+        {/* Attorney Search Coming Soon */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold text-foreground mb-2">
+                  Attorney Search — Coming Soon
+                </h2>
+                <p className="text-muted-foreground mb-3">
+                  We're building a searchable directory of civil rights attorneys, including those who specialize in 
+                  police misconduct, housing discrimination, employment law, and disability rights. 
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  In the meantime, use the resources below to find legal aid organizations and referral services 
+                  that can help connect you with an attorney.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Search and Filter */}

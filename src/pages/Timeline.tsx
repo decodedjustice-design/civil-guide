@@ -78,6 +78,13 @@ export default function Timeline() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey && newTitle.trim() && newDate) {
+      e.preventDefault();
+      createEntry();
+    }
+  };
+
   const updateEntry = async (id: string) => {
     const { error } = await supabase
       .from("timeline_entries")
@@ -116,17 +123,11 @@ export default function Timeline() {
               <ArrowLeft className="w-4 h-4" />
               Back to Self-Help Tools
             </Link>
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">Timeline Creator</h1>
-                <p className="text-muted-foreground">
-                  Build a chronological record of events to help you and professionals understand what happened.
-                </p>
-              </div>
-              <Button variant="hero" onClick={() => setIsCreating(true)}>
-                <Plus className="w-4 h-4" />
-                Add Event
-              </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Timeline Creator</h1>
+              <p className="text-muted-foreground">
+                Build a chronological record of events to help you and professionals understand what happened.
+              </p>
             </div>
           </div>
 
@@ -137,6 +138,16 @@ export default function Timeline() {
             </p>
           </div>
 
+          {/* Add Event Button (when not creating) */}
+          {!isCreating && (
+            <div className="mb-6">
+              <Button variant="hero" onClick={() => setIsCreating(true)}>
+                <Plus className="w-4 h-4" />
+                Add Event
+              </Button>
+            </div>
+          )}
+
           {/* Create Entry Form */}
           {isCreating && (
             <div className="p-6 rounded-2xl bg-card border border-border mb-6 animate-fade-up">
@@ -144,6 +155,7 @@ export default function Timeline() {
                 type="text"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="What happened? (brief title)..."
                 className="w-full text-lg font-medium bg-transparent border-0 text-foreground placeholder:text-muted-foreground focus:outline-none mb-4"
               />
@@ -154,6 +166,7 @@ export default function Timeline() {
                     type="date"
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     className="w-full h-12 pl-12 pr-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
                 </div>
@@ -165,7 +178,10 @@ export default function Timeline() {
                 rows={4}
                 className="w-full bg-background border border-border rounded-xl p-4 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
-              <div className="flex justify-end gap-3 mt-4">
+              <p className="text-xs text-muted-foreground mt-2 mb-4">
+                Press Enter to save quickly, or use the buttons below.
+              </p>
+              <div className="flex justify-end gap-3">
                 <Button variant="ghost" onClick={() => { setIsCreating(false); setNewTitle(""); setNewDescription(""); setNewDate(""); }}>
                   <X className="w-4 h-4" />
                   Cancel
@@ -240,14 +256,17 @@ export default function Timeline() {
                         <>
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
-                              <p className="text-sm text-primary font-medium mb-1">
+                              <Link 
+                                to={`/timeline`} 
+                                className="text-sm text-primary font-medium mb-1 hover:underline cursor-pointer"
+                              >
                                 {new Date(entry.event_date).toLocaleDateString("en-US", {
                                   weekday: "long",
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
                                 })}
-                              </p>
+                              </Link>
                               <h3 className="text-lg font-medium text-foreground mb-2">{entry.title}</h3>
                               {entry.description && (
                                 <p className="text-muted-foreground whitespace-pre-wrap">{entry.description}</p>

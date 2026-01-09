@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FolderOpen, Plus, Trash2, Edit2, Save, X, ArrowLeft, File, Image, FileText as FileTextIcon } from "lucide-react";
+import { FolderOpen, Plus, Trash2, Save, X, ArrowLeft, File, Image, FileText as FileTextIcon, Upload, Calendar, Building, Users, FileQuestion, Info } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
@@ -13,19 +13,47 @@ interface Evidence {
   title: string;
   description: string | null;
   file_type: string | null;
+  file_url: string | null;
+  document_date: string | null;
+  source: string | null;
+  system_involved: string | null;
+  people_involved: string | null;
+  relevance_notes: string | null;
   created_at: string;
 }
+
+const systemOptions = [
+  { value: "", label: "Select system..." },
+  { value: "police", label: "Police / Law Enforcement" },
+  { value: "courts", label: "Courts / Legal System" },
+  { value: "housing", label: "Housing / Landlord" },
+  { value: "employer", label: "Employer / Workplace" },
+  { value: "healthcare", label: "Healthcare Provider" },
+  { value: "school", label: "School / Education" },
+  { value: "government", label: "Government Agency" },
+  { value: "other", label: "Other" },
+];
 
 export default function EvidenceVault() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [evidence, setEvidence] = useState<Evidence[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  
+  // Form state
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newFileType, setNewFileType] = useState("document");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [documentDate, setDocumentDate] = useState("");
+  const [source, setSource] = useState("");
+  const [systemInvolved, setSystemInvolved] = useState("");
+  const [peopleInvolved, setPeopleInvolved] = useState("");
+  const [relevanceNotes, setRelevanceNotes] = useState("");
 
   useEffect(() => {
     if (!loading && !user) {
@@ -53,23 +81,93 @@ export default function EvidenceVault() {
     setIsLoading(false);
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      if (!newTitle) {
+        setNewTitle(file.name.replace(/\.[^/.]+$/, "")); // Use filename without extension as title
+      }
+      // Auto-detect file type
+      if (file.type.startsWith("image/")) {
+        setNewFileType("image");
+      } else if (file.type.startsWith("audio/")) {
+        setNewFileType("audio");
+      } else if (file.type.startsWith("video/")) {
+        setNewFileType("video");
+      } else {
+        setNewFileType("document");
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setNewTitle("");
+    setNewDescription("");
+    setNewFileType("document");
+    setSelectedFile(null);
+    setDocumentDate("");
+    setSource("");
+    setSystemInvolved("");
+    setPeopleInvolved("");
+    setRelevanceNotes("");
+    setIsCreating(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const createEvidence = async () => {
     if (!newTitle.trim()) return;
 
-    const { error } = await supabase.from("evidence").insert({
-      user_id: user!.id,
-      title: newTitle,
-      description: newDescription,
-      file_type: newFileType,
-    });
+    setIsUploading(true);
+    let fileUrl: string | null = null;
 
-    if (error) {
-      toast({ title: "Error", description: "Could not add evidence", variant: "destructive" });
-    } else {
-      setNewTitle("");
-      setNewDescription("");
-      setIsCreating(false);
-      fetchEvidence();
+    try {
+      // Upload file if selected
+      if (selectedFile && user) {
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from("evidence-files")
+          .upload(fileName, selectedFile);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("evidence-files")
+          .getPublicUrl(fileName);
+        
+        fileUrl = urlData.publicUrl;
+      }
+
+      const { error } = await supabase.from("evidence").insert({
+        user_id: user!.id,
+        title: newTitle,
+        description: newDescription || null,
+        file_type: newFileType,
+        file_url: fileUrl,
+        document_date: documentDate || null,
+        source: source || null,
+        system_involved: systemInvolved || null,
+        people_involved: peopleInvolved || null,
+        relevance_notes: relevanceNotes || null,
+      });
+
+      if (error) {
+        toast({ title: "Error", description: "Could not add evidence", variant: "destructive" });
+      } else {
+        toast({ title: "Success", description: "Evidence added to your vault" });
+        resetForm();
+        fetchEvidence();
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Could not upload file", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -129,39 +227,181 @@ export default function EvidenceVault() {
           {/* Create Evidence Form */}
           {isCreating && (
             <div className="p-6 rounded-2xl bg-card border border-border mb-6 animate-fade-up">
-              <input
-                type="text"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="Evidence title (e.g., 'Photo of incident')..."
-                className="w-full text-lg font-medium bg-transparent border-0 text-foreground placeholder:text-muted-foreground focus:outline-none mb-4"
-              />
-              <select
-                value={newFileType}
-                onChange={(e) => setNewFileType(e.target.value)}
-                className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 mb-4"
-              >
-                <option value="document">Document</option>
-                <option value="image">Photo/Image</option>
-                <option value="audio">Audio Recording</option>
-                <option value="video">Video</option>
-                <option value="other">Other</option>
-              </select>
-              <textarea
-                value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
-                placeholder="Describe this evidence (where you got it, when, what it shows)..."
-                rows={4}
-                className="w-full bg-background border border-border rounded-xl p-4 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-              <div className="flex justify-end gap-3 mt-4">
-                <Button variant="ghost" onClick={() => { setIsCreating(false); setNewTitle(""); setNewDescription(""); }}>
+              {/* File Upload */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Upload File (Optional)
+                </label>
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-border rounded-xl bg-background hover:border-primary/50 hover:bg-muted/30 transition-all cursor-pointer"
+                >
+                  <Upload className="w-8 h-8 text-muted-foreground mb-3" />
+                  {selectedFile ? (
+                    <p className="text-foreground font-medium">{selectedFile.name}</p>
+                  ) : (
+                    <>
+                      <p className="text-foreground font-medium mb-1">Click to upload a file</p>
+                      <p className="text-xs text-muted-foreground">Documents, photos, audio, or video</p>
+                    </>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.txt"
+                />
+              </div>
+
+              {/* Title */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Title <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder="Brief title for this evidence..."
+                  className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              {/* Type */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Type
+                </label>
+                <select
+                  value={newFileType}
+                  onChange={(e) => setNewFileType(e.target.value)}
+                  className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                >
+                  <option value="document">Document</option>
+                  <option value="image">Photo/Image</option>
+                  <option value="audio">Audio Recording</option>
+                  <option value="video">Video</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              {/* Metadata Section */}
+              <div className="p-4 rounded-xl bg-muted/30 border border-border mb-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Info className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Evidence Details</span>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Adding details helps you organize and find evidence later, and helps professionals understand your situation.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Date of Document/Incident */}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      Date of Document/Incident
+                    </label>
+                    <input
+                      type="date"
+                      value={documentDate}
+                      onChange={(e) => setDocumentDate(e.target.value)}
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">When did this happen or when was it created?</p>
+                  </div>
+
+                  {/* Source */}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                      <Building className="w-4 h-4 text-muted-foreground" />
+                      Source (Agency/Person)
+                    </label>
+                    <input
+                      type="text"
+                      value={source}
+                      onChange={(e) => setSource(e.target.value)}
+                      placeholder="e.g., Seattle PD, Dr. Smith..."
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Who created or sent this?</p>
+                  </div>
+
+                  {/* System Involved */}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                      <FileQuestion className="w-4 h-4 text-muted-foreground" />
+                      System Involved
+                    </label>
+                    <select
+                      value={systemInvolved}
+                      onChange={(e) => setSystemInvolved(e.target.value)}
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    >
+                      {systemOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-muted-foreground mt-1">Which system or institution is involved?</p>
+                  </div>
+
+                  {/* People Involved */}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                      <Users className="w-4 h-4 text-muted-foreground" />
+                      People Involved
+                    </label>
+                    <input
+                      type="text"
+                      value={peopleInvolved}
+                      onChange={(e) => setPeopleInvolved(e.target.value)}
+                      placeholder="Names, badge numbers, titles..."
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Who was present or involved?</p>
+                  </div>
+                </div>
+
+                {/* Relevance Notes */}
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Relevance / Notes
+                  </label>
+                  <textarea
+                    value={relevanceNotes}
+                    onChange={(e) => setRelevanceNotes(e.target.value)}
+                    placeholder="Why is this important? What does it show?"
+                    rows={2}
+                    className="w-full bg-background border border-border rounded-lg p-3 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Explain why you're keeping this and what it demonstrates.</p>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Additional Description
+                </label>
+                <textarea
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  placeholder="Any other details about this evidence..."
+                  rows={3}
+                  className="w-full bg-background border border-border rounded-xl p-4 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <Button variant="ghost" onClick={resetForm} disabled={isUploading}>
                   <X className="w-4 h-4" />
                   Cancel
                 </Button>
-                <Button variant="hero" onClick={createEvidence} disabled={!newTitle.trim()}>
+                <Button variant="hero" onClick={createEvidence} disabled={!newTitle.trim() || isUploading}>
                   <Save className="w-4 h-4" />
-                  Save Evidence
+                  {isUploading ? "Uploading..." : "Save Evidence"}
                 </Button>
               </div>
             </div>
@@ -195,8 +435,23 @@ export default function EvidenceVault() {
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-medium text-foreground mb-1 truncate">{item.title}</h3>
                         <p className="text-xs text-primary mb-2 capitalize">{item.file_type}</p>
+                        {item.system_involved && (
+                          <p className="text-xs text-muted-foreground mb-1">
+                            System: {systemOptions.find(s => s.value === item.system_involved)?.label || item.system_involved}
+                          </p>
+                        )}
+                        {item.document_date && (
+                          <p className="text-xs text-muted-foreground mb-1">
+                            Date: {new Date(item.document_date).toLocaleDateString()}
+                          </p>
+                        )}
+                        {item.source && (
+                          <p className="text-xs text-muted-foreground mb-1">
+                            Source: {item.source}
+                          </p>
+                        )}
                         {item.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
+                          <p className="text-sm text-muted-foreground line-clamp-2 mt-2">{item.description}</p>
                         )}
                         <p className="text-xs text-text-softer mt-2">
                           Added: {new Date(item.created_at).toLocaleDateString()}

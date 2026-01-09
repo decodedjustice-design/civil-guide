@@ -1,10 +1,208 @@
-import { Link } from "react-router-dom";
-import { Shield, Heart, Target, Eye, ArrowRight } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Shield, Heart, Target, Eye, ArrowRight, BookOpen, User } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 
 export default function About() {
+  const location = useLocation();
+  const isFoundersStory = location.pathname === "/founders-story";
+  const isWhatWeAre = location.pathname === "/what-we-are";
+  const isPrivacy = location.pathname === "/privacy";
+  const isTerms = location.pathname === "/terms";
+  const isDisclaimerPage = location.pathname === "/disclaimer";
+
+  // Founder's Story content
+  if (isFoundersStory) {
+    return (
+      <Layout>
+        <div className="container py-12 lg:py-20">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
+                <User className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Founder's Story
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                Why Decoded Justice exists
+              </p>
+            </div>
+
+            <div className="prose prose-invert max-w-none">
+              <div className="p-8 rounded-2xl bg-card border border-border mb-8">
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  Decoded Justice was born from a simple but profound realization: when people face potential civil rights 
+                  violations or need to engage with complex systems, they often feel overwhelmed, confused, and alone.
+                </p>
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  The legal system wasn't designed to be understood by everyday people. Official documents are written in 
+                  language that intimidates. Deadlines are buried in fine print. And the very people who need help the most 
+                  often don't know where to begin looking for it.
+                </p>
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  This platform exists to change that. Not by providing legal advice — that's what attorneys are for — 
+                  but by providing clarity, organization, and preparation so that when you do speak with a professional, 
+                  you're ready. So that when you need to make decisions, you understand what you're deciding.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Everyone deserves access to understanding. That's what we're building here.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Button variant="hero" size="lg" asChild>
+                <Link to="/about">
+                  Learn About Our Mission
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            </div>
+
+            <div className="mt-12 pt-8 border-t border-border">
+              <Disclaimer className="justify-center" />
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // What We Are content (also shown on /what-we-are route)
+  if (isWhatWeAre) {
+    return (
+      <Layout>
+        <div className="container py-12 lg:py-20">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
+                <BookOpen className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                What This Platform Is
+              </h1>
+            </div>
+
+            <section className="mb-16 grid md:grid-cols-2 gap-6">
+              <div className="p-6 rounded-2xl bg-card border border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Eye className="w-5 h-5 text-primary" />
+                  What We Are
+                </h3>
+                <ul className="space-y-3 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                    An educational resource platform
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                    A preparation and organization tool
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                    A calm, supportive space for understanding
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                    A guide to help you find proper resources
+                  </li>
+                </ul>
+              </div>
+              <div className="p-6 rounded-2xl bg-card border border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  What We Are Not
+                </h3>
+                <ul className="space-y-3 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 shrink-0" />
+                    A law firm or legal service
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 shrink-0" />
+                    A source of legal advice
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 shrink-0" />
+                    A replacement for professional counsel
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 shrink-0" />
+                    A guarantee of any outcome
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <div className="text-center">
+              <Button variant="hero" size="lg" asChild>
+                <Link to="/about">
+                  View Full Mission
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            </div>
+
+            <div className="mt-12 pt-8 border-t border-border">
+              <Disclaimer className="justify-center" />
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Privacy, Terms, Disclaimer pages - simple placeholders
+  if (isPrivacy || isTerms || isDisclaimerPage) {
+    const pageTitle = isPrivacy ? "Privacy & Security" : isTerms ? "Terms of Service" : "Disclaimer";
+    return (
+      <Layout>
+        <div className="container py-12 lg:py-20">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {pageTitle}
+              </h1>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-card border border-border mb-8">
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                <strong className="text-foreground">Educational Use Only.</strong> Decoded Justice is not a law firm 
+                and does not provide legal advice. The information provided on this platform is for educational 
+                purposes only and should not be construed as legal advice.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                For legal concerns, please consult with a qualified attorney. Nothing on this platform creates 
+                an attorney-client relationship.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                We take your privacy seriously. Any information you enter into our tools is stored securely 
+                and is only accessible by you. We do not share your data with third parties.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/about">
+                  Back to About
+                </Link>
+              </Button>
+            </div>
+
+            <div className="mt-12 pt-8 border-t border-border">
+              <Disclaimer className="justify-center" />
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Main About page
   return (
     <Layout>
       <div className="container py-12 lg:py-20">
