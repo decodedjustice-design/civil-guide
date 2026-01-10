@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import decodedJusticeLogo from "@/assets/decoded-justice-logo.png";
+import decodedJusticeLogo from "@/assets/decoded-justice-logo-full.png";
 
 const navigation = [
   { name: "Analyzer", href: "/analyzer" },
@@ -25,7 +25,7 @@ export function Header() {
           <img 
             src={decodedJusticeLogo} 
             alt="Decoded Justice" 
-            className="h-10 w-auto"
+            className="h-12 md:h-14 w-auto"
           />
         </Link>
 

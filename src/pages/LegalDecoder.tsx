@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import heroImage from "@/assets/hero-decoder.jpg";
+import heroImage from "@/assets/hero-analysis.png";
 
 interface DecodedResult {
   plainLanguageSummary: string;

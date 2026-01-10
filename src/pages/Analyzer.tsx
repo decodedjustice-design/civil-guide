@@ -23,7 +23,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import heroImage from "@/assets/hero-analyzer.jpg";
+import heroImage from "@/assets/hero-analysis.png";
 
 type SystemId = 
   | "police" 

@@ -14,7 +14,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import heroImage from "@/assets/hero-home.jpg";
+import heroImage from "@/assets/hero-courthouse.png";
 
 const features = [
   {

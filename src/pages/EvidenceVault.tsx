@@ -7,6 +7,7 @@ import { Disclaimer } from "@/components/shared/Disclaimer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import heroImage from "@/assets/hero-paperwork.png";
 
 interface Evidence {
   id: string;
@@ -195,26 +196,39 @@ export default function EvidenceVault() {
 
   return (
     <Layout>
-      <div className="container py-12 lg:py-20">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-hero">
+        <div className="absolute inset-0">
+          <img 
+            src={heroImage} 
+            alt="" 
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/60" />
+        </div>
+        
+        <div className="container relative py-12 lg:py-16">
+          <div className="text-center lg:text-left">
             <Link to="/self-help" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
               <ArrowLeft className="w-4 h-4" />
               Back to Self-Help Tools
             </Link>
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground mb-2">Evidence Vault</h1>
-                <p className="text-muted-foreground">
-                  Securely catalog and organize evidence related to your situation.
-                </p>
-              </div>
-              <Button variant="hero" onClick={() => setIsCreating(true)}>
-                <Plus className="w-4 h-4" />
-                Add Evidence
-              </Button>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Evidence Vault</h1>
+            <p className="text-muted-foreground max-w-xl">
+              Securely catalog and organize evidence related to your situation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="container py-12 lg:py-16">
+        <div className="max-w-4xl mx-auto">
+          {/* Header Actions */}
+          <div className="flex items-center justify-end mb-8">
+            <Button variant="hero" onClick={() => setIsCreating(true)}>
+              <Plus className="w-4 h-4" />
+              Add Evidence
+            </Button>
           </div>
 
           {/* Wellbeing Note */}

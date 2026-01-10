@@ -28,6 +28,7 @@ import {
   type RightsInsightGuide,
   type SystemId
 } from "@/data/rightsInsightContent";
+import heroImage from "@/assets/hero-paperwork.png";
 
 type FilterId = "all" | SystemId;
 
@@ -94,21 +95,37 @@ export default function RightsInsight() {
 
   return (
     <Layout>
-      <div className="container py-12 lg:py-20">
-        {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
-            <BookOpen className="w-8 h-8 text-primary" />
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-hero">
+        <div className="absolute inset-0">
+          <img 
+            src={heroImage} 
+            alt="" 
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/60" />
+        </div>
+        
+        <div className="container relative py-12 lg:py-16">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
+              <BookOpen className="w-4 h-4" />
+              <span>Educational Guides</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Rights Insight
+            </h1>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              Understand how different systems work, what usually matters, and where people often lose time or focus. 
+              Plain language, at your pace.
+            </p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Rights Insight
-          </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-            Understand how different systems work, what usually matters, and where people often lose time or focus. 
-            Plain language, at your pace.
-          </p>
+        </div>
+      </section>
 
-          {/* Search */}
+      <div className="container py-12 lg:py-16">
+        {/* Search */}
+        <div className="max-w-3xl mx-auto mb-12">
           <div className="relative max-w-md mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
