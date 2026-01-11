@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FolderOpen, Plus, Trash2, Save, X, ArrowLeft, File, Image, FileText as FileTextIcon, Upload, Calendar, Building, Users, FileQuestion, Info } from "lucide-react";
+import { FolderOpen, Plus, Trash2, Save, X, ArrowLeft, File, Image, FileText as FileTextIcon, Upload, Calendar, Building, Users, FileQuestion, Info, Eye } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
@@ -138,11 +138,8 @@ export default function EvidenceVault() {
           throw uploadError;
         }
 
-        const { data: urlData } = supabase.storage
-          .from("evidence-files")
-          .getPublicUrl(fileName);
-        
-        fileUrl = urlData.publicUrl;
+        // Store the file path for signed URL generation on access
+        fileUrl = fileName;
       }
 
       const { error } = await supabase.from("evidence").insert({
@@ -179,6 +176,20 @@ export default function EvidenceVault() {
       toast({ title: "Error", description: "Could not delete evidence", variant: "destructive" });
     } else {
       fetchEvidence();
+    }
+  };
+
+  const viewFile = async (filePath: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("evidence-files")
+        .createSignedUrl(filePath, 3600); // 1 hour expiration
+
+      if (error) throw error;
+      
+      window.open(data.signedUrl, '_blank');
+    } catch (error) {
+      toast({ title: "Error", description: "Could not open file", variant: "destructive" });
     }
   };
 
@@ -471,14 +482,26 @@ export default function EvidenceVault() {
                           Added: {new Date(item.created_at).toLocaleDateString()}
                         </p>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => deleteEvidence(item.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex flex-col gap-1">
+                        {item.file_url && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => viewFile(item.file_url!)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => deleteEvidence(item.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
