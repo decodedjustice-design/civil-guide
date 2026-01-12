@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import heroImage from "@/assets/hero-paperwork.png";
 import { Clock, Plus, Trash2, Edit2, Save, X, ArrowLeft, Calendar } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -115,21 +116,33 @@ export default function Timeline() {
 
   return (
     <Layout>
-      <div className="container py-12 lg:py-20">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-hero">
+        <div className="absolute inset-0">
+          <img 
+            src={heroImage} 
+            alt="" 
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/60" />
+        </div>
+        
+        <div className="container relative py-12 lg:py-16">
+          <div className="text-center lg:text-left">
             <Link to="/self-help" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
               <ArrowLeft className="w-4 h-4" />
               Back to Self-Help Tools
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Timeline Creator</h1>
-              <p className="text-muted-foreground">
-                Build a chronological record of events to help you and professionals understand what happened.
-              </p>
-            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Timeline Creator</h1>
+            <p className="text-muted-foreground max-w-xl">
+              Build a chronological record of events to help you and professionals understand what happened.
+            </p>
           </div>
+        </div>
+      </section>
+
+      <div className="container py-12 lg:py-16">
+        <div className="max-w-4xl mx-auto">
 
           {/* Wellbeing Note */}
           <div className="p-4 rounded-xl bg-muted/50 border border-border mb-8">
@@ -255,18 +268,15 @@ export default function Timeline() {
                       ) : (
                         <>
                           <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <Link 
-                                to={`/timeline`} 
-                                className="text-sm text-primary font-medium mb-1 hover:underline cursor-pointer"
-                              >
+                          <div className="flex-1">
+                              <p className="text-sm text-primary font-medium mb-1">
                                 {new Date(entry.event_date).toLocaleDateString("en-US", {
                                   weekday: "long",
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
                                 })}
-                              </Link>
+                              </p>
                               <h3 className="text-lg font-medium text-foreground mb-2">{entry.title}</h3>
                               {entry.description && (
                                 <p className="text-muted-foreground whitespace-pre-wrap">{entry.description}</p>
