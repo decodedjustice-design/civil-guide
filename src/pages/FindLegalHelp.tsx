@@ -26,6 +26,7 @@ const resourceTypes = [
   { id: "housing", label: "Housing", icon: Home },
   { id: "employment", label: "Employment", icon: Briefcase },
   { id: "disability", label: "Disability", icon: Accessibility },
+  { id: "family-cps", label: "Family / CPS", icon: Users },
   { id: "trauma-informed", label: "Trauma-Informed", icon: Heart },
   { id: "legal-aid", label: "Legal Aid", icon: Users },
 ];
@@ -180,6 +181,52 @@ const resources = [
     website: "https://www.rainn.org/",
     phone: "1-800-656-4673",
   },
+  // Family / CPS / DCYF
+  {
+    name: "TeamChild",
+    type: "family-cps",
+    serviceType: "legal",
+    description: "Legal advocacy for youth in foster care, juvenile justice, and education systems. Helps with dependency cases and youth rights.",
+    location: "Washington State",
+    website: "https://teamchild.org/",
+    phone: "(206) 322-2444",
+  },
+  {
+    name: "Office of the Family and Children's Ombuds (OFCO)",
+    type: "family-cps",
+    serviceType: "informational",
+    description: "Independent state agency that investigates complaints about DCYF/CPS. Can help families understand their rights and the system.",
+    location: "Washington State",
+    website: "https://ofco.wa.gov/",
+    phone: "1-800-571-7321",
+  },
+  {
+    name: "Center for Children & Youth Justice",
+    type: "family-cps",
+    serviceType: "informational",
+    description: "Advocacy and system reform for youth in foster care and juvenile justice. Resources for families navigating the system.",
+    location: "Washington State",
+    website: "https://ccyj.org/",
+    phone: "(206) 696-7503",
+  },
+  {
+    name: "Washington State DCYF - Family Rights",
+    type: "family-cps",
+    serviceType: "informational",
+    description: "Information about parent and family rights during CPS investigations and dependency proceedings.",
+    location: "Washington State",
+    website: "https://www.dcyf.wa.gov/",
+    phone: "1-866-363-4276",
+  },
+  {
+    name: "Treehouse",
+    type: "family-cps",
+    serviceType: "informational",
+    description: "Support services for youth in foster care including education advocacy, housing, and graduation support.",
+    location: "Washington State",
+    website: "https://treehouseforkids.org/",
+    phone: "(206) 767-7000",
+  },
   // Legal Aid
   {
     name: "Washington LawHelp",
@@ -227,6 +274,7 @@ export default function FindLegalHelp() {
       case "housing": return Home;
       case "employment": return Briefcase;
       case "disability": return Accessibility;
+      case "family-cps": return Users;
       case "trauma-informed": return Heart;
       case "legal-aid": return Users;
       default: return Scale;

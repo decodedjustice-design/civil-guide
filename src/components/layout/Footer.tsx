@@ -12,13 +12,13 @@ const footerLinks = {
   ],
   about: [
     { name: "About & Mission", href: "/about" },
-    { name: "Founder's Story", href: "/about#founders-story" },
-    { name: "What This Platform Is", href: "/about#what-we-are" },
+    { name: "Founder's Story", href: "/founders-story" },
+    { name: "What We Are", href: "/what-we-are" },
   ],
   legal: [
-    { name: "Privacy & Security", href: "/about#privacy" },
-    { name: "Terms of Service", href: "/about#terms" },
-    { name: "Disclaimer", href: "/about#disclaimer" },
+    { name: "Privacy & Security", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
+    { name: "Disclaimer", href: "/disclaimer" },
   ],
 };
 
