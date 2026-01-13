@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      case_profiles: {
+        Row: {
+          claim_tags: string[]
+          created_at: string
+          date_end: string | null
+          date_start: string | null
+          description: string | null
+          entity: string
+          entity_type: string | null
+          id: string
+          is_seed_data: boolean | null
+          location_city: string | null
+          location_county: string | null
+          location_state: string | null
+          pattern_notes: string | null
+          pattern_strength:
+            | Database["public"]["Enums"]["pattern_strength"]
+            | null
+          system: Database["public"]["Enums"]["civil_rights_system"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          claim_tags?: string[]
+          created_at?: string
+          date_end?: string | null
+          date_start?: string | null
+          description?: string | null
+          entity: string
+          entity_type?: string | null
+          id?: string
+          is_seed_data?: boolean | null
+          location_city?: string | null
+          location_county?: string | null
+          location_state?: string | null
+          pattern_notes?: string | null
+          pattern_strength?:
+            | Database["public"]["Enums"]["pattern_strength"]
+            | null
+          system: Database["public"]["Enums"]["civil_rights_system"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          claim_tags?: string[]
+          created_at?: string
+          date_end?: string | null
+          date_start?: string | null
+          description?: string | null
+          entity?: string
+          entity_type?: string | null
+          id?: string
+          is_seed_data?: boolean | null
+          location_city?: string | null
+          location_county?: string | null
+          location_state?: string | null
+          pattern_notes?: string | null
+          pattern_strength?:
+            | Database["public"]["Enums"]["pattern_strength"]
+            | null
+          system?: Database["public"]["Enums"]["civil_rights_system"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       evidence: {
         Row: {
           created_at: string
@@ -59,6 +125,54 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      known_patterns: {
+        Row: {
+          case_count: number | null
+          claim_tags: string[]
+          created_at: string
+          description: string | null
+          entity: string
+          entity_type: string | null
+          id: string
+          is_verified: boolean | null
+          pattern_type: string
+          source: string | null
+          source_url: string | null
+          system: Database["public"]["Enums"]["civil_rights_system"]
+          updated_at: string
+        }
+        Insert: {
+          case_count?: number | null
+          claim_tags?: string[]
+          created_at?: string
+          description?: string | null
+          entity: string
+          entity_type?: string | null
+          id?: string
+          is_verified?: boolean | null
+          pattern_type: string
+          source?: string | null
+          source_url?: string | null
+          system: Database["public"]["Enums"]["civil_rights_system"]
+          updated_at?: string
+        }
+        Update: {
+          case_count?: number | null
+          claim_tags?: string[]
+          created_at?: string
+          description?: string | null
+          entity?: string
+          entity_type?: string | null
+          id?: string
+          is_verified?: boolean | null
+          pattern_type?: string
+          source?: string | null
+          source_url?: string | null
+          system?: Database["public"]["Enums"]["civil_rights_system"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -151,7 +265,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      civil_rights_system:
+        | "police"
+        | "housing"
+        | "cps_dcyf"
+        | "schools"
+        | "healthcare"
+        | "benefits"
+        | "courts"
+        | "other"
+      pattern_strength: "none" | "possible" | "strong" | "very_strong"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -278,6 +401,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      civil_rights_system: [
+        "police",
+        "housing",
+        "cps_dcyf",
+        "schools",
+        "healthcare",
+        "benefits",
+        "courts",
+        "other",
+      ],
+      pattern_strength: ["none", "possible", "strong", "very_strong"],
+    },
   },
 } as const

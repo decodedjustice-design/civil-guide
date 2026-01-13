@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { 
   ArrowRight, 
@@ -20,11 +20,17 @@ import {
   Heart,
   Search,
   X,
-  Clock
+  Clock,
+  Loader2
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { PatternInsights } from "@/components/analyzer/PatternInsights";
+import { DynamicToolUnlock } from "@/components/analyzer/DynamicToolUnlock";
+import { CaseProfileForm } from "@/components/analyzer/CaseProfileForm";
+import { usePatternEngine, CivilRightsSystem } from "@/hooks/usePatternEngine";
+import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-analysis.png";
 
 type SystemId = 
@@ -516,6 +522,24 @@ export default function Analyzer() {
   const [selectedSystem, setSelectedSystem] = useState<SystemId | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
+  const [entityName, setEntityName] = useState("");
+  
+  const { user } = useAuth();
+  const { 
+    isAnalyzing, 
+    analysis, 
+    analyzePatterns, 
+    saveCaseProfile,
+    mapSystemToEnum,
+    extractClaimTags 
+  } = usePatternEngine();
+
+  const handleAnalyze = useCallback((entity: string) => {
+    if (selectedSystem) {
+      setEntityName(entity);
+      analyzePatterns(selectedSystem, entity, answers);
+    }
+  }, [selectedSystem, answers, analyzePatterns]);
 
   const currentFollowUps = selectedSystem ? followUpQuestions[selectedSystem] : [];
   const totalSteps = currentFollowUps.length + 1; // +1 for system selection
@@ -805,10 +829,36 @@ export default function Analyzer() {
                 </ul>
               </div>
 
-              {/* Why These Tools Matter */}
+              {/* Case Profile Form - for saving and pattern analysis */}
+              {selectedSystem && (
+                <CaseProfileForm
+                  initialSystem={mapSystemToEnum(selectedSystem) as CivilRightsSystem}
+                  initialClaimTags={extractClaimTags(answers)}
+                  onSave={saveCaseProfile}
+                  onAnalyze={handleAnalyze}
+                  isAnalyzing={isAnalyzing}
+                />
+              )}
+
+              {/* Pattern Insights - shows pattern analysis results */}
+              {analysis && (
+                <PatternInsights 
+                  analysis={analysis} 
+                  entityName={entityName || "this entity"} 
+                />
+              )}
+
+              {/* Dynamic Tool Unlock - shows tools based on pattern strength */}
+              <DynamicToolUnlock
+                patternStrength={analysis?.strength || 'none'}
+                systemFilter={resultInfo?.rightsInsightFilter || 'general'}
+                isLoggedIn={!!user}
+              />
+
+              {/* Why These Tools Matter (condensed) */}
               <div className="p-6 rounded-2xl bg-secondary/30 border border-border mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Why these tools matter for your situation
+                  Why documentation matters for your situation
                 </h3>
                 <div className="space-y-4">
                   {resultInfo.whyToolsMatter.map((item, i) => (
@@ -823,38 +873,6 @@ export default function Analyzer() {
                         <p className="text-sm text-muted-foreground">{item.why}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Next Actions */}
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Next Steps You Can Take
-                </h3>
-                <div className="space-y-3">
-                  {getResultActions().map((action) => (
-                    <Link
-                      key={action.label}
-                      to={action.href}
-                      className="group flex items-center gap-4 p-4 rounded-xl bg-card border-2 border-border hover:border-primary/50 hover:shadow-glow transition-all duration-200 cursor-pointer active:scale-[0.99]"
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-105 transition-all">
-                        <action.icon className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                          {action.label}
-                          {action.requiresAuth && (
-                            <span className="ml-2 text-xs text-muted-foreground font-normal">(account required)</span>
-                          )}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {action.description}
-                        </p>
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-all" />
-                    </Link>
                   ))}
                 </div>
               </div>
