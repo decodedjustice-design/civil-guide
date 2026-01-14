@@ -17,6 +17,7 @@ import Auth from "./pages/Auth";
 import Notes from "./pages/Notes";
 import EvidenceVault from "./pages/EvidenceVault";
 import Timeline from "./pages/Timeline";
+import FullGuide from "./pages/FullGuide";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/notes" element={<Notes />} />
             <Route path="/evidence-vault" element={<EvidenceVault />} />
             <Route path="/timeline" element={<Timeline />} />
+            <Route path="/guide/:guideId" element={<FullGuide />} />
             <Route path="/founders-story" element={<About />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />

@@ -11,6 +11,7 @@ import {
   Scale,
   Building,
   Landmark,
+  Users,
   HelpCircle,
   FileText,
   FolderOpen,
@@ -42,6 +43,7 @@ type SystemId =
   | "courts" 
   | "jail" 
   | "government" 
+  | "cps_dcyf"
   | "unsure";
 
 interface SystemCategory {
@@ -107,6 +109,12 @@ const systemCategories: SystemCategory[] = [
     label: "Jail or Prison", 
     icon: Building, 
     description: "Conditions, medical care, visitation, reentry, communication" 
+  },
+  { 
+    id: "cps_dcyf", 
+    label: "CPS or DCYF (Child Welfare)", 
+    icon: Users, 
+    description: "Investigations, safety plans, dependency cases, family rights" 
   },
   { 
     id: "government", 
@@ -246,6 +254,20 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
         { id: "license", label: "Licensing or permit issue" },
         { id: "records", label: "Records or FOIA request" },
         { id: "other", label: "Other government agency issue" },
+      ]
+    }
+  ],
+  cps_dcyf: [
+    {
+      id: "issue-type",
+      question: "What best describes your situation?",
+      options: [
+        { id: "investigation", label: "CPS investigation or visit" },
+        { id: "safety-plan", label: "Safety plan or voluntary services" },
+        { id: "removal", label: "Child removed from home" },
+        { id: "dependency", label: "Dependency case in court" },
+        { id: "reunification", label: "Reunification or services" },
+        { id: "other", label: "Other child welfare issue" },
       ]
     }
   ],
@@ -488,6 +510,33 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
     ],
     rightsInsightFilter: "government",
     supportNetworkFilter: "government",
+  },
+  cps_dcyf: {
+    summary: "CPS or DCYF (child welfare) involvement",
+    explanation: "Child welfare cases involve investigations, safety plans, and sometimes court proceedings. Understanding the process, your rights, and how to engage strategically is critical.",
+    whatThisMeans: "Few experiences are more destabilizing than having child protective services involved in your family's life. The fear and confusion you may be feeling are completely understandable. What matters now is understanding the process and your rights.",
+    misunderstandings: [
+      "That you must let CPS into your home without a court order — you have rights, though there can be consequences",
+      "That 'cooperating' always helps — cooperation is important, but so is understanding what you're agreeing to",
+      "That safety plans are just suggestions — violations can be used as evidence",
+      "That the worker is on your side — their job is to assess safety, not represent you",
+      "That what you say can't be used against you — anything you say can appear in court documents"
+    ],
+    whatHelpsFirst: [
+      "Get an attorney as early as possible — you're entitled to one in dependency cases",
+      "Request to see what's alleged against you",
+      "Document your own parenting, home conditions, and children's wellbeing",
+      "Keep records of every interaction with DCYF",
+      "Engage with services genuinely, not just checking boxes",
+      "Attend every hearing and scheduled visit"
+    ],
+    whyToolsMatter: [
+      { tool: "Timeline Creator", why: "A clear record of interactions, agreements, and compliance is essential" },
+      { tool: "Evidence Vault", why: "Photos of your home, records of services, and correspondence should be saved" },
+      { tool: "Notes", why: "Recording what workers said helps when speaking with your attorney" }
+    ],
+    rightsInsightFilter: "cps_dcyf",
+    supportNetworkFilter: "cps_dcyf",
   },
   unsure: {
     summary: "a situation that may involve multiple systems or issues",
