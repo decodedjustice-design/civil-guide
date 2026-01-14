@@ -22,7 +22,8 @@ import {
   Search,
   X,
   Clock,
-  Loader2
+  Loader2,
+  CheckCircle
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -291,6 +292,13 @@ interface EnhancedSystemResult extends SystemResult {
   whatThisMeans: string;
   misunderstandings: string[];
   whatHelpsFirst: string[];
+  ifYouDoNothingElse: {
+    documentation: string;
+    time: string;
+    emotionalSafety: string;
+    primaryGuideId?: string;
+    secondaryGuideId?: string;
+  };
   whyToolsMatter: { tool: string; why: string }[];
 }
 
@@ -314,6 +322,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Consider requesting any body camera or dash camera footage",
       "Note the deadlines — some complaints must be filed within 60-180 days"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Write down what happened today — date, time, location, who was involved, what was said. Even rough notes matter.",
+      time: "Check if there's a deadline for filing a complaint. Many are 60-180 days. If you're unsure, assume it's sooner rather than later.",
+      emotionalSafety: "You don't have to decide anything right now. Documenting is enough for today.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Reconstructing exactly what happened, step by step, helps attorneys and oversight agencies understand your experience" },
       { tool: "Evidence Vault", why: "Photos of injuries, screenshots of texts, and records need to be stored safely before they're lost or deleted" },
@@ -341,6 +356,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Research your company's policies — they can be used to show violations",
       "Consider filing with the EEOC or Washington State Human Rights Commission early"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Save any emails, texts, or written records related to the issue. Forward work emails to a personal account if allowed.",
+      time: "Note the EEOC deadline (often 180-300 days from the incident). Mark it on a calendar.",
+      emotionalSafety: "You don't need to confront anyone or make a decision today. Gathering information is a valid step.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Showing the pattern over time — when incidents occurred and how they escalated — is often essential" },
       { tool: "Evidence Vault", why: "Emails, screenshots, and HR responses can disappear after you leave; save them now" },
@@ -368,6 +390,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Request repairs in writing — texts and emails count as documentation",
       "File a fair housing complaint if discrimination occurred (federal and state)"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Keep a copy of your lease and photograph any notices you receive. Store these outside your home (email, cloud, or with someone you trust).",
+      time: "If you received an eviction notice, find the response deadline. Courts are strict about timing.",
+      emotionalSafety: "Housing stress is overwhelming. Reaching out to a tenant hotline isn't committing to anything — it's just getting information.",
+      primaryGuideId: "housing",
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "A clear history of complaints, repairs, or landlord behavior can be critical in eviction defense" },
       { tool: "Evidence Vault", why: "Photos of mold, broken locks, or notices — and when they were taken — can support your case" },
@@ -395,6 +424,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "File with the Office for Civil Rights (OCR) if discrimination is occurring",
       "Know your state and district appeal procedures for discipline"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Request your child's educational records in writing. Schools must provide them.",
+      time: "If discipline is involved, ask about appeal deadlines. They can be as short as a few days.",
+      emotionalSafety: "Advocating for a child is exhausting. You don't have to solve everything in one meeting.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Showing the sequence of events — incidents, meetings, ignored concerns — helps advocates see the full picture" },
       { tool: "Evidence Vault", why: "IEPs, disciplinary notices, emails with staff, and report cards all matter" },
@@ -422,6 +458,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Get a second opinion if you were denied treatment",
       "Appeal insurance denials — most denials can be challenged"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Request your medical records in writing. You have a legal right to them.",
+      time: "If an insurance denial is involved, note the appeal deadline — often 30-60 days.",
+      emotionalSafety: "Being dismissed or mistreated by a provider is painful. You don't have to process everything at once.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Healthcare incidents often span multiple visits — tracking symptoms, visits, and denials clarifies patterns" },
       { tool: "Evidence Vault", why: "Medical records, bills, denial letters, and prescriptions all matter" },
@@ -449,6 +492,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Document any interactions that felt unfair or biased",
       "Request transcripts of hearings if needed for an appeal"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Get copies of all court documents — orders, filings, and notices. The court clerk can help.",
+      time: "Find and write down your next deadline. Courts rarely forgive missed dates.",
+      emotionalSafety: "Court processes are stressful even for professionals. One step at a time is enough.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Court cases have many dates — filings, hearings, orders — keeping them organized is critical" },
       { tool: "Evidence Vault", why: "All court documents, orders, and correspondence should be stored safely" },
@@ -476,6 +526,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Document dates, names, and what happened in as much detail as possible",
       "Look into ACLU or prison rights organizations for assistance"
     ],
+    ifYouDoNothingElse: {
+      documentation: "File a formal grievance through the facility process. Keep a copy of everything submitted.",
+      time: "Grievances often have short deadlines. Ask about the facility's timeline.",
+      emotionalSafety: "If you're supporting someone inside, you're already doing something. Pace yourself.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Incidents inside facilities often happen repeatedly — a timeline shows patterns" },
       { tool: "Evidence Vault", why: "Grievance forms, medical requests, and correspondence should be saved" },
@@ -503,6 +560,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "File a public records request (FOIA at federal level, state PRA in Washington)",
       "Contact an ombudsman or advocacy group for that agency type"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Get a copy of any decision letter. It should explain your appeal rights.",
+      time: "Find the appeal deadline — it's often 10-30 days from the decision date.",
+      emotionalSafety: "Bureaucracy is exhausting. One request at a time is enough.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Tracking applications, denials, appeals, and responses helps you see the full picture" },
       { tool: "Evidence Vault", why: "Letters, forms, and decisions from agencies are essential records" },
@@ -530,6 +594,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Engage with services genuinely, not just checking boxes",
       "Attend every hearing and scheduled visit"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Write down what DCYF told you — who said it, when, and what they asked. Keep notes of every interaction.",
+      time: "Ask about any deadlines for responding to allegations or attending meetings. These matter.",
+      emotionalSafety: "This is one of the most stressful situations a family can face. Getting an attorney isn't escalating — it's protecting yourself.",
+      primaryGuideId: "cps_dcyf",
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "A clear record of interactions, agreements, and compliance is essential" },
       { tool: "Evidence Vault", why: "Photos of your home, records of services, and correspondence should be saved" },
@@ -556,6 +627,13 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
       "Focus on what's affecting you most urgently right now",
       "Don't worry about 'having it all figured out' — just start documenting"
     ],
+    ifYouDoNothingElse: {
+      documentation: "Write down what happened, who was involved, and when. Even rough notes help.",
+      time: "If anything has a deadline (eviction, appeal, complaint), find out when.",
+      emotionalSafety: "Not knowing is okay. You don't need to have answers to take a first step.",
+      primaryGuideId: undefined,
+      secondaryGuideId: undefined
+    },
     whyToolsMatter: [
       { tool: "Timeline Creator", why: "Even if you're unsure what happened, a timeline helps you — and others — see patterns" },
       { tool: "Evidence Vault", why: "Save what you have; you don't need to know if it's 'evidence' yet" },
@@ -876,6 +954,72 @@ export default function Analyzer() {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* If You Do Nothing Else */}
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/5 via-card to-card border-2 border-primary/30 mb-6">
+                <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">4</span>
+                  If you do nothing else
+                </h3>
+                <p className="text-sm text-muted-foreground mb-5 italic">
+                  This section is enough on its own if you cannot engage further today.
+                </p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground text-sm">Document</p>
+                      <p className="text-muted-foreground text-sm">{resultInfo.ifYouDoNothingElse.documentation}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground text-sm">Time</p>
+                      <p className="text-muted-foreground text-sm">{resultInfo.ifYouDoNothingElse.time}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-foreground text-sm">Emotional safety</p>
+                      <p className="text-muted-foreground text-sm">{resultInfo.ifYouDoNothingElse.emotionalSafety}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Guide Links */}
+                {(resultInfo.ifYouDoNothingElse.primaryGuideId || resultInfo.ifYouDoNothingElse.secondaryGuideId) && (
+                  <div className="mt-6 pt-4 border-t border-border/50">
+                    <p className="text-sm text-muted-foreground mb-3">Learn more about this system:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {resultInfo.ifYouDoNothingElse.primaryGuideId && (
+                        <Link
+                          to={`/guide/${resultInfo.ifYouDoNothingElse.primaryGuideId}`}
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium transition-colors"
+                        >
+                          <BookOpen className="w-4 h-4" />
+                          Full Guide
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      )}
+                      {resultInfo.ifYouDoNothingElse.secondaryGuideId && (
+                        <Link
+                          to={`/guide/${resultInfo.ifYouDoNothingElse.secondaryGuideId}`}
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground text-sm font-medium transition-colors"
+                        >
+                          <BookOpen className="w-4 h-4" />
+                          Related Guide
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Case Profile Form - for saving and pattern analysis */}
