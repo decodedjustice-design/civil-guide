@@ -10,7 +10,8 @@ export type SystemId =
   | "incarceration"
   | "education"
   | "healthcare"
-  | "government";
+  | "government"
+  | "cps_dcyf";
 
 export interface RightsInsightGuide {
   id: string;
@@ -432,6 +433,7 @@ export const systemCategories: { id: SystemId; label: string; description: strin
   { id: "police", label: "Police & Law Enforcement", description: "Understanding encounters, complaints, and accountability." },
   { id: "employment", label: "Employment & Workplace", description: "Discrimination, wages, and workplace protections." },
   { id: "housing", label: "Housing & Tenant Rights", description: "Eviction, habitability, and fair housing." },
+  { id: "cps_dcyf", label: "CPS & DCYF (Child Welfare)", description: "Investigations, safety plans, and family rights." },
   { id: "disability", label: "Disability Rights", description: "Accommodations, access, and advocacy." },
   { id: "courts", label: "Courts & Legal System", description: "Procedures, self-help, and navigating the system." },
   { id: "incarceration", label: "Jail & Prison", description: "Rights inside, grievances, and oversight." },
