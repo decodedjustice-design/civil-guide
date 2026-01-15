@@ -2,7 +2,7 @@ import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DisclaimerProps {
-  variant?: "subtle" | "prominent";
+  variant?: "subtle" | "prominent" | "light";
   className?: string;
 }
 
@@ -24,6 +24,18 @@ export function Disclaimer({ variant = "subtle", className }: DisclaimerProps) {
           </p>
         </div>
       </div>
+    );
+  }
+
+  if (variant === "light") {
+    return (
+      <p className={cn(
+        "text-xs text-stone-500 flex items-center gap-1.5",
+        className
+      )}>
+        <AlertCircle className="w-3 h-3" />
+        <span>Educational use only. Not legal advice.</span>
+      </p>
     );
   }
 

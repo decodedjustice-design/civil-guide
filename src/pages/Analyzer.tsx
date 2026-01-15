@@ -13,24 +13,13 @@ import {
   Landmark,
   Users,
   HelpCircle,
-  FileText,
-  FolderOpen,
-  Phone,
-  BookOpen,
-  UserSearch,
-  Heart,
-  Search,
-  X,
-  Clock,
-  Loader2,
-  CheckCircle
+  Search
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import { PatternInsights } from "@/components/analyzer/PatternInsights";
-import { DynamicToolUnlock } from "@/components/analyzer/DynamicToolUnlock";
 import { CaseProfileForm } from "@/components/analyzer/CaseProfileForm";
+import { AnalyzerResults, generateResultContent } from "@/components/analyzer/AnalyzerResults";
 import { usePatternEngine, CivilRightsSystem } from "@/hooks/usePatternEngine";
 import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-analysis.png";
@@ -718,44 +707,10 @@ export default function Analyzer() {
   const resultInfo = selectedSystem ? systemResults[selectedSystem] : null;
   const currentQuestion = step > 0 && step <= currentFollowUps.length ? currentFollowUps[step - 1] : null;
 
-  // Build next action links with filters
-  const getResultActions = () => {
-    const filter = resultInfo?.rightsInsightFilter || "general";
-    return [
-      { 
-        icon: FileText, 
-        label: "Document what happened", 
-        description: "Create a secure record of events and details", 
-        href: "/self-help",
-        requiresAuth: true
-      },
-      { 
-        icon: FolderOpen, 
-        label: "Gather evidence", 
-        description: "Organize documents, photos, and records in your vault", 
-        href: "/self-help",
-        requiresAuth: true
-      },
-      { 
-        icon: Phone, 
-        label: "Contact oversight agencies", 
-        description: "Find relevant complaint bodies and oversight agencies", 
-        href: `/support-network?filter=${filter}`
-      },
-      { 
-        icon: BookOpen, 
-        label: "Learn how this system works", 
-        description: "Educational guides about your rights and processes", 
-        href: `/rights-insight?filter=${filter}`
-      },
-      { 
-        icon: UserSearch, 
-        label: "Find legal help", 
-        description: "Attorneys, legal aid, and referral services", 
-        href: "/find-help"
-      },
-    ];
-  };
+  // Generate result content for new light-theme results page
+  const generatedResultContent = selectedSystem 
+    ? generateResultContent(selectedSystem, analysis?.strength || 'none')
+    : null;
 
   return (
     <Layout>
@@ -884,230 +839,51 @@ export default function Analyzer() {
             </div>
           )}
 
-          {/* Results Page */}
-          {showResults && resultInfo && (
-            <div className="animate-fade-up">
-              <button
-                onClick={handleBack}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Go back
-              </button>
-
-              {/* Plain-Language Summary */}
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 mb-8">
-                <h2 className="text-xl font-semibold text-foreground mb-3">
-                  Based on what you shared
-                </h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Your situation may involve {resultInfo.summary}. The information below can help you 
-                  understand your options and take steps at your own pace.
-                </p>
-              </div>
-
-              {/* What This Usually Means */}
-              <div className="p-6 rounded-2xl bg-card border border-border mb-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <span className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">1</span>
-                  What this usually means
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {resultInfo.whatThisMeans}
-                </p>
-              </div>
-
-              {/* What People Often Misunderstand */}
-              <div className="p-6 rounded-2xl bg-card border border-border mb-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <span className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center text-accent text-sm font-bold">2</span>
-                  What people often misunderstand
-                </h3>
-                <ul className="space-y-3">
-                  {resultInfo.misunderstandings.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5">
-                        <X className="w-3 h-3 text-destructive" />
-                      </span>
-                      <span className="text-muted-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* What Usually Helps First */}
-              <div className="p-6 rounded-2xl bg-card border border-border mb-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <span className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center text-success text-sm font-bold">3</span>
-                  What usually helps first
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 italic">
-                  Not legal advice — just orientation on what people in similar situations often do.
-                </p>
-                <ul className="space-y-3">
-                  {resultInfo.whatHelpsFirst.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-xs text-primary font-medium">{i + 1}</span>
-                      </span>
-                      <span className="text-muted-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* If You Do Nothing Else */}
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/5 via-card to-card border-2 border-primary/30 mb-6">
-                <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
-                  <span className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary text-sm font-bold">4</span>
-                  If you do nothing else
-                </h3>
-                <p className="text-sm text-muted-foreground mb-5 italic">
-                  This section is enough on its own if you cannot engage further today.
-                </p>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-foreground text-sm">Document</p>
-                      <p className="text-muted-foreground text-sm">{resultInfo.ifYouDoNothingElse.documentation}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-foreground text-sm">Time</p>
-                      <p className="text-muted-foreground text-sm">{resultInfo.ifYouDoNothingElse.time}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-foreground text-sm">Emotional safety</p>
-                      <p className="text-muted-foreground text-sm">{resultInfo.ifYouDoNothingElse.emotionalSafety}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Guide Links */}
-                {(resultInfo.ifYouDoNothingElse.primaryGuideId || resultInfo.ifYouDoNothingElse.secondaryGuideId) && (
-                  <div className="mt-6 pt-4 border-t border-border/50">
-                    <p className="text-sm text-muted-foreground mb-3">Learn more about this system:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {resultInfo.ifYouDoNothingElse.primaryGuideId && (
-                        <Link
-                          to={`/guide/${resultInfo.ifYouDoNothingElse.primaryGuideId}`}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium transition-colors"
-                        >
-                          <BookOpen className="w-4 h-4" />
-                          Full Guide
-                          <ArrowRight className="w-3 h-3" />
-                        </Link>
-                      )}
-                      {resultInfo.ifYouDoNothingElse.secondaryGuideId && (
-                        <Link
-                          to={`/guide/${resultInfo.ifYouDoNothingElse.secondaryGuideId}`}
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground text-sm font-medium transition-colors"
-                        >
-                          <BookOpen className="w-4 h-4" />
-                          Related Guide
-                          <ArrowRight className="w-3 h-3" />
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Case Profile Form - for saving and pattern analysis */}
-              {selectedSystem && (
-                <CaseProfileForm
-                  initialSystem={mapSystemToEnum(selectedSystem) as CivilRightsSystem}
-                  initialClaimTags={extractClaimTags(answers)}
-                  onSave={saveCaseProfile}
-                  onAnalyze={handleAnalyze}
-                  isAnalyzing={isAnalyzing}
-                />
-              )}
-
-              {/* Pattern Insights - shows pattern analysis results */}
-              {analysis && (
-                <PatternInsights 
-                  analysis={analysis} 
-                  entityName={entityName || "this entity"} 
-                />
-              )}
-
-              {/* Dynamic Tool Unlock - shows tools based on pattern strength */}
-              <DynamicToolUnlock
-                patternStrength={analysis?.strength || 'none'}
-                systemFilter={resultInfo?.rightsInsightFilter || 'general'}
-                isLoggedIn={!!user}
-              />
-
-              {/* Why These Tools Matter (condensed) */}
-              <div className="p-6 rounded-2xl bg-secondary/30 border border-border mb-8">
-                <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Why documentation matters for your situation
-                </h3>
-                <div className="space-y-4">
-                  {resultInfo.whyToolsMatter.map((item, i) => (
-                    <div key={i} className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
-                        {item.tool === "Timeline Creator" && <Clock className="w-5 h-5 text-primary" />}
-                        {item.tool === "Evidence Vault" && <FolderOpen className="w-5 h-5 text-primary" />}
-                        {item.tool === "Notes" && <FileText className="w-5 h-5 text-primary" />}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{item.tool}</p>
-                        <p className="text-sm text-muted-foreground">{item.why}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Wellbeing Note */}
-              <div className="p-5 rounded-xl bg-muted/50 border border-border mb-8">
-                <div className="flex items-start gap-3">
-                  <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-foreground font-medium mb-1">Take your time</p>
-                    <p className="text-sm text-muted-foreground">
-                      Some experiences are difficult to revisit. You can pause, save, or return at any time. 
-                      There's no pressure to do everything at once.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Micro-Disclaimer */}
-              <Disclaimer variant="prominent" className="mb-8" />
-
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="hero" size="lg" asChild>
-                  <Link to="/self-help">
-                    Start Documenting
-                    <ArrowRight className="w-5 h-5" />
-                  </Link>
-                </Button>
-                <Button variant="outline" size="lg" onClick={handleRestart}>
-                  Start Over
-                </Button>
-              </div>
+          {/* Bottom Disclaimer - only show when not in results */}
+          {!showResults && (
+            <div className="mt-12 pt-8 border-t border-border">
+              <Disclaimer className="justify-center" />
             </div>
           )}
-
-          {/* Bottom Disclaimer */}
-          <div className="mt-12 pt-8 border-t border-border">
-            <Disclaimer className="justify-center" />
-          </div>
         </div>
       </div>
+
+      {/* Results Page - New minimal light design - breaks out of dark container */}
+      {showResults && resultInfo && selectedSystem && generatedResultContent && (
+        <div className="relative">
+          {/* Back button at top of light section */}
+          <div className="absolute top-4 left-4 z-10">
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 text-sm text-stone-500 hover:text-stone-700 transition-colors bg-white/80 backdrop-blur-sm px-3 py-2 rounded-lg"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Go back
+            </button>
+          </div>
+          
+          <AnalyzerResults
+            systemId={selectedSystem}
+            systemLabel={generatedResultContent.label}
+            patternStrength={analysis?.strength || 'none'}
+            systemControls={generatedResultContent.systemControls}
+            systemDoesNotControl={generatedResultContent.systemDoesNotControl}
+            decisionMakers={generatedResultContent.decisionMakers}
+            commonStuckPoints={generatedResultContent.commonStuckPoints}
+            whatUsuallyHappens={generatedResultContent.whatUsuallyHappens}
+            whatPeopleMisinterpret={generatedResultContent.whatPeopleMisinterpret}
+            tools={generatedResultContent.tools}
+            primaryGuideId={generatedResultContent.primaryGuideId}
+          />
+          
+          {/* Disclaimer at bottom */}
+          <div className="bg-stone-50 px-4 pb-12">
+            <div className="max-w-2xl mx-auto">
+              <Disclaimer variant="light" className="justify-center" />
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
