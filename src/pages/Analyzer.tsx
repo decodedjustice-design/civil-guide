@@ -121,6 +121,7 @@ const systemCategories: SystemCategory[] = [
 ];
 
 // Conditional follow-up questions based on system
+// Each system has 8-12 questions covering: urgency, deadlines, evidence, retaliation risk, family impact, prior attempts, safety
 const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
   police: [
     {
@@ -136,13 +137,101 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
       ]
     },
     {
+      id: "timing",
+      question: "When did this happen?",
+      options: [
+        { id: "today", label: "Today or in the last few days" },
+        { id: "weeks", label: "Within the last few weeks" },
+        { id: "months", label: "Within the last few months" },
+        { id: "over-year", label: "More than a year ago" },
+        { id: "ongoing", label: "It's ongoing or happened multiple times" },
+      ]
+    },
+    {
       id: "injury",
       question: "Did this involve an injury or need for medical attention?",
       options: [
-        { id: "yes", label: "Yes" },
-        { id: "no", label: "No" },
+        { id: "serious", label: "Yes — serious injury or hospitalization" },
+        { id: "minor", label: "Yes — minor injury" },
+        { id: "no-physical", label: "No physical injury, but emotional impact" },
+        { id: "none", label: "No injury" },
       ]
-    }
+    },
+    {
+      id: "evidence",
+      question: "Do you have any documentation or evidence?",
+      options: [
+        { id: "video", label: "Video or photos of the incident" },
+        { id: "medical", label: "Medical records or photos of injuries" },
+        { id: "witnesses", label: "Witnesses who saw what happened" },
+        { id: "police-report", label: "Police report or incident number" },
+        { id: "none", label: "I don't have documentation yet" },
+        { id: "unsure", label: "I'm not sure what counts as evidence" },
+      ]
+    },
+    {
+      id: "body-camera",
+      question: "Do you know if body camera or dash camera footage exists?",
+      options: [
+        { id: "yes-exists", label: "Yes — I believe footage exists" },
+        { id: "requested", label: "I've already requested it" },
+        { id: "unknown", label: "I don't know" },
+        { id: "no-camera", label: "No cameras were present" },
+      ]
+    },
+    {
+      id: "prior-complaints",
+      question: "Have you filed a complaint or report about this?",
+      options: [
+        { id: "filed", label: "Yes — I filed a formal complaint" },
+        { id: "informal", label: "I reported it informally" },
+        { id: "considering", label: "I'm considering it" },
+        { id: "afraid", label: "I'm afraid to file a complaint" },
+        { id: "no", label: "No, I haven't reported it" },
+      ]
+    },
+    {
+      id: "retaliation-concern",
+      question: "Are you concerned about retaliation or ongoing contact with this officer or department?",
+      options: [
+        { id: "active-case", label: "Yes — I have an active case or ongoing contact" },
+        { id: "same-area", label: "Yes — I live or work in the same area" },
+        { id: "some-concern", label: "Some concern, but no immediate contact expected" },
+        { id: "no-concern", label: "No — I don't expect further contact" },
+      ]
+    },
+    {
+      id: "family-impact",
+      question: "Did this incident affect others in your household or family?",
+      options: [
+        { id: "children-present", label: "Children were present or affected" },
+        { id: "family-witnessed", label: "Family members witnessed or were involved" },
+        { id: "family-impacted", label: "My family has been impacted (stress, fear, financial)" },
+        { id: "just-me", label: "It primarily affected just me" },
+      ]
+    },
+    {
+      id: "immediate-safety",
+      question: "Do you feel safe right now?",
+      options: [
+        { id: "safe", label: "Yes — I feel safe" },
+        { id: "uncertain", label: "Uncertain — I have some concerns" },
+        { id: "not-safe", label: "No — I have ongoing safety concerns" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "understand", label: "Understanding what happened and my rights" },
+        { id: "document", label: "Documenting everything properly" },
+        { id: "complaint", label: "Filing a formal complaint" },
+        { id: "legal", label: "Talking to an attorney" },
+        { id: "safety", label: "Ensuring my safety" },
+        { id: "unsure", label: "I'm not sure yet" },
+      ]
+    },
   ],
   employer: [
     {
@@ -154,31 +243,220 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
         { id: "termination", label: "Wrongful termination or demotion" },
         { id: "harassment", label: "Harassment or hostile work environment" },
         { id: "accommodation", label: "Denied accommodation or leave" },
+        { id: "wage", label: "Wage theft or unpaid wages" },
         { id: "other", label: "Other workplace issue" },
       ]
     },
     {
       id: "timing",
-      question: "Is this ongoing or in the past?",
+      question: "When did this issue begin or occur?",
       options: [
-        { id: "ongoing", label: "Ongoing — still happening" },
-        { id: "past", label: "Past — already occurred" },
+        { id: "current", label: "It's happening now" },
+        { id: "recent", label: "Within the last few weeks" },
+        { id: "months", label: "Within the last few months" },
+        { id: "over-180", label: "More than 6 months ago" },
+        { id: "over-year", label: "More than a year ago" },
       ]
-    }
+    },
+    {
+      id: "employment-status",
+      question: "What is your current employment status?",
+      options: [
+        { id: "employed", label: "Still employed there" },
+        { id: "terminated", label: "Terminated or fired" },
+        { id: "resigned", label: "I resigned" },
+        { id: "leave", label: "On leave or suspended" },
+        { id: "contractor", label: "I was a contractor, not employee" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation do you have?",
+      options: [
+        { id: "emails", label: "Emails or written communications" },
+        { id: "reviews", label: "Performance reviews or HR records" },
+        { id: "witnesses", label: "Coworkers who witnessed incidents" },
+        { id: "notes", label: "Personal notes or journal entries" },
+        { id: "recordings", label: "Recordings (if legal in your state)" },
+        { id: "none", label: "I don't have documentation yet" },
+      ]
+    },
+    {
+      id: "hr-complaint",
+      question: "Have you reported this to HR or management?",
+      options: [
+        { id: "formal-hr", label: "Yes — formal HR complaint" },
+        { id: "informal", label: "Yes — informal conversation" },
+        { id: "no-afraid", label: "No — I'm afraid of retaliation" },
+        { id: "no-wont-help", label: "No — I don't think it would help" },
+        { id: "no-not-yet", label: "No — not yet" },
+      ]
+    },
+    {
+      id: "retaliation-concern",
+      question: "Are you concerned about retaliation if you take action?",
+      options: [
+        { id: "already-retaliated", label: "I've already experienced retaliation" },
+        { id: "likely", label: "Yes — I expect retaliation" },
+        { id: "some-concern", label: "Some concern" },
+        { id: "no-concern", label: "No — I'm not worried about that" },
+        { id: "already-gone", label: "I no longer work there, so less concern" },
+      ]
+    },
+    {
+      id: "agency-filing",
+      question: "Have you filed with any external agency?",
+      options: [
+        { id: "eeoc", label: "Yes — EEOC" },
+        { id: "state", label: "Yes — State Human Rights Commission" },
+        { id: "other-agency", label: "Yes — another agency" },
+        { id: "considering", label: "I'm considering it" },
+        { id: "no", label: "No" },
+        { id: "unsure-what", label: "I don't know what agencies exist" },
+      ]
+    },
+    {
+      id: "family-impact",
+      question: "How has this affected your household or family?",
+      options: [
+        { id: "financial", label: "Financial stress (lost income, bills)" },
+        { id: "health", label: "Health or mental health impact" },
+        { id: "insurance", label: "Lost health insurance or benefits" },
+        { id: "relationships", label: "Strain on relationships" },
+        { id: "manageable", label: "It's been difficult but manageable" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "job-back", label: "Getting my job back" },
+        { id: "compensation", label: "Financial compensation" },
+        { id: "record-clear", label: "Clearing my record" },
+        { id: "accountability", label: "Holding them accountable" },
+        { id: "reference", label: "Getting a fair reference" },
+        { id: "understand", label: "Understanding my options" },
+      ]
+    },
   ],
   housing: [
     {
       id: "issue-type",
       question: "What issue best fits your situation?",
       options: [
-        { id: "discrimination", label: "Discrimination in housing" },
         { id: "eviction", label: "Eviction or threat of eviction" },
+        { id: "discrimination", label: "Discrimination in housing" },
         { id: "retaliation", label: "Retaliation for complaints or organizing" },
         { id: "habitability", label: "Habitability or repair issues" },
         { id: "accommodation", label: "Denied accommodation for disability" },
+        { id: "voucher", label: "Housing voucher or subsidy issue" },
         { id: "other", label: "Other housing issue" },
       ]
-    }
+    },
+    {
+      id: "timing",
+      question: "When did this issue start?",
+      options: [
+        { id: "today", label: "Today or in the last few days" },
+        { id: "weeks", label: "Within the last few weeks" },
+        { id: "months", label: "Within the last few months" },
+        { id: "ongoing", label: "It's been ongoing for a while" },
+      ]
+    },
+    {
+      id: "notice-received",
+      question: "Have you received any written notices from your landlord?",
+      options: [
+        { id: "eviction-notice", label: "Yes — eviction or pay-or-vacate notice" },
+        { id: "lease-violation", label: "Yes — lease violation notice" },
+        { id: "rent-increase", label: "Yes — rent increase notice" },
+        { id: "other-notice", label: "Yes — another type of notice" },
+        { id: "verbal-only", label: "No — only verbal communication" },
+        { id: "none", label: "No notices" },
+      ]
+    },
+    {
+      id: "deadline",
+      question: "Do you have a deadline to respond or move?",
+      options: [
+        { id: "days", label: "Yes — within the next few days" },
+        { id: "weeks", label: "Yes — within the next few weeks" },
+        { id: "month-plus", label: "Yes — more than a month away" },
+        { id: "unknown", label: "I'm not sure" },
+        { id: "none", label: "No deadline that I know of" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation do you have?",
+      options: [
+        { id: "lease", label: "Copy of my lease" },
+        { id: "notices", label: "Notices from landlord" },
+        { id: "photos", label: "Photos of conditions or damage" },
+        { id: "communications", label: "Texts, emails, or letters" },
+        { id: "repair-requests", label: "Written repair requests" },
+        { id: "none", label: "I don't have documentation yet" },
+      ]
+    },
+    {
+      id: "prior-complaints",
+      question: "Have you complained to your landlord about any issues?",
+      options: [
+        { id: "written", label: "Yes — in writing" },
+        { id: "verbal", label: "Yes — verbally" },
+        { id: "ignored", label: "Yes — but they ignored me" },
+        { id: "retaliated", label: "Yes — and I faced retaliation" },
+        { id: "no", label: "No" },
+      ]
+    },
+    {
+      id: "family-situation",
+      question: "Who lives in the household?",
+      options: [
+        { id: "children", label: "Children under 18" },
+        { id: "elderly", label: "Elderly family members" },
+        { id: "disabled", label: "Someone with a disability" },
+        { id: "just-me", label: "Just me" },
+        { id: "adults", label: "Multiple adults, no children" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "housing-type",
+      question: "What type of housing is this?",
+      options: [
+        { id: "private", label: "Private rental (individual landlord)" },
+        { id: "company", label: "Property management company" },
+        { id: "public", label: "Public housing" },
+        { id: "voucher", label: "Section 8 or housing voucher" },
+        { id: "subsidized", label: "Other subsidized housing" },
+        { id: "other", label: "Other" },
+      ]
+    },
+    {
+      id: "safety",
+      question: "Do you feel safe in your current housing?",
+      options: [
+        { id: "safe", label: "Yes — I feel safe" },
+        { id: "conditions", label: "No — due to housing conditions" },
+        { id: "landlord", label: "No — due to landlord behavior" },
+        { id: "other-residents", label: "No — due to other residents" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "stay", label: "Staying in my home" },
+        { id: "repairs", label: "Getting repairs made" },
+        { id: "time", label: "More time to find a new place" },
+        { id: "rights", label: "Understanding my rights" },
+        { id: "legal", label: "Getting legal help" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
   ],
   school: [
     {
@@ -190,9 +468,99 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
         { id: "iep", label: "IEP, 504 plan, or special education" },
         { id: "harassment", label: "Bullying or harassment" },
         { id: "retaliation", label: "Retaliation for complaints" },
+        { id: "records", label: "Records or transcript issues" },
         { id: "other", label: "Other school issue" },
       ]
-    }
+    },
+    {
+      id: "who-affected",
+      question: "Who is directly affected?",
+      options: [
+        { id: "child", label: "My child" },
+        { id: "myself-student", label: "Myself (I'm a student)" },
+        { id: "multiple-children", label: "Multiple children" },
+        { id: "other", label: "Someone else I'm advocating for" },
+      ]
+    },
+    {
+      id: "timing",
+      question: "When did this issue start?",
+      options: [
+        { id: "current", label: "Currently happening" },
+        { id: "recent", label: "Within the last few weeks" },
+        { id: "this-year", label: "Earlier this school year" },
+        { id: "prior-year", label: "Previous school year" },
+        { id: "ongoing", label: "It's been ongoing for a long time" },
+      ]
+    },
+    {
+      id: "discipline-status",
+      question: "Is there a pending disciplinary action?",
+      options: [
+        { id: "suspended", label: "Currently suspended" },
+        { id: "expulsion-pending", label: "Expulsion hearing scheduled" },
+        { id: "hearing-scheduled", label: "Discipline hearing scheduled" },
+        { id: "completed", label: "Discipline already completed" },
+        { id: "none", label: "No disciplinary action" },
+      ]
+    },
+    {
+      id: "deadline",
+      question: "Do you have any upcoming deadlines or meetings?",
+      options: [
+        { id: "days", label: "Yes — within the next few days" },
+        { id: "weeks", label: "Yes — within the next few weeks" },
+        { id: "scheduled", label: "I have a meeting scheduled" },
+        { id: "unknown", label: "I'm not sure" },
+        { id: "none", label: "No deadlines that I know of" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation do you have?",
+      options: [
+        { id: "iep-504", label: "IEP or 504 plan" },
+        { id: "discipline-records", label: "Discipline records or notices" },
+        { id: "emails", label: "Emails or communications with school" },
+        { id: "incident-reports", label: "Incident reports" },
+        { id: "notes", label: "Personal notes from meetings" },
+        { id: "none", label: "I don't have documentation yet" },
+      ]
+    },
+    {
+      id: "prior-complaints",
+      question: "Have you raised concerns with the school before?",
+      options: [
+        { id: "formal", label: "Yes — formal written complaint" },
+        { id: "meetings", label: "Yes — in meetings or calls" },
+        { id: "ignored", label: "Yes — but I was ignored" },
+        { id: "retaliated", label: "Yes — and my child faced retaliation" },
+        { id: "no", label: "No" },
+      ]
+    },
+    {
+      id: "special-education",
+      question: "Does this involve special education services?",
+      options: [
+        { id: "has-iep", label: "Yes — child has an IEP" },
+        { id: "has-504", label: "Yes — child has a 504 plan" },
+        { id: "evaluation-needed", label: "I've requested an evaluation" },
+        { id: "denied", label: "Services were denied" },
+        { id: "no", label: "No special education involvement" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "return", label: "Getting my child back in school" },
+        { id: "services", label: "Getting appropriate services" },
+        { id: "record", label: "Clearing the disciplinary record" },
+        { id: "safety", label: "Ensuring my child's safety" },
+        { id: "understand", label: "Understanding our rights" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
   ],
   healthcare: [
     {
@@ -200,12 +568,104 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
       question: "What issue best fits your situation?",
       options: [
         { id: "discrimination", label: "Discrimination in care" },
-        { id: "access", label: "Denied care or treatment" },
+        { id: "denied", label: "Denied treatment or care" },
         { id: "privacy", label: "Privacy or records violation" },
         { id: "billing", label: "Billing or insurance dispute" },
+        { id: "quality", label: "Quality of care concerns" },
+        { id: "access", label: "Can't access my records" },
         { id: "other", label: "Other healthcare issue" },
       ]
-    }
+    },
+    {
+      id: "timing",
+      question: "When did this issue occur?",
+      options: [
+        { id: "current", label: "Currently ongoing" },
+        { id: "recent", label: "Within the last few weeks" },
+        { id: "months", label: "Within the last few months" },
+        { id: "over-year", label: "More than a year ago" },
+      ]
+    },
+    {
+      id: "urgency",
+      question: "Is there an urgent medical need right now?",
+      options: [
+        { id: "urgent", label: "Yes — I need care now" },
+        { id: "delayed", label: "Care is being delayed" },
+        { id: "ongoing-treatment", label: "I'm in the middle of treatment" },
+        { id: "not-urgent", label: "No immediate medical urgency" },
+      ]
+    },
+    {
+      id: "provider-type",
+      question: "What type of provider is involved?",
+      options: [
+        { id: "hospital", label: "Hospital" },
+        { id: "doctor", label: "Doctor's office or clinic" },
+        { id: "insurance", label: "Insurance company" },
+        { id: "pharmacy", label: "Pharmacy" },
+        { id: "mental-health", label: "Mental health provider" },
+        { id: "other", label: "Other" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation do you have?",
+      options: [
+        { id: "records", label: "Medical records" },
+        { id: "bills", label: "Bills or insurance statements" },
+        { id: "denial-letters", label: "Denial letters" },
+        { id: "communications", label: "Communications with provider" },
+        { id: "none", label: "I don't have documentation yet" },
+        { id: "requested", label: "I've requested my records" },
+      ]
+    },
+    {
+      id: "prior-complaints",
+      question: "Have you raised concerns with the provider?",
+      options: [
+        { id: "formal", label: "Yes — formal complaint" },
+        { id: "patient-advocate", label: "Yes — to patient advocate" },
+        { id: "verbal", label: "Yes — verbally" },
+        { id: "ignored", label: "Yes — but I was ignored" },
+        { id: "no", label: "No" },
+      ]
+    },
+    {
+      id: "insurance-involved",
+      question: "Is insurance involved in this issue?",
+      options: [
+        { id: "denied-claim", label: "Yes — claim was denied" },
+        { id: "coverage-dispute", label: "Yes — coverage dispute" },
+        { id: "appealing", label: "Yes — I'm appealing a decision" },
+        { id: "no-insurance", label: "I don't have insurance" },
+        { id: "not-involved", label: "Insurance isn't the main issue" },
+      ]
+    },
+    {
+      id: "family-impact",
+      question: "How has this affected you or your family?",
+      options: [
+        { id: "health-declined", label: "Health has gotten worse" },
+        { id: "financial", label: "Financial stress from bills" },
+        { id: "emotional", label: "Emotional or mental health impact" },
+        { id: "care-disrupted", label: "Ongoing care was disrupted" },
+        { id: "manageable", label: "Difficult but manageable" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "get-care", label: "Getting the care I need" },
+        { id: "records", label: "Accessing my records" },
+        { id: "billing", label: "Resolving a billing issue" },
+        { id: "complaint", label: "Filing a formal complaint" },
+        { id: "understand", label: "Understanding what happened" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
   ],
   courts: [
     {
@@ -216,36 +676,310 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
         { id: "representation", label: "Denied or inadequate representation" },
         { id: "procedure", label: "Procedural error or unfairness" },
         { id: "appeal", label: "Appeal or post-conviction issue" },
+        { id: "access", label: "Can't access the court system" },
         { id: "other", label: "Other court issue" },
       ]
-    }
+    },
+    {
+      id: "case-type",
+      question: "What type of case is this?",
+      options: [
+        { id: "criminal", label: "Criminal case" },
+        { id: "family", label: "Family law (divorce, custody, etc.)" },
+        { id: "civil", label: "Civil lawsuit" },
+        { id: "small-claims", label: "Small claims" },
+        { id: "administrative", label: "Administrative hearing" },
+        { id: "other", label: "Other" },
+      ]
+    },
+    {
+      id: "case-status",
+      question: "What is the current status of your case?",
+      options: [
+        { id: "active", label: "Case is active / ongoing" },
+        { id: "decided", label: "Decision was made" },
+        { id: "appeal-pending", label: "Appeal is pending" },
+        { id: "closed", label: "Case is closed" },
+        { id: "not-filed", label: "Case hasn't been filed yet" },
+      ]
+    },
+    {
+      id: "deadline",
+      question: "Do you have any upcoming deadlines?",
+      options: [
+        { id: "days", label: "Yes — within the next few days" },
+        { id: "weeks", label: "Yes — within the next few weeks" },
+        { id: "hearing-scheduled", label: "I have a hearing scheduled" },
+        { id: "unknown", label: "I'm not sure" },
+        { id: "none", label: "No deadlines that I know of" },
+      ]
+    },
+    {
+      id: "representation",
+      question: "Do you have legal representation?",
+      options: [
+        { id: "attorney", label: "Yes — I have an attorney" },
+        { id: "public-defender", label: "Yes — public defender" },
+        { id: "pro-se", label: "No — I'm representing myself" },
+        { id: "seeking", label: "I'm looking for an attorney" },
+        { id: "cant-afford", label: "I can't afford an attorney" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation do you have?",
+      options: [
+        { id: "court-orders", label: "Court orders or judgments" },
+        { id: "filings", label: "Filings or motions" },
+        { id: "transcripts", label: "Hearing transcripts" },
+        { id: "correspondence", label: "Letters from the court" },
+        { id: "none", label: "I don't have documentation yet" },
+      ]
+    },
+    {
+      id: "prior-attempts",
+      question: "Have you tried to address this issue?",
+      options: [
+        { id: "motion-filed", label: "Yes — filed a motion" },
+        { id: "appealed", label: "Yes — filed an appeal" },
+        { id: "contacted-court", label: "Yes — contacted court staff" },
+        { id: "no", label: "No — not yet" },
+        { id: "unsure-how", label: "I don't know how to address it" },
+      ]
+    },
+    {
+      id: "family-impact",
+      question: "How has this affected your life?",
+      options: [
+        { id: "custody", label: "Affecting custody or family" },
+        { id: "financial", label: "Financial impact" },
+        { id: "freedom", label: "Affecting my freedom" },
+        { id: "housing-job", label: "Affecting housing or job" },
+        { id: "stress", label: "Significant stress" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "understand", label: "Understanding the process" },
+        { id: "deadline", label: "Meeting an upcoming deadline" },
+        { id: "representation", label: "Finding legal help" },
+        { id: "appeal", label: "Appealing a decision" },
+        { id: "records", label: "Getting court records" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
   ],
   jail: [
     {
       id: "issue-type",
-      question: "What issue best fits your situation?",
+      question: "What issue best fits the situation?",
       options: [
         { id: "conditions", label: "Conditions of confinement" },
         { id: "medical", label: "Medical care or mental health" },
         { id: "communication", label: "Mail, phone, or visitation" },
         { id: "discipline", label: "Disciplinary action or solitary" },
         { id: "reentry", label: "Reentry or release issues" },
+        { id: "abuse", label: "Abuse or excessive force" },
         { id: "other", label: "Other incarceration issue" },
       ]
-    }
+    },
+    {
+      id: "who-affected",
+      question: "Who is directly affected?",
+      options: [
+        { id: "myself", label: "I am currently incarcerated" },
+        { id: "family", label: "A family member is incarcerated" },
+        { id: "released", label: "I was recently released" },
+        { id: "other", label: "Someone else I'm advocating for" },
+      ]
+    },
+    {
+      id: "facility-type",
+      question: "What type of facility?",
+      options: [
+        { id: "county-jail", label: "County jail" },
+        { id: "state-prison", label: "State prison" },
+        { id: "federal", label: "Federal prison" },
+        { id: "detention", label: "Detention center" },
+        { id: "juvenile", label: "Juvenile facility" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
+    {
+      id: "urgency",
+      question: "How urgent is the situation?",
+      options: [
+        { id: "emergency", label: "Emergency — immediate danger" },
+        { id: "urgent", label: "Urgent — needs attention soon" },
+        { id: "ongoing", label: "Ongoing issue" },
+        { id: "past", label: "Issue already occurred" },
+      ]
+    },
+    {
+      id: "grievance-filed",
+      question: "Has a grievance been filed?",
+      options: [
+        { id: "yes-pending", label: "Yes — still pending" },
+        { id: "yes-denied", label: "Yes — it was denied" },
+        { id: "yes-ignored", label: "Yes — no response" },
+        { id: "no", label: "No grievance filed" },
+        { id: "unsure-how", label: "Don't know how to file" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation exists?",
+      options: [
+        { id: "grievances", label: "Grievance forms or responses" },
+        { id: "medical-requests", label: "Medical request forms" },
+        { id: "letters", label: "Letters or correspondence" },
+        { id: "incident-reports", label: "Incident reports" },
+        { id: "none", label: "No documentation yet" },
+        { id: "hard-to-get", label: "Hard to get documentation inside" },
+      ]
+    },
+    {
+      id: "retaliation-concern",
+      question: "Is there concern about retaliation?",
+      options: [
+        { id: "yes-experienced", label: "Yes — retaliation has occurred" },
+        { id: "yes-feared", label: "Yes — afraid of retaliation" },
+        { id: "some", label: "Some concern" },
+        { id: "no", label: "No concern" },
+      ]
+    },
+    {
+      id: "outside-contact",
+      question: "Has anyone outside been contacted?",
+      options: [
+        { id: "attorney", label: "Attorney" },
+        { id: "family", label: "Family is aware" },
+        { id: "advocacy-org", label: "Advocacy organization" },
+        { id: "ombudsman", label: "Jail/prison ombudsman" },
+        { id: "no-contact", label: "No outside contact yet" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most right now?",
+      options: [
+        { id: "medical", label: "Getting medical attention" },
+        { id: "safety", label: "Safety from harm" },
+        { id: "communication", label: "Restoring communication" },
+        { id: "release", label: "Release or reentry issues" },
+        { id: "document", label: "Documenting what happened" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
   ],
   government: [
     {
       id: "issue-type",
       question: "What issue best fits your situation?",
       options: [
-        { id: "benefits", label: "Denied or terminated benefits" },
+        { id: "benefits-denied", label: "Benefits denied or terminated" },
+        { id: "benefits-delayed", label: "Benefits delayed or reduced" },
         { id: "discrimination", label: "Discrimination by agency" },
         { id: "license", label: "Licensing or permit issue" },
         { id: "records", label: "Records or FOIA request" },
         { id: "other", label: "Other government agency issue" },
       ]
-    }
+    },
+    {
+      id: "agency-type",
+      question: "What type of agency is involved?",
+      options: [
+        { id: "dshs", label: "DSHS (Department of Social and Health Services)" },
+        { id: "unemployment", label: "Unemployment / ESD" },
+        { id: "disability", label: "Social Security / Disability" },
+        { id: "medicaid", label: "Medicaid / Apple Health" },
+        { id: "other-state", label: "Other state agency" },
+        { id: "federal", label: "Federal agency" },
+        { id: "local", label: "City or county agency" },
+      ]
+    },
+    {
+      id: "timing",
+      question: "When did this issue occur?",
+      options: [
+        { id: "current", label: "Currently ongoing" },
+        { id: "recent", label: "Within the last few weeks" },
+        { id: "months", label: "Within the last few months" },
+        { id: "over-year", label: "More than a year ago" },
+      ]
+    },
+    {
+      id: "decision-received",
+      question: "Did you receive a decision letter?",
+      options: [
+        { id: "yes-recent", label: "Yes — within the last 30 days" },
+        { id: "yes-older", label: "Yes — more than 30 days ago" },
+        { id: "verbal-only", label: "No — verbal notice only" },
+        { id: "no-notice", label: "No — no notice at all" },
+        { id: "pending", label: "Still waiting for a decision" },
+      ]
+    },
+    {
+      id: "appeal-deadline",
+      question: "Do you know your appeal deadline?",
+      options: [
+        { id: "days", label: "Yes — within the next few days" },
+        { id: "weeks", label: "Yes — within the next few weeks" },
+        { id: "missed", label: "I may have missed it" },
+        { id: "unknown", label: "I don't know the deadline" },
+        { id: "already-appealed", label: "I already filed an appeal" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation do you have?",
+      options: [
+        { id: "decision-letter", label: "Decision letter" },
+        { id: "application", label: "My application or forms" },
+        { id: "correspondence", label: "Letters or emails from agency" },
+        { id: "records", label: "Supporting documents (medical, financial)" },
+        { id: "none", label: "I don't have documentation yet" },
+      ]
+    },
+    {
+      id: "prior-attempts",
+      question: "Have you tried to resolve this?",
+      options: [
+        { id: "called", label: "Yes — called the agency" },
+        { id: "written", label: "Yes — wrote to the agency" },
+        { id: "appealed", label: "Yes — filed an appeal" },
+        { id: "hearing", label: "Yes — had a hearing" },
+        { id: "no", label: "No — not yet" },
+        { id: "unsure-how", label: "I don't know how" },
+      ]
+    },
+    {
+      id: "family-impact",
+      question: "How has this affected your household?",
+      options: [
+        { id: "basic-needs", label: "Can't meet basic needs (food, housing)" },
+        { id: "medical", label: "Can't access medical care" },
+        { id: "children", label: "Children are affected" },
+        { id: "financial", label: "Financial stress" },
+        { id: "manageable", label: "Difficult but manageable" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "restore", label: "Getting benefits restored" },
+        { id: "understand", label: "Understanding why I was denied" },
+        { id: "appeal", label: "Filing or preparing an appeal" },
+        { id: "records", label: "Getting my case file" },
+        { id: "help", label: "Finding someone to help" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
   ],
   cps_dcyf: [
     {
@@ -256,10 +990,129 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
         { id: "safety-plan", label: "Safety plan or voluntary services" },
         { id: "removal", label: "Child removed from home" },
         { id: "dependency", label: "Dependency case in court" },
-        { id: "reunification", label: "Reunification or services" },
+        { id: "reunification", label: "Working toward reunification" },
+        { id: "closed", label: "Case is closed but I have concerns" },
         { id: "other", label: "Other child welfare issue" },
       ]
-    }
+    },
+    {
+      id: "timing",
+      question: "When did DCYF involvement begin?",
+      options: [
+        { id: "just-started", label: "Just started (this week)" },
+        { id: "recent", label: "Within the last few weeks" },
+        { id: "months", label: "Several months" },
+        { id: "long-term", label: "More than a year" },
+      ]
+    },
+    {
+      id: "case-status",
+      question: "Is this a voluntary or court-ordered case?",
+      options: [
+        { id: "voluntary", label: "Voluntary (no court involvement yet)" },
+        { id: "court", label: "Court-ordered (dependency filed)" },
+        { id: "unsure", label: "I'm not sure" },
+        { id: "transitioning", label: "It may be going to court" },
+      ]
+    },
+    {
+      id: "children-placement",
+      question: "Where are the children currently?",
+      options: [
+        { id: "home", label: "At home with me" },
+        { id: "relative", label: "With a relative" },
+        { id: "foster", label: "In foster care" },
+        { id: "other-parent", label: "With the other parent" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
+    {
+      id: "attorney",
+      question: "Do you have an attorney?",
+      options: [
+        { id: "yes", label: "Yes — I have an attorney" },
+        { id: "appointed", label: "One was appointed but I haven't met them" },
+        { id: "seeking", label: "I'm looking for one" },
+        { id: "no", label: "No" },
+        { id: "unsure-need", label: "I don't know if I need one" },
+      ]
+    },
+    {
+      id: "allegations",
+      question: "Do you know what allegations were made?",
+      options: [
+        { id: "yes-written", label: "Yes — I received them in writing" },
+        { id: "yes-verbal", label: "Yes — I was told verbally" },
+        { id: "partially", label: "I know some, but not all" },
+        { id: "no", label: "No — I don't know the allegations" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "What documentation do you have?",
+      options: [
+        { id: "safety-plan", label: "Safety plan document" },
+        { id: "court-papers", label: "Court papers or orders" },
+        { id: "communications", label: "Texts, emails, or letters from DCYF" },
+        { id: "notes", label: "Notes from meetings or visits" },
+        { id: "none", label: "I don't have documentation yet" },
+      ]
+    },
+    {
+      id: "services",
+      question: "Have you been asked to complete services?",
+      options: [
+        { id: "yes-complying", label: "Yes — and I'm participating" },
+        { id: "yes-struggling", label: "Yes — but I'm struggling to complete them" },
+        { id: "yes-disagree", label: "Yes — but I disagree with them" },
+        { id: "no", label: "No services have been required" },
+        { id: "waiting", label: "Waiting for services to start" },
+      ]
+    },
+    {
+      id: "deadline",
+      question: "Do you have upcoming hearings or deadlines?",
+      options: [
+        { id: "days", label: "Yes — within the next few days" },
+        { id: "weeks", label: "Yes — within the next few weeks" },
+        { id: "scheduled", label: "Hearing is scheduled" },
+        { id: "unknown", label: "I don't know" },
+        { id: "none", label: "No upcoming deadlines" },
+      ]
+    },
+    {
+      id: "communication",
+      question: "How is communication with your caseworker?",
+      options: [
+        { id: "good", label: "Good — we communicate regularly" },
+        { id: "difficult", label: "Difficult — hard to reach them" },
+        { id: "tense", label: "Tense or adversarial" },
+        { id: "unclear", label: "Unclear — I don't know what's expected" },
+        { id: "no-contact", label: "No contact recently" },
+      ]
+    },
+    {
+      id: "safety",
+      question: "Do you feel safe right now?",
+      options: [
+        { id: "safe", label: "Yes — I feel safe" },
+        { id: "stressed", label: "Safe but extremely stressed" },
+        { id: "unsafe-other", label: "No — due to someone else involved in the case" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What matters most to you right now?",
+      options: [
+        { id: "reunification", label: "Getting my children back" },
+        { id: "understand", label: "Understanding the process" },
+        { id: "attorney", label: "Finding or talking to an attorney" },
+        { id: "allegations", label: "Responding to allegations" },
+        { id: "services", label: "Completing required services" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
   ],
   unsure: [
     {
@@ -272,7 +1125,87 @@ const followUpQuestions: Record<SystemId, FollowUpQuestion[]> = {
         { id: "retaliation", label: "I faced consequences for speaking up" },
         { id: "confused", label: "I'm still trying to understand what happened" },
       ]
-    }
+    },
+    {
+      id: "who-involved",
+      question: "Who was involved?",
+      options: [
+        { id: "government", label: "A government agency or employee" },
+        { id: "employer", label: "An employer or workplace" },
+        { id: "landlord", label: "A landlord or property manager" },
+        { id: "police", label: "Police or law enforcement" },
+        { id: "school", label: "A school or educational institution" },
+        { id: "healthcare", label: "A healthcare provider" },
+        { id: "other", label: "Someone else" },
+        { id: "multiple", label: "Multiple parties" },
+      ]
+    },
+    {
+      id: "timing",
+      question: "When did this happen?",
+      options: [
+        { id: "current", label: "It's happening now" },
+        { id: "recent", label: "Within the last few weeks" },
+        { id: "months", label: "Within the last few months" },
+        { id: "over-year", label: "More than a year ago" },
+        { id: "ongoing", label: "It's been ongoing" },
+      ]
+    },
+    {
+      id: "urgency",
+      question: "Is there any immediate urgency?",
+      options: [
+        { id: "deadline", label: "Yes — I have a deadline coming up" },
+        { id: "safety", label: "Yes — there's a safety concern" },
+        { id: "escalating", label: "The situation is getting worse" },
+        { id: "stable", label: "No immediate urgency" },
+        { id: "unsure", label: "I'm not sure" },
+      ]
+    },
+    {
+      id: "evidence",
+      question: "Do you have any documentation?",
+      options: [
+        { id: "yes", label: "Yes — documents, photos, or records" },
+        { id: "some", label: "Some, but not organized" },
+        { id: "witnesses", label: "Witnesses but no documents" },
+        { id: "none", label: "No documentation" },
+        { id: "unsure-what", label: "I don't know what counts" },
+      ]
+    },
+    {
+      id: "prior-attempts",
+      question: "Have you tried to address this?",
+      options: [
+        { id: "yes-formal", label: "Yes — formally (complaint, appeal, etc.)" },
+        { id: "yes-informal", label: "Yes — informally (calls, conversations)" },
+        { id: "no-afraid", label: "No — afraid of consequences" },
+        { id: "no-unsure", label: "No — not sure where to start" },
+        { id: "no", label: "No" },
+      ]
+    },
+    {
+      id: "family-impact",
+      question: "Has this affected others in your household?",
+      options: [
+        { id: "children", label: "Children are affected" },
+        { id: "family", label: "Family members are affected" },
+        { id: "financial", label: "Financial impact on household" },
+        { id: "just-me", label: "Primarily affects just me" },
+        { id: "prefer-not", label: "I prefer not to answer" },
+      ]
+    },
+    {
+      id: "priority",
+      question: "What would help you most right now?",
+      options: [
+        { id: "understand", label: "Understanding what happened" },
+        { id: "options", label: "Knowing my options" },
+        { id: "document", label: "Help documenting the situation" },
+        { id: "resources", label: "Finding resources or help" },
+        { id: "just-start", label: "Just getting started somewhere" },
+      ]
+    },
   ],
 };
 
