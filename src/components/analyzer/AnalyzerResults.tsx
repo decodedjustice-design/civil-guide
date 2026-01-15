@@ -52,15 +52,15 @@ const patternLabels = {
 const ToolCard = ({ name, purpose, relevance, link, icon: Icon, isLocked, lockReason }: ToolCardProps) => {
   if (isLocked) {
     return (
-      <div className="p-6 rounded-2xl bg-stone-100/60 border border-stone-200/50 opacity-60">
+      <div className="p-6 rounded-2xl bg-muted/60 border border-border/50 opacity-60">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-stone-200/50 flex items-center justify-center shrink-0">
-            <Icon className="w-6 h-6 text-stone-400" />
+          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
+            <Icon className="w-6 h-6 text-muted-foreground" />
           </div>
           <div className="flex-1">
-            <h4 className="text-lg font-medium text-stone-400 mb-1">{name}</h4>
-            <p className="text-sm text-stone-400 mb-3">{purpose}</p>
-            <p className="text-xs text-stone-400 italic">{lockReason}</p>
+            <h4 className="text-lg font-medium text-muted-foreground mb-1">{name}</h4>
+            <p className="text-sm text-muted-foreground mb-3">{purpose}</p>
+            <p className="text-xs text-muted-foreground italic">{lockReason}</p>
           </div>
         </div>
       </div>
@@ -70,20 +70,20 @@ const ToolCard = ({ name, purpose, relevance, link, icon: Icon, isLocked, lockRe
   return (
     <Link 
       to={link}
-      className="block p-6 rounded-2xl bg-white border border-stone-200 hover:border-amber-300/50 hover:shadow-lg transition-all duration-300 group"
+      className="block p-6 rounded-2xl bg-card border border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 group"
     >
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl bg-amber-50 group-hover:bg-amber-100 flex items-center justify-center shrink-0 transition-colors">
-          <Icon className="w-6 h-6 text-amber-600" />
+        <div className="w-12 h-12 rounded-xl bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center shrink-0 transition-colors">
+          <Icon className="w-6 h-6 text-primary" />
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between mb-1">
-            <h4 className="text-lg font-medium text-stone-800 group-hover:text-amber-700 transition-colors">{name}</h4>
-            <ArrowRight className="w-4 h-4 text-amber-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            <h4 className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">{name}</h4>
+            <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
           </div>
-          <p className="text-sm text-stone-600 mb-3">{purpose}</p>
-          <div className="pt-3 border-t border-stone-100">
-            <p className="text-xs text-amber-700 font-medium">
+          <p className="text-sm text-muted-foreground mb-3">{purpose}</p>
+          <div className="pt-3 border-t border-border">
+            <p className="text-xs text-primary font-medium">
               Shown because: {relevance}
             </p>
           </div>
@@ -116,15 +116,15 @@ export function AnalyzerResults({
   const lockedTools = tools.filter(t => t.isLocked);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-amber-50/20 to-stone-50">
+    <div className="min-h-screen bg-gradient-hero">
       <div className="max-w-2xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         
         {/* Page Header */}
         <header className="mb-16 text-center">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-stone-800 mb-4 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 tracking-tight">
             What This Means for Your Situation
           </h1>
-          <p className="text-stone-500 text-base max-w-lg mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-base max-w-lg mx-auto leading-relaxed">
             Based on what you shared, here's how this system usually works — and what matters next.
           </p>
         </header>
@@ -132,53 +132,53 @@ export function AnalyzerResults({
         {/* Section 1: System Summary Card (Collapsed by default) */}
         <section className="mb-8">
           <Collapsible open={systemSummaryOpen} onOpenChange={setSystemSummaryOpen}>
-            <div className="rounded-2xl bg-white border border-stone-200 overflow-hidden shadow-sm">
-              <CollapsibleTrigger className="w-full p-6 flex items-center justify-between text-left hover:bg-stone-50/50 transition-colors">
+            <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-sm">
+              <CollapsibleTrigger className="w-full p-6 flex items-center justify-between text-left hover:bg-surface-hover transition-colors">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-lg font-medium text-stone-800">{systemLabel}</span>
+                    <span className="text-lg font-medium text-foreground">{systemLabel}</span>
                     {location && (
-                      <span className="text-sm text-stone-500">• {location}</span>
+                      <span className="text-sm text-muted-foreground">• {location}</span>
                     )}
                   </div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-sm font-medium">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
                     {patternLabels[patternStrength]}
                   </div>
                 </div>
-                <div className="ml-4 p-2 rounded-lg hover:bg-stone-100 transition-colors">
+                <div className="ml-4 p-2 rounded-lg hover:bg-muted transition-colors">
                   {systemSummaryOpen ? (
-                    <ChevronUp className="w-5 h-5 text-stone-400" />
+                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-stone-400" />
+                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
               </CollapsibleTrigger>
               
               <CollapsibleContent>
-                <div className="px-6 pb-6 pt-2 border-t border-stone-100 space-y-6">
+                <div className="px-6 pb-6 pt-2 border-t border-border space-y-6">
                   <div>
-                    <h4 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">What this system controls</h4>
-                    <p className="text-stone-700 leading-relaxed">{systemControls}</p>
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">What this system controls</h4>
+                    <p className="text-foreground leading-relaxed">{systemControls}</p>
                   </div>
                   
                   <div>
-                    <h4 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">What it does not control</h4>
-                    <p className="text-stone-700 leading-relaxed">{systemDoesNotControl}</p>
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">What it does not control</h4>
+                    <p className="text-foreground leading-relaxed">{systemDoesNotControl}</p>
                   </div>
                   
                   <div>
-                    <h4 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">Who actually makes decisions</h4>
-                    <p className="text-stone-700 leading-relaxed">{decisionMakers}</p>
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">Who actually makes decisions</h4>
+                    <p className="text-foreground leading-relaxed">{decisionMakers}</p>
                   </div>
                   
                   <div>
-                    <h4 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">Where people usually get stuck</h4>
-                    <p className="text-stone-700 leading-relaxed">{commonStuckPoints}</p>
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">Where people usually get stuck</h4>
+                    <p className="text-foreground leading-relaxed">{commonStuckPoints}</p>
                   </div>
                   
-                  <div className="pt-4 border-t border-stone-100">
-                    <p className="text-sm text-stone-500 italic">
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-sm text-muted-foreground italic">
                       None of this means you did anything wrong.
                     </p>
                   </div>
@@ -191,35 +191,35 @@ export function AnalyzerResults({
         {/* Section 2: What Usually Happens (Accordion) */}
         <section className="mb-8">
           <Collapsible open={whatHappensOpen} onOpenChange={setWhatHappensOpen}>
-            <div className="rounded-2xl bg-white border border-stone-200 overflow-hidden shadow-sm">
-              <CollapsibleTrigger className="w-full p-6 flex items-center justify-between text-left hover:bg-stone-50/50 transition-colors">
-                <h3 className="text-lg font-medium text-stone-800">What Usually Happens</h3>
-                <div className="p-2 rounded-lg hover:bg-stone-100 transition-colors">
+            <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-sm">
+              <CollapsibleTrigger className="w-full p-6 flex items-center justify-between text-left hover:bg-surface-hover transition-colors">
+                <h3 className="text-lg font-medium text-foreground">What Usually Happens</h3>
+                <div className="p-2 rounded-lg hover:bg-muted transition-colors">
                   {whatHappensOpen ? (
-                    <ChevronUp className="w-5 h-5 text-stone-400" />
+                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-stone-400" />
+                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
               </CollapsibleTrigger>
               
               <CollapsibleContent>
-                <div className="px-6 pb-6 pt-2 border-t border-stone-100">
+                <div className="px-6 pb-6 pt-2 border-t border-border">
                   <div className="space-y-4 mb-6">
                     {whatUsuallyHappens.map((item, i) => (
-                      <p key={i} className="text-stone-700 leading-relaxed">
+                      <p key={i} className="text-foreground leading-relaxed">
                         {item}
                       </p>
                     ))}
                   </div>
                   
-                  <div className="pt-4 border-t border-stone-100">
-                    <h4 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-3">
+                  <div className="pt-4 border-t border-border">
+                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-3">
                       What people often misinterpret
                     </h4>
                     <ul className="space-y-2">
                       {whatPeopleMisinterpret.map((item, i) => (
-                        <li key={i} className="text-stone-600 text-sm leading-relaxed pl-4 border-l-2 border-amber-200">
+                        <li key={i} className="text-muted-foreground text-sm leading-relaxed pl-4 border-l-2 border-primary/30">
                           {item}
                         </li>
                       ))}
@@ -233,27 +233,27 @@ export function AnalyzerResults({
 
         {/* Section 3: Pattern Insight */}
         <section className="mb-12">
-          <div className="rounded-2xl bg-amber-50/50 border border-amber-100 p-6">
+          <div className="rounded-2xl bg-primary/5 border border-primary/20 p-6">
             {patternStrength === 'none' ? (
               <>
-                <p className="text-stone-700 leading-relaxed mb-2">
+                <p className="text-foreground leading-relaxed mb-2">
                   This may be one of the first documented cases — which makes your records especially important.
                 </p>
-                <p className="text-sm text-stone-500">
+                <p className="text-sm text-muted-foreground">
                   Without existing patterns, your documentation could help identify emerging issues.
                 </p>
               </>
             ) : (
               <>
-                <p className="text-stone-700 leading-relaxed mb-3">
+                <p className="text-foreground leading-relaxed mb-3">
                   Other people have reported similar issues with this system.
                 </p>
-                <p className="text-sm text-stone-600 mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   {patternStrength === 'possible' && "There are some indications of a broader pattern, though more information would help confirm this."}
                   {patternStrength === 'strong' && "This pattern has been documented in multiple cases, which can strengthen your position."}
                   {patternStrength === 'very_strong' && "This is a well-documented pattern with significant supporting evidence."}
                 </p>
-                <div className="text-sm text-amber-700">
+                <div className="text-sm text-primary">
                   <span className="font-medium">Why this matters:</span> Documented patterns can influence which attorneys take interest, 
                   which escalation paths make sense, and how you organize your evidence.
                 </div>
@@ -264,7 +264,7 @@ export function AnalyzerResults({
 
         {/* Section 4: Tools That Matter Right Now */}
         <section className="mb-12">
-          <h2 className="text-xl font-semibold text-stone-800 mb-6">
+          <h2 className="text-xl font-semibold text-foreground mb-6">
             Tools That Matter Right Now
           </h2>
           
@@ -285,8 +285,8 @@ export function AnalyzerResults({
 
         {/* Section 5: Gentle Reality Check */}
         <section className="mb-12">
-          <div className="rounded-2xl bg-stone-100/50 border border-stone-200/50 p-6">
-            <p className="text-stone-600 leading-relaxed">
+          <div className="rounded-2xl bg-muted/50 border border-border p-6">
+            <p className="text-muted-foreground leading-relaxed">
               This process is rarely fast or fair. Progress usually comes from clarity, not force. 
               What you do now creates options later.
             </p>
@@ -297,8 +297,9 @@ export function AnalyzerResults({
         <section className="text-center">
           <Button 
             onClick={onStartOrganizing}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-8 py-6 text-base rounded-xl shadow-sm hover:shadow-md transition-all"
+            variant="hero"
             size="lg"
+            className="px-8 py-6 text-base"
             asChild
           >
             <Link to="/self-help">
@@ -310,7 +311,7 @@ export function AnalyzerResults({
             <div className="mt-6">
               <Link 
                 to={`/guide/${primaryGuideId}`}
-                className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm font-medium transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
                 Read the full guide for this system
