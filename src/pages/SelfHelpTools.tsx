@@ -11,12 +11,14 @@ import {
   Lock,
   ArrowRight,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  BookOpen
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { useAuth } from "@/contexts/AuthContext";
+import { educationalGuides } from "@/data/educationalGuides";
 
 const tools = [
   {
@@ -188,10 +190,55 @@ export default function SelfHelpTools() {
             ))}
           </div>
 
+          {/* Educational Guides Section */}
+          <div className="mt-12 pt-8 border-t border-border">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-accent" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">Educational Guides</h2>
+                  <p className="text-sm text-muted-foreground">In-depth guides for navigating specific systems</p>
+                </div>
+              </div>
+              <Button variant="soft" size="sm" asChild>
+                <Link to="/rights-insight">
+                  View All
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {educationalGuides.slice(0, 2).map((guide) => (
+                <Link
+                  key={guide.id}
+                  to={`/full-guide/${guide.id}`}
+                  className="group p-5 rounded-2xl bg-card border border-border hover:border-accent/30 hover:shadow-glow transition-all duration-300"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <h3 className="font-semibold text-foreground group-hover:text-accent transition-colors">
+                      {guide.title}
+                    </h3>
+                    <span className="text-xs text-muted-foreground shrink-0">{guide.readTime}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {guide.whatThisSystemIs.description.slice(0, 120)}...
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-sm font-medium text-accent">
+                    Read Guide
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* Sign In CTA - only show if not logged in */}
           {!user && (
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-card to-card/50 border border-border text-center">
-              <Lock className="w-12 h-12 text-primary mx-auto mb-4" />
+            <div className="mt-10 p-8 rounded-2xl bg-gradient-to-br from-card to-card/50 border border-border text-center">
+              <Lock className="w-12 h-12 text-accent mx-auto mb-4" />
               <h2 className="text-xl font-semibold text-foreground mb-2">
                 Sign in to access your tools
               </h2>

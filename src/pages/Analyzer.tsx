@@ -1653,9 +1653,9 @@ export default function Analyzer() {
           <img 
             src={heroImage} 
             alt="" 
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover opacity-15"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-background/40" />
         </div>
         
         <div className="container relative py-12 lg:py-16">
