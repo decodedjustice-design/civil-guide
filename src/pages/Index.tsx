@@ -87,9 +87,9 @@ const Index = () => {
               <img 
                 src={heroImage} 
                 alt="" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover opacity-70"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/30 to-transparent" />
             </div>
 
             {/* Text Content */}
@@ -131,9 +131,9 @@ const Index = () => {
               <img 
                 src={heroImage} 
                 alt="" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover opacity-80"
               />
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-background/20 to-background/60" />
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-background/10 to-background/40" />
             </div>
           </div>
         </div>

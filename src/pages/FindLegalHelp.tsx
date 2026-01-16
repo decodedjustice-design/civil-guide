@@ -13,12 +13,19 @@ import {
   Home,
   Briefcase,
   Accessibility,
-  Clock
+  Clock,
+  ChevronDown
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const resourceTypes = [
   { id: "all", label: "All Resources" },
@@ -268,6 +275,15 @@ export default function FindLegalHelp() {
     return matchesFilter && matchesSearch;
   });
 
+  // Group resources by type for accordion display
+  const groupedResources = filteredResources.reduce((acc, resource) => {
+    if (!acc[resource.type]) {
+      acc[resource.type] = [];
+    }
+    acc[resource.type].push(resource);
+    return acc;
+  }, {} as Record<string, typeof resources>);
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "civil-rights": return Shield;
@@ -281,13 +297,18 @@ export default function FindLegalHelp() {
     }
   };
 
+  const getTypeLabel = (type: string) => {
+    const typeObj = resourceTypes.find(t => t.id === type);
+    return typeObj?.label || type;
+  };
+
   return (
     <Layout>
       <div className="container py-12 lg:py-20">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
-            <Scale className="w-8 h-8 text-primary" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 mb-6">
+            <Scale className="w-8 h-8 text-accent" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Find Legal Help
@@ -304,10 +325,10 @@ export default function FindLegalHelp() {
 
         {/* Attorney Search Coming Soon */}
         <div className="max-w-4xl mx-auto mb-8">
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-accent/10 to-transparent border border-accent/20">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6 text-primary" />
+              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 text-accent" />
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-foreground mb-2">
@@ -337,7 +358,7 @@ export default function FindLegalHelp() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search resources..."
-                className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
               />
             </div>
           </div>
@@ -350,8 +371,8 @@ export default function FindLegalHelp() {
                 onClick={() => setActiveFilter(type.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                   activeFilter === type.id
-                    ? "bg-primary text-primary-foreground shadow-glow"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-2 border-transparent hover:border-primary/30"
+                    ? "bg-accent text-accent-foreground shadow-glow"
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-2 border-transparent hover:border-accent/30"
                 }`}
               >
                 {type.label}
@@ -360,64 +381,49 @@ export default function FindLegalHelp() {
           </div>
         </div>
 
-        {/* Resources List */}
+        {/* Resources by Category - Accordion View */}
         <div className="max-w-4xl mx-auto">
-          <div className="space-y-4">
-            {filteredResources.map((resource) => {
-              const Icon = getTypeIcon(resource.type);
-              return (
-                <div
-                  key={resource.name}
-                  className="p-6 rounded-2xl bg-card border-2 border-border hover:border-primary/30 transition-all duration-200"
-                >
-                  <div className="flex flex-col md:flex-row md:items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center shrink-0">
-                      <Icon className="w-6 h-6 text-foreground" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="text-lg font-semibold text-foreground">
-                          {resource.name}
-                        </h3>
-                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                          resource.serviceType === "legal" 
-                            ? "bg-primary/20 text-primary border border-primary/30" 
-                            : "bg-muted text-muted-foreground border border-border"
-                        }`}>
-                          {resource.serviceType === "legal" ? "Legal Services" : "Informational"}
-                        </span>
+          {activeFilter === "all" ? (
+            // Show grouped by category with accordions
+            <Accordion type="multiple" className="space-y-4">
+              {Object.entries(groupedResources).map(([type, typeResources]) => {
+                const Icon = getTypeIcon(type);
+                return (
+                  <AccordionItem 
+                    key={type} 
+                    value={type}
+                    className="rounded-2xl bg-card border border-border overflow-hidden"
+                  >
+                    <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-secondary/30 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                          <Icon className="w-5 h-5 text-accent" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="font-semibold text-foreground">{getTypeLabel(type)}</h3>
+                          <p className="text-sm text-muted-foreground">{typeResources.length} resources</p>
+                        </div>
                       </div>
-                      <p className="text-muted-foreground mb-4">
-                        {resource.description}
-                      </p>
-                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          {resource.location}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Phone className="w-4 h-4" />
-                          {resource.phone}
-                        </span>
-                        {resource.website !== "#" && (
-                          <a
-                            href={resource.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-primary font-medium hover:underline px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors"
-                          >
-                            <Globe className="w-4 h-4" />
-                            Visit Website
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-4">
+                      <div className="space-y-4 pt-2">
+                        {typeResources.map((resource) => (
+                          <ResourceCard key={resource.name} resource={resource} />
+                        ))}
                       </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          ) : (
+            // Show flat list when filtered
+            <div className="space-y-4">
+              {filteredResources.map((resource) => (
+                <ResourceCard key={resource.name} resource={resource} expanded />
+              ))}
+            </div>
+          )}
 
           {filteredResources.length === 0 && (
             <div className="text-center py-12">
@@ -430,61 +436,112 @@ export default function FindLegalHelp() {
 
         {/* Guidance Section */}
         <div className="max-w-3xl mx-auto mt-16 p-8 rounded-2xl bg-card border border-border">
-          <h2 className="text-xl font-semibold text-foreground mb-4">
+          <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+            <span className="w-1 h-6 bg-accent rounded-full" />
             Tips for Finding the Right Help
           </h2>
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-medium shrink-0">1</span>
-              <span className="text-muted-foreground">
-                <strong className="text-foreground">Know your issue area.</strong> Different attorneys specialize in different areas (civil rights, housing, employment, disability, etc.).
-              </span>
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">1</span>
+              <p className="text-muted-foreground">
+                <strong className="text-foreground">Start with legal aid organizations</strong> — they can often provide free consultations and help you understand your options.
+              </p>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-medium shrink-0">2</span>
-              <span className="text-muted-foreground">
-                <strong className="text-foreground">Check eligibility.</strong> Legal aid organizations often have income requirements for free services.
-              </span>
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">2</span>
+              <p className="text-muted-foreground">
+                <strong className="text-foreground">Prepare before you call</strong> — have dates, names, and a brief summary of what happened ready.
+              </p>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-medium shrink-0">3</span>
-              <span className="text-muted-foreground">
-                <strong className="text-foreground">Prepare your information.</strong> Having your documents organized can help attorneys understand your situation faster.
-              </span>
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">3</span>
+              <p className="text-muted-foreground">
+                <strong className="text-foreground">Ask about fees upfront</strong> — many civil rights attorneys work on contingency (no fee unless you win).
+              </p>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-medium shrink-0">4</span>
-              <span className="text-muted-foreground">
-                <strong className="text-foreground">Ask about consultations.</strong> Many attorneys offer free initial consultations to discuss your case.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-medium shrink-0">5</span>
-              <span className="text-muted-foreground">
-                <strong className="text-foreground">Consider trauma-informed resources.</strong> If your situation involves trauma, look for services that specialize in supportive, understanding approaches.
-              </span>
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">4</span>
+              <p className="text-muted-foreground">
+                <strong className="text-foreground">Know your deadlines</strong> — civil rights claims often have strict filing deadlines (sometimes as short as 180 days).
+              </p>
             </li>
           </ul>
         </div>
 
         {/* CTA */}
-        <div className="max-w-2xl mx-auto mt-12 text-center">
+        <div className="max-w-2xl mx-auto mt-16 text-center">
           <p className="text-muted-foreground mb-6">
-            Need help organizing your information before contacting an attorney?
+            Not sure what kind of help you need? The Analyzer can help you understand your situation.
           </p>
-          <Button variant="hero" size="lg" className="shadow-glow" asChild>
-            <Link to="/self-help">
-              Use Self-Help Tools
+          <Button variant="hero" size="lg" asChild>
+            <Link to="/analyzer">
+              Start the Analyzer
               <ArrowRight className="w-5 h-5" />
             </Link>
           </Button>
         </div>
 
-        {/* Bottom Disclaimer */}
+        {/* Disclaimer */}
         <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-border">
           <Disclaimer className="justify-center" />
         </div>
       </div>
     </Layout>
+  );
+}
+
+// Resource Card Component
+function ResourceCard({ resource, expanded = false }: { resource: typeof resources[0]; expanded?: boolean }) {
+  const [isOpen, setIsOpen] = useState(expanded);
+  
+  return (
+    <div className="p-4 rounded-xl bg-secondary/30 border border-border hover:border-accent/30 transition-all">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full text-left flex items-start justify-between gap-3"
+      >
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <h4 className="font-medium text-foreground">{resource.name}</h4>
+            <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+              resource.serviceType === "legal" 
+                ? "bg-accent/20 text-accent border border-accent/30" 
+                : "bg-muted text-muted-foreground border border-border"
+            }`}>
+              {resource.serviceType === "legal" ? "Legal Services" : "Informational"}
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground flex items-center gap-1">
+            <MapPin className="w-3 h-3" />
+            {resource.location}
+          </p>
+        </div>
+        <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+      
+      {isOpen && (
+        <div className="mt-3 pt-3 border-t border-border">
+          <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
+          <div className="flex flex-wrap gap-3 text-sm">
+            <span className="flex items-center gap-1 text-muted-foreground">
+              <Phone className="w-4 h-4" />
+              {resource.phone}
+            </span>
+            {resource.website !== "#" && (
+              <a
+                href={resource.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-accent font-medium hover:underline px-3 py-1 rounded-lg bg-accent/10 hover:bg-accent/20 transition-colors"
+              >
+                <Globe className="w-4 h-4" />
+                Visit Website
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

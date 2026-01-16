@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
-import decodedJusticeLogo from "@/assets/decoded-justice-logo-full.png";
+import decodedJusticeLogo from "@/assets/decoded-justice-logo-new.png";
 
 const footerLinks = {
   platform: [

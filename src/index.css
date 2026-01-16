@@ -29,9 +29,13 @@
     --muted: 40 8% 93%;
     --muted-foreground: 220 10% 45%;
 
-    /* Soft teal accent for highlights */
-    --accent: 180 25% 40%;
+    /* Soft teal accent for highlights - used for section headers and dividers */
+    --accent: 175 35% 42%;
     --accent-foreground: 0 0% 100%;
+    
+    /* Teal highlight for emphasis */
+    --teal: 175 35% 42%;
+    --teal-foreground: 0 0% 100%;
 
     /* Soft rose for alerts/important */
     --destructive: 0 55% 50%;
