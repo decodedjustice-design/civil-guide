@@ -30,29 +30,149 @@ export default function About() {
               </p>
             </div>
 
-            <div className="prose prose-invert max-w-none">
-              <div className="p-8 rounded-2xl bg-card border border-border mb-8">
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  Decoded Justice was born from a simple but profound realization: when people face potential civil rights 
-                  violations or need to engage with complex systems, they often feel overwhelmed, confused, and alone.
-                </p>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  The legal system wasn't designed to be understood by everyday people. Official documents are written in 
-                  language that intimidates. Deadlines are buried in fine print. And the very people who need help the most 
-                  often don't know where to begin looking for it.
-                </p>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  This platform exists to change that. Not by providing legal advice — that's what attorneys are for — 
-                  but by providing clarity, organization, and preparation so that when you do speak with a professional, 
-                  you're ready. So that when you need to make decisions, you understand what you're deciding.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Everyone deserves access to understanding. That's what we're building here.
-                </p>
+            <div className="prose max-w-none">
+              <div className="space-y-8">
+                {/* Opening */}
+                <div className="p-8 rounded-2xl bg-card border border-border">
+                  <p className="text-muted-foreground leading-relaxed text-lg mb-4">
+                    Decoded Justice did not begin as a company.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed text-lg font-medium">
+                    It began when the systems that were supposed to act simply did not.
+                  </p>
+                </div>
+
+                {/* The Story */}
+                <div className="space-y-6 text-muted-foreground leading-relaxed">
+                  <p>
+                    After a landlord refused rental assistance and pursued eviction, the founder and her family were pushed into homelessness and into Washington's shelter and coordinated entry system. What should have been an organized path to stability became a maze of lost assessments, changing case managers, and rules that were never clearly explained.
+                  </p>
+
+                  <p>
+                    While they were still living in shelter, police shot her partner with a so-called "less-lethal" weapon, nearly killing him and leaving lasting injuries. The criminal case that followed came directly from that incident. He was assigned counsel. On paper, he was represented.
+                  </p>
+
+                  <div className="p-6 rounded-xl bg-secondary/30 border border-border my-8">
+                    <p className="text-foreground font-medium mb-4">In reality, nothing happened.</p>
+                    <ul className="space-y-2 text-muted-foreground">
+                      <li>His attorneys did not investigate.</li>
+                      <li>They did not challenge the record.</li>
+                      <li>They did not file motions.</li>
+                      <li>They did not respond.</li>
+                    </ul>
+                  </div>
+
+                  <p className="text-foreground font-medium">
+                    When the people responsible for protecting his rights failed to act, there was only one option left: she had to learn the system herself.
+                  </p>
+
+                  <p>
+                    At the same time, life did not pause. His incarceration triggered the loss of household benefits and automatic child support actions, despite his inability to earn income. Housing instability continued. A housing voucher finally arrived more than a year into shelter living, only to bring new harm—landlord harassment, resistance to the voucher, and repeated illegal eviction attempts.
+                  </p>
+
+                  <p>
+                    Then another system entered her home.
+                  </p>
+
+                  <p>
+                    A fourteen-year-old was left in her care. She chose to protect the child, and Child Protective Services became part of her life overnight. Expectations were immediate. Guidance was minimal. Consequences were enormous.
+                  </p>
+
+                  <div className="p-6 rounded-xl bg-muted/30 border border-border my-8">
+                    <p className="text-foreground font-medium mb-3">Housing. Shelters. Police. Courts. Public defense. Child welfare. Public benefits.</p>
+                    <p className="text-muted-foreground">
+                      Each system operated independently. Each demanded compliance. None explained how to navigate.
+                    </p>
+                    <div className="mt-4 space-y-1 text-muted-foreground">
+                      <p>There was no roadmap.</p>
+                      <p>There was no coordination.</p>
+                      <p>There was no margin for error.</p>
+                      <p className="text-foreground font-medium">Consequences were life changing.</p>
+                    </div>
+                  </div>
+
+                  <p className="text-lg text-foreground font-medium">
+                    So she built what was missing.
+                  </p>
+
+                  <p>
+                    Late at night, without help or training, she began documenting everything: timelines that aligned police reports, court dates and deadlines, agency actions, documents and evidence structures, public requests, structured records that turned scattered paperwork into coherent narratives.
+                  </p>
+
+                  <p>
+                    She did not study law because she wanted to. She learned it because life demanded it of her.
+                  </p>
+
+                  <p className="text-muted-foreground italic border-l-4 border-primary/30 pl-4">
+                    She learned the system too late to protect the person she was trying to save—but not too late to recognize the tipping scales and build something that will be ready when the next person needs it.
+                  </p>
+                </div>
+
+                {/* Mission */}
+                <div className="p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
+                  <h2 className="text-xl font-semibold text-foreground mb-4">Decoded Justice exists to prevent that silence from happening to others.</h2>
+                  
+                  <p className="text-muted-foreground leading-relaxed mb-4">
+                    This platform does not provide legal advice. That responsibility belongs to attorneys.
+                  </p>
+                  
+                  <p className="text-muted-foreground leading-relaxed mb-4">
+                    Decoded Justice provides clarity, structure, and preparation—so people are not left trying to understand the law for the first time at the moment that hurts the most.
+                  </p>
+
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      Which system you are in
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      What usually happens next
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      How to prepare for the actions coming
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      What information actually matters
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      How to preserve your story before it is overwritten
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Values */}
+                <div className="space-y-4">
+                  <p className="text-muted-foreground leading-relaxed">
+                    Decoded Justice is not about fighting louder.
+                  </p>
+                  <p className="text-foreground font-medium text-lg">
+                    It is about understanding earlier.
+                  </p>
+                </div>
+
+                {/* Positioning */}
+                <div className="text-center py-8">
+                  <p className="text-2xl md:text-3xl font-bold text-foreground">
+                    Clarity in the chaos.
+                  </p>
+                  <p className="text-2xl md:text-3xl font-bold text-foreground">
+                    Justice when systems fail.
+                  </p>
+                  <p className="text-2xl md:text-3xl font-bold text-foreground">
+                    Empathy at every step.
+                  </p>
+                  <p className="text-muted-foreground mt-6">
+                    That is what is being built here.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="text-center">
+            <div className="text-center mt-12">
               <Button variant="hero" size="lg" asChild>
                 <Link to="/about">
                   Learn About Our Mission
@@ -286,15 +406,20 @@ export default function About() {
             </div>
           </section>
 
-          {/* Values */}
+          {/* Values - Positioning Statement */}
           <section className="mb-16">
-            <h2 className="text-xl font-semibold text-foreground mb-6 text-center">Our Core Values</h2>
+            <div className="text-center mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                Clarity. Justice. Empathy.
+              </h2>
+              <p className="text-muted-foreground">Our guiding principles</p>
+            </div>
             <div className="grid sm:grid-cols-2 gap-4">
               {[
-                { title: "Clarity", description: "Replace confusion with understanding. Know where you stand." },
-                { title: "Organization", description: "Keep what matters in one secure, accessible place." },
-                { title: "Preparation", description: "Be ready for the conversations that matter most." },
-                { title: "Orientation", description: "Understand how systems work before engaging with them." },
+                { title: "Clarity", description: "Replace confusion with understanding. Know where you stand and what your options are." },
+                { title: "Organization", description: "Keep evidence, timelines, and notes in one secure, accessible place." },
+                { title: "Preparation", description: "Be ready for conversations with attorneys, agencies, and oversight bodies." },
+                { title: "Orientation", description: "Understand how systems work before you engage with them." },
               ].map((value) => (
                 <div key={value.title} className="p-5 rounded-xl bg-secondary/30 border border-border/50">
                   <h3 className="font-medium text-foreground mb-1">{value.title}</h3>
