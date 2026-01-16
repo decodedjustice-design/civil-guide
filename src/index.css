@@ -7,72 +7,72 @@
 @layer base {
   :root {
     /* Decoded Justice - Calm, Light, Trauma-Aware Design System */
-    /* Stone/amber palette matching AnalyzerResults */
-    --background: 40 20% 97%;
-    --foreground: 25 10% 20%;
+    /* Stone/warm gray palette with muted slate accents */
+    --background: 40 15% 97%;
+    --foreground: 220 15% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 25 10% 20%;
+    --card-foreground: 220 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 25 10% 20%;
+    --popover-foreground: 220 15% 20%;
 
-    /* Warm amber - primary brand color for action/hope */
-    --primary: 35 90% 50%;
+    /* Muted slate - primary brand color for calm professionalism */
+    --primary: 220 20% 35%;
     --primary-foreground: 0 0% 100%;
 
     /* Light stone for secondary elements */
-    --secondary: 40 15% 92%;
-    --secondary-foreground: 25 10% 35%;
+    --secondary: 40 12% 92%;
+    --secondary-foreground: 220 15% 30%;
 
     /* Subtle muted tones */
-    --muted: 40 10% 93%;
-    --muted-foreground: 25 5% 45%;
+    --muted: 40 8% 93%;
+    --muted-foreground: 220 10% 45%;
 
-    /* Amber accent for highlights */
-    --accent: 35 85% 55%;
+    /* Soft teal accent for highlights */
+    --accent: 180 25% 40%;
     --accent-foreground: 0 0% 100%;
 
     /* Soft rose for alerts/important */
-    --destructive: 0 65% 55%;
+    --destructive: 0 55% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* UI elements */
     --border: 40 10% 85%;
     --input: 40 10% 90%;
-    --ring: 35 90% 50%;
+    --ring: 220 20% 35%;
 
     --radius: 0.75rem;
 
     /* Custom tokens for Decoded Justice */
     --surface-elevated: 0 0% 100%;
-    --surface-hover: 40 15% 95%;
-    --text-soft: 25 5% 55%;
-    --text-softer: 25 5% 65%;
-    --success: 160 60% 40%;
-    --warning: 45 90% 50%;
+    --surface-hover: 40 12% 95%;
+    --text-soft: 220 10% 50%;
+    --text-softer: 220 8% 60%;
+    --success: 160 45% 35%;
+    --warning: 45 70% 45%;
     
-    /* Gradients - light theme */
-    --gradient-hero: linear-gradient(135deg, hsl(40 20% 97%) 0%, hsl(35 30% 95%) 50%, hsl(40 20% 97%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 15% 98%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(35 90% 50%) 0%, hsl(30 85% 45%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(35 90% 55%) 0%, hsl(30 85% 50%) 100%);
+    /* Gradients - light theme with calm slate */
+    --gradient-hero: linear-gradient(135deg, hsl(40 15% 97%) 0%, hsl(40 20% 95%) 50%, hsl(40 15% 97%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 12% 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(220 20% 35%) 0%, hsl(220 25% 30%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(180 25% 40%) 0%, hsl(180 30% 35%) 100%);
 
     /* Shadows - softer for light theme */
-    --shadow-sm: 0 2px 8px hsl(25 10% 20% / 0.06);
-    --shadow-md: 0 4px 16px hsl(25 10% 20% / 0.08);
-    --shadow-lg: 0 8px 32px hsl(25 10% 20% / 0.12);
-    --shadow-glow: 0 0 40px hsl(35 90% 50% / 0.15);
+    --shadow-sm: 0 2px 8px hsl(220 15% 20% / 0.05);
+    --shadow-md: 0 4px 16px hsl(220 15% 20% / 0.07);
+    --shadow-lg: 0 8px 32px hsl(220 15% 20% / 0.10);
+    --shadow-glow: 0 0 40px hsl(220 20% 35% / 0.12);
 
     /* Sidebar */
-    --sidebar-background: 40 15% 96%;
-    --sidebar-foreground: 25 10% 25%;
-    --sidebar-primary: 35 90% 50%;
+    --sidebar-background: 40 12% 96%;
+    --sidebar-foreground: 220 15% 25%;
+    --sidebar-primary: 220 20% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 15% 92%;
-    --sidebar-accent-foreground: 25 10% 30%;
+    --sidebar-accent: 40 12% 92%;
+    --sidebar-accent-foreground: 220 15% 30%;
     --sidebar-border: 40 10% 88%;
-    --sidebar-ring: 35 90% 50%;
+    --sidebar-ring: 220 20% 35%;
   }
 }
 
@@ -139,7 +139,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(35 90% 45%) 0%, hsl(25 85% 40%) 100%);
+    background: linear-gradient(135deg, hsl(220 25% 30%) 0%, hsl(180 25% 35%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

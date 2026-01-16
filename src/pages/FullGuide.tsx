@@ -12,13 +12,15 @@ import {
   CheckCircle,
   XCircle,
   Eye,
-  Lightbulb,
   Scale,
-  FileText
+  FileText,
+  Wrench,
+  ChevronDown
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { GuideAccordionSection } from "@/components/guides/GuideAccordionSection";
 import { educationalGuides, type EducationalGuide } from "@/data/educationalGuides";
 
 export default function FullGuide() {
@@ -72,10 +74,10 @@ export default function FullGuide() {
       </section>
 
       <div className="container py-12 lg:py-16">
-        <div className="max-w-3xl mx-auto space-y-12">
+        <div className="max-w-3xl mx-auto space-y-4">
           
-          {/* Section 1: Before You Start */}
-          <section className="p-6 rounded-2xl bg-secondary/30 border border-border">
+          {/* Before You Start - Always visible */}
+          <div className="p-6 rounded-2xl bg-secondary/30 border border-border">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
                 <Heart className="w-5 h-5 text-primary" />
@@ -88,16 +90,15 @@ export default function FullGuide() {
             <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-4">
               {guide.beforeYouStart.consent}
             </p>
-          </section>
+          </div>
 
-          {/* Section 2: What This System Is */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <span className="text-primary font-bold">1</span>
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">What This System Is</h2>
-            </div>
+          {/* Section 1: What This System Is */}
+          <GuideAccordionSection 
+            title="What This System Is" 
+            number={1} 
+            variant="highlight"
+            defaultOpen={true}
+          >
             <div className="space-y-4">
               <p className="text-muted-foreground leading-relaxed">
                 {guide.whatThisSystemIs.description}
@@ -113,16 +114,13 @@ export default function FullGuide() {
                 </div>
               </div>
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 3: Why It Feels Confusing */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-                <span className="text-accent font-bold">2</span>
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">Why It Feels So Confusing</h2>
-            </div>
+          {/* Section 2: Why It Feels Confusing */}
+          <GuideAccordionSection 
+            title="Why It Feels So Confusing" 
+            number={2}
+          >
             <p className="text-muted-foreground leading-relaxed mb-4">
               {guide.whyConfusing.explanation}
             </p>
@@ -137,16 +135,13 @@ export default function FullGuide() {
                 ))}
               </ul>
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 4: What Usually Happens */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <span className="text-primary font-bold">3</span>
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">What Usually Happens</h2>
-            </div>
+          {/* Section 3: What Usually Happens */}
+          <GuideAccordionSection 
+            title="What Usually Happens" 
+            number={3}
+          >
             <p className="text-sm text-muted-foreground mb-4">The common real-world pattern people experience:</p>
             <div className="space-y-3">
               {guide.whatUsuallyHappens.map((step, i) => (
@@ -158,16 +153,14 @@ export default function FullGuide() {
                 </div>
               ))}
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 5: What Success Actually Looks Like */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
-                <span className="text-success font-bold">4</span>
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">What Success Actually Looks Like</h2>
-            </div>
+          {/* Section 4: What Success Actually Looks Like */}
+          <GuideAccordionSection 
+            title="What Success Actually Looks Like" 
+            number={4}
+            variant="success"
+          >
             <p className="text-muted-foreground leading-relaxed mb-4">
               {guide.successReframe.reality}
             </p>
@@ -179,16 +172,15 @@ export default function FullGuide() {
                 </div>
               ))}
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 6: What They Know — But You Don't */}
-          <section className="p-6 rounded-2xl bg-card border-2 border-accent/30">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-                <Eye className="w-5 h-5 text-accent" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">What They Know — But You Don't</h2>
-            </div>
+          {/* Section 5: What They Know — But You Don't */}
+          <GuideAccordionSection 
+            title="What They Know — But You Don't" 
+            number={5}
+            variant="warning"
+            icon={<Eye className="w-4 h-4" />}
+          >
             <p className="text-muted-foreground leading-relaxed mb-4">
               {guide.internalKnowledge.explanation}
             </p>
@@ -200,16 +192,13 @@ export default function FullGuide() {
                 </div>
               ))}
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 7: What People Often Misunderstand */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-destructive/20 flex items-center justify-center">
-                <span className="text-destructive font-bold">5</span>
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">What People Often Misunderstand</h2>
-            </div>
+          {/* Section 6: What People Often Misunderstand */}
+          <GuideAccordionSection 
+            title="What People Often Misunderstand" 
+            number={6}
+          >
             <p className="text-sm text-muted-foreground mb-4">Common traps and misconceptions:</p>
             <div className="space-y-3">
               {guide.misunderstandings.traps.map((trap, i) => (
@@ -219,16 +208,14 @@ export default function FullGuide() {
                 </div>
               ))}
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 8: What Actually Matters */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <span className="text-primary font-bold">6</span>
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">What Actually Matters</h2>
-            </div>
+          {/* Section 7: What Actually Matters */}
+          <GuideAccordionSection 
+            title="What Actually Matters" 
+            number={7}
+            variant="highlight"
+          >
             <div className="grid sm:grid-cols-2 gap-3">
               {guide.whatMatters.map((item, i) => (
                 <div key={i} className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
@@ -237,16 +224,15 @@ export default function FullGuide() {
                 </div>
               ))}
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 9: What You Can Do Safely */}
-          <section className="p-6 rounded-2xl bg-success/5 border border-success/20">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-success" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">What You Can Do Safely</h2>
-            </div>
+          {/* Section 8: What You Can Do Safely */}
+          <GuideAccordionSection 
+            title="What You Can Do Safely" 
+            number={8}
+            variant="success"
+            icon={<Shield className="w-4 h-4" />}
+          >
             <p className="text-sm text-muted-foreground mb-4">
               Low-risk steps that help even if you never escalate:
             </p>
@@ -260,16 +246,14 @@ export default function FullGuide() {
                 </li>
               ))}
             </ul>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 10: When It's Time to Escalate */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
-                <Scale className="w-5 h-5 text-accent" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">When It's Time to Escalate</h2>
-            </div>
+          {/* Section 9: When It's Time to Escalate */}
+          <GuideAccordionSection 
+            title="When It's Time to Escalate" 
+            number={9}
+            icon={<Scale className="w-4 h-4" />}
+          >
             <p className="text-muted-foreground leading-relaxed mb-4">
               {guide.escalation.explanation}
             </p>
@@ -284,29 +268,60 @@ export default function FullGuide() {
                 ))}
               </ul>
             </div>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Section 11: Closing */}
-          <section className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground">A Final Note</h2>
-            </div>
+          {/* Section 10: Trauma-Aware Closing */}
+          <GuideAccordionSection 
+            title="A Final Note" 
+            number={10}
+            variant="highlight"
+            icon={<Heart className="w-4 h-4" />}
+          >
             <p className="text-muted-foreground leading-relaxed">
               {guide.closing.reassurance}
             </p>
-          </section>
+          </GuideAccordionSection>
 
-          {/* Sources & References */}
-          <section>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                <FileText className="w-5 h-5 text-foreground" />
+          {/* Section 11: Templates & Tools (Collapsible) */}
+          <GuideAccordionSection 
+            title="Templates & Tools" 
+            icon={<Wrench className="w-4 h-4" />}
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              Practical resources to help you organize your situation:
+            </p>
+            <div className="space-y-3">
+              <div className="p-4 rounded-lg bg-card border border-border">
+                <h4 className="font-medium text-foreground mb-2">Timeline Template</h4>
+                <p className="text-sm text-muted-foreground">Document events in chronological order with dates, people involved, and outcomes.</p>
               </div>
-              <h2 className="text-xl font-semibold text-foreground">Sources & References</h2>
+              <div className="p-4 rounded-lg bg-card border border-border">
+                <h4 className="font-medium text-foreground mb-2">Evidence Log</h4>
+                <p className="text-sm text-muted-foreground">Track documents, photos, and communications with notes on relevance.</p>
+              </div>
+              <div className="p-4 rounded-lg bg-card border border-border">
+                <h4 className="font-medium text-foreground mb-2">Communication Tracker</h4>
+                <p className="text-sm text-muted-foreground">Record who said what, when, and how (in-person, phone, email, text).</p>
+              </div>
             </div>
+            <div className="mt-4">
+              <Button variant="soft" size="sm" asChild>
+                <Link to="/self-help">
+                  <Wrench className="w-4 h-4 mr-2" />
+                  Access All Self-Help Tools
+                </Link>
+              </Button>
+            </div>
+          </GuideAccordionSection>
+
+          {/* Sources & References (Collapsible) */}
+          <GuideAccordionSection 
+            title="Sources & References" 
+            icon={<FileText className="w-4 h-4" />}
+          >
+            <p className="text-sm text-muted-foreground mb-4">
+              Official sources for verification and further reading:
+            </p>
             <div className="space-y-3">
               {guide.sources.map((source, i) => (
                 <a
@@ -330,7 +345,7 @@ export default function FullGuide() {
                 </a>
               ))}
             </div>
-          </section>
+          </GuideAccordionSection>
 
           {/* Related Resources */}
           <section className="p-6 rounded-2xl bg-card border border-border">
