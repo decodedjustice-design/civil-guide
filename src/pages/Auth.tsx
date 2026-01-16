@@ -6,6 +6,28 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
+/**
+ * Validates redirect URL to prevent open redirect attacks.
+ * Only allows internal paths starting with / that are not protocol-relative.
+ */
+const getValidatedRedirect = (redirect: string | null): string => {
+  if (!redirect) return "/";
+  
+  // Only allow internal paths (must start with /)
+  if (!redirect.startsWith("/")) return "/";
+  
+  // Prevent protocol-relative URLs (//evil.com)
+  if (redirect.startsWith("//")) return "/";
+  
+  // Prevent javascript: urls
+  if (redirect.toLowerCase().startsWith("javascript:")) return "/";
+  
+  // Prevent data: urls
+  if (redirect.toLowerCase().startsWith("data:")) return "/";
+  
+  return redirect;
+};
+
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
@@ -16,7 +38,7 @@ export default function Auth() {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
-  const redirectTo = searchParams.get("redirect") || "/";
+  const redirectTo = getValidatedRedirect(searchParams.get("redirect"));
 
   // Redirect if already logged in
   useEffect(() => {
