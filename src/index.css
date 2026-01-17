@@ -29,12 +29,14 @@
     --muted: 40 8% 93%;
     --muted-foreground: 220 10% 45%;
 
-    /* Soft teal accent for highlights - used for section headers and dividers */
-    --accent: 175 35% 42%;
+    /* Logo-matched accent colors - blue-dominant teal from brand */
+    --accent: 191 47% 44%;
     --accent-foreground: 0 0% 100%;
     
-    /* Teal highlight for emphasis */
-    --teal: 175 35% 42%;
+    /* Logo teal variants for UI consistency */
+    --accent-strong: 191 48% 35%;
+    --accent-soft: 197 50% 89%;
+    --teal: 191 47% 44%;
     --teal-foreground: 0 0% 100%;
 
     /* Soft rose for alerts/important */
@@ -60,7 +62,7 @@
     --gradient-hero: linear-gradient(135deg, hsl(40 15% 97%) 0%, hsl(40 20% 95%) 50%, hsl(40 15% 97%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 12% 98%) 100%);
     --gradient-primary: linear-gradient(135deg, hsl(220 20% 35%) 0%, hsl(220 25% 30%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(180 25% 40%) 0%, hsl(180 30% 35%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(191 47% 44%) 0%, hsl(191 48% 35%) 100%);
 
     /* Shadows - softer for light theme */
     --shadow-sm: 0 2px 8px hsl(220 15% 20% / 0.05);
@@ -143,7 +145,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(220 25% 30%) 0%, hsl(180 25% 35%) 100%);
+    background: linear-gradient(135deg, hsl(220 25% 30%) 0%, hsl(191 47% 44%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

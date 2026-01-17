@@ -78,6 +78,9 @@ export default {
           DEFAULT: "hsl(var(--teal))",
           foreground: "hsl(var(--teal-foreground))",
         },
+        // Logo-matched accent variants
+        "accent-strong": "hsl(var(--accent-strong))",
+        "accent-soft": "hsl(var(--accent-soft))",
       },
       borderRadius: {
         lg: "var(--radius)",
