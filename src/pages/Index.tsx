@@ -7,8 +7,7 @@ import {
   Users, 
   ArrowRight,
   Shield,
-  Clock,
-  Folder,
+  Heart,
   Compass
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
@@ -52,22 +51,26 @@ const principles = [
   {
     icon: Compass,
     title: "Clarity",
+    tagline: "Guided by",
     description: "Replace confusion with understanding. Know where you stand and what your options are."
   },
   {
-    icon: Folder,
-    title: "Organization",
-    description: "Keep evidence, timelines, and notes in one secure, accessible place."
+    icon: Scale,
+    title: "Justice",
+    tagline: "Rooted in",
+    description: "Transparency and fairness in how information is presented and organized."
   },
   {
-    icon: Clock,
-    title: "Preparation",
-    description: "Be ready for conversations with attorneys, agencies, and oversight bodies."
+    icon: Heart,
+    title: "Empathy",
+    tagline: "Built with",
+    description: "Every feature designed with care for those navigating difficult situations."
   },
   {
     icon: Shield,
-    title: "Orientation",
-    description: "Understand how systems work before you engage with them."
+    title: "Preparation",
+    tagline: "Focused on",
+    description: "Be ready for conversations with attorneys, agencies, and oversight bodies."
   },
 ];
 
@@ -204,12 +207,15 @@ const Index = () => {
             {principles.map((principle, index) => (
               <div
                 key={principle.title}
-                className="text-center p-6 rounded-2xl bg-card/50 border border-border/50 hover:border-primary/30 transition-all duration-300 animate-fade-up"
+                className="text-center p-6 rounded-2xl bg-card/50 border border-border/50 hover:border-accent/30 transition-all duration-300 animate-fade-up"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-4">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-accent/10 text-accent mb-4">
                   <principle.icon className="w-6 h-6" />
                 </div>
+                <p className="text-xs text-accent font-medium uppercase tracking-wider mb-1">
+                  {principle.tagline}
+                </p>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
                   {principle.title}
                 </h3>

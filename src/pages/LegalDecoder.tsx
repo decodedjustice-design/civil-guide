@@ -219,9 +219,9 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
         <div className="container relative py-12 lg:py-16">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
                 <FileText className="w-4 h-4" />
-                <span>Plain-Language Explanations</span>
+                <span>Guided by Clarity</span>
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Justice Decoder
@@ -237,10 +237,10 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
       <div className="container py-12 lg:py-16">
         <div className="max-w-4xl mx-auto">
           {/* Wellbeing Note */}
-          <div className="mb-8 p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-3">
-            <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+          <div className="mb-8 p-4 rounded-xl bg-accent/5 border border-accent/20 flex items-start gap-3">
+            <Heart className="w-5 h-5 text-accent shrink-0 mt-0.5" />
             <p className="text-sm text-muted-foreground">
-              You can pause at any time. This is educational only, and there's no pressure to act right now.
+              <span className="font-medium text-foreground">Built with empathy.</span> You can pause at any time. This is educational only, and there's no pressure to act right now.
             </p>
           </div>
 

@@ -104,9 +104,9 @@ export default function SelfHelpTools() {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border text-muted-foreground text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
               <Lock className="w-4 h-4" />
-              <span>Member Area</span>
+              <span>Built with Empathy</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Self-Help Tools

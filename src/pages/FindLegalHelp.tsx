@@ -307,8 +307,9 @@ export default function FindLegalHelp() {
       <div className="container py-12 lg:py-20">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 mb-6">
-            <Scale className="w-8 h-8 text-accent" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
+            <Scale className="w-4 h-4" />
+            <span>Rooted in Justice</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Find Legal Help
