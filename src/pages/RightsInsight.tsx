@@ -216,7 +216,7 @@ export default function RightsInsight() {
         {/* Browse by Topic (when showing all) */}
         {activeFilter === "all" && (
           <div className="max-w-4xl mx-auto mt-16">
-            <h2 className="text-xl font-semibold text-foreground mb-6">Browse by Topic</h2>
+            <h2 className="text-xl font-semibold text-accent mb-6 border-l-4 border-accent pl-4">Browse by Topic</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {systemCategories.map((category) => {
                 const Icon = systemIcons[category.id] || Shield;
@@ -253,7 +253,7 @@ export default function RightsInsight() {
         {/* Related links when filtered */}
         {activeFilter !== "all" && (
           <div className="max-w-4xl mx-auto mt-12 p-6 rounded-xl bg-card border border-border">
-            <h3 className="font-semibold text-foreground mb-4">Related Resources</h3>
+            <h3 className="font-semibold text-accent mb-4 border-l-4 border-accent pl-3">Related Resources</h3>
             <div className="flex flex-col sm:flex-row gap-3">
               <Button variant="soft" size="sm" asChild>
                 <Link to={`/support-network?filter=${activeFilter}`}>

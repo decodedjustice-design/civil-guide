@@ -37,8 +37,8 @@ export function Footer() {
                 className="h-14 md:h-16 w-auto"
               />
             </Link>
-            <p className="text-[10px] tracking-widest text-accent font-medium uppercase mb-2">
-              Clarity · Justice · Empathy
+            <p className="text-[10px] tracking-widest text-foreground/70 font-medium uppercase mb-2">
+              Clarity <span className="text-accent">·</span> Justice <span className="text-accent">·</span> Empathy
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed mb-3">
               A supportive space to regain clarity, organize what matters, and move forward with purpose.
@@ -53,13 +53,13 @@ export function Footer() {
           <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-6 lg:gap-8">
             {/* Platform Links */}
             <div>
-              <h3 className="text-xs font-semibold text-foreground mb-3">Platform</h3>
+              <h3 className="text-xs font-semibold text-accent mb-3">Platform</h3>
               <ul className="space-y-2">
                 {footerLinks.platform.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                      className="text-xs text-muted-foreground hover:text-accent transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -70,13 +70,13 @@ export function Footer() {
 
             {/* About Links */}
             <div>
-              <h3 className="text-xs font-semibold text-foreground mb-3">About</h3>
+              <h3 className="text-xs font-semibold text-accent mb-3">About</h3>
               <ul className="space-y-2">
                 {footerLinks.about.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                      className="text-xs text-muted-foreground hover:text-accent transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -87,13 +87,13 @@ export function Footer() {
 
             {/* Legal Links */}
             <div>
-              <h3 className="text-xs font-semibold text-foreground mb-3">Legal</h3>
+              <h3 className="text-xs font-semibold text-accent mb-3">Legal</h3>
               <ul className="space-y-2">
                 {footerLinks.legal.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                      className="text-xs text-muted-foreground hover:text-accent transition-colors"
                     >
                       {link.name}
                     </Link>

@@ -28,8 +28,8 @@ export function Header() {
             className="h-16 md:h-20 w-auto"
           />
           <div className="hidden md:flex flex-col">
-            <span className="text-xs tracking-widest text-accent font-medium uppercase">
-              Clarity · Justice · Empathy
+            <span className="text-xs tracking-widest text-foreground/70 font-medium uppercase">
+              Clarity <span className="text-accent">·</span> Justice <span className="text-accent">·</span> Empathy
             </span>
           </div>
         </Link>
@@ -41,10 +41,10 @@ export function Header() {
               key={item.name}
               to={item.href}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative",
                 location.pathname === item.href
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-hover"
+                  ? "text-accent after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-accent after:rounded-full"
+                  : "text-foreground hover:text-accent"
               )}
             >
               {item.name}
@@ -88,10 +88,10 @@ export function Header() {
                 to={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
-                  "block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                  "block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border-l-4",
                   location.pathname === item.href
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-surface-hover"
+                    ? "border-accent text-accent bg-accent/5"
+                    : "border-transparent text-foreground hover:text-accent hover:border-accent/50"
                 )}
               >
                 {item.name}

@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border-2 border-border bg-transparent hover:bg-secondary hover:border-primary/50 hover:text-foreground",
+          "border-2 border-accent bg-transparent text-accent hover:bg-accent hover:text-accent-foreground hover:border-accent",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost:
@@ -23,11 +23,11 @@ const buttonVariants = cva(
           "text-primary underline-offset-4 hover:underline",
         // Custom Decoded Justice variants
         hero:
-          "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold shadow-glow hover:opacity-90 hover:shadow-lg transition-all duration-300",
+          "bg-accent text-accent-foreground font-semibold shadow-md hover:bg-accent-strong hover:shadow-lg transition-all duration-300",
         accent:
-          "bg-accent text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 hover:shadow-md",
+          "bg-accent text-accent-foreground font-semibold shadow-sm hover:bg-accent-strong hover:shadow-md",
         soft:
-          "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 hover:border-primary/40",
+          "bg-accent/10 text-accent hover:bg-accent/20 border border-accent/20 hover:border-accent/40",
         glass:
           "bg-card/70 backdrop-blur-sm border border-border/50 text-foreground hover:bg-card/90",
       },
