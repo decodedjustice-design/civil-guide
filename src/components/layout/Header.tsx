@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import decodedJusticeLogo from "@/assets/decoded-justice-logo-new.png";
+import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const navigation = [
   { name: "Analyzer", href: "/analyzer" },

@@ -122,9 +122,9 @@ export default function Timeline() {
           <img 
             src={heroImage} 
             alt="" 
-            className="w-full h-full object-cover opacity-15"
+            className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-background/30" />
         </div>
         
         <div className="container relative py-12 lg:py-16">
