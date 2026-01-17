@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
-import decodedJusticeLogo from "@/assets/decoded-justice-logo-new.png";
+import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const footerLinks = {
   platform: [
@@ -34,7 +34,7 @@ export function Footer() {
               <img 
                 src={decodedJusticeLogo} 
                 alt="Decoded Justice" 
-                className="h-10 w-auto opacity-80"
+                className="h-14 md:h-16 w-auto"
               />
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed mb-3">
