@@ -37,11 +37,14 @@ export function Footer() {
                 className="h-14 md:h-16 w-auto"
               />
             </Link>
+            <p className="text-[10px] tracking-widest text-accent font-medium uppercase mb-2">
+              Clarity · Justice · Empathy
+            </p>
             <p className="text-xs text-muted-foreground leading-relaxed mb-3">
               A supportive space to regain clarity, organize what matters, and move forward with purpose.
             </p>
             <div className="flex items-center gap-1.5 text-[10px] text-text-softer">
-              <Heart className="w-2.5 h-2.5 text-primary" />
+              <Heart className="w-2.5 h-2.5 text-accent" />
               <span>Built with care for those who need it most</span>
             </div>
           </div>
