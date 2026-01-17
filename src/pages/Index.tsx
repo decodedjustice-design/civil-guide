@@ -146,7 +146,7 @@ const Index = () => {
       <section className="py-16 lg:py-24 bg-card/30">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-accent mb-4">
               Tools Built for Your Journey
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -195,7 +195,7 @@ const Index = () => {
       <section className="py-16 lg:py-24">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-accent mb-4">
               What We Help You Achieve
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -244,7 +244,7 @@ const Index = () => {
       <section className="py-16 lg:py-24">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center p-8 lg:p-12 rounded-3xl bg-gradient-to-br from-card to-card/50 border border-border">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-accent mb-4">
               Ready to Begin?
             </h2>
             <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
