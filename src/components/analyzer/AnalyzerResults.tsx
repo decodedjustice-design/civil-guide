@@ -276,7 +276,7 @@ export function AnalyzerResults({
             </div>
             <div className="p-6 space-y-3">
               <Link 
-                to={`/library?section=hidden-rules&subsection=what-systems-assume`}
+                to={`/rights-insight?section=hidden-rules&subsection=what-systems-assume`}
                 className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
               >
                 <span className="font-medium text-foreground group-hover:text-accent transition-colors">
@@ -285,7 +285,7 @@ export function AnalyzerResults({
                 <ArrowRight className="w-4 h-4 text-accent" />
               </Link>
               <Link 
-                to={`/library?section=systems-power&subsection=${systemId === 'cps_dcyf' ? 'cps-dcyf' : systemId}`}
+                to={`/rights-insight?section=systems-power&subsection=${systemId === 'cps_dcyf' ? 'cps-dcyf' : systemId}`}
                 className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
               >
                 <span className="font-medium text-foreground group-hover:text-accent transition-colors">
@@ -294,7 +294,7 @@ export function AnalyzerResults({
                 <ArrowRight className="w-4 h-4 text-accent" />
               </Link>
               <Link 
-                to={`/library?section=patterns-harm&subsection=individual-vs-systemic`}
+                to={`/rights-insight?section=patterns-harm&subsection=individual-vs-systemic`}
                 className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
               >
                 <span className="font-medium text-foreground group-hover:text-accent transition-colors">
@@ -366,11 +366,11 @@ export function AnalyzerResults({
           
           <div className="mt-4">
             <Link 
-              to="/library"
+              to="/rights-insight"
               className="inline-flex items-center gap-2 text-accent hover:text-accent/80 text-sm font-medium transition-colors"
             >
               <BookOpen className="w-4 h-4" />
-              Explore the Library
+              Explore Rights Insight
               <ArrowRight className="w-3 h-3" />
             </Link>
           </div>

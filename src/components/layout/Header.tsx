@@ -7,6 +7,7 @@ import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const navigation = [
   { name: "Analyzer", href: "/analyzer" },
+  { name: "Rights Insight", href: "/rights-insight" },
   { name: "Library", href: "/library" },
   { name: "Justice Decoder", href: "/legal-decoder" },
   { name: "Self-Help Tools", href: "/self-help" },

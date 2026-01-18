@@ -75,11 +75,11 @@ export default function Library() {
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-              The Library
+              Rights Insight
             </h1>
             
             <p className="text-lg md:text-xl text-accent font-medium mb-4">
-              The Library explains how systems actually operate — the rules they don't explain, the power they hold, and the patterns they follow.
+              Rights Insight explains how systems actually operate — the rules they don't explain, the power they hold, and the patterns they follow.
             </p>
             
             <p className="text-base text-muted-foreground/80 mb-6">
@@ -173,14 +173,14 @@ export default function Library() {
             </Link>
             
             <Link 
-              to="/rights-insight"
+              to="/library"
               className="p-6 bg-white rounded-xl border border-border hover:border-accent/30 hover:shadow-sm transition-all group"
             >
               <h3 className="font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
-                Browse Rights Insight
+                Browse the Library
               </h3>
               <p className="text-sm text-muted-foreground">
-                Explore educational guides organized by system type — police, housing, CPS, courts, and more.
+                Explore educational guides, templates, and sources organized by system type.
               </p>
             </Link>
           </div>
