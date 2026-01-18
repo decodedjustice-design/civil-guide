@@ -154,18 +154,21 @@ export default function About() {
                   </p>
                 </div>
 
-                {/* Positioning */}
+                {/* Positioning - Clarity · Justice · Empathy */}
                 <div className="text-center py-8">
                   <p className="text-2xl md:text-3xl font-bold text-foreground">
-                    Clarity in the chaos.
+                    <span className="text-accent">Clarity</span> in the chaos.
                   </p>
                   <p className="text-2xl md:text-3xl font-bold text-foreground">
-                    Justice when systems fail.
+                    <span className="text-accent">Justice</span> when systems fail.
                   </p>
                   <p className="text-2xl md:text-3xl font-bold text-foreground">
-                    Empathy at every step.
+                    <span className="text-accent">Empathy</span> at every step.
                   </p>
-                  <p className="text-muted-foreground mt-6">
+                  <p className="text-[11px] tracking-widest text-muted-foreground font-medium uppercase mt-6">
+                    Clarity <span className="text-accent">·</span> Justice <span className="text-accent">·</span> Empathy
+                  </p>
+                  <p className="text-muted-foreground mt-4">
                     That is what is being built here.
                   </p>
                 </div>

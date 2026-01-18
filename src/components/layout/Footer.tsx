@@ -30,14 +30,15 @@ export function Footer() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-6">
           {/* Brand Column */}
           <div className="lg:w-[280px] shrink-0">
-            <Link to="/" className="flex items-center gap-2 mb-3 hover:opacity-80 transition-opacity">
+            <Link to="/" className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity">
               <img 
                 src={decodedJusticeLogo} 
                 alt="Decoded Justice" 
                 className="h-14 md:h-16 w-auto"
               />
+              <span className="text-lg font-semibold text-foreground">Decoded Justice</span>
             </Link>
-            <p className="text-[10px] tracking-widest text-foreground/70 font-medium uppercase mb-2">
+            <p className="text-[10px] tracking-widest text-muted-foreground font-medium uppercase mb-2">
               Clarity <span className="text-accent">·</span> Justice <span className="text-accent">·</span> Empathy
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed mb-3">

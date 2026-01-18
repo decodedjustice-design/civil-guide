@@ -7,29 +7,32 @@
 @layer base {
   :root {
     /* Decoded Justice - Calm, Light, Trauma-Aware Design System */
-    /* Stone/warm gray palette with muted slate accents */
-    --background: 40 15% 97%;
-    --foreground: 220 15% 20%;
+    /* Brand color: #499FA4 | Supporting: #1F2933, #F4F7F8, #D8E3E6 */
+    
+    /* Soft slate background (#F4F7F8) */
+    --background: 200 20% 97%;
+    /* Charcoal text (#1F2933) */
+    --foreground: 207 27% 16%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 20%;
+    --card-foreground: 207 27% 16%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 20%;
+    --popover-foreground: 207 27% 16%;
 
-    /* Muted slate - primary brand color for calm professionalism */
-    --primary: 220 20% 35%;
+    /* Primary brand color - matches logo teal #499FA4 */
+    --primary: 183 38% 46%;
     --primary-foreground: 0 0% 100%;
 
     /* Light stone for secondary elements */
-    --secondary: 40 12% 92%;
-    --secondary-foreground: 220 15% 30%;
+    --secondary: 200 15% 94%;
+    --secondary-foreground: 207 27% 20%;
 
     /* Subtle muted tones */
-    --muted: 40 8% 93%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 200 12% 93%;
+    --muted-foreground: 207 15% 40%;
 
-    /* Brand teal #499FA4 - calm, credible, logo-matched */
+    /* Brand teal #499FA4 - primary identity color */
     --accent: 183 38% 46%;
     --accent-foreground: 0 0% 100%;
     
@@ -43,42 +46,42 @@
     --destructive: 0 55% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    /* UI elements */
-    --border: 40 10% 85%;
-    --input: 40 10% 90%;
-    --ring: 220 20% 35%;
+    /* UI elements - divider color (#D8E3E6) */
+    --border: 195 20% 87%;
+    --input: 195 15% 90%;
+    --ring: 183 38% 46%;
 
     --radius: 0.75rem;
 
     /* Custom tokens for Decoded Justice */
     --surface-elevated: 0 0% 100%;
-    --surface-hover: 40 12% 95%;
-    --text-soft: 220 10% 50%;
-    --text-softer: 220 8% 60%;
+    --surface-hover: 200 15% 95%;
+    --text-soft: 207 15% 45%;
+    --text-softer: 207 12% 55%;
     --success: 160 45% 35%;
     --warning: 45 70% 45%;
     
-    /* Gradients - light theme with calm slate */
-    --gradient-hero: linear-gradient(135deg, hsl(40 15% 97%) 0%, hsl(40 20% 95%) 50%, hsl(40 15% 97%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 12% 98%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(220 20% 35%) 0%, hsl(220 25% 30%) 100%);
+    /* Gradients - light theme with brand teal */
+    --gradient-hero: linear-gradient(135deg, hsl(200 20% 97%) 0%, hsl(200 25% 95%) 50%, hsl(200 20% 97%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(200 15% 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(183 38% 46%) 0%, hsl(183 42% 40%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(183 38% 46%) 0%, hsl(183 42% 35%) 100%);
 
     /* Shadows - softer for light theme */
-    --shadow-sm: 0 2px 8px hsl(220 15% 20% / 0.05);
-    --shadow-md: 0 4px 16px hsl(220 15% 20% / 0.07);
-    --shadow-lg: 0 8px 32px hsl(220 15% 20% / 0.10);
-    --shadow-glow: 0 0 40px hsl(220 20% 35% / 0.12);
+    --shadow-sm: 0 2px 8px hsl(207 27% 16% / 0.05);
+    --shadow-md: 0 4px 16px hsl(207 27% 16% / 0.07);
+    --shadow-lg: 0 8px 32px hsl(207 27% 16% / 0.10);
+    --shadow-glow: 0 0 40px hsl(183 38% 46% / 0.15);
 
     /* Sidebar */
-    --sidebar-background: 40 12% 96%;
-    --sidebar-foreground: 220 15% 25%;
-    --sidebar-primary: 220 20% 35%;
+    --sidebar-background: 200 15% 96%;
+    --sidebar-foreground: 207 27% 20%;
+    --sidebar-primary: 183 38% 46%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 12% 92%;
-    --sidebar-accent-foreground: 220 15% 30%;
-    --sidebar-border: 40 10% 88%;
-    --sidebar-ring: 220 20% 35%;
+    --sidebar-accent: 200 15% 92%;
+    --sidebar-accent-foreground: 207 27% 25%;
+    --sidebar-border: 195 20% 88%;
+    --sidebar-ring: 183 38% 46%;
   }
 }
 
