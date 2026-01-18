@@ -22,6 +22,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { PrintShareGuides } from "@/components/library/PrintShareGuides";
 import {
   rightsInsightGuides,
   systemCategories,
@@ -276,6 +277,11 @@ export default function RightsInsight() {
             </div>
           </div>
         )}
+
+        {/* Print & Share Guides Section */}
+        <div className="max-w-5xl mx-auto mt-16">
+          <PrintShareGuides />
+        </div>
 
         {/* CTA */}
         <div className="max-w-2xl mx-auto mt-16 text-center">
