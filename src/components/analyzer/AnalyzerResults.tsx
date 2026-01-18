@@ -70,20 +70,20 @@ const ToolCard = ({ name, purpose, relevance, link, icon: Icon, isLocked, lockRe
   return (
     <Link 
       to={link}
-      className="block p-6 rounded-2xl bg-card border border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 group"
+      className="block p-6 rounded-2xl bg-card border border-border hover:border-accent/50 hover:shadow-lg transition-all duration-300 group"
     >
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center shrink-0 transition-colors">
-          <Icon className="w-6 h-6 text-primary" />
+        <div className="w-12 h-12 rounded-xl bg-accent/10 group-hover:bg-accent/20 flex items-center justify-center shrink-0 transition-colors">
+          <Icon className="w-6 h-6 text-accent" />
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between mb-1">
-            <h4 className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">{name}</h4>
-            <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            <h4 className="text-lg font-medium text-foreground group-hover:text-accent transition-colors">{name}</h4>
+            <ArrowRight className="w-4 h-4 text-accent opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
           </div>
           <p className="text-sm text-muted-foreground mb-3">{purpose}</p>
           <div className="pt-3 border-t border-border">
-            <p className="text-xs text-primary font-medium">
+            <p className="text-xs text-accent font-medium">
               Shown because: {relevance}
             </p>
           </div>
@@ -141,8 +141,8 @@ export function AnalyzerResults({
                       <span className="text-sm text-muted-foreground">• {location}</span>
                     )}
                   </div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                    <span className="w-2 h-2 rounded-full bg-primary" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium">
+                    <span className="w-2 h-2 rounded-full bg-accent" />
                     {patternLabels[patternStrength]}
                   </div>
                 </div>
@@ -219,7 +219,7 @@ export function AnalyzerResults({
                     </h4>
                     <ul className="space-y-2">
                       {whatPeopleMisinterpret.map((item, i) => (
-                        <li key={i} className="text-muted-foreground text-sm leading-relaxed pl-4 border-l-2 border-primary/30">
+                        <li key={i} className="text-muted-foreground text-sm leading-relaxed pl-4 border-l-2 border-accent/30">
                           {item}
                         </li>
                       ))}
@@ -233,7 +233,7 @@ export function AnalyzerResults({
 
         {/* Section 3: Pattern Insight */}
         <section className="mb-12">
-          <div className="rounded-2xl bg-primary/5 border border-primary/20 p-6">
+          <div className="rounded-2xl bg-accent/5 border border-accent/20 p-6">
             {patternStrength === 'none' ? (
               <>
                 <p className="text-foreground leading-relaxed mb-2">
@@ -253,7 +253,7 @@ export function AnalyzerResults({
                   {patternStrength === 'strong' && "This pattern has been documented in multiple cases, which can strengthen your position."}
                   {patternStrength === 'very_strong' && "This is a well-documented pattern with significant supporting evidence."}
                 </p>
-                <div className="text-sm text-primary">
+                <div className="text-sm text-accent">
                   <span className="font-medium">Why this matters:</span> Documented patterns can influence which attorneys take interest, 
                   which escalation paths make sense, and how you organize your evidence.
                 </div>
@@ -262,7 +262,51 @@ export function AnalyzerResults({
           </div>
         </section>
 
-        {/* Section 4: Tools That Matter Right Now */}
+        {/* Section 4: How This System Really Works — Library Handoff */}
+        <section className="mb-12">
+          <div className="rounded-2xl bg-white border border-border overflow-hidden">
+            <div className="p-6 border-b border-border">
+              <h3 className="text-lg font-semibold text-accent mb-3">
+                How This System Really Works
+              </h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Most systems do not explain their internal rules, deadlines, or power structures. 
+                These sections explain what is usually happening behind the scenes.
+              </p>
+            </div>
+            <div className="p-6 space-y-3">
+              <Link 
+                to={`/library?section=hidden-rules&subsection=what-systems-assume`}
+                className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
+              >
+                <span className="font-medium text-foreground group-hover:text-accent transition-colors">
+                  Hidden Rules in {systemLabel}
+                </span>
+                <ArrowRight className="w-4 h-4 text-accent" />
+              </Link>
+              <Link 
+                to={`/library?section=systems-power&subsection=${systemId === 'cps_dcyf' ? 'cps-dcyf' : systemId}`}
+                className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
+              >
+                <span className="font-medium text-foreground group-hover:text-accent transition-colors">
+                  Who Holds Power in {systemLabel}
+                </span>
+                <ArrowRight className="w-4 h-4 text-accent" />
+              </Link>
+              <Link 
+                to={`/library?section=patterns-harm&subsection=individual-vs-systemic`}
+                className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
+              >
+                <span className="font-medium text-foreground group-hover:text-accent transition-colors">
+                  Patterns Seen in Similar Cases
+                </span>
+                <ArrowRight className="w-4 h-4 text-accent" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5: Tools That Matter Right Now */}
         <section className="mb-12">
           <h2 className="text-xl font-semibold text-foreground mb-6">
             Tools That Matter Right Now
@@ -283,7 +327,7 @@ export function AnalyzerResults({
           )}
         </section>
 
-        {/* Section 5: Gentle Reality Check */}
+        {/* Section 6: Gentle Reality Check */}
         <section className="mb-12">
           <div className="rounded-2xl bg-muted/50 border border-border p-6">
             <p className="text-muted-foreground leading-relaxed">
@@ -311,7 +355,7 @@ export function AnalyzerResults({
             <div className="mt-6">
               <Link 
                 to={`/guide/${primaryGuideId}`}
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-2 text-accent hover:text-accent/80 text-sm font-medium transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
                 Read the full guide for this system
@@ -319,6 +363,17 @@ export function AnalyzerResults({
               </Link>
             </div>
           )}
+          
+          <div className="mt-4">
+            <Link 
+              to="/library"
+              className="inline-flex items-center gap-2 text-accent hover:text-accent/80 text-sm font-medium transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+              Explore the Library
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
         </section>
 
       </div>
