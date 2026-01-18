@@ -113,7 +113,7 @@ export default function RightsInsight() {
               <span>Guided by Clarity</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Rights Insight
+              Library
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto">
               Understand how different systems work, what usually matters, and where people often lose time or focus. 
