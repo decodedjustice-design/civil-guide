@@ -20,7 +20,7 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass">
       <nav className="container flex items-center justify-between py-4">
-        {/* Logo with Brand Positioning */}
+        {/* Logo with Brand Name and Positioning */}
         <Link to="/" className="flex items-center gap-3 group hover:opacity-90 transition-opacity">
           <img 
             src={decodedJusticeLogo} 
@@ -28,7 +28,10 @@ export function Header() {
             className="h-16 md:h-20 w-auto"
           />
           <div className="hidden md:flex flex-col">
-            <span className="text-xs tracking-widest text-foreground/70 font-medium uppercase">
+            <span className="text-lg font-semibold text-foreground tracking-tight">
+              Decoded Justice
+            </span>
+            <span className="text-[10px] tracking-widest text-muted-foreground font-medium uppercase">
               Clarity <span className="text-accent">·</span> Justice <span className="text-accent">·</span> Empathy
             </span>
           </div>
