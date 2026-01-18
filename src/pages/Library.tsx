@@ -78,15 +78,47 @@ export default function Library() {
               The Library
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground mb-4">
-              Understanding how systems operate, hide rules, and create harm.
+            <p className="text-lg md:text-xl text-accent font-medium mb-4">
+              The Library explains how systems actually operate — the rules they don't explain, the power they hold, and the patterns they follow.
             </p>
             
-            <p className="text-base text-muted-foreground/80">
+            <p className="text-base text-muted-foreground/80 mb-6">
               This is not legal advice. It's educational context about how institutions work — 
               the patterns they follow, the assumptions they make, and the gaps between 
               what's promised and what happens.
             </p>
+            
+            {/* Section Questions Preview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-left max-w-2xl mx-auto mt-8">
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <span className="text-accent font-medium shrink-0">Systems & Power:</span>
+                <span>Who has control</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <span className="text-accent font-medium shrink-0">Hidden Rules:</span>
+                <span>What they don't tell you</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <span className="text-accent font-medium shrink-0">Patterns of Harm:</span>
+                <span>Repeated behaviors</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <span className="text-accent font-medium shrink-0">Process Reality:</span>
+                <span>What actually happens</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <span className="text-accent font-medium shrink-0">Evidence Truths:</span>
+                <span>What counts vs doesn't</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <span className="text-accent font-medium shrink-0">Safety & Retaliation:</span>
+                <span>Risks of action</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-muted-foreground md:col-span-2 justify-center">
+                <span className="text-accent font-medium shrink-0">Rights in Practice:</span>
+                <span>What rights look like in reality</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -191,7 +223,10 @@ function LibrarySectionCard({
         </div>
         
         <div className="flex-1 min-w-0">
-          <h2 className="font-semibold text-foreground text-lg">
+          <h2 className={cn(
+            "font-semibold text-lg transition-colors",
+            isExpanded ? "text-accent" : "text-foreground"
+          )}>
             {section.title}
           </h2>
           <p className="text-sm text-muted-foreground line-clamp-2">
