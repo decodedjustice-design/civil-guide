@@ -70,6 +70,12 @@ export default function LegalDecoder() {
   const handleDecode = async () => {
     if (!inputText.trim()) return;
     
+    // Require login to use the decoder
+    if (!user) {
+      navigate("/auth?redirect=/legal-decoder");
+      return;
+    }
+    
     setIsDecoding(true);
     setResult(null);
     
