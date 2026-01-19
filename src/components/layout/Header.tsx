@@ -9,9 +9,7 @@ const navigation = [
   { name: "Analyzer", href: "/analyzer" },
   { name: "Rights Insight", href: "/rights-insight" },
   { name: "Library", href: "/library" },
-  { name: "Justice Decoder", href: "/legal-decoder" },
-  { name: "Self-Help Tools", href: "/self-help" },
-  { name: "Find Legal Help", href: "/find-help" },
+  { name: "Find Help", href: "/find-help" },
 ];
 
 export function Header() {
