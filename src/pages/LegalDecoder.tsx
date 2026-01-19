@@ -28,6 +28,7 @@ export default function LegalDecoder() {
   const [bookmarked, setBookmarked] = useState(false);
   const [showExtractedText, setShowExtractedText] = useState(false);
   const [extractedFromPdf, setExtractedFromPdf] = useState(false);
+  const [selectedPdfName, setSelectedPdfName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { user } = useAuth();
@@ -35,14 +36,26 @@ export default function LegalDecoder() {
 
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
+    // Allow selecting the same file again later
+    e.target.value = "";
+
     if (!file) return;
 
     if (file.type !== "application/pdf") {
-      toast({ title: "Invalid file", description: "Please upload a PDF file", variant: "destructive" });
+      toast({
+        title: "Invalid file",
+        description: "Please upload a PDF file",
+        variant: "destructive",
+      });
       return;
     }
 
-    toast({ title: "Processing PDF", description: "Extracting text from your document..." });
+    setSelectedPdfName(file.name);
+    setExtractedFromPdf(false);
+    setShowExtractedText(false);
+
+    toast({ title: "PDF selected", description: `Reading “${file.name}”…` });
 
     try {
       const pdfjsLib = await import("pdfjs-dist");
@@ -50,7 +63,7 @@ export default function LegalDecoder() {
 
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      
+
       let fullText = "";
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
@@ -59,45 +72,57 @@ export default function LegalDecoder() {
         fullText += pageText + "\n\n";
       }
 
-      setInputText(fullText.trim());
+      const trimmed = fullText.trim();
+      setInputText(trimmed);
       setExtractedFromPdf(true);
-      toast({ title: "PDF processed", description: "Text extracted successfully. Click 'Decode Document' to analyze." });
+      setShowExtractedText(true);
+
+      toast({
+        title: "PDF processed",
+        description: trimmed
+          ? "Text extracted successfully. You can now decode the document."
+          : "We couldn’t extract readable text from this PDF (it may be scanned).",
+        variant: trimmed ? "default" : "destructive",
+      });
     } catch (err) {
-      toast({ title: "Error", description: "Could not extract text from PDF", variant: "destructive" });
+      toast({
+        title: "PDF error",
+        description: "Could not extract text from this PDF.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDecode = async () => {
-    if (!inputText.trim()) return;
-    
-    // Require login to use the decoder
+    if (!inputText.trim()) {
+      toast({ title: "Nothing to decode", description: "Paste text or upload a PDF first." });
+      return;
+    }
+
+    // Require login to use the decoder (avoid silent failure / 401)
     if (!user) {
+      toast({ title: "Sign in required", description: "Please sign in to decode a document." });
       navigate("/auth?redirect=/legal-decoder");
       return;
     }
-    
+
     setIsDecoding(true);
     setResult(null);
-    
+
     try {
       const { data, error } = await supabase.functions.invoke("decode-document", {
         body: { documentText: inputText },
       });
 
-      if (error) {
-        throw error;
-      }
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       setResult(data);
     } catch (err: any) {
       console.error("Decode error:", err);
       toast({
         title: "Analysis failed",
-        description: err.message || "Could not analyze the document. Please try again.",
+        description: err?.message || "Could not analyze the document. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -253,11 +278,19 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
           {/* Input Section */}
           <div className="mb-8">
             <div className="p-6 rounded-2xl bg-card border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-foreground">
-                  Paste your text or upload a PDF
-                </label>
+              <div className="flex items-center justify-between mb-3 gap-3">
                 <div>
+                  <label className="block text-sm font-medium text-foreground">
+                    Paste your text or upload a PDF
+                  </label>
+                  {selectedPdfName && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Selected PDF: <span className="font-medium text-foreground">{selectedPdfName}</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="shrink-0">
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -299,14 +332,26 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                 onChange={(e) => {
                   setInputText(e.target.value);
                   setExtractedFromPdf(false);
+                  setSelectedPdfName(null);
+                }}
+                onKeyDown={(e) => {
+                  // Avoid misleading "press Enter" expectations in a textarea.
+                  // Provide a reliable shortcut instead.
+                  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                    e.preventDefault();
+                    void handleDecode();
+                  }
                 }}
                 placeholder="Paste a legal document, notice, contract clause, or any official language you'd like explained in plain terms..."
                 className="w-full h-48 p-4 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
               />
               <div className="flex items-center justify-between mt-4">
-                <p className="text-xs text-muted-foreground">
-                  {inputText.length} characters
-                </p>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">{inputText.length} characters</p>
+                  <p className="text-xs text-muted-foreground">
+                    Tip: press <span className="font-medium text-foreground">Ctrl/⌘ + Enter</span> to decode.
+                  </p>
+                </div>
                 <div className="flex gap-3">
                   {inputText && (
                     <Button variant="ghost" size="sm" onClick={handleClear}>
