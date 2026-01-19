@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyzer_results: {
+        Row: {
+          answers: Json
+          common_stuck_points: string | null
+          created_at: string
+          decision_makers: string | null
+          entity_name: string | null
+          id: string
+          linked_guide_id: string | null
+          pattern_strength: string
+          system: string
+          system_controls: string | null
+          system_does_not_control: string | null
+          system_label: string
+          updated_at: string
+          user_id: string
+          what_people_misinterpret: string[] | null
+          what_usually_happens: string[] | null
+        }
+        Insert: {
+          answers?: Json
+          common_stuck_points?: string | null
+          created_at?: string
+          decision_makers?: string | null
+          entity_name?: string | null
+          id?: string
+          linked_guide_id?: string | null
+          pattern_strength?: string
+          system: string
+          system_controls?: string | null
+          system_does_not_control?: string | null
+          system_label: string
+          updated_at?: string
+          user_id: string
+          what_people_misinterpret?: string[] | null
+          what_usually_happens?: string[] | null
+        }
+        Update: {
+          answers?: Json
+          common_stuck_points?: string | null
+          created_at?: string
+          decision_makers?: string | null
+          entity_name?: string | null
+          id?: string
+          linked_guide_id?: string | null
+          pattern_strength?: string
+          system?: string
+          system_controls?: string | null
+          system_does_not_control?: string | null
+          system_label?: string
+          updated_at?: string
+          user_id?: string
+          what_people_misinterpret?: string[] | null
+          what_usually_happens?: string[] | null
+        }
+        Relationships: []
+      }
       case_profiles: {
         Row: {
           claim_tags: string[]
