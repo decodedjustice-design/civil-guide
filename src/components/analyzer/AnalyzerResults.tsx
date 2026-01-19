@@ -10,7 +10,10 @@ import {
   FileText,
   Search,
   Scale,
-  Share2
+  Share2,
+  Check,
+  Loader2,
+  LogIn
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -25,6 +28,11 @@ interface ToolCardProps {
   icon: React.ElementType;
   isLocked?: boolean;
   lockReason?: string;
+}
+
+interface SavedResult {
+  id: string;
+  savedAt: Date;
 }
 
 interface AnalyzerResultsProps {
@@ -42,6 +50,11 @@ interface AnalyzerResultsProps {
   primaryGuideId?: string;
   onSaveAnalysis?: () => void;
   onStartOrganizing?: () => void;
+  // Auto-save status props
+  isLoggedIn?: boolean;
+  isSaving?: boolean;
+  savedResult?: SavedResult | null;
+  saveError?: string | null;
 }
 
 const patternLabels = {
@@ -109,7 +122,11 @@ export function AnalyzerResults({
   tools,
   primaryGuideId,
   onSaveAnalysis,
-  onStartOrganizing
+  onStartOrganizing,
+  isLoggedIn = false,
+  isSaving = false,
+  savedResult = null,
+  saveError = null,
 }: AnalyzerResultsProps) {
   const [systemSummaryOpen, setSystemSummaryOpen] = useState(false);
   const [whatHappensOpen, setWhatHappensOpen] = useState(false);
@@ -118,9 +135,53 @@ export function AnalyzerResults({
   const unlockedTools = tools.filter(t => !t.isLocked);
   const lockedTools = tools.filter(t => t.isLocked);
 
+  // Format save time
+  const formatSaveTime = (date: Date) => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSecs = Math.floor(diffMs / 1000);
+    if (diffSecs < 60) return 'just now';
+    const diffMins = Math.floor(diffSecs / 60);
+    if (diffMins < 60) return `${diffMins}m ago`;
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-hero">
       <div className="max-w-2xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        
+        {/* Save Status Banner */}
+        {isLoggedIn ? (
+          <div className="mb-6 flex items-center justify-center">
+            {isSaving && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/60 text-muted-foreground text-sm">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Saving to your file...</span>
+              </div>
+            )}
+            {savedResult && !isSaving && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium">
+                <Check className="w-4 h-4" />
+                <span>Saved to your file · {formatSaveTime(savedResult.savedAt)}</span>
+              </div>
+            )}
+            {saveError && !isSaving && !savedResult && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 text-destructive text-sm">
+                <span>Could not save · Please try again later</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="mb-6 flex items-center justify-center">
+            <Link 
+              to="/auth?redirect=/analyzer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Sign in to save this result</span>
+            </Link>
+          </div>
+        )}
         
         {/* Page Header */}
         <header className="mb-16 text-center">

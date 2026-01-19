@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { 
   ArrowRight, 
@@ -22,6 +22,7 @@ import { CaseProfileForm } from "@/components/analyzer/CaseProfileForm";
 import { AnalyzerResults, generateResultContent } from "@/components/analyzer/AnalyzerResults";
 import { usePatternEngine, CivilRightsSystem } from "@/hooks/usePatternEngine";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAutoSaveAnalyzerResult } from "@/hooks/useAutoSaveAnalyzerResult";
 import heroImage from "@/assets/hero-analysis.png";
 
 type SystemId = 
@@ -1582,6 +1583,15 @@ export default function Analyzer() {
     mapSystemToEnum,
     extractClaimTags 
   } = usePatternEngine();
+  
+  const {
+    isLoggedIn,
+    isSaving,
+    savedResult,
+    saveError,
+    saveAnalyzerResult,
+    resetSaveState,
+  } = useAutoSaveAnalyzerResult();
 
   const handleAnalyze = useCallback((entity: string) => {
     if (selectedSystem) {
@@ -1634,6 +1644,7 @@ export default function Analyzer() {
     setSelectedSystem(null);
     setAnswers({});
     setShowResults(false);
+    resetSaveState();
   };
 
   const selectedSystemInfo = systemCategories.find(s => s.id === selectedSystem);
@@ -1644,6 +1655,26 @@ export default function Analyzer() {
   const generatedResultContent = selectedSystem 
     ? generateResultContent(selectedSystem, analysis?.strength || 'none')
     : null;
+
+  // Auto-save analyzer results when results are shown and user is logged in
+  useEffect(() => {
+    if (showResults && isLoggedIn && selectedSystem && generatedResultContent && !savedResult && !isSaving) {
+      saveAnalyzerResult({
+        system: selectedSystem,
+        systemLabel: generatedResultContent.label,
+        patternStrength: analysis?.strength || 'none',
+        answers: answers,
+        entityName: entityName || undefined,
+        systemControls: generatedResultContent.systemControls,
+        systemDoesNotControl: generatedResultContent.systemDoesNotControl,
+        decisionMakers: generatedResultContent.decisionMakers,
+        commonStuckPoints: generatedResultContent.commonStuckPoints,
+        whatUsuallyHappens: generatedResultContent.whatUsuallyHappens,
+        whatPeopleMisinterpret: generatedResultContent.whatPeopleMisinterpret,
+        linkedGuideId: generatedResultContent.primaryGuideId,
+      });
+    }
+  }, [showResults, isLoggedIn, selectedSystem, generatedResultContent, savedResult, isSaving, analysis?.strength, answers, entityName, saveAnalyzerResult]);
 
   return (
     <Layout>
@@ -1807,6 +1838,10 @@ export default function Analyzer() {
             whatPeopleMisinterpret={generatedResultContent.whatPeopleMisinterpret}
             tools={generatedResultContent.tools}
             primaryGuideId={generatedResultContent.primaryGuideId}
+            isLoggedIn={isLoggedIn}
+            isSaving={isSaving}
+            savedResult={savedResult}
+            saveError={saveError}
           />
           
           {/* Disclaimer at bottom */}
