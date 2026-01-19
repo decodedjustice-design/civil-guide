@@ -9,10 +9,12 @@ import {
   Clock,
   FileText,
   Search,
-  Scale
+  Scale,
+  Share2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { PrintShareModal } from "@/components/shared/PrintShareModal";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
 
 interface ToolCardProps {
@@ -111,6 +113,7 @@ export function AnalyzerResults({
 }: AnalyzerResultsProps) {
   const [systemSummaryOpen, setSystemSummaryOpen] = useState(false);
   const [whatHappensOpen, setWhatHappensOpen] = useState(false);
+  const [printShareOpen, setPrintShareOpen] = useState(false);
 
   const unlockedTools = tools.filter(t => !t.isLocked);
   const lockedTools = tools.filter(t => t.isLocked);
@@ -124,9 +127,18 @@ export function AnalyzerResults({
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 tracking-tight">
             What This Means for Your Situation
           </h1>
-          <p className="text-muted-foreground text-base max-w-lg mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-base max-w-lg mx-auto leading-relaxed mb-6">
             Based on what you shared, here's how this system usually works — and what matters next.
           </p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setPrintShareOpen(true)}
+            className="gap-2"
+          >
+            <Share2 className="w-4 h-4" />
+            Print or Share
+          </Button>
         </header>
 
         {/* Section 1: System Summary Card (Collapsed by default) */}
@@ -377,6 +389,13 @@ export function AnalyzerResults({
         </section>
 
       </div>
+
+      {/* Print/Share Modal */}
+      <PrintShareModal
+        open={printShareOpen}
+        onOpenChange={setPrintShareOpen}
+        title={`${systemLabel} - Analysis Results`}
+      />
     </div>
   );
 }

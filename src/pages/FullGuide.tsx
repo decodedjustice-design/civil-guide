@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { 
   BookOpen, 
@@ -15,16 +16,19 @@ import {
   Scale,
   FileText,
   Wrench,
-  ChevronDown
+  ChevronDown,
+  Share2
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { GuideAccordionSection } from "@/components/guides/GuideAccordionSection";
+import { PrintShareModal } from "@/components/shared/PrintShareModal";
 import { educationalGuides, type EducationalGuide } from "@/data/educationalGuides";
 
 export default function FullGuide() {
   const { guideId } = useParams<{ guideId: string }>();
+  const [printShareOpen, setPrintShareOpen] = useState(false);
   
   const guide = educationalGuides.find(g => g.id === guideId);
   
@@ -52,14 +56,25 @@ export default function FullGuide() {
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/60" />
         <div className="container relative py-12 lg:py-16">
           <div className="max-w-3xl mx-auto">
-            <Link 
-              to="/rights-insight" 
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Rights Insight
-            </Link>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4 ml-4">
+            <div className="flex items-center justify-between mb-4">
+              <Link 
+                to="/rights-insight" 
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Rights Insight
+              </Link>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setPrintShareOpen(true)}
+                className="gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                Print or Share
+              </Button>
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
               <BookOpen className="w-4 h-4" />
               <span>Full Educational Guide</span>
             </div>
@@ -386,6 +401,13 @@ export default function FullGuide() {
           </div>
         </div>
       </div>
+
+      {/* Print/Share Modal */}
+      <PrintShareModal
+        open={printShareOpen}
+        onOpenChange={setPrintShareOpen}
+        title={guide.title}
+      />
     </Layout>
   );
 }
