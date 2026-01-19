@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Printer, Download, Link2, Check, FileText, BookOpen, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +8,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { educationalGuides } from "@/data/educationalGuides";
+import { libraryContent } from "@/data/libraryContent";
 
 interface PrintShareModalProps {
   open: boolean;
@@ -24,6 +26,13 @@ interface PrintShareModalProps {
 type SourceType = "analyzer" | "rights-insight" | "library";
 type FormatType = "summary" | "full" | "handout";
 
+interface TopicOption {
+  id: string;
+  title: string;
+  url: string;
+  source: "rights-insight" | "library";
+}
+
 export function PrintShareModal({
   open,
   onOpenChange,
@@ -37,9 +46,42 @@ export function PrintShareModal({
   const [copied, setCopied] = useState(false);
   const [selectedSource, setSelectedSource] = useState<SourceType>(savedResultId ? "analyzer" : "rights-insight");
   const [selectedFormat, setSelectedFormat] = useState<FormatType>("summary");
+  const [selectedTopic, setSelectedTopic] = useState<TopicOption | null>(null);
 
   const currentUrl = pageUrl || window.location.href;
   const isFromAnalyzer = !!savedResultId || !!systemId;
+
+  // Generate available topics based on selected source
+  const availableTopics = useMemo((): TopicOption[] => {
+    if (selectedSource === "rights-insight") {
+      // Generate topics from library content sections (Rights Insight uses libraryContent)
+      const topics: TopicOption[] = [];
+      libraryContent.forEach(section => {
+        section.subsections.forEach(subsection => {
+          topics.push({
+            id: `${section.id}-${subsection.id}`,
+            title: `${section.title}: ${subsection.title}`,
+            url: `/rights-insight?section=${section.id}&subsection=${subsection.id}`,
+            source: "rights-insight"
+          });
+        });
+      });
+      return topics;
+    } else if (selectedSource === "library") {
+      // Generate topics from educational guides
+      return educationalGuides.map(guide => ({
+        id: guide.id,
+        title: guide.title,
+        url: `/guide/${guide.id}`,
+        source: "library" as const
+      }));
+    }
+    return [];
+  }, [selectedSource]);
+
+  // Determine if topic selection is required and if we can proceed
+  const isTopicRequired = selectedSource !== "analyzer";
+  const canProceed = !isTopicRequired || selectedTopic !== null;
 
   const sources = [
     { id: "analyzer" as SourceType, label: "My Analyzer Result", icon: BarChart3, disabled: !isFromAnalyzer },
@@ -52,6 +94,12 @@ export function PrintShareModal({
     { id: "full" as FormatType, label: "Full Guide", description: "Complete content" },
     { id: "handout" as FormatType, label: "Resource Handout", description: "For sharing with others" },
   ];
+
+  // Reset topic selection when source changes
+  const handleSourceChange = (sourceId: SourceType) => {
+    setSelectedSource(sourceId);
+    setSelectedTopic(null);
+  };
 
   const generatePrintContent = () => {
     let content = "";
@@ -99,34 +147,38 @@ NEXT STEPS:
 This document is for educational purposes only. 
 It is not legal advice. Consult an attorney for legal guidance.
       `;
-    } else if (selectedSource === "rights-insight") {
+    } else if (selectedSource === "rights-insight" && selectedTopic) {
+      const baseUrl = window.location.origin;
       content = `
 RIGHTS INSIGHT
-Topic: ${title}
+Topic: ${selectedTopic.title}
 Generated: ${now}
 
 ---
 
 This document contains educational information from Decoded Justice's Rights Insight section.
 
-Visit ${currentUrl} for the full interactive content.
+View full interactive version:
+${baseUrl}${selectedTopic.url}
 
 ---
 
 This document is for educational purposes only.
 It is not legal advice. Consult an attorney for legal guidance.
       `;
-    } else {
+    } else if (selectedSource === "library" && selectedTopic) {
+      const baseUrl = window.location.origin;
       content = `
 LIBRARY GUIDE
-Topic: ${title}
+Topic: ${selectedTopic.title}
 Generated: ${now}
 
 ---
 
 This document contains educational information from Decoded Justice's Library.
 
-Visit ${currentUrl} for the full interactive content.
+View full interactive version:
+${baseUrl}${selectedTopic.url}
 
 ---
 
@@ -139,14 +191,17 @@ It is not legal advice. Consult an attorney for legal guidance.
   };
 
   const handlePrint = () => {
+    if (!canProceed) return;
+    
     const content = printContent || generatePrintContent();
     const printWindow = window.open('', '_blank');
     if (printWindow) {
+      const printTitle = selectedTopic?.title || title;
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-          <title>${title} - Decoded Justice</title>
+          <title>${printTitle} - Decoded Justice</title>
           <style>
             body {
               font-family: 'Georgia', serif;
@@ -175,12 +230,15 @@ It is not legal advice. Consult an attorney for legal guidance.
   };
 
   const handleDownload = () => {
+    if (!canProceed) return;
+    
     const content = printContent || generatePrintContent();
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const fileName = `${title.toLowerCase().replace(/\s+/g, '-')}-${selectedFormat}-decoded-justice.txt`;
+    const downloadTitle = selectedTopic?.title || title;
+    const fileName = `${downloadTitle.toLowerCase().replace(/\s+/g, '-')}-${selectedFormat}-decoded-justice.txt`;
     a.download = fileName;
     document.body.appendChild(a);
     a.click();
@@ -191,8 +249,13 @@ It is not legal advice. Consult an attorney for legal guidance.
   };
 
   const handleCopyLink = async () => {
+    if (!canProceed) return;
+    
     try {
-      await navigator.clipboard.writeText(currentUrl);
+      const linkUrl = selectedTopic 
+        ? `${window.location.origin}${selectedTopic.url}` 
+        : currentUrl;
+      await navigator.clipboard.writeText(linkUrl);
       setCopied(true);
       toast.success("Link copied");
       setTimeout(() => setCopied(false), 2000);
@@ -203,7 +266,7 @@ It is not legal advice. Consult an attorney for legal guidance.
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-foreground">
             Print or Share
@@ -217,7 +280,7 @@ It is not legal advice. Consult an attorney for legal guidance.
             {sources.map((source) => (
               <button
                 key={source.id}
-                onClick={() => !source.disabled && setSelectedSource(source.id)}
+                onClick={() => !source.disabled && handleSourceChange(source.id)}
                 disabled={source.disabled}
                 className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-all text-left ${
                   selectedSource === source.id
@@ -249,9 +312,42 @@ It is not legal advice. Consult an attorney for legal guidance.
           </div>
         </div>
 
-        {/* Step 2: Choose Format */}
+        {/* Step 2: Choose Topic (Required for Rights Insight / Library) */}
+        {isTopicRequired && (
+          <div className="space-y-3 pt-2">
+            <h4 className="text-sm font-medium text-foreground">
+              2. Choose a specific topic <span className="text-destructive">*</span>
+            </h4>
+            
+            {availableTopics.length === 0 ? (
+              <p className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg">
+                No topics available. Open a topic or guide first to enable printing.
+              </p>
+            ) : (
+              <select
+                className="w-full border border-border rounded-lg p-3 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
+                value={selectedTopic?.id || ""}
+                onChange={(e) => {
+                  const topic = availableTopics.find(t => t.id === e.target.value);
+                  setSelectedTopic(topic || null);
+                }}
+              >
+                <option value="">Select a topic…</option>
+                {availableTopics.map(topic => (
+                  <option key={topic.id} value={topic.id}>
+                    {topic.title}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        )}
+
+        {/* Step 3: Choose Format */}
         <div className="space-y-3 pt-2">
-          <h4 className="text-sm font-medium text-foreground">2. Choose format</h4>
+          <h4 className="text-sm font-medium text-foreground">
+            {isTopicRequired ? "3. Choose format" : "2. Choose format"}
+          </h4>
           <div className="grid grid-cols-3 gap-2">
             {formats.map((format) => (
               <button
@@ -276,52 +372,80 @@ It is not legal advice. Consult an attorney for legal guidance.
           </div>
         </div>
 
-        {/* Step 3: Actions */}
+        {/* Step 4: Actions */}
         <div className="space-y-2 pt-4 border-t border-border">
           <button
             onClick={handlePrint}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:bg-muted/50 hover:border-accent/30 transition-all text-left group"
+            disabled={!canProceed}
+            className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left group ${
+              canProceed 
+                ? "border-border bg-card hover:bg-muted/50 hover:border-accent/30 cursor-pointer" 
+                : "border-border bg-muted/30 opacity-50 cursor-not-allowed"
+            }`}
           >
-            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors">
-              <Printer className="w-5 h-5 text-accent" />
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+              canProceed ? "bg-accent/10 group-hover:bg-accent/20" : "bg-muted"
+            }`}>
+              <Printer className={`w-5 h-5 ${canProceed ? "text-accent" : "text-muted-foreground"}`} />
             </div>
             <div>
-              <p className="font-medium text-foreground">Print</p>
+              <p className={`font-medium ${canProceed ? "text-foreground" : "text-muted-foreground"}`}>Print</p>
               <p className="text-sm text-muted-foreground">Opens print dialog</p>
             </div>
           </button>
 
           <button
             onClick={handleDownload}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:bg-muted/50 hover:border-accent/30 transition-all text-left group"
+            disabled={!canProceed}
+            className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left group ${
+              canProceed 
+                ? "border-border bg-card hover:bg-muted/50 hover:border-accent/30 cursor-pointer" 
+                : "border-border bg-muted/30 opacity-50 cursor-not-allowed"
+            }`}
           >
-            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors">
-              <Download className="w-5 h-5 text-accent" />
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+              canProceed ? "bg-accent/10 group-hover:bg-accent/20" : "bg-muted"
+            }`}>
+              <Download className={`w-5 h-5 ${canProceed ? "text-accent" : "text-muted-foreground"}`} />
             </div>
             <div>
-              <p className="font-medium text-foreground">Download PDF</p>
+              <p className={`font-medium ${canProceed ? "text-foreground" : "text-muted-foreground"}`}>Download</p>
               <p className="text-sm text-muted-foreground">Save as text file</p>
             </div>
           </button>
 
           <button
             onClick={handleCopyLink}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:bg-muted/50 hover:border-accent/30 transition-all text-left group"
+            disabled={!canProceed}
+            className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left group ${
+              canProceed 
+                ? "border-border bg-card hover:bg-muted/50 hover:border-accent/30 cursor-pointer" 
+                : "border-border bg-muted/30 opacity-50 cursor-not-allowed"
+            }`}
           >
-            <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0 group-hover:bg-accent/20 transition-colors">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+              canProceed ? "bg-accent/10 group-hover:bg-accent/20" : "bg-muted"
+            }`}>
               {copied ? (
                 <Check className="w-5 h-5 text-green-600" />
               ) : (
-                <Link2 className="w-5 h-5 text-accent" />
+                <Link2 className={`w-5 h-5 ${canProceed ? "text-accent" : "text-muted-foreground"}`} />
               )}
             </div>
             <div>
-              <p className="font-medium text-foreground">
+              <p className={`font-medium ${canProceed ? "text-foreground" : "text-muted-foreground"}`}>
                 {copied ? "Copied!" : "Share Link"}
               </p>
               <p className="text-sm text-muted-foreground">Copy private link</p>
             </div>
           </button>
+
+          {/* Inline explanation when actions are blocked */}
+          {!canProceed && (
+            <p className="text-sm text-muted-foreground text-center pt-2 px-4">
+              Please select a specific topic or guide to print or share.
+            </p>
+          )}
         </div>
 
         <p className="text-xs text-muted-foreground/70 text-center pt-2">
