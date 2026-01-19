@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   ChevronDown,
   ChevronUp,
   ArrowRight,
+  ArrowLeft,
   BookOpen,
   FolderOpen,
   Clock,
@@ -13,7 +14,8 @@ import {
   Share2,
   Check,
   Loader2,
-  LogIn
+  LogIn,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -128,9 +130,9 @@ export function AnalyzerResults({
   savedResult = null,
   saveError = null,
 }: AnalyzerResultsProps) {
-  const [systemSummaryOpen, setSystemSummaryOpen] = useState(false);
-  const [whatHappensOpen, setWhatHappensOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [printShareOpen, setPrintShareOpen] = useState(false);
+  const navigate = useNavigate();
 
   const unlockedTools = tools.filter(t => !t.isLocked);
   const lockedTools = tools.filter(t => t.isLocked);
@@ -144,6 +146,11 @@ export function AnalyzerResults({
     const diffMins = Math.floor(diffSecs / 60);
     if (diffMins < 60) return `${diffMins}m ago`;
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Create back-to-analyzer URL for deep-links
+  const createDeepLink = (section: string, subsection: string) => {
+    return `/rights-insight?section=${section}&subsection=${subsection}&from=analyzer`;
   };
 
   return (
@@ -184,7 +191,7 @@ export function AnalyzerResults({
         )}
         
         {/* Page Header */}
-        <header className="mb-16 text-center">
+        <header className="mb-12 text-center">
           <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-4 tracking-tight">
             What This Means for Your Situation
           </h1>
@@ -202,140 +209,162 @@ export function AnalyzerResults({
           </Button>
         </header>
 
-        {/* Section 1: System Summary Card (Collapsed by default) */}
+        {/* SECTION 1: What system you are actually in */}
         <section className="mb-8">
-          <Collapsible open={systemSummaryOpen} onOpenChange={setSystemSummaryOpen}>
-            <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-sm">
-              <CollapsibleTrigger className="w-full p-6 flex items-center justify-between text-left hover:bg-surface-hover transition-colors">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-lg font-medium text-foreground">{systemLabel}</span>
-                    {location && (
-                      <span className="text-sm text-muted-foreground">• {location}</span>
-                    )}
-                  </div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium">
-                    <span className="w-2 h-2 rounded-full bg-accent" />
-                    {patternLabels[patternStrength]}
-                  </div>
-                </div>
-                <div className="ml-4 p-2 rounded-lg hover:bg-muted transition-colors">
-                  {systemSummaryOpen ? (
-                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                  )}
-                </div>
-              </CollapsibleTrigger>
-              
-              <CollapsibleContent>
-                <div className="px-6 pb-6 pt-2 border-t border-border space-y-6">
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">What this system controls</h4>
-                    <p className="text-foreground leading-relaxed">{systemControls}</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">What it does not control</h4>
-                    <p className="text-foreground leading-relaxed">{systemDoesNotControl}</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">Who actually makes decisions</h4>
-                    <p className="text-foreground leading-relaxed">{decisionMakers}</p>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-2">Where people usually get stuck</h4>
-                    <p className="text-foreground leading-relaxed">{commonStuckPoints}</p>
-                  </div>
-                  
-                  <div className="pt-4 border-t border-border">
-                    <p className="text-sm text-muted-foreground italic">
-                      None of this means you did anything wrong.
-                    </p>
-                  </div>
-                </div>
-              </CollapsibleContent>
+          <div className="rounded-2xl bg-card border border-border p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-3 h-3 rounded-full bg-accent" />
+              <h2 className="text-lg font-semibold text-accent">What System You Are Actually In</h2>
             </div>
-          </Collapsible>
-        </section>
-
-        {/* Section 2: What Usually Happens (Accordion) */}
-        <section className="mb-8">
-          <Collapsible open={whatHappensOpen} onOpenChange={setWhatHappensOpen}>
-            <div className="rounded-2xl bg-card border border-border overflow-hidden shadow-sm">
-              <CollapsibleTrigger className="w-full p-6 flex items-center justify-between text-left hover:bg-surface-hover transition-colors">
-                <h3 className="text-lg font-medium text-foreground">What Usually Happens</h3>
-                <div className="p-2 rounded-lg hover:bg-muted transition-colors">
-                  {whatHappensOpen ? (
-                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                  )}
-                </div>
-              </CollapsibleTrigger>
-              
-              <CollapsibleContent>
-                <div className="px-6 pb-6 pt-2 border-t border-border">
-                  <div className="space-y-4 mb-6">
-                    {whatUsuallyHappens.map((item, i) => (
-                      <p key={i} className="text-foreground leading-relaxed">
-                        {item}
-                      </p>
-                    ))}
-                  </div>
-                  
-                  <div className="pt-4 border-t border-border">
-                    <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-3">
-                      What people often misinterpret
-                    </h4>
-                    <ul className="space-y-2">
-                      {whatPeopleMisinterpret.map((item, i) => (
-                        <li key={i} className="text-muted-foreground text-sm leading-relaxed pl-4 border-l-2 border-accent/30">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
-        </section>
-
-        {/* Section 3: Pattern Insight */}
-        <section className="mb-12">
-          <div className="rounded-2xl bg-accent/5 border border-accent/20 p-6">
-            {patternStrength === 'none' ? (
-              <>
-                <p className="text-foreground leading-relaxed mb-2">
-                  This may be one of the first documented cases — which makes your records especially important.
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Without existing patterns, your documentation could help identify emerging issues.
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-foreground leading-relaxed mb-3">
-                  Other people have reported similar issues with this system.
-                </p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {patternStrength === 'possible' && "There are some indications of a broader pattern, though more information would help confirm this."}
-                  {patternStrength === 'strong' && "This pattern has been documented in multiple cases, which can strengthen your position."}
-                  {patternStrength === 'very_strong' && "This is a well-documented pattern with significant supporting evidence."}
-                </p>
-                <div className="text-sm text-accent">
-                  <span className="font-medium">Why this matters:</span> Documented patterns can influence which attorneys take interest, 
-                  which escalation paths make sense, and how you organize your evidence.
-                </div>
-              </>
-            )}
+            <p className="text-foreground leading-relaxed">
+              You are navigating the <span className="font-semibold text-accent">{systemLabel}</span> system
+              {location && <span>, specifically in {location}</span>}.
+            </p>
+            <p className="text-muted-foreground text-sm mt-3 leading-relaxed">
+              This is not just "{systemLabel.toLowerCase()}" in general — it's a specific set of agencies, decision-makers, 
+              and processes with their own rules and timelines.
+            </p>
           </div>
         </section>
 
-        {/* Section 4: How This System Really Works — Library Handoff */}
+        {/* SECTION 2: Who has power (and who does not) */}
+        <section className="mb-8">
+          <div className="rounded-2xl bg-card border border-border p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-3 h-3 rounded-full bg-accent" />
+              <h2 className="text-lg font-semibold text-accent">Who Has Power (And Who Does Not)</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-medium text-foreground mb-2">What this system controls:</h4>
+                <p className="text-muted-foreground text-sm leading-relaxed">{systemControls}</p>
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-medium text-foreground mb-2">What it does NOT control:</h4>
+                <p className="text-muted-foreground text-sm leading-relaxed">{systemDoesNotControl}</p>
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-medium text-foreground mb-2">Who actually makes decisions:</h4>
+                <p className="text-muted-foreground text-sm leading-relaxed">{decisionMakers}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3: What usually happens next */}
+        <section className="mb-8">
+          <div className="rounded-2xl bg-card border border-border p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-3 h-3 rounded-full bg-accent" />
+              <h2 className="text-lg font-semibold text-accent">What Usually Happens Next</h2>
+            </div>
+            
+            <div className="space-y-4">
+              {whatUsuallyHappens.map((item, i) => (
+                <div key={i} className="flex gap-3">
+                  <span className="text-accent font-semibold shrink-0">{i + 1}.</span>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 4: Where people get stuck */}
+        <section className="mb-8">
+          <div className="rounded-2xl bg-amber-50 border border-amber-200 p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertCircle className="w-5 h-5 text-amber-600" />
+              <h2 className="text-lg font-semibold text-amber-800">Where People Get Stuck</h2>
+            </div>
+            
+            <p className="text-amber-900/80 text-sm leading-relaxed mb-4">
+              {commonStuckPoints}
+            </p>
+            
+            <div className="pt-4 border-t border-amber-200">
+              <h4 className="text-sm font-medium text-amber-800 mb-3">What people often misinterpret:</h4>
+              <ul className="space-y-2">
+                {whatPeopleMisinterpret.map((item, i) => (
+                  <li key={i} className="text-amber-900/80 text-sm leading-relaxed pl-4 border-l-2 border-amber-300">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 5: What matters first (If You Do Nothing Else) */}
+        <section className="mb-12">
+          <div className="rounded-2xl bg-accent/5 border-2 border-accent/30 p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
+                <Check className="w-4 h-4 text-white" />
+              </div>
+              <h2 className="text-lg font-semibold text-accent">If You Do Nothing Else</h2>
+            </div>
+            
+            <p className="text-muted-foreground text-sm mb-4">
+              These three things matter most right now — not everything, just these:
+            </p>
+            
+            <div className="space-y-3">
+              <div className="flex gap-3 items-start p-3 rounded-lg bg-white border border-border">
+                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-sm font-semibold flex items-center justify-center shrink-0">1</span>
+                <div>
+                  <p className="font-medium text-foreground text-sm">Preserve your records</p>
+                  <p className="text-muted-foreground text-xs mt-1">Write down what happened. Save any documents, messages, or photos.</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 items-start p-3 rounded-lg bg-white border border-border">
+                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-sm font-semibold flex items-center justify-center shrink-0">2</span>
+                <div>
+                  <p className="font-medium text-foreground text-sm">Track any deadlines</p>
+                  <p className="text-muted-foreground text-xs mt-1">Many systems have short windows to respond. Missing them can close options.</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 items-start p-3 rounded-lg bg-white border border-border">
+                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-sm font-semibold flex items-center justify-center shrink-0">3</span>
+                <div>
+                  <p className="font-medium text-foreground text-sm">Take care of yourself</p>
+                  <p className="text-muted-foreground text-xs mt-1">This process is stressful. Pausing to regroup is okay. Your wellbeing matters.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Pattern Insight */}
+        {patternStrength !== 'none' && (
+          <section className="mb-12">
+            <div className="rounded-2xl bg-accent/5 border border-accent/20 p-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium mb-3">
+                <span className="w-2 h-2 rounded-full bg-accent" />
+                {patternLabels[patternStrength]}
+              </div>
+              <p className="text-foreground leading-relaxed mb-3">
+                Other people have reported similar issues with this system.
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                {patternStrength === 'possible' && "There are some indications of a broader pattern, though more information would help confirm this."}
+                {patternStrength === 'strong' && "This pattern has been documented in multiple cases, which can strengthen your position."}
+                {patternStrength === 'very_strong' && "This is a well-documented pattern with significant supporting evidence."}
+              </p>
+              <div className="text-sm text-accent">
+                <span className="font-medium">Why this matters:</span> Documented patterns can influence which attorneys take interest, 
+                which escalation paths make sense, and how you organize your evidence.
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* How This System Really Works — Deep Links to Rights Insight */}
         <section className="mb-12">
           <div className="rounded-2xl bg-white border border-border overflow-hidden">
             <div className="p-6 border-b border-border">
@@ -349,7 +378,7 @@ export function AnalyzerResults({
             </div>
             <div className="p-6 space-y-3">
               <Link 
-                to={`/rights-insight?section=hidden-rules&subsection=what-systems-assume`}
+                to={createDeepLink("hidden-rules", "what-systems-assume")}
                 className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
               >
                 <span className="font-medium text-foreground group-hover:text-accent transition-colors">
@@ -358,7 +387,7 @@ export function AnalyzerResults({
                 <ArrowRight className="w-4 h-4 text-accent" />
               </Link>
               <Link 
-                to={`/rights-insight?section=systems-power&subsection=${systemId === 'cps_dcyf' ? 'cps-dcyf' : systemId}`}
+                to={createDeepLink("systems-power", systemId === 'cps_dcyf' ? 'cps-dcyf' : (systemId === 'employer' ? 'employment' : systemId))}
                 className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
               >
                 <span className="font-medium text-foreground group-hover:text-accent transition-colors">
@@ -367,7 +396,7 @@ export function AnalyzerResults({
                 <ArrowRight className="w-4 h-4 text-accent" />
               </Link>
               <Link 
-                to={`/rights-insight?section=patterns-harm&subsection=individual-vs-systemic`}
+                to={createDeepLink("patterns-harm", "individual-vs-systemic")}
                 className="flex items-center justify-between p-4 rounded-xl bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors group"
               >
                 <span className="font-medium text-foreground group-hover:text-accent transition-colors">
@@ -379,7 +408,7 @@ export function AnalyzerResults({
           </div>
         </section>
 
-        {/* Section 5: Tools That Matter Right Now */}
+        {/* Tools That Matter Right Now */}
         <section className="mb-12">
           <h2 className="text-xl font-semibold text-foreground mb-6">
             Tools That Matter Right Now
@@ -400,7 +429,7 @@ export function AnalyzerResults({
           )}
         </section>
 
-        {/* Section 6: Gentle Reality Check */}
+        {/* Gentle Reality Check */}
         <section className="mb-12">
           <div className="rounded-2xl bg-muted/50 border border-border p-6">
             <p className="text-muted-foreground leading-relaxed">
@@ -410,7 +439,7 @@ export function AnalyzerResults({
           </div>
         </section>
 
-        {/* Section 6: Primary Action */}
+        {/* Primary Action */}
         <section className="text-center">
           <Button 
             onClick={onStartOrganizing}
@@ -456,6 +485,9 @@ export function AnalyzerResults({
         open={printShareOpen}
         onOpenChange={setPrintShareOpen}
         title={`${systemLabel} - Analysis Results`}
+        savedResultId={savedResult?.id}
+        systemId={systemId}
+        systemLabel={systemLabel}
       />
     </div>
   );
@@ -474,15 +506,15 @@ export function generateResultContent(systemId: string, patternStrength: 'none' 
     primaryGuideId?: string;
   }> = {
     police: {
-      label: "Police or Sheriff",
+      label: "Police Accountability & Prosecutorial Review",
       systemControls: "Arrests, detentions, use of force, searches, traffic stops, and initial charging decisions. Officers have discretion in how they respond to calls and make on-scene decisions.",
       systemDoesNotControl: "Final charging decisions (that's the prosecutor), court outcomes, or what happens after arrest. Officers also don't control their department's policies — supervisors and elected officials do.",
       decisionMakers: "The responding officer makes immediate decisions. Internal affairs handles complaints. Civilian oversight boards (where they exist) review patterns. Prosecutors decide charges.",
-      commonStuckPoints: "Waiting for internal affairs to respond. Not knowing if body camera footage exists or how to get it. Unclear deadlines for complaints. Feeling like no one is listening.",
+      commonStuckPoints: "People lose options because they assume verbal reports are enough, deadlines are flexible, or 'under review' means active work. Waiting for internal affairs to respond without understanding their timeline leads to frustration.",
       whatUsuallyHappens: [
-        "After an incident, there's usually a period of confusion about what to do next. Many people don't realize there are formal complaint processes.",
-        "If you file a complaint, the department investigates internally. This can take months. You may not receive updates during this time.",
-        "Civilian oversight boards, where they exist, can provide an alternative review process."
+        "After an incident, you'll often experience confusion about what to do next. Most people don't realize there are formal complaint processes with specific deadlines.",
+        "If you file a complaint, the department investigates internally. This can take months. You may not receive updates during this time — silence is common, not necessarily meaningful.",
+        "Long investigative delays occur. 'Under review' does not mean someone is actively working on your case right now."
       ],
       whatPeopleMisinterpret: [
         "Silence from internal affairs doesn't mean they found nothing — it often just means the investigation is ongoing",
@@ -492,15 +524,15 @@ export function generateResultContent(systemId: string, patternStrength: 'none' 
       primaryGuideId: undefined
     },
     housing: {
-      label: "Housing or Landlord",
+      label: "Tenant Rights & Housing Enforcement",
       systemControls: "Lease enforcement, rent collection, eviction filings, property maintenance, and tenant selection. Landlords have significant power over your living situation within legal limits.",
       systemDoesNotControl: "Final eviction decisions (courts do), fair housing enforcement (federal/state agencies do), or building code enforcement (local inspectors do).",
       decisionMakers: "Landlords make initial decisions. Property managers act on their behalf. Courts decide evictions. Housing authorities handle subsidized housing. Fair housing agencies investigate discrimination.",
-      commonStuckPoints: "Short response deadlines for evictions. Confusion about what defenses exist. Not knowing who to call for code violations. Feeling intimidated by legal-looking documents.",
+      commonStuckPoints: "Short response deadlines for evictions catch people off guard. Confusion about what defenses exist leads to missed opportunities. Many people don't know who to call for code violations.",
       whatUsuallyHappens: [
-        "Disputes often start with a notice — for rent, lease violations, or eviction. These notices have specific deadlines that matter.",
-        "If you receive an eviction notice, you typically have a limited time to respond. The court process follows a set timeline.",
-        "Many issues can be resolved through communication, documentation, or involving tenant advocacy organizations before they escalate."
+        "Disputes often start with a notice — for rent, lease violations, or eviction. These notices have specific deadlines that matter legally.",
+        "If you receive an eviction notice, you typically have a limited time to respond. The court process follows a set timeline that won't wait.",
+        "Many issues can be resolved through communication, documentation, or involving tenant advocacy organizations before they escalate to court."
       ],
       whatPeopleMisinterpret: [
         "An eviction notice is not the same as being evicted — it's the start of a legal process you can respond to",
@@ -510,13 +542,13 @@ export function generateResultContent(systemId: string, patternStrength: 'none' 
       primaryGuideId: "housing"
     },
     cps_dcyf: {
-      label: "CPS / DCYF (Child Welfare)",
+      label: "CPS / DCYF Child Welfare System",
       systemControls: "Investigations into child safety, safety planning, case management, and recommendations to the court. They can require services and make placement decisions in emergencies.",
       systemDoesNotControl: "Final custody decisions (courts do), criminal charges (prosecutors do), or therapeutic treatment plans (providers do). They also don't control whether you have an attorney — you're entitled to one.",
       decisionMakers: "Caseworkers assess and recommend. Supervisors approve major decisions. Courts make final rulings on dependency and placement. Attorneys advocate for each party.",
-      commonStuckPoints: "Not understanding the difference between 'voluntary' and 'court-ordered' services. Feeling like cooperation is the same as admitting guilt. Not knowing what's in your own case file.",
+      commonStuckPoints: "People confuse 'voluntary' with 'optional.' They don't understand what's in their own case file. They think cooperation means admitting guilt, or that caseworkers are allies.",
       whatUsuallyHappens: [
-        "An investigation usually starts with a home visit. Workers assess safety and may ask for voluntary services or safety planning.",
+        "An investigation usually starts with a home visit. Workers assess safety and may ask for 'voluntary' services or safety planning — but these requests carry significant weight.",
         "If concerns remain, the case may go to court. At that point, you'll have opportunities to respond, and you're entitled to an attorney.",
         "The goal of most cases is reunification — but the process can feel adversarial even when everyone shares that goal."
       ],
@@ -528,20 +560,110 @@ export function generateResultContent(systemId: string, patternStrength: 'none' 
       primaryGuideId: "cps_dcyf"
     },
     employer: {
-      label: "Employer or Workplace",
+      label: "Employment Rights & Workplace Enforcement",
       systemControls: "Hiring, firing, promotions, work assignments, scheduling, performance evaluations, and internal investigations. HR manages policies and complaints.",
       systemDoesNotControl: "Final determinations on discrimination claims (agencies like EEOC do), unemployment decisions (state agencies do), or workplace safety enforcement (OSHA does).",
       decisionMakers: "Supervisors make daily decisions. HR handles policies and complaints. Executives set direction. External agencies investigate formal complaints.",
-      commonStuckPoints: "Not understanding that HR protects the company, not you. Missing EEOC deadlines (often 180-300 days). Not having documentation of incidents.",
+      commonStuckPoints: "People believe HR is there to help them — HR protects the company. They miss EEOC deadlines (often 180-300 days). They don't document incidents as they happen.",
       whatUsuallyHappens: [
-        "Issues often escalate over time. What starts as one incident may become a pattern.",
-        "Internal HR complaints may or may not lead to action. The company investigates itself.",
-        "If you file externally (EEOC, state agency), there's a formal investigation process with specific deadlines."
+        "Issues often escalate over time. What starts as one incident may become a pattern that only becomes visible when you look back.",
+        "Internal HR complaints may or may not lead to action. The company investigates itself and decides what happened.",
+        "If you file externally (EEOC, state agency), there's a formal investigation process with specific deadlines and procedures."
       ],
       whatPeopleMisinterpret: [
         "HR's job is to protect the company — they may help you, but that's not their primary role",
         "Retaliation after a complaint is illegal, but proving it requires clear documentation",
         "You don't need a lawyer to file an EEOC charge, but deadlines are strict"
+      ],
+      primaryGuideId: undefined
+    },
+    courts: {
+      label: "Court System & Legal Procedures",
+      systemControls: "Scheduling hearings, ruling on motions, interpreting law, and issuing judgments. Courts control the procedural timeline once a case is filed.",
+      systemDoesNotControl: "What claims you bring (you decide), evidence you present (you gather), or whether you have an attorney (though some situations provide one).",
+      decisionMakers: "Judges make rulings. Court clerks manage paperwork. Attorneys know procedures. In criminal cases, prosecutors represent the state.",
+      commonStuckPoints: "Self-represented parties don't know procedural rules. Deadlines feel arbitrary but are absolute. The formality is intimidating.",
+      whatUsuallyHappens: [
+        "Court processes follow specific procedural rules that differ by court type. What works in one court may not apply in another.",
+        "Deadlines are generally absolute. Missing a filing deadline can result in losing your case regardless of the merits.",
+        "Judges expect both parties to follow the same rules, even when one has an attorney and one doesn't."
+      ],
+      whatPeopleMisinterpret: [
+        "Being 'right' doesn't matter if you don't follow procedures — you can lose a valid claim on technicalities",
+        "Judges don't investigate — they decide based on what's presented to them",
+        "Verbal explanations don't substitute for written filings in most situations"
+      ],
+      primaryGuideId: undefined
+    },
+    school: {
+      label: "Education Rights & Student Protections",
+      systemControls: "Enrollment, discipline, grades, accommodations processes (IEP/504), and day-to-day school operations.",
+      systemDoesNotControl: "Final decisions on disability services (federal law does), discrimination findings (OCR does), or criminal matters involving students.",
+      decisionMakers: "Teachers make classroom decisions. Principals handle discipline. District offices set policy. IEP teams decide accommodations. State agencies enforce civil rights.",
+      commonStuckPoints: "Parents don't know they can disagree with IEP decisions. Students don't understand due process for discipline. Records follow students between schools.",
+      whatUsuallyHappens: [
+        "Issues often surface during discipline or when accommodations aren't working. Schools have internal processes that must usually be tried first.",
+        "For special education, there's a formal dispute process including mediation and due process hearings.",
+        "Documentation of communications and decisions matters significantly in education disputes."
+      ],
+      whatPeopleMisinterpret: [
+        "An IEP meeting is a collaborative process — you don't have to agree with everything proposed",
+        "Discipline records can affect future opportunities — understanding your rights before signing matters",
+        "Schools must follow specific timelines for evaluations and meetings — delays may be violations"
+      ],
+      primaryGuideId: undefined
+    },
+    healthcare: {
+      label: "Healthcare Rights & Patient Protections",
+      systemControls: "Treatment decisions (with your consent), medical records, billing, and compliance with health regulations.",
+      systemDoesNotControl: "Insurance coverage decisions (insurers do), licensing complaints (state boards do), or civil rights enforcement (OCR does).",
+      decisionMakers: "Providers recommend treatment. Insurers approve coverage. Hospital administration sets policies. State boards handle licensing. You make final treatment decisions.",
+      commonStuckPoints: "Medical records contain characterizations that follow you. Insurance denials seem final but can be appealed. Bills appear long after care.",
+      whatUsuallyHappens: [
+        "Healthcare disputes often involve multiple parties: providers, insurers, and billing companies. Each has different processes.",
+        "Insurance denials can be appealed internally, then externally. Many people give up too early.",
+        "Medical records can be amended if they contain errors, though the original entries remain visible."
+      ],
+      whatPeopleMisinterpret: [
+        "A treatment recommendation is not a requirement — you can decline or seek second opinions",
+        "An insurance denial is often the start of a process, not the end",
+        "HIPAA has many exceptions — your information may be shared more than you expect"
+      ],
+      primaryGuideId: undefined
+    },
+    government: {
+      label: "Government Agency & Benefits",
+      systemControls: "Benefits eligibility, licensing, permits, and administrative decisions within their mandate.",
+      systemDoesNotControl: "Policies set by legislature, court interpretations of law, or decisions by other agencies.",
+      decisionMakers: "Case workers assess eligibility. Supervisors review decisions. Hearing officers decide appeals. Courts review agency actions.",
+      commonStuckPoints: "Appeals processes exist but aren't explained. Overpayment claims appear years later. Documentation requirements seem endless.",
+      whatUsuallyHappens: [
+        "Benefits decisions can be appealed through administrative hearings. These are less formal than court but still have rules.",
+        "Agencies track their own metrics — case closures, processing times — not whether outcomes are just.",
+        "Written requests and appeals create records that protect you better than phone calls."
+      ],
+      whatPeopleMisinterpret: [
+        "A denial letter is not the final answer — appeals processes exist and often succeed",
+        "Overpayment claims can sometimes be waived if you weren't at fault and repayment would be hardship",
+        "You can request your complete file to understand how decisions were made"
+      ],
+      primaryGuideId: undefined
+    },
+    jail: {
+      label: "Incarceration & Corrections",
+      systemControls: "Daily conditions, discipline, programming access, and classification decisions within the facility.",
+      systemDoesNotControl: "Sentencing (courts do), parole decisions (parole boards do), or conditions at other facilities.",
+      decisionMakers: "Corrections officers make immediate decisions. Administrators handle grievances. Courts review conditions claims. Ombudsman offices provide oversight.",
+      commonStuckPoints: "Grievance processes feel futile but are often required before court. Medical care access is limited. Retaliation fears are real.",
+      whatUsuallyHappens: [
+        "Grievances must usually be exhausted before courts will hear conditions claims. Filing creates a record even if denied.",
+        "Medical care complaints follow a specific process. Documenting requests and denials matters.",
+        "Family members can contact oversight offices like the Office of the Corrections Ombuds."
+      ],
+      whatPeopleMisinterpret: [
+        "Constitutional rights are limited but not eliminated during incarceration",
+        "Grievance denials don't mean your concerns are invalid — they're often required steps",
+        "Outside advocates and oversight offices can receive complaints when internal processes fail"
       ],
       primaryGuideId: undefined
     }
@@ -552,9 +674,17 @@ export function generateResultContent(systemId: string, patternStrength: 'none' 
     systemControls: "This system has specific areas of authority that affect your situation.",
     systemDoesNotControl: "Other agencies or courts may control related decisions.",
     decisionMakers: "Different people at different levels make different decisions.",
-    commonStuckPoints: "Understanding who to contact and when can be confusing.",
-    whatUsuallyHappens: ["The process typically involves multiple steps and may take time."],
-    whatPeopleMisinterpret: ["The process may not work the way you expect."],
+    commonStuckPoints: "Understanding who to contact and when can be confusing. Deadlines may be shorter than expected.",
+    whatUsuallyHappens: [
+      "The process typically involves multiple steps and may take longer than expected.",
+      "Documentation and written communication tend to matter more than verbal exchanges.",
+      "There are usually appeal or review processes, though they may not be clearly explained."
+    ],
+    whatPeopleMisinterpret: [
+      "Silence from agencies doesn't necessarily mean no action — it often just means slow processing",
+      "Initial denials or negative responses are often the start of a process, not the end",
+      "Understanding the actual decision-makers helps focus your efforts"
+    ],
     primaryGuideId: undefined
   };
 
@@ -610,7 +740,7 @@ function getToolsForSystem(systemId: string, patternStrength: 'none' | 'possible
       name: "Records Request Guide",
       purpose: "Learn how to request official records and files.",
       relevance: "Understanding what they know helps you prepare.",
-      link: "/rights-insight",
+      link: "/rights-insight?section=evidence-truths&subsection=what-counts&from=analyzer",
       icon: Search,
       isLocked: false
     }

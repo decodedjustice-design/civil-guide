@@ -9,9 +9,11 @@ import {
   Shield, 
   Scale,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  ArrowLeft
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
 import { libraryContent, LibrarySection, LibrarySubsection } from "@/data/libraryContent";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +32,9 @@ export default function Library() {
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [expandedSubsections, setExpandedSubsections] = useState<string[]>([]);
   
+  // Check if user came from Analyzer
+  const fromAnalyzer = searchParams.get("from") === "analyzer";
+  
   // Handle direct linking via URL params
   useEffect(() => {
     const section = searchParams.get("section");
@@ -39,11 +44,21 @@ export default function Library() {
       setExpandedSections([section]);
       if (subsection) {
         setExpandedSubsections([`${section}-${subsection}`]);
+        
+        // Scroll to the section after a short delay
+        setTimeout(() => {
+          const element = document.getElementById(`section-${section}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
       }
     }
     
-    // Scroll to top on mount
-    window.scrollTo(0, 0);
+    // Scroll to top on mount if no section specified
+    if (!section) {
+      window.scrollTo(0, 0);
+    }
   }, [searchParams]);
 
   const toggleSection = (sectionId: string) => {
@@ -65,6 +80,21 @@ export default function Library() {
 
   return (
     <Layout>
+      {/* Back to Analyzer Button - shown when coming from Analyzer */}
+      {fromAnalyzer && (
+        <div className="bg-accent/5 border-b border-accent/20">
+          <div className="container mx-auto px-4 py-3">
+            <Link 
+              to="/analyzer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to my Analyzer Results
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative py-16 md:py-20 bg-gradient-to-b from-slate-50 to-background">
         <div className="container mx-auto px-4">
@@ -168,19 +198,19 @@ export default function Library() {
                 Use the Analyzer
               </h3>
               <p className="text-sm text-muted-foreground">
-                Answer questions about your situation and receive personalized guidance about which Library sections are most relevant.
+                Answer questions about your situation and receive personalized guidance about which sections are most relevant.
               </p>
             </Link>
             
             <Link 
-              to="/library"
+              to="/rights-insight"
               className="p-6 bg-white rounded-xl border border-border hover:border-accent/30 hover:shadow-sm transition-all group"
             >
               <h3 className="font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
-                Browse the Library
+                Browse Educational Guides
               </h3>
               <p className="text-sm text-muted-foreground">
-                Explore educational guides, templates, and sources organized by system type.
+                Explore guides organized by system type — police, housing, CPS, employment, and more.
               </p>
             </Link>
           </div>
@@ -209,7 +239,7 @@ function LibrarySectionCard({
   icon
 }: LibrarySectionCardProps) {
   return (
-    <div className="rounded-xl border border-border bg-white overflow-hidden">
+    <div id={`section-${section.id}`} className="rounded-xl border border-border bg-white overflow-hidden">
       {/* Section Header */}
       <button
         onClick={onToggle}

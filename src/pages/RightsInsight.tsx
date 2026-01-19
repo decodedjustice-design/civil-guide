@@ -11,6 +11,7 @@ import {
   Stethoscope,
   Heart,
   ArrowRight,
+  ArrowLeft,
   Search,
   Bookmark,
   BookmarkCheck,
@@ -51,6 +52,9 @@ export default function RightsInsight() {
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [bookmarkedGuides, setBookmarkedGuides] = useState<Set<string>>(new Set());
   const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
+
+  // Check if user came from Analyzer
+  const fromAnalyzer = searchParams.get("from") === "analyzer";
 
   // Read filter from URL on mount
   useEffect(() => {
@@ -96,6 +100,21 @@ export default function RightsInsight() {
 
   return (
     <Layout>
+      {/* Back to Analyzer Button - shown when coming from Analyzer */}
+      {fromAnalyzer && (
+        <div className="bg-accent/5 border-b border-accent/20">
+          <div className="container mx-auto px-4 py-3">
+            <Link 
+              to="/analyzer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to my Analyzer Results
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">
