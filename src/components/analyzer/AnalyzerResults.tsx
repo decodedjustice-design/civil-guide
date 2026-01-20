@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
-  ChevronDown,
-  ChevronUp,
   ArrowRight,
-  ArrowLeft,
   BookOpen,
   FolderOpen,
   Clock,
@@ -553,206 +550,40 @@ export function AnalyzerResults({
   );
 }
 
-// Helper function to generate result content based on system
+// Helper function to get system label and tools - content is now AI-generated
 export function generateResultContent(systemId: string, patternStrength: 'none' | 'possible' | 'strong' | 'very_strong') {
-  const systemContent: Record<string, {
-    label: string;
-    systemControls: string;
-    systemDoesNotControl: string;
-    decisionMakers: string;
-    commonStuckPoints: string;
-    whatUsuallyHappens: string[];
-    whatPeopleMisinterpret: string[];
-    primaryGuideId?: string;
-  }> = {
-    police: {
-      label: "Police Accountability & Prosecutorial Review",
-      systemControls: "Arrests, detentions, use of force, searches, traffic stops, and initial charging decisions. Officers have discretion in how they respond to calls and make on-scene decisions.",
-      systemDoesNotControl: "Final charging decisions (that's the prosecutor), court outcomes, or what happens after arrest. Officers also don't control their department's policies — supervisors and elected officials do.",
-      decisionMakers: "The responding officer makes immediate decisions. Internal affairs handles complaints. Civilian oversight boards (where they exist) review patterns. Prosecutors decide charges.",
-      commonStuckPoints: "People lose options because they assume verbal reports are enough, deadlines are flexible, or 'under review' means active work. Waiting for internal affairs to respond without understanding their timeline leads to frustration.",
-      whatUsuallyHappens: [
-        "After an incident, you'll often experience confusion about what to do next. Most people don't realize there are formal complaint processes with specific deadlines.",
-        "If you file a complaint, the department investigates internally. This can take months. You may not receive updates during this time — silence is common, not necessarily meaningful.",
-        "Long investigative delays occur. 'Under review' does not mean someone is actively working on your case right now."
-      ],
-      whatPeopleMisinterpret: [
-        "Silence from internal affairs doesn't mean they found nothing — it often just means the investigation is ongoing",
-        "A 'not sustained' finding doesn't mean they think you're lying — it means they couldn't prove it either way",
-        "Filing a complaint doesn't automatically mean anything will happen to the officer"
-      ],
-      primaryGuideId: undefined
-    },
-    housing: {
-      label: "Tenant Rights & Housing Enforcement",
-      systemControls: "Lease enforcement, rent collection, eviction filings, property maintenance, and tenant selection. Landlords have significant power over your living situation within legal limits.",
-      systemDoesNotControl: "Final eviction decisions (courts do), fair housing enforcement (federal/state agencies do), or building code enforcement (local inspectors do).",
-      decisionMakers: "Landlords make initial decisions. Property managers act on their behalf. Courts decide evictions. Housing authorities handle subsidized housing. Fair housing agencies investigate discrimination.",
-      commonStuckPoints: "Short response deadlines for evictions catch people off guard. Confusion about what defenses exist leads to missed opportunities. Many people don't know who to call for code violations.",
-      whatUsuallyHappens: [
-        "Disputes often start with a notice — for rent, lease violations, or eviction. These notices have specific deadlines that matter legally.",
-        "If you receive an eviction notice, you typically have a limited time to respond. The court process follows a set timeline that won't wait.",
-        "Many issues can be resolved through communication, documentation, or involving tenant advocacy organizations before they escalate to court."
-      ],
-      whatPeopleMisinterpret: [
-        "An eviction notice is not the same as being evicted — it's the start of a legal process you can respond to",
-        "Landlords cannot lock you out or shut off utilities, even if you owe rent — that's illegal in Washington",
-        "Verbal promises from landlords are hard to enforce — get agreements in writing"
-      ],
-      primaryGuideId: "housing"
-    },
-    cps_dcyf: {
-      label: "CPS / DCYF Child Welfare System",
-      systemControls: "Investigations into child safety, safety planning, case management, and recommendations to the court. They can require services and make placement decisions in emergencies.",
-      systemDoesNotControl: "Final custody decisions (courts do), criminal charges (prosecutors do), or therapeutic treatment plans (providers do). They also don't control whether you have an attorney — you're entitled to one.",
-      decisionMakers: "Caseworkers assess and recommend. Supervisors approve major decisions. Courts make final rulings on dependency and placement. Attorneys advocate for each party.",
-      commonStuckPoints: "People confuse 'voluntary' with 'optional.' They don't understand what's in their own case file. They think cooperation means admitting guilt, or that caseworkers are allies.",
-      whatUsuallyHappens: [
-        "An investigation usually starts with a home visit. Workers assess safety and may ask for 'voluntary' services or safety planning — but these requests carry significant weight.",
-        "If concerns remain, the case may go to court. At that point, you'll have opportunities to respond, and you're entitled to an attorney.",
-        "The goal of most cases is reunification — but the process can feel adversarial even when everyone shares that goal."
-      ],
-      whatPeopleMisinterpret: [
-        "Agreeing to services doesn't mean you're admitting wrongdoing — it often shows engagement",
-        "Caseworkers aren't 'on your side' or 'against you' — their job is to assess safety, not represent you",
-        "What you say can appear in court documents — be thoughtful about what you share without legal advice"
-      ],
-      primaryGuideId: "cps_dcyf"
-    },
-    employer: {
-      label: "Employment Rights & Workplace Enforcement",
-      systemControls: "Hiring, firing, promotions, work assignments, scheduling, performance evaluations, and internal investigations. HR manages policies and complaints.",
-      systemDoesNotControl: "Final determinations on discrimination claims (agencies like EEOC do), unemployment decisions (state agencies do), or workplace safety enforcement (OSHA does).",
-      decisionMakers: "Supervisors make daily decisions. HR handles policies and complaints. Executives set direction. External agencies investigate formal complaints.",
-      commonStuckPoints: "People believe HR is there to help them — HR protects the company. They miss EEOC deadlines (often 180-300 days). They don't document incidents as they happen.",
-      whatUsuallyHappens: [
-        "Issues often escalate over time. What starts as one incident may become a pattern that only becomes visible when you look back.",
-        "Internal HR complaints may or may not lead to action. The company investigates itself and decides what happened.",
-        "If you file externally (EEOC, state agency), there's a formal investigation process with specific deadlines and procedures."
-      ],
-      whatPeopleMisinterpret: [
-        "HR's job is to protect the company — they may help you, but that's not their primary role",
-        "Retaliation after a complaint is illegal, but proving it requires clear documentation",
-        "You don't need a lawyer to file an EEOC charge, but deadlines are strict"
-      ],
-      primaryGuideId: undefined
-    },
-    courts: {
-      label: "Court System & Legal Procedures",
-      systemControls: "Scheduling hearings, ruling on motions, interpreting law, and issuing judgments. Courts control the procedural timeline once a case is filed.",
-      systemDoesNotControl: "What claims you bring (you decide), evidence you present (you gather), or whether you have an attorney (though some situations provide one).",
-      decisionMakers: "Judges make rulings. Court clerks manage paperwork. Attorneys know procedures. In criminal cases, prosecutors represent the state.",
-      commonStuckPoints: "Self-represented parties don't know procedural rules. Deadlines feel arbitrary but are absolute. The formality is intimidating.",
-      whatUsuallyHappens: [
-        "Court processes follow specific procedural rules that differ by court type. What works in one court may not apply in another.",
-        "Deadlines are generally absolute. Missing a filing deadline can result in losing your case regardless of the merits.",
-        "Judges expect both parties to follow the same rules, even when one has an attorney and one doesn't."
-      ],
-      whatPeopleMisinterpret: [
-        "Being 'right' doesn't matter if you don't follow procedures — you can lose a valid claim on technicalities",
-        "Judges don't investigate — they decide based on what's presented to them",
-        "Verbal explanations don't substitute for written filings in most situations"
-      ],
-      primaryGuideId: undefined
-    },
-    school: {
-      label: "Education Rights & Student Protections",
-      systemControls: "Enrollment, discipline, grades, accommodations processes (IEP/504), and day-to-day school operations.",
-      systemDoesNotControl: "Final decisions on disability services (federal law does), discrimination findings (OCR does), or criminal matters involving students.",
-      decisionMakers: "Teachers make classroom decisions. Principals handle discipline. District offices set policy. IEP teams decide accommodations. State agencies enforce civil rights.",
-      commonStuckPoints: "Parents don't know they can disagree with IEP decisions. Students don't understand due process for discipline. Records follow students between schools.",
-      whatUsuallyHappens: [
-        "Issues often surface during discipline or when accommodations aren't working. Schools have internal processes that must usually be tried first.",
-        "For special education, there's a formal dispute process including mediation and due process hearings.",
-        "Documentation of communications and decisions matters significantly in education disputes."
-      ],
-      whatPeopleMisinterpret: [
-        "An IEP meeting is a collaborative process — you don't have to agree with everything proposed",
-        "Discipline records can affect future opportunities — understanding your rights before signing matters",
-        "Schools must follow specific timelines for evaluations and meetings — delays may be violations"
-      ],
-      primaryGuideId: undefined
-    },
-    healthcare: {
-      label: "Healthcare Rights & Patient Protections",
-      systemControls: "Treatment decisions (with your consent), medical records, billing, and compliance with health regulations.",
-      systemDoesNotControl: "Insurance coverage decisions (insurers do), licensing complaints (state boards do), or civil rights enforcement (OCR does).",
-      decisionMakers: "Providers recommend treatment. Insurers approve coverage. Hospital administration sets policies. State boards handle licensing. You make final treatment decisions.",
-      commonStuckPoints: "Medical records contain characterizations that follow you. Insurance denials seem final but can be appealed. Bills appear long after care.",
-      whatUsuallyHappens: [
-        "Healthcare disputes often involve multiple parties: providers, insurers, and billing companies. Each has different processes.",
-        "Insurance denials can be appealed internally, then externally. Many people give up too early.",
-        "Medical records can be amended if they contain errors, though the original entries remain visible."
-      ],
-      whatPeopleMisinterpret: [
-        "A treatment recommendation is not a requirement — you can decline or seek second opinions",
-        "An insurance denial is often the start of a process, not the end",
-        "HIPAA has many exceptions — your information may be shared more than you expect"
-      ],
-      primaryGuideId: undefined
-    },
-    government: {
-      label: "Government Agency & Benefits",
-      systemControls: "Benefits eligibility, licensing, permits, and administrative decisions within their mandate.",
-      systemDoesNotControl: "Policies set by legislature, court interpretations of law, or decisions by other agencies.",
-      decisionMakers: "Case workers assess eligibility. Supervisors review decisions. Hearing officers decide appeals. Courts review agency actions.",
-      commonStuckPoints: "Appeals processes exist but aren't explained. Overpayment claims appear years later. Documentation requirements seem endless.",
-      whatUsuallyHappens: [
-        "Benefits decisions can be appealed through administrative hearings. These are less formal than court but still have rules.",
-        "Agencies track their own metrics — case closures, processing times — not whether outcomes are just.",
-        "Written requests and appeals create records that protect you better than phone calls."
-      ],
-      whatPeopleMisinterpret: [
-        "A denial letter is not the final answer — appeals processes exist and often succeed",
-        "Overpayment claims can sometimes be waived if you weren't at fault and repayment would be hardship",
-        "You can request your complete file to understand how decisions were made"
-      ],
-      primaryGuideId: undefined
-    },
-    jail: {
-      label: "Incarceration & Corrections",
-      systemControls: "Daily conditions, discipline, programming access, and classification decisions within the facility.",
-      systemDoesNotControl: "Sentencing (courts do), parole decisions (parole boards do), or conditions at other facilities.",
-      decisionMakers: "Corrections officers make immediate decisions. Administrators handle grievances. Courts review conditions claims. Ombudsman offices provide oversight.",
-      commonStuckPoints: "Grievance processes feel futile but are often required before court. Medical care access is limited. Retaliation fears are real.",
-      whatUsuallyHappens: [
-        "Grievances must usually be exhausted before courts will hear conditions claims. Filing creates a record even if denied.",
-        "Medical care complaints follow a specific process. Documenting requests and denials matters.",
-        "Family members can contact oversight offices like the Office of the Corrections Ombuds."
-      ],
-      whatPeopleMisinterpret: [
-        "Constitutional rights are limited but not eliminated during incarceration",
-        "Grievance denials don't mean your concerns are invalid — they're often required steps",
-        "Outside advocates and oversight offices can receive complaints when internal processes fail"
-      ],
-      primaryGuideId: undefined
-    }
+  const systemLabels: Record<string, string> = {
+    police: "Police Accountability & Prosecutorial Review",
+    housing: "Tenant Rights & Housing Enforcement",
+    cps_dcyf: "CPS / DCYF Child Welfare System",
+    employer: "Employment Rights & Workplace Enforcement",
+    courts: "Court System & Legal Procedures",
+    school: "Education Rights & Student Protections",
+    healthcare: "Healthcare Rights & Patient Protections",
+    government: "Government Agency & Benefits",
+    jail: "Incarceration & Corrections",
+    unsure: "System Identification"
   };
 
-  const content = systemContent[systemId] || {
-    label: "System",
-    systemControls: "This system has specific areas of authority that affect your situation.",
-    systemDoesNotControl: "Other agencies or courts may control related decisions.",
-    decisionMakers: "Different people at different levels make different decisions.",
-    commonStuckPoints: "Understanding who to contact and when can be confusing. Deadlines may be shorter than expected.",
-    whatUsuallyHappens: [
-      "The process typically involves multiple steps and may take longer than expected.",
-      "Documentation and written communication tend to matter more than verbal exchanges.",
-      "There are usually appeal or review processes, though they may not be clearly explained."
-    ],
-    whatPeopleMisinterpret: [
-      "Silence from agencies doesn't necessarily mean no action — it often just means slow processing",
-      "Initial denials or negative responses are often the start of a process, not the end",
-      "Understanding the actual decision-makers helps focus your efforts"
-    ],
-    primaryGuideId: undefined
+  const primaryGuides: Record<string, string | undefined> = {
+    police: undefined,
+    housing: "housing",
+    cps_dcyf: "cps_dcyf",
+    employer: undefined,
+    courts: undefined,
+    school: undefined,
+    healthcare: undefined,
+    government: undefined,
+    jail: undefined,
+    unsure: undefined
   };
 
   // Define tools based on pattern strength and system
   const tools = getToolsForSystem(systemId, patternStrength);
 
   return {
-    ...content,
+    label: systemLabels[systemId] || "System",
+    primaryGuideId: primaryGuides[systemId],
     patternStrength,
     tools
   };

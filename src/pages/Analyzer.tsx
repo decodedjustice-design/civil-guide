@@ -1676,25 +1676,27 @@ export default function Analyzer() {
     ? generateResultContent(selectedSystem, analysis?.strength || 'none')
     : null;
 
-  // Auto-save analyzer results when results are shown and user is logged in
+  // Auto-save analyzer results when AI results are ready and user is logged in
   useEffect(() => {
-    if (showResults && isLoggedIn && selectedSystem && generatedResultContent && !savedResult && !isSaving) {
+    if (showResults && isLoggedIn && selectedSystem && generatedResultContent && aiResults && !savedResult && !isSaving) {
+      // Save using AI-generated content
       saveAnalyzerResult({
         system: selectedSystem,
         systemLabel: generatedResultContent.label,
         patternStrength: analysis?.strength || 'none',
         answers: answers,
         entityName: entityName || undefined,
-        systemControls: generatedResultContent.systemControls,
-        systemDoesNotControl: generatedResultContent.systemDoesNotControl,
-        decisionMakers: generatedResultContent.decisionMakers,
-        commonStuckPoints: generatedResultContent.commonStuckPoints,
-        whatUsuallyHappens: generatedResultContent.whatUsuallyHappens,
-        whatPeopleMisinterpret: generatedResultContent.whatPeopleMisinterpret,
+        // AI-generated content
+        systemControls: aiResults.powerDynamics.whoHasControl.join('; '),
+        systemDoesNotControl: aiResults.powerDynamics.whoDoesNotControl.join('; '),
+        decisionMakers: aiResults.powerDynamics.decisionMakers.join('; '),
+        commonStuckPoints: aiResults.commonStuckPoints.join('; '),
+        whatUsuallyHappens: aiResults.usualProcess,
+        whatPeopleMisinterpret: aiResults.commonStuckPoints,
         linkedGuideId: generatedResultContent.primaryGuideId,
       });
     }
-  }, [showResults, isLoggedIn, selectedSystem, generatedResultContent, savedResult, isSaving, analysis?.strength, answers, entityName, saveAnalyzerResult]);
+  }, [showResults, isLoggedIn, selectedSystem, generatedResultContent, aiResults, savedResult, isSaving, analysis?.strength, answers, entityName, saveAnalyzerResult]);
 
   return (
     <Layout>
