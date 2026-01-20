@@ -23,6 +23,7 @@ import { AnalyzerResults, generateResultContent } from "@/components/analyzer/An
 import { usePatternEngine, CivilRightsSystem } from "@/hooks/usePatternEngine";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAutoSaveAnalyzerResult } from "@/hooks/useAutoSaveAnalyzerResult";
+import { useAnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
 import heroImage from "@/assets/hero-analysis.png";
 
 type SystemId = 
@@ -1593,6 +1594,14 @@ export default function Analyzer() {
     resetSaveState,
   } = useAutoSaveAnalyzerResult();
 
+  const {
+    generatedResults: aiResults,
+    isGenerating: isGeneratingAI,
+    generateError: aiError,
+    generateResults: generateAIResults,
+    resetResults: resetAIResults,
+  } = useAnalyzerResultsAI();
+
   const handleAnalyze = useCallback((entity: string) => {
     if (selectedSystem) {
       setEntityName(entity);
@@ -1618,6 +1627,17 @@ export default function Analyzer() {
       setStep(step + 1);
     } else {
       setShowResults(true);
+      
+      // Trigger AI generation when showing results
+      const systemInfo = systemCategories.find(s => s.id === selectedSystem);
+      if (systemInfo) {
+        generateAIResults({
+          systemId: selectedSystem,
+          systemLabel: systemInfo.label,
+          patternStrength: 'none', // Will be updated after pattern analysis
+          location: 'Washington State',
+        });
+      }
     }
   };
 
@@ -1626,7 +1646,6 @@ export default function Analyzer() {
       setShowResults(false);
     } else if (step > 1) {
       setStep(step - 1);
-      // Remove the last answer
       const currentQuestion = currentFollowUps[step - 2];
       if (currentQuestion) {
         const { [currentQuestion.id]: _, ...remaining } = answers;
@@ -1645,6 +1664,7 @@ export default function Analyzer() {
     setAnswers({});
     setShowResults(false);
     resetSaveState();
+    resetAIResults();
   };
 
   const selectedSystemInfo = systemCategories.find(s => s.id === selectedSystem);
@@ -1830,18 +1850,26 @@ export default function Analyzer() {
             systemId={selectedSystem}
             systemLabel={generatedResultContent.label}
             patternStrength={analysis?.strength || 'none'}
-            systemControls={generatedResultContent.systemControls}
-            systemDoesNotControl={generatedResultContent.systemDoesNotControl}
-            decisionMakers={generatedResultContent.decisionMakers}
-            commonStuckPoints={generatedResultContent.commonStuckPoints}
-            whatUsuallyHappens={generatedResultContent.whatUsuallyHappens}
-            whatPeopleMisinterpret={generatedResultContent.whatPeopleMisinterpret}
             tools={generatedResultContent.tools}
             primaryGuideId={generatedResultContent.primaryGuideId}
             isLoggedIn={isLoggedIn}
             isSaving={isSaving}
             savedResult={savedResult}
             saveError={saveError}
+            aiResults={aiResults}
+            isGeneratingAI={isGeneratingAI}
+            aiError={aiError}
+            onRetryGeneration={() => {
+              const systemInfo = systemCategories.find(s => s.id === selectedSystem);
+              if (systemInfo) {
+                generateAIResults({
+                  systemId: selectedSystem,
+                  systemLabel: systemInfo.label,
+                  patternStrength: analysis?.strength || 'none',
+                  location: 'Washington State',
+                });
+              }
+            }}
           />
           
           {/* Disclaimer at bottom */}

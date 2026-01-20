@@ -2,3 +2,6 @@ project_id = "keeirvtfrvyqtmkonsru"
 
 [functions.decode-document]
 verify_jwt = false
+
+[functions.generate-analyzer-results]
+verify_jwt = false
