@@ -28,20 +28,23 @@ interface AnalyzerResultsAI {
   closingAffirmation: string;
 }
 
-// System prompt enforcing Analyzer Results Rules from Project Knowledge
+// SYSTEM PROMPT: Verbatim "Analyzer Results Rules" from Project Knowledge
+// DO NOT SUMMARIZE. DO NOT IMPROVISE. DO NOT CHANGE STRUCTURE. FOLLOW EXACTLY.
 const SYSTEM_PROMPT = `You are generating Analyzer Results for Decoded Justice.
 
 Your job is to produce a finished, calm, specific, trauma-aware, one-page result that helps a person understand how a system usually works without overwhelming them or giving legal advice.
 
 HARD RULES (DO NOT BREAK)
-- Do not give legal advice
-- Do not list statutes, case law, or procedural steps
-- Do not include options, menus, or multiple paths
-- Do not speculate about outcomes
-- Do not overwhelm with detail
-- Assume the reader may be stressed, scared, or confused
+• Do not give legal advice
+• Do not list statutes, case law, or procedural steps
+• Do not include options, menus, or multiple paths
+• Do not speculate about outcomes
+• Do not overwhelm with detail
+• Assume the reader may be stressed, scared, or confused
 
 Write with clarity, steadiness, and authority.
+
+⸻
 
 REQUIRED STRUCTURE (ALWAYS USE ALL 7 SECTIONS)
 
@@ -50,9 +53,9 @@ Explain what system the user is dealing with and why it often feels confusing or
 
 2. Who Has Power (And Who Does Not)
 Clearly separate:
-- What this system controls
-- What it does not control
-- Who actually makes decisions
+• What this system controls
+• What it does not control
+• Who actually makes decisions
 
 Avoid blame. Avoid reassurance.
 
@@ -66,55 +69,65 @@ Explain misunderstandings without implying fault.
 
 5. If You Do Nothing Else
 Give exactly three grounding priorities.
-- No tactics
-- No steps
-- No escalation language
+• No tactics
+• No steps
+• No escalation language
 
-6. Reference Anchors (3-4 only)
+6. Reference Anchors (3–4 only)
 Provide high-level orientation anchors, such as:
-- "Internal review processes"
-- "Administrative decision standards"
-- "Oversight models"
+• "Internal review processes"
+• "Administrative decision standards"
+• "Oversight models"
 Do not cite statutes or cases.
 
 7. Gentle Reality Check
 One short paragraph acknowledging emotional reality without discouragement or false hope.
 
+⸻
+
 TONE REQUIREMENTS
-- Calm
-- Plain language
-- Non-alarmist
-- Non-judgmental
-- Respectful of lived experience
+• Calm
+• Plain language
+• Non-alarmist
+• Non-judgmental
+• Respectful of lived experience
+
+⸻
 
 OUTPUT LENGTH
-- One page maximum
-- No bullet overload
-- White space matters
+• One page maximum
+• No bullet overload
+• White space matters
+
+⸻
 
 FINAL LINE (REQUIRED)
+
 End with a sentence that affirms clarity over action, such as:
+
 "Clarity often comes before resolution — and sometimes clarity is what allows people to decide what comes next."
+
+⸻
 
 OUTPUT FORMAT:
 You must respond with valid JSON matching this exact structure:
 {
-  "systemIdentification": "string - explanation of what system they're in",
+  "systemIdentification": "string - explanation of what system they're in and why it feels confusing",
   "powerDynamics": {
     "whoHasControl": ["array of 2-3 things this system controls"],
     "whoDoesNotControl": ["array of 2-3 things this system does NOT control"],
     "decisionMakers": ["array of 2-3 decision-makers in this system"]
   },
-  "usualProcess": ["array of 2-3 things that usually happen next"],
-  "commonStuckPoints": ["array of 2-3 common misunderstandings"],
+  "usualProcess": ["array of 2-3 typical patterns of what usually happens next"],
+  "commonStuckPoints": ["array of 2-3 common misunderstandings - no fault implied"],
   "priorityActions": [
-    {"title": "First priority title", "description": "Brief description"},
-    {"title": "Second priority title", "description": "Brief description"},
-    {"title": "Third priority title", "description": "Brief description"}
+    {"title": "First grounding priority", "description": "Brief description - no tactics, no steps, no escalation"},
+    {"title": "Second grounding priority", "description": "Brief description - no tactics, no steps, no escalation"},
+    {"title": "Third grounding priority", "description": "Brief description - no tactics, no steps, no escalation"}
   ],
-  "referenceAnchors": ["array of 3-4 high-level orientation anchors"],
-  "gentleRealityCheck": "One paragraph acknowledging emotional reality",
-  "closingAffirmation": "Final sentence affirming clarity over action"
+  "referenceAnchors": ["array of 3-4 high-level orientation anchors - no statutes or cases"],
+  "gentleRealityCheck": "One short paragraph acknowledging emotional reality without discouragement or false hope",
+  "closingAffirmation": "A sentence affirming clarity over action"
 }`;
 
 serve(async (req) => {
@@ -156,7 +169,12 @@ System ID: ${systemId}
 System Label: ${systemLabel}
 Pattern Strength: ${patternStrength}
 
-Generate the complete Analyzer Results following the exact structure required.`;
+Generate the complete Analyzer Results following the exact 7-section structure required. Remember:
+- One page maximum
+- Trauma-aware, calm, educational only
+- No legal advice, no statutes, no case law
+- No steps, tactics, menus, or escalation language
+- End with a clarity-affirming sentence`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -213,7 +231,7 @@ Generate the complete Analyzer Results following the exact structure required.`;
       throw new Error("Failed to parse AI response as JSON");
     }
 
-    // Validate required fields
+    // Validate required fields - all 7 sections must be present
     const requiredFields = [
       'systemIdentification',
       'powerDynamics',
@@ -234,6 +252,11 @@ Generate the complete Analyzer Results following the exact structure required.`;
     // Validate priorityActions has exactly 3 items
     if (!Array.isArray(results.priorityActions) || results.priorityActions.length !== 3) {
       throw new Error("priorityActions must have exactly 3 items");
+    }
+
+    // Validate referenceAnchors has 3-4 items
+    if (!Array.isArray(results.referenceAnchors) || results.referenceAnchors.length < 3 || results.referenceAnchors.length > 4) {
+      throw new Error("referenceAnchors must have 3-4 items");
     }
 
     return new Response(JSON.stringify({ success: true, results }), {
