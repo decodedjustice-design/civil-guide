@@ -13,7 +13,9 @@ import {
   Loader2,
   LogIn,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  ChevronDown,
+  FileQuestion
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -62,6 +64,87 @@ const patternLabels = {
   possible: "Possible pattern",
   strong: "Pattern detected",
   very_strong: "Pattern detected"
+};
+
+// System-specific sources for optional reference
+const systemSources: Record<string, string[]> = {
+  police: [
+    "RCW 43.101 — Law Enforcement Training and Certification",
+    "RCW 10.93 — Mutual Aid Peace Officer Powers",
+    "WAC 139-12 — Peace Officer Certification Standards",
+    "Washington State Criminal Justice Training Commission Policies",
+    "Municipal Police Department General Orders (varies by jurisdiction)"
+  ],
+  housing: [
+    "RCW 59.18 — Residential Landlord-Tenant Act",
+    "RCW 49.60 — Washington Law Against Discrimination (Housing)",
+    "WAC 162-32 — Fair Housing Practices",
+    "Fair Housing Act (42 U.S.C. § 3601 et seq.)",
+    "HUD Handbook 4350.3 — Occupancy Requirements"
+  ],
+  cps_dcyf: [
+    "RCW 26.44 — Abuse of Children",
+    "RCW 13.34 — Juvenile Court Act (Dependency)",
+    "WAC 110-30 — Child Welfare Services Standards",
+    "DCYF Policy Manual — Practices and Procedures Guide",
+    "Indian Child Welfare Act (25 U.S.C. § 1901 et seq.)"
+  ],
+  employer: [
+    "RCW 49.60 — Washington Law Against Discrimination",
+    "RCW 49.46 — Minimum Wage Act",
+    "WAC 296-126 — Employment Standards",
+    "Title VII of the Civil Rights Act (42 U.S.C. § 2000e)",
+    "EEOC Compliance Manual"
+  ],
+  courts: [
+    "Washington Court Rules (CR, CrR, RAP)",
+    "RCW Title 4 — Civil Procedure",
+    "RCW Title 10 — Criminal Procedure",
+    "Washington State Court Forms and Instructions",
+    "Administrative Office of the Courts — Procedural Guidelines"
+  ],
+  school: [
+    "RCW 28A — Common School Provisions",
+    "WAC 392-400 — Student Discipline",
+    "Individuals with Disabilities Education Act (IDEA)",
+    "Section 504 of the Rehabilitation Act",
+    "Family Educational Rights and Privacy Act (FERPA)"
+  ],
+  healthcare: [
+    "RCW 70.02 — Medical Records — Health Care Information Access and Disclosure",
+    "WAC 246-320 — Hospital Licensing",
+    "HIPAA Privacy Rule (45 CFR Part 164)",
+    "Emergency Medical Treatment and Labor Act (EMTALA)",
+    "Patient Bill of Rights — CMS Guidelines"
+  ],
+  government: [
+    "RCW 42.56 — Public Records Act",
+    "RCW 34.05 — Administrative Procedure Act",
+    "WAC 44-14 — Public Records Act Rules",
+    "Social Security Act (42 U.S.C. § 301 et seq.)",
+    "Code of Federal Regulations — Agency-Specific Rules"
+  ],
+  benefits: [
+    "RCW 74.04 — Public Assistance Programs",
+    "WAC 388 — DSHS Economic Services Administration Rules",
+    "Social Security Act (42 U.S.C. § 301 et seq.)",
+    "Supplemental Nutrition Assistance Program (SNAP) Regulations",
+    "Medicaid/Medicare Coverage Determinations"
+  ],
+  jail: [
+    "RCW 72.09 — Department of Corrections",
+    "WAC 137 — Department of Corrections Rules",
+    "Prison Rape Elimination Act (PREA) Standards",
+    "Eighth Amendment — Cruel and Unusual Punishment Precedents",
+    "ACA Standards for Adult Correctional Institutions"
+  ],
+  unsure: [
+    "Washington State Constitution — Article I (Declaration of Rights)",
+    "RCW 42.56 — Public Records Act",
+    "RCW 34.05 — Administrative Procedure Act",
+    "U.S. Constitution — Bill of Rights",
+    "Administrative Procedures for State Agencies"
+  ]
 };
 
 const ToolCard = ({ name, purpose, relevance, link, icon: Icon, isLocked, lockReason }: ToolCardProps) => {
@@ -128,6 +211,7 @@ export function AnalyzerResults({
 }: AnalyzerResultsProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [printShareOpen, setPrintShareOpen] = useState(false);
+  const [sourcesOpen, setSourcesOpen] = useState(false);
   const navigate = useNavigate();
 
   const unlockedTools = tools.filter(t => !t.isLocked);
@@ -494,6 +578,31 @@ export function AnalyzerResults({
               {aiResults.closingAffirmation}
             </p>
           </div>
+        </section>
+
+        {/* View Sources (Optional) - Inline Collapsible */}
+        <section className="mb-12">
+          <Collapsible open={sourcesOpen} onOpenChange={setSourcesOpen}>
+            <CollapsibleTrigger className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm group cursor-pointer">
+              <FileQuestion className="w-4 h-4" />
+              <span>View sources (optional)</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${sourcesOpen ? 'rotate-180' : ''}`} />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4">
+              <div className="rounded-xl bg-muted/30 border border-border/50 p-5">
+                <p className="text-muted-foreground text-xs mb-4 italic">
+                  These sources are provided for orientation only. They are not instructions or legal advice.
+                </p>
+                <ul className="space-y-2">
+                  {(systemSources[systemId] || systemSources.unsure).map((source, i) => (
+                    <li key={i} className="text-muted-foreground text-sm leading-relaxed">
+                      • {source}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </section>
 
         {/* Primary Action */}
