@@ -15,12 +15,14 @@ import {
   Check,
   Loader2,
   LogIn,
-  AlertCircle
+  AlertCircle,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { PrintShareModal } from "@/components/shared/PrintShareModal";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
+import type { AnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
 
 interface ToolCardProps {
   name: string;
@@ -42,12 +44,6 @@ interface AnalyzerResultsProps {
   systemLabel: string;
   location?: string;
   patternStrength: 'none' | 'possible' | 'strong' | 'very_strong';
-  systemControls: string;
-  systemDoesNotControl: string;
-  decisionMakers: string;
-  commonStuckPoints: string;
-  whatUsuallyHappens: string[];
-  whatPeopleMisinterpret: string[];
   tools: ToolCardProps[];
   primaryGuideId?: string;
   onSaveAnalysis?: () => void;
@@ -57,6 +53,11 @@ interface AnalyzerResultsProps {
   isSaving?: boolean;
   savedResult?: SavedResult | null;
   saveError?: string | null;
+  // AI-generated results
+  aiResults: AnalyzerResultsAI | null;
+  isGeneratingAI: boolean;
+  aiError: string | null;
+  onRetryGeneration?: () => void;
 }
 
 const patternLabels = {
@@ -115,12 +116,6 @@ export function AnalyzerResults({
   systemLabel,
   location,
   patternStrength,
-  systemControls,
-  systemDoesNotControl,
-  decisionMakers,
-  commonStuckPoints,
-  whatUsuallyHappens,
-  whatPeopleMisinterpret,
   tools,
   primaryGuideId,
   onSaveAnalysis,
@@ -129,6 +124,10 @@ export function AnalyzerResults({
   isSaving = false,
   savedResult = null,
   saveError = null,
+  aiResults,
+  isGeneratingAI,
+  aiError,
+  onRetryGeneration,
 }: AnalyzerResultsProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [printShareOpen, setPrintShareOpen] = useState(false);
@@ -152,6 +151,54 @@ export function AnalyzerResults({
   const createDeepLink = (section: string, subsection: string) => {
     return `/rights-insight?section=${section}&subsection=${subsection}&from=analyzer`;
   };
+
+  // Show loading state while AI generates
+  if (isGeneratingAI) {
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <div className="text-center p-8">
+          <Loader2 className="w-12 h-12 animate-spin text-accent mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-foreground mb-2">Preparing Your Results</h2>
+          <p className="text-muted-foreground max-w-md">
+            We're analyzing your situation to provide personalized guidance. This takes just a moment.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state with retry option
+  if (aiError && !aiResults) {
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <div className="text-center p-8 max-w-md">
+          <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-foreground mb-2">We're Preparing Your Results</h2>
+          <p className="text-muted-foreground mb-6">
+            {aiError}
+          </p>
+          {onRetryGeneration && (
+            <Button onClick={onRetryGeneration} variant="outline" className="gap-2">
+              <RefreshCw className="w-4 h-4" />
+              Try Again
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // If no AI results yet, show minimal fallback (shouldn't normally happen)
+  if (!aiResults) {
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <div className="text-center p-8">
+          <Loader2 className="w-12 h-12 animate-spin text-accent mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading results...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-hero">
@@ -238,17 +285,29 @@ export function AnalyzerResults({
             <div className="space-y-4">
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-2">What this system controls:</h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">{systemControls}</p>
+                <ul className="space-y-1">
+                  {aiResults.powerDynamics.whoHasControl.map((item, i) => (
+                    <li key={i} className="text-muted-foreground text-sm leading-relaxed">• {item}</li>
+                  ))}
+                </ul>
               </div>
               
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-2">What it does NOT control:</h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">{systemDoesNotControl}</p>
+                <ul className="space-y-1">
+                  {aiResults.powerDynamics.whoDoesNotControl.map((item, i) => (
+                    <li key={i} className="text-muted-foreground text-sm leading-relaxed">• {item}</li>
+                  ))}
+                </ul>
               </div>
               
               <div>
                 <h4 className="text-sm font-medium text-foreground mb-2">Who actually makes decisions:</h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">{decisionMakers}</p>
+                <ul className="space-y-1">
+                  {aiResults.powerDynamics.decisionMakers.map((item, i) => (
+                    <li key={i} className="text-muted-foreground text-sm leading-relaxed">• {item}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
@@ -263,7 +322,7 @@ export function AnalyzerResults({
             </div>
             
             <div className="space-y-4">
-              {whatUsuallyHappens.map((item, i) => (
+              {aiResults.usualProcess.map((item, i) => (
                 <div key={i} className="flex gap-3">
                   <span className="text-accent font-semibold shrink-0">{i + 1}.</span>
                   <p className="text-muted-foreground text-sm leading-relaxed">{item}</p>
@@ -281,24 +340,17 @@ export function AnalyzerResults({
               <h2 className="text-lg font-semibold text-amber-800">Where People Get Stuck</h2>
             </div>
             
-            <p className="text-amber-900/80 text-sm leading-relaxed mb-4">
-              {commonStuckPoints}
-            </p>
-            
-            <div className="pt-4 border-t border-amber-200">
-              <h4 className="text-sm font-medium text-amber-800 mb-3">What people often misinterpret:</h4>
-              <ul className="space-y-2">
-                {whatPeopleMisinterpret.map((item, i) => (
-                  <li key={i} className="text-amber-900/80 text-sm leading-relaxed pl-4 border-l-2 border-amber-300">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ul className="space-y-2">
+              {aiResults.commonStuckPoints.map((item, i) => (
+                <li key={i} className="text-amber-900/80 text-sm leading-relaxed pl-4 border-l-2 border-amber-300">
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        {/* SECTION 5: What matters first (If You Do Nothing Else) */}
+        {/* SECTION 5: What matters first (If You Do Nothing Else) - AI Generated */}
         <section className="mb-12">
           <div className="rounded-2xl bg-accent/5 border-2 border-accent/30 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
@@ -313,30 +365,36 @@ export function AnalyzerResults({
             </p>
             
             <div className="space-y-3">
-              <div className="flex gap-3 items-start p-3 rounded-lg bg-white border border-border">
-                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-sm font-semibold flex items-center justify-center shrink-0">1</span>
-                <div>
-                  <p className="font-medium text-foreground text-sm">Preserve your records</p>
-                  <p className="text-muted-foreground text-xs mt-1">Write down what happened. Save any documents, messages, or photos.</p>
+              {aiResults.priorityActions.map((action, i) => (
+                <div key={i} className="flex gap-3 items-start p-3 rounded-lg bg-white border border-border">
+                  <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-sm font-semibold flex items-center justify-center shrink-0">{i + 1}</span>
+                  <div>
+                    <p className="font-medium text-foreground text-sm">{action.title}</p>
+                    <p className="text-muted-foreground text-xs mt-1">{action.description}</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex gap-3 items-start p-3 rounded-lg bg-white border border-border">
-                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-sm font-semibold flex items-center justify-center shrink-0">2</span>
-                <div>
-                  <p className="font-medium text-foreground text-sm">Track any deadlines</p>
-                  <p className="text-muted-foreground text-xs mt-1">Many systems have short windows to respond. Missing them can close options.</p>
-                </div>
-              </div>
-              
-              <div className="flex gap-3 items-start p-3 rounded-lg bg-white border border-border">
-                <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-sm font-semibold flex items-center justify-center shrink-0">3</span>
-                <div>
-                  <p className="font-medium text-foreground text-sm">Take care of yourself</p>
-                  <p className="text-muted-foreground text-xs mt-1">This process is stressful. Pausing to regroup is okay. Your wellbeing matters.</p>
-                </div>
-              </div>
+              ))}
             </div>
+          </div>
+        </section>
+
+        {/* SECTION 6: Reference Anchors */}
+        <section className="mb-8">
+          <div className="rounded-2xl bg-card border border-border p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-3 h-3 rounded-full bg-accent" />
+              <h2 className="text-lg font-semibold text-accent">Reference Anchors</h2>
+            </div>
+            <p className="text-muted-foreground text-sm mb-3">
+              These concepts can help orient your understanding:
+            </p>
+            <ul className="space-y-2">
+              {aiResults.referenceAnchors.map((anchor, i) => (
+                <li key={i} className="text-muted-foreground text-sm leading-relaxed pl-4 border-l-2 border-accent/30">
+                  {anchor}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -429,12 +487,14 @@ export function AnalyzerResults({
           )}
         </section>
 
-        {/* Gentle Reality Check */}
+        {/* SECTION 7: Gentle Reality Check + Closing Affirmation */}
         <section className="mb-12">
           <div className="rounded-2xl bg-muted/50 border border-border p-6">
-            <p className="text-muted-foreground leading-relaxed">
-              This process is rarely fast or fair. Progress usually comes from clarity, not force. 
-              What you do now creates options later.
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              {aiResults.gentleRealityCheck}
+            </p>
+            <p className="text-foreground text-sm font-medium italic">
+              {aiResults.closingAffirmation}
             </p>
           </div>
         </section>
