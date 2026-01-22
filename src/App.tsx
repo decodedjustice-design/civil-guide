@@ -21,6 +21,7 @@ import FullGuide from "./pages/FullGuide";
 import Library from "./pages/Library";
 import Transcription from "./pages/Transcription";
 import Tools from "./pages/Tools";
+import PublicRequestRights from "./pages/PublicRequestRights";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/guide/:guideId" element={<FullGuide />} />
             <Route path="/library" element={<Library />} />
             <Route path="/transcription" element={<Transcription />} />
+            <Route path="/public-request-rights" element={<PublicRequestRights />} />
             <Route path="/founders-story" element={<About />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />

@@ -71,9 +71,9 @@ const allTools: Tool[] = [
   },
   {
     id: 'records',
-    label: 'Records Request Guide',
-    description: 'Learn how to request public records and body cam footage',
-    href: '/rights-insight?filter=records',
+    label: 'Public Request Rights',
+    description: 'Understand, request, and organize public records and documents',
+    href: '/public-request-rights?from=analyzer',
     icon: FileSearch,
     requiresAuth: false,
     minStrength: 'none',

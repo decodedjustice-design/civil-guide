@@ -37,6 +37,14 @@ const selfHelpTools: ToolCard[] = [
     available: true,
   },
   {
+    icon: FileText,
+    title: "Public Request Rights",
+    description: "Understand, request, and organize public records and documents.",
+    href: "/public-request-rights",
+    buttonLabel: "Open Tool",
+    available: true,
+  },
+  {
     icon: FolderOpen,
     title: "Evidence Vault",
     description: "Store and organize documents, files, and records securely.",
