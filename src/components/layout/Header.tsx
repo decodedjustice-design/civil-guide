@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const navigation = [
+  { name: "Tools", href: "/tools" },
   { name: "Analyzer", href: "/analyzer" },
-  { name: "Rights Insight", href: "/rights-insight" },
   { name: "Library", href: "/library" },
   { name: "Find Help", href: "/find-help" },
 ];

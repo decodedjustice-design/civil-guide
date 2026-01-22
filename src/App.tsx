@@ -20,6 +20,7 @@ import Timeline from "./pages/Timeline";
 import FullGuide from "./pages/FullGuide";
 import Library from "./pages/Library";
 import Transcription from "./pages/Transcription";
+import Tools from "./pages/Tools";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/tools" element={<Tools />} />
             <Route path="/analyzer" element={<Analyzer />} />
             <Route path="/legal-decoder" element={<LegalDecoder />} />
             <Route path="/self-help" element={<SelfHelpTools />} />
