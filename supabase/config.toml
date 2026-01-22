@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.generate-analyzer-results]
 verify_jwt = false
+
+[functions.transcribe-audio]
+verify_jwt = false

@@ -12,7 +12,8 @@ import {
   ArrowRight,
   LogOut,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  FileAudio
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,13 @@ const tools = [
     title: "Timeline Creator",
     description: "Build a chronological record of events to help you and professionals understand what happened.",
     href: "/timeline",
+    status: "available"
+  },
+  {
+    icon: FileAudio,
+    title: "Transcription Tool",
+    description: "Upload audio or paste text to organize what was said during important interactions.",
+    href: "/transcription",
     status: "available"
   },
   {
