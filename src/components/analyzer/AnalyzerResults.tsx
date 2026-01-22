@@ -737,10 +737,10 @@ function getToolsForSystem(systemId: string, patternStrength: 'none' | 'possible
       lockReason: "Available if more pattern evidence appears."
     },
     {
-      name: "Records Request Guide",
-      purpose: "Learn how to request official records and files.",
+      name: "Public Request Rights",
+      purpose: "Understand, request, and organize public records.",
       relevance: "Understanding what they know helps you prepare.",
-      link: "/rights-insight?section=evidence-truths&subsection=what-counts&from=analyzer",
+      link: "/public-request-rights?from=analyzer",
       icon: Search,
       isLocked: false
     }

@@ -24,6 +24,13 @@ import { educationalGuides } from "@/data/educationalGuides";
 const tools = [
   {
     icon: FileText,
+    title: "Public Request Rights",
+    description: "Understand, request, and organize public records and documents.",
+    href: "/public-request-rights",
+    status: "available"
+  },
+  {
+    icon: FileText,
     title: "Notes",
     description: "Keep detailed notes about conversations, observations, and important details.",
     href: "/notes",
