@@ -320,6 +320,126 @@ export const educationalGuides: EducationalGuide[] = [
       { label: "DCYF Complaint Process", url: "https://www.dcyf.wa.gov/about/complaints", type: "agency" },
       { label: "Indian Child Welfare Act (ICWA) Information", url: "https://www.bia.gov/bia/ois/dhs/icwa", type: "official" }
     ]
+  },
+
+  // ===== AI PROMPT GUIDE =====
+  {
+    id: "ai-prompt-guide",
+    systemId: "ai-tools",
+    title: "How to Use AI for Research, Clarity, and Organization (Without Hallucinations)",
+    readTime: "12 min read",
+    
+    beforeYouStart: {
+      grounding: "AI tools are becoming more common in daily life, and many people wonder how to use them safely — especially when dealing with sensitive situations like civil rights issues or legal processes. This guide exists to help you use AI as a support tool, not as a substitute for professional guidance or your own judgment.",
+      consent: "You don't have to use AI at all if it doesn't feel right for you. This guide is purely educational. Take what's useful, leave what isn't, and remember: you are always in control of your own decisions."
+    },
+    
+    whatThisSystemIs: {
+      description: "AI (artificial intelligence) refers to computer systems that can process language, organize information, and generate text. On this platform and others, AI can help you structure your thoughts, understand complex language, and prepare questions. But AI is not a lawyer, not a therapist, and not a source of truth.",
+      whoRunsIt: "AI systems are built by technology companies. The AI you interact with follows patterns it learned from large amounts of text. It does not 'know' your situation, does not have access to current databases, and cannot verify facts independently.",
+      whatItControls: "AI controls nothing about your case, your rights, or your outcomes. It can only process the information you give it and respond based on patterns. It cannot make decisions for you, and it should never be treated as an authority."
+    },
+    
+    whyConfusing: {
+      explanation: "AI can feel confusing because it often sounds confident, even when it's wrong. It may produce text that looks authoritative but contains invented facts, outdated information, or completely fabricated sources. This is called 'hallucination.'",
+      structuralReasons: [
+        "AI generates responses based on patterns, not verified knowledge",
+        "AI cannot distinguish between reliable and unreliable sources",
+        "AI may invent citations, case names, or statistics that don't exist",
+        "AI often sounds more certain than it should",
+        "AI doesn't know when it's wrong",
+        "AI has no way to verify current laws, policies, or procedures"
+      ]
+    },
+    
+    whatUsuallyHappens: [
+      "A person asks AI for help understanding a legal or civil rights issue",
+      "AI provides a response that sounds helpful and authoritative",
+      "The person assumes the information is accurate because it sounds professional",
+      "They may act on that information without verifying it",
+      "Later, they discover the AI invented facts, cited cases that don't exist, or gave outdated advice",
+      "This can cause confusion, wasted effort, or even harm to their situation"
+    ],
+    
+    successReframe: {
+      reality: "Successful use of AI means treating it as an organizer and clarifier — not as an authority or decision-maker. When used carefully, AI can genuinely help you prepare, structure, and understand. The key is knowing its limits.",
+      examples: [
+        "Using AI to turn messy notes into a clean timeline",
+        "Asking AI to simplify complex language without adding interpretation",
+        "Having AI generate neutral questions you can ask a professional",
+        "Using AI to organize documents into categories",
+        "Asking AI to identify what's unclear so you know what to research further",
+        "Using AI to format your own writing without changing meaning"
+      ]
+    },
+    
+    internalKnowledge: {
+      explanation: "Understanding how AI actually works can help you use it more safely. Here are things AI systems know (and don't know) that most users aren't aware of.",
+      examples: [
+        "AI doesn't 'remember' previous conversations unless specifically designed to",
+        "AI cannot access the internet or current databases in most cases",
+        "AI was trained on data with a cutoff date — it doesn't know recent developments",
+        "AI has no way to verify if what it says is true",
+        "AI is designed to sound helpful, which can make it seem more confident than it should be",
+        "AI cannot distinguish between your situation and general patterns",
+        "AI may give different answers to the same question if asked multiple times"
+      ]
+    },
+    
+    misunderstandings: {
+      traps: [
+        "That AI 'knows' the law — it doesn't; it generates text based on patterns",
+        "That AI can predict outcomes — it cannot; it has no access to courts, judges, or real-world data",
+        "That AI citations are real — AI frequently invents case names, statutes, and sources",
+        "That AI understands your situation — it processes text, not context or lived experience",
+        "That AI is neutral — AI reflects biases in its training data",
+        "That longer, more detailed AI responses are more accurate — length is not a sign of truth",
+        "That AI can replace a lawyer, advocate, or counselor — it absolutely cannot"
+      ]
+    },
+    
+    whatMatters: [
+      "Always verify any factual claim AI makes before acting on it",
+      "Never treat AI as a source of legal, medical, or professional advice",
+      "Use AI for organization and clarity, not for conclusions or decisions",
+      "If AI cites a source, check whether that source actually exists",
+      "Ask AI to label uncertainty — and be skeptical if it sounds too confident",
+      "Keep humans in the loop for any decision that affects your rights or safety",
+      "Remember: AI is a tool, not an authority"
+    ],
+    
+    safeSteps: [
+      "Use AI to organize information you already have — not to generate new facts",
+      "Ask AI to simplify or structure text, not to interpret or advise",
+      "Include safety prompts that tell AI not to add, assume, or invent",
+      "If you get a response with citations, verify them independently",
+      "Use AI to prepare questions for professionals, not to replace those conversations",
+      "Take breaks — you don't have to process everything at once",
+      "Trust your own judgment over AI when something feels wrong"
+    ],
+    
+    escalation: {
+      explanation: "Escalation in AI use means recognizing when AI is the wrong tool for the job. If you need verified legal information, medical advice, or professional guidance, AI is not sufficient — you need a human professional.",
+      signs: [
+        "You're about to take legal action based on AI output",
+        "AI is giving you information that will affect your safety or rights",
+        "You're unsure whether something AI said is accurate",
+        "AI is generating citations or sources you can't verify",
+        "You're using AI instead of talking to a lawyer, advocate, or counselor",
+        "AI is telling you what to 'do' instead of helping you organize"
+      ]
+    },
+    
+    closing: {
+      reassurance: "AI can be a genuinely useful tool when used with care. It can help you organize your thoughts, understand complex language, and prepare for important conversations. But it should never replace human judgment, professional guidance, or your own lived experience. You are the expert on your own life. AI is just a helper."
+    },
+    
+    sources: [
+      { label: "MIT Technology Review - AI Limitations", url: "https://www.technologyreview.com/", type: "official" },
+      { label: "Electronic Frontier Foundation - AI and Rights", url: "https://www.eff.org/issues/ai", type: "oversight" },
+      { label: "Partnership on AI - Responsible Practices", url: "https://partnershiponai.org/", type: "oversight" },
+      { label: "AI Now Institute - Research", url: "https://ainowinstitute.org/", type: "official" }
+    ]
   }
 ];
 
