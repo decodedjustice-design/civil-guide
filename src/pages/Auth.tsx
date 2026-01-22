@@ -11,19 +11,22 @@ import { useToast } from "@/hooks/use-toast";
  * Only allows internal paths starting with / that are not protocol-relative.
  */
 const getValidatedRedirect = (redirect: string | null): string => {
-  if (!redirect) return "/";
+  // Default to /tools for new users to discover platform capabilities
+  const defaultRedirect = "/tools";
+  
+  if (!redirect) return defaultRedirect;
   
   // Only allow internal paths (must start with /)
-  if (!redirect.startsWith("/")) return "/";
+  if (!redirect.startsWith("/")) return defaultRedirect;
   
   // Prevent protocol-relative URLs (//evil.com)
-  if (redirect.startsWith("//")) return "/";
+  if (redirect.startsWith("//")) return defaultRedirect;
   
   // Prevent javascript: urls
-  if (redirect.toLowerCase().startsWith("javascript:")) return "/";
+  if (redirect.toLowerCase().startsWith("javascript:")) return defaultRedirect;
   
   // Prevent data: urls
-  if (redirect.toLowerCase().startsWith("data:")) return "/";
+  if (redirect.toLowerCase().startsWith("data:")) return defaultRedirect;
   
   return redirect;
 };
