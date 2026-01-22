@@ -19,6 +19,7 @@ import EvidenceVault from "./pages/EvidenceVault";
 import Timeline from "./pages/Timeline";
 import FullGuide from "./pages/FullGuide";
 import Library from "./pages/Library";
+import Transcription from "./pages/Transcription";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/timeline" element={<Timeline />} />
             <Route path="/guide/:guideId" element={<FullGuide />} />
             <Route path="/library" element={<Library />} />
+            <Route path="/transcription" element={<Transcription />} />
             <Route path="/founders-story" element={<About />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />
