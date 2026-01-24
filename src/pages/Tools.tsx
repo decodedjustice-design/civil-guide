@@ -278,6 +278,42 @@ export default function Tools() {
             </Button>
           </div>
 
+          {/* Platform Connection */}
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 rounded-xl bg-card border border-border">
+              <h3 className="text-sm font-semibold text-foreground mb-3">Learn How Systems Work</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Understand the rules, patterns, and realities before taking action.
+              </p>
+              <div className="flex flex-col gap-2">
+                <Link to="/library" className="text-sm text-primary hover:underline flex items-center gap-1">
+                  <BookOpen className="w-4 h-4" />
+                  Rights Insight
+                </Link>
+                <Link to="/rights-insight" className="text-sm text-primary hover:underline flex items-center gap-1">
+                  <Map className="w-4 h-4" />
+                  Library Guides
+                </Link>
+              </div>
+            </div>
+            <div className="p-6 rounded-xl bg-card border border-border">
+              <h3 className="text-sm font-semibold text-foreground mb-3">Find Outside Support</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Agencies, oversight bodies, and legal resources.
+              </p>
+              <div className="flex flex-col gap-2">
+                <Link to="/support-network" className="text-sm text-primary hover:underline flex items-center gap-1">
+                  <Layers className="w-4 h-4" />
+                  Support Network
+                </Link>
+                <Link to="/find-help" className="text-sm text-primary hover:underline flex items-center gap-1">
+                  <Scale className="w-4 h-4" />
+                  Find Legal Help
+                </Link>
+              </div>
+            </div>
+          </div>
+
           {/* Disclaimer */}
           <div className="mt-12 pt-8 border-t border-border">
             <Disclaimer className="justify-center" />

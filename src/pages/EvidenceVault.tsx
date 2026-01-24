@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FolderOpen, Plus, Trash2, Save, X, ArrowLeft, File, Image, FileText as FileTextIcon, Upload, Calendar, Building, Users, FileQuestion, Info, Eye } from "lucide-react";
+import { FolderOpen, Plus, Trash2, Save, X, ArrowLeft, File, Image, FileText as FileTextIcon, Upload, Calendar, Building, Users, FileQuestion, Info, Eye, Shield, Clock } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
@@ -240,6 +240,19 @@ export default function EvidenceVault() {
               <Plus className="w-4 h-4" />
               Add Evidence
             </Button>
+          </div>
+
+          {/* Privacy & Trust Framing */}
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-accent/5 border border-accent/20 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center shrink-0">
+              <Shield className="w-4 h-4 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Private and secure</p>
+              <p className="text-xs text-muted-foreground">
+                Your files are stored securely and are only accessible to you. Nothing is shared with third parties.
+              </p>
+            </div>
           </div>
 
           {/* Wellbeing Note */}
@@ -508,6 +521,21 @@ export default function EvidenceVault() {
               })}
             </div>
           )}
+
+          {/* Related Tools */}
+          <div className="mt-12 p-6 rounded-xl bg-card border border-border">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Related Tools</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <Link to="/timeline" className="flex items-center gap-2 text-primary hover:underline">
+                <Clock className="w-4 h-4" />
+                Timeline — Build a chronological record
+              </Link>
+              <Link to="/transcription" className="flex items-center gap-2 text-primary hover:underline">
+                <FileTextIcon className="w-4 h-4" />
+                Transcription — Convert audio to text
+              </Link>
+            </div>
+          </div>
 
           {/* Disclaimer */}
           <div className="mt-12 pt-8 border-t border-border">

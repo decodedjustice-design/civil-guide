@@ -195,8 +195,31 @@ export default function SupportNetwork() {
           )}
         </div>
 
+        {/* Related Connections */}
+        <div className="max-w-4xl mx-auto mt-12 p-6 rounded-xl bg-card border border-border">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Related Platform Areas</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <Link to="/library" className="flex items-center gap-2 text-primary hover:underline">
+              <Info className="w-4 h-4" />
+              Rights Insight
+            </Link>
+            <Link to="/rights-insight" className="flex items-center gap-2 text-primary hover:underline">
+              <FileText className="w-4 h-4" />
+              Library Guides
+            </Link>
+            <Link to="/tools" className="flex items-center gap-2 text-primary hover:underline">
+              <Building2 className="w-4 h-4" />
+              All Tools
+            </Link>
+            <Link to="/public-request-rights" className="flex items-center gap-2 text-primary hover:underline">
+              <FileText className="w-4 h-4" />
+              Public Request Rights
+            </Link>
+          </div>
+        </div>
+
         {/* CTA */}
-        <div className="max-w-2xl mx-auto mt-16 text-center">
+        <div className="max-w-2xl mx-auto mt-12 text-center">
           <p className="text-muted-foreground mb-6">
             Not sure which agencies apply to your situation?
           </p>

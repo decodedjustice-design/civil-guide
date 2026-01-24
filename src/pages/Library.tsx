@@ -214,6 +214,25 @@ export default function Library() {
               </p>
             </Link>
           </div>
+
+          {/* Related Connections */}
+          <div className="mt-8 p-6 rounded-xl bg-white border border-border">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Related Platform Areas</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+              <Link to="/support-network" className="flex items-center gap-2 text-accent hover:underline">
+                <Scale className="w-4 h-4" />
+                Support Network
+              </Link>
+              <Link to="/tools" className="flex items-center gap-2 text-accent hover:underline">
+                <FileCheck className="w-4 h-4" />
+                All Tools
+              </Link>
+              <Link to="/public-request-rights" className="flex items-center gap-2 text-accent hover:underline">
+                <FileCheck className="w-4 h-4" />
+                Public Request Rights
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </Layout>
