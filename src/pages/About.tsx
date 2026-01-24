@@ -23,100 +23,141 @@ export default function About() {
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Why This Platform Exists
               </h1>
-              <p className="text-lg text-muted-foreground">
-                The origin of Decoded Justice
-              </p>
+              <div className="flex items-center justify-center gap-3 text-primary text-sm tracking-wide mt-4">
+                <span>Clarity</span>
+                <span className="w-1 h-1 rounded-full bg-primary" />
+                <span>Justice</span>
+                <span className="w-1 h-1 rounded-full bg-primary" />
+                <span>Empathy</span>
+              </div>
             </div>
 
-            <div className="space-y-16">
-              {/* 1. Simple Origin */}
+            <div className="space-y-14">
+              {/* 1. Origin (Clarity) */}
               <section>
-                <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                  How It Started
-                </h2>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">Origin</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity</span>
+                </div>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    Decoded Justice began as a personal attempt to make sense of systems that were not designed to be understood.
+                    Decoded Justice began when one person could not find a single place that explained how the systems affecting their life actually worked.
                   </p>
                   <p>
-                    It was not created as a business or a product. It emerged from the experience of navigating housing instability, court proceedings, police encounters, child welfare involvement, and public benefits—all at once, with no coordination, no guidance, and no central place to organize what was happening.
+                    It was not a business idea. It was not a product concept. It started as an attempt to organize scattered information—court filings, agency letters, case numbers, deadlines—into something that made sense.
                   </p>
                   <p>
-                    There was no roadmap. So one was built.
+                    The confusion was not personal failure. It was structural. The systems were designed without coordination, without explanation, without a map.
+                  </p>
+                  <p>
+                    So one was built.
                   </p>
                 </div>
               </section>
 
-              {/* 2. The Problem */}
+              {/* 2. The Reality (Justice) */}
               <section>
-                <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                  The Problem
-                </h2>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Reality</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Justice</span>
+                </div>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    Public systems—courts, housing authorities, police departments, child welfare agencies, public defense offices, benefits programs—do not communicate with each other. They operate independently, often with conflicting timelines, overlapping demands, and no shared understanding of your situation.
+                    Public systems—courts, housing authorities, police departments, child welfare agencies, public defense offices, benefits programs—do not operate as a unified structure. They run independently. They do not share information. They do not coordinate timelines.
                   </p>
                   <p>
-                    Each system assumes you already understand how it works. Each expects compliance without offering explanation. Each creates records that may later be used in ways you did not anticipate.
+                    Each system assumes you already understand how it works. Each expects compliance without providing explanation. Each creates records that may be used later in ways you did not anticipate.
                   </p>
                   <p>
-                    The result is fragmentation: scattered documents, missed deadlines, inconsistent information, and decisions made without your input or awareness.
+                    Power is distributed unevenly. Institutions have staff, attorneys, and established procedures. Most people navigating these systems have none of those resources.
+                  </p>
+                  <p>
+                    This is not a conspiracy. It is structural design. And that design produces consistent outcomes: confusion, delay, missed deadlines, and decisions made without informed participation.
                   </p>
                 </div>
               </section>
 
-              {/* 3. The Gap */}
+              {/* 3. The Human Impact (Empathy) */}
               <section>
-                <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                  What Was Missing
-                </h2>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Human Impact</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Empathy</span>
+                </div>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    When navigating these systems, there was no central place to:
+                    What does this actually feel like?
+                  </p>
+                  <p>
+                    It feels like receiving mail you do not fully understand. It feels like deadlines that passed before you knew they existed. It feels like being spoken to in language designed for professionals, not for you.
+                  </p>
+                  <p>
+                    It feels like overwhelm. Isolation. Fear of making the wrong choice. Fear of saying the wrong thing. Fear that one mistake will cascade into something you cannot undo.
+                  </p>
+                  <p>
+                    And often, it feels like shame—because the confusion gets internalized as personal failure, when it is actually system failure.
+                  </p>
+                  <p>
+                    This platform does not forget that reality. Every design decision accounts for it.
+                  </p>
+                </div>
+              </section>
+
+              {/* 4. The Gap (Clarity + Justice) */}
+              <section>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Gap</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity + Justice</span>
+                </div>
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
+                  <p>
+                    When navigating these systems, there was no central resource to:
                   </p>
                   <ul className="space-y-2 pl-4">
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Understand which system you are actually in</span>
+                      <span>Explain which system you are actually in and how it typically operates</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Learn what typically happens next</span>
+                      <span>Organize documents, records, and communications coherently</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Organize documents and records coherently</span>
+                      <span>Build a timeline of events that makes chronological sense</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Build a timeline that makes sense</span>
+                      <span>Access plain-language explanations written for clarity, not for legal professionals</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Access information written in plain language</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Receive guidance that acknowledges the stress of the situation</span>
+                      <span>Receive guidance that acknowledges the emotional weight of the situation</span>
                     </li>
                   </ul>
                   <p>
-                    Legal aid is limited. Attorneys are expensive. And by the time most people seek help, critical deadlines have often passed or records have already been created without their input.
+                    Legal aid is limited. Attorneys are expensive. And by the time most people seek help, critical deadlines have passed or records have been created without their input.
+                  </p>
+                  <p>
+                    The gap was not access to legal advice. The gap was access to understanding—before crisis.
                   </p>
                 </div>
               </section>
 
-              {/* 4. The Response */}
+              {/* 5. The Response (Clarity + Empathy) */}
               <section>
-                <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                  Why Decoded Justice Was Built
-                </h2>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Response</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity + Empathy</span>
+                </div>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    This platform was built to address that gap—not by providing legal advice, but by providing structure.
+                    Decoded Justice was built to address that gap.
                   </p>
                   <p>
-                    The goal is to help people:
+                    Not to provide legal advice. Not to replace attorneys. Not to promise outcomes.
+                  </p>
+                  <p>
+                    But to provide structure. To help people:
                   </p>
                   <ul className="space-y-2 pl-4">
                     <li className="flex items-start gap-3">
@@ -125,7 +166,7 @@ export default function About() {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Understand how systems generally operate</span>
+                      <span>Understand how systems generally operate before having to navigate them</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
@@ -133,77 +174,72 @@ export default function About() {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Reduce confusion during already difficult situations</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Prepare for conversations with attorneys or advocates</span>
+                      <span>Prepare for conversations with attorneys, advocates, or officials</span>
                     </li>
                   </ul>
                   <p>
-                    Decoded Justice does not replace professional legal counsel. It creates a foundation so that when you do speak with an attorney, you arrive organized.
+                    The platform was designed to reduce confusion—not to add another layer of complexity to an already difficult situation.
                   </p>
                 </div>
               </section>
 
-              {/* 5. The Philosophy */}
+              {/* 6. The Philosophy (Identity Pillars) */}
               <section>
-                <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                  Core Beliefs
-                </h2>
-                <div className="space-y-4 text-muted-foreground leading-relaxed">
-                  <p>
-                    The philosophy behind this platform is straightforward:
-                  </p>
-                  <ul className="space-y-3 pl-4">
-                    <li className="flex items-start gap-3">
-                      <span className="text-primary font-medium shrink-0">Clarity over chaos.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span>Understanding before reaction.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span>Structure before conflict.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span>Documentation before damage.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span>Support without exploitation.</span>
-                    </li>
-                  </ul>
-                  <p>
-                    This is not about fighting louder. It is about understanding earlier.
-                  </p>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Philosophy</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Identity</span>
+                </div>
+                <div className="space-y-6 text-muted-foreground leading-relaxed">
+                  <div className="p-5 rounded-lg bg-card border border-border">
+                    <h3 className="font-semibold text-foreground mb-2">Clarity as Protection</h3>
+                    <p>
+                      When you understand what is happening, you are less vulnerable to being misled. When you can see the structure, you can navigate it. Clarity is not a luxury—it is a form of protection.
+                    </p>
+                  </div>
+                  <div className="p-5 rounded-lg bg-card border border-border">
+                    <h3 className="font-semibold text-foreground mb-2">Justice as Access to Understanding</h3>
+                    <p>
+                      Justice is not only what happens in courtrooms. It begins with whether people can understand the systems that govern their lives. If information is inaccessible, the system is not just. Access to understanding is a prerequisite to any meaningful participation.
+                    </p>
+                  </div>
+                  <div className="p-5 rounded-lg bg-card border border-border">
+                    <h3 className="font-semibold text-foreground mb-2">Empathy as Design Principle</h3>
+                    <p>
+                      This platform was built with the assumption that users may be stressed, afraid, or exhausted. Every interface, every instruction, every piece of content is designed with that reality in mind. Empathy is not a tone—it is a structural commitment.
+                    </p>
+                  </div>
                 </div>
               </section>
 
-              {/* 6. The Mission Statement */}
+              {/* 7. The Mission */}
               <section>
-                <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                  The Mission
-                </h2>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Mission</h2>
+                </div>
                 <div className="p-6 rounded-xl bg-card border border-border">
                   <p className="text-foreground leading-relaxed">
-                    Decoded Justice exists to provide clarity, structure, and educational resources for people navigating complex public systems—so they are not left trying to understand how things work only after harm has occurred.
+                    Decoded Justice exists to provide clarity, structure, and educational resources for people navigating complex public systems—so they can understand what is happening, organize their information, and prepare for what comes next.
                   </p>
                 </div>
               </section>
 
-              {/* 7. Closing Section */}
+              {/* 8. Purpose Statement */}
               <section>
-                <h2 className="text-xl font-semibold text-foreground mb-4 pb-2 border-b border-border">
-                  Why This Matters
-                </h2>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Purpose</h2>
+                </div>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    Most people do not learn how housing courts work until they face eviction. Most people do not understand police report processes until they are named in one. Most people do not know how child welfare investigations proceed until a caseworker is at their door.
+                    Most people do not learn how housing courts work until they face eviction. Most people do not understand police report processes until they are named in one. Most people do not know how child welfare investigations proceed until a caseworker arrives at their door.
                   </p>
                   <p>
+                    By then, critical deadlines may have passed. Records may already exist. Decisions may have been made.
+                  </p>
+                  <p className="text-foreground font-medium">
                     This platform exists so people do not have to learn systems only after harm occurs.
                   </p>
-                  <p className="text-foreground">
-                    That is the purpose. Nothing more, nothing less.
+                  <p className="text-sm text-muted-foreground pt-4 italic">
+                    That is the purpose. Nothing more. Nothing less.
                   </p>
                 </div>
               </section>
@@ -212,8 +248,8 @@ export default function About() {
             {/* CTA */}
             <div className="text-center mt-16">
               <Button variant="outline" size="lg" asChild>
-                <Link to="/about">
-                  Learn About the Platform
+                <Link to="/tools">
+                  Explore the Tools
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
