@@ -302,8 +302,31 @@ export default function RightsInsight() {
           <PrintShareGuides />
         </div>
 
+        {/* Related Connections */}
+        <div className="max-w-4xl mx-auto mt-12 p-6 rounded-xl bg-card border border-border">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Related Platform Areas</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <Link to="/library" className="flex items-center gap-2 text-primary hover:underline">
+              <BookOpen className="w-4 h-4" />
+              Rights Insight
+            </Link>
+            <Link to="/public-request-rights" className="flex items-center gap-2 text-primary hover:underline">
+              <HelpCircle className="w-4 h-4" />
+              Public Request Rights
+            </Link>
+            <Link to="/support-network" className="flex items-center gap-2 text-primary hover:underline">
+              <Users className="w-4 h-4" />
+              Support Network
+            </Link>
+            <Link to="/tools" className="flex items-center gap-2 text-primary hover:underline">
+              <Scale className="w-4 h-4" />
+              All Tools
+            </Link>
+          </div>
+        </div>
+
         {/* CTA */}
-        <div className="max-w-2xl mx-auto mt-16 text-center">
+        <div className="max-w-2xl mx-auto mt-12 text-center">
           <p className="text-muted-foreground mb-6">
             Have a specific situation? The Analyzer can help point you to relevant resources.
           </p>

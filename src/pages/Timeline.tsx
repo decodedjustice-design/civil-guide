@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-paperwork.png";
-import { Clock, Plus, Trash2, Edit2, Save, X, ArrowLeft, Calendar } from "lucide-react";
+import { Clock, Plus, Trash2, Edit2, Save, X, ArrowLeft, Calendar, FolderOpen, FileText } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
@@ -312,6 +312,21 @@ export default function Timeline() {
               </div>
             </div>
           )}
+
+          {/* Related Tools */}
+          <div className="mt-12 p-6 rounded-xl bg-card border border-border">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Related Tools</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <Link to="/evidence-vault" className="flex items-center gap-2 text-primary hover:underline">
+                <FolderOpen className="w-4 h-4" />
+                Evidence Vault — Store documents and files
+              </Link>
+              <Link to="/notes" className="flex items-center gap-2 text-primary hover:underline">
+                <FileText className="w-4 h-4" />
+                Notes — Record details and observations
+              </Link>
+            </div>
+          </div>
 
           {/* Disclaimer */}
           <div className="mt-12 pt-8 border-t border-border">

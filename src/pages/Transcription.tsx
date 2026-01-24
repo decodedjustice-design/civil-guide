@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { 
   Upload, 
   FileAudio, 
@@ -11,7 +11,9 @@ import {
   Clock,
   ArrowLeft,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Lock,
+  FolderOpen
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -250,6 +252,19 @@ export default function Transcription() {
             </div>
           </div>
 
+          {/* Trust & Privacy Framing */}
+          <div className="flex items-start gap-3 p-4 rounded-xl bg-accent/5 border border-accent/20 mb-6">
+            <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center shrink-0">
+              <Lock className="w-4 h-4 text-accent" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Personal documentation only</p>
+              <p className="text-xs text-muted-foreground">
+                Your transcripts are stored privately in your Evidence Vault. Only you can access them.
+              </p>
+            </div>
+          </div>
+
           {/* Wellbeing Note */}
           <div className="p-4 rounded-xl bg-muted/50 border border-border mb-8">
             <p className="text-sm text-muted-foreground text-center">
@@ -459,6 +474,21 @@ export default function Transcription() {
               </div>
             </div>
           )}
+
+          {/* Related Tools */}
+          <div className="mt-12 p-6 rounded-xl bg-card border border-border">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Related Tools</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <Link to="/evidence-vault" className="flex items-center gap-2 text-primary hover:underline">
+                <FolderOpen className="w-4 h-4" />
+                Evidence Vault — Store and organize your files
+              </Link>
+              <Link to="/timeline" className="flex items-center gap-2 text-primary hover:underline">
+                <Clock className="w-4 h-4" />
+                Timeline — Build a chronological record
+              </Link>
+            </div>
+          </div>
 
           {/* Disclaimer */}
           <div className="mt-12 pt-8 border-t border-border">
