@@ -1,138 +1,106 @@
 import { Link } from "react-router-dom";
 import { 
-  Search, 
-  FileText, 
-  BookOpen, 
+  Lightbulb, 
+  BookMarked, 
   FolderOpen,
   Clock,
-  Users,
-  Mic,
-  FileSearch
+  Brain,
+  Users
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
-interface PurposeCardProps {
+interface PathwayCardProps {
   icon: LucideIcon;
   title: string;
   description: string;
   href: string;
 }
 
-function PurposeCard({ icon: Icon, title, description, href }: PurposeCardProps) {
+function PathwayCard({ icon: Icon, title, description, href }: PathwayCardProps) {
   return (
     <Link
       to={href}
-      className="group p-6 rounded-2xl bg-card border border-border/50 shadow-md hover:shadow-lg hover:border-primary/20 transition-all duration-300"
+      className="group relative p-8 rounded-2xl bg-card border border-border/50 shadow-md hover:shadow-lg hover:border-primary/20 transition-all duration-300 overflow-hidden"
     >
-      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-4 group-hover:from-primary/20 group-hover:to-primary/10 transition-colors">
-        <Icon className="w-6 h-6 text-primary" />
+      {/* Subtle hover glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/5 group-hover:to-transparent transition-all duration-500" />
+      
+      <div className="relative">
+        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/10 to-accent-soft flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-300">
+          <Icon className="w-7 h-7 text-primary" />
+        </div>
+        <h3 className="text-lg font-semibold text-navy mb-2 group-hover:text-primary transition-colors">
+          {title}
+        </h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {description}
+        </p>
       </div>
-      <h3 className="text-lg font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-        {title}
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        {description}
-      </p>
     </Link>
   );
 }
 
-interface PurposeGroupProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-function PurposeGroup({ title, children }: PurposeGroupProps) {
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="w-1.5 h-6 rounded-full bg-primary" />
-        <h2 className="text-sm font-semibold text-navy uppercase tracking-wider">
-          {title}
-        </h2>
-      </div>
-      <div className="grid gap-4">
-        {children}
-      </div>
-    </div>
-  );
-}
-
 export function PurposeGrid() {
+  const pathways = [
+    {
+      icon: Lightbulb,
+      title: "Understand your situation",
+      description: "Identify which systems apply and what patterns typically emerge.",
+      href: "/analyzer"
+    },
+    {
+      icon: BookMarked,
+      title: "Learn your rights and systems",
+      description: "Educational resources about how different systems work.",
+      href: "/rights-insight"
+    },
+    {
+      icon: FolderOpen,
+      title: "Organize your documents",
+      description: "Securely store and categorize important files and evidence.",
+      href: "/evidence-vault"
+    },
+    {
+      icon: Clock,
+      title: "Track your timeline",
+      description: "Create a chronological record of events and interactions.",
+      href: "/timeline"
+    },
+    {
+      icon: Brain,
+      title: "Prepare intelligently",
+      description: "Structure your thoughts and information for clarity.",
+      href: "/tools"
+    },
+    {
+      icon: Users,
+      title: "Get support resources",
+      description: "Connect with organizations and services that can help.",
+      href: "/support-network"
+    }
+  ];
+
   return (
-    <section className="py-20 lg:py-28">
+    <section className="py-20 lg:py-28 bg-secondary/20">
       <div className="container">
         {/* Section header */}
         <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 mb-6">
+            <span className="text-sm font-medium text-primary">Guided Pathways</span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-semibold text-navy mb-4">
-            What's available
+            How this space can help
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Organized by purpose, not features. Find what you need, when you need it.
+            Choose a path that feels right. There's no wrong place to start.
           </p>
         </div>
 
         {/* Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
-          <PurposeGroup title="Understanding">
-            <PurposeCard
-              icon={Search}
-              title="Analyzer"
-              description="System identification and clarity"
-              href="/analyzer"
-            />
-            <PurposeCard
-              icon={FileText}
-              title="Decoder"
-              description="Plain language translation"
-              href="/legal-decoder"
-            />
-          </PurposeGroup>
-
-          <PurposeGroup title="Learning">
-            <PurposeCard
-              icon={BookOpen}
-              title="Rights Insight"
-              description="System education and knowledge"
-              href="/rights-insight"
-            />
-            <PurposeCard
-              icon={FileSearch}
-              title="Library"
-              description="Reference guides and resources"
-              href="/library"
-            />
-          </PurposeGroup>
-
-          <PurposeGroup title="Organization">
-            <PurposeCard
-              icon={FolderOpen}
-              title="Evidence Vault"
-              description="Secure document storage"
-              href="/evidence-vault"
-            />
-            <PurposeCard
-              icon={Clock}
-              title="Timeline"
-              description="Event tracking and history"
-              href="/timeline"
-            />
-          </PurposeGroup>
-
-          <PurposeGroup title="Documentation">
-            <PurposeCard
-              icon={Mic}
-              title="Transcription"
-              description="Audio to text conversion"
-              href="/transcription"
-            />
-            <PurposeCard
-              icon={Users}
-              title="Support"
-              description="Help and resource connections"
-              href="/support-network"
-            />
-          </PurposeGroup>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {pathways.map((pathway) => (
+            <PathwayCard key={pathway.title} {...pathway} />
+          ))}
         </div>
       </div>
     </section>

@@ -4,15 +4,15 @@ import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const footerLinks = {
   platform: [
-    { name: "Analyzer", href: "/analyzer" },
-    { name: "Rights Insight", href: "/rights-insight" },
-    { name: "Library", href: "/library" },
-    { name: "Tools", href: "/tools" },
+    { name: "Understanding", href: "/analyzer" },
+    { name: "Learning", href: "/rights-insight" },
+    { name: "Organization", href: "/evidence-vault" },
+    { name: "Documentation", href: "/library" },
   ],
   resources: [
+    { name: "Tools", href: "/tools" },
     { name: "Support Network", href: "/support-network" },
-    { name: "Public Requests", href: "/public-request-rights" },
-    { name: "Find Legal Help", href: "/find-help" },
+    { name: "Find Help", href: "/find-help" },
   ],
   about: [
     { name: "About", href: "/about" },
@@ -20,10 +20,11 @@ const footerLinks = {
 };
 
 const trustSignals = [
-  { icon: BookOpen, label: "Built for understanding" },
-  { icon: Heart, label: "Designed for dignity" },
-  { icon: Lock, label: "Private by design" },
-  { icon: Shield, label: "Your information stays yours" },
+  { icon: BookOpen, label: "Educational use only" },
+  { icon: Scale, label: "Not legal advice" },
+  { icon: Lock, label: "Your data stays yours" },
+  { icon: Heart, label: "Built for understanding" },
+  { icon: Shield, label: "Not exploitation" },
 ];
 
 export function Footer() {
@@ -31,7 +32,7 @@ export function Footer() {
     <footer className="bg-navy text-white/90">
       {/* Trust signals bar */}
       <div className="border-b border-white/10">
-        <div className="container py-8">
+        <div className="container py-10">
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
             {trustSignals.map((signal) => (
               <div key={signal.label} className="flex items-center gap-2.5">
@@ -52,20 +53,20 @@ export function Footer() {
               <img 
                 src={decodedJusticeLogo} 
                 alt="Decoded Justice" 
-                className="h-10 w-auto brightness-0 invert opacity-90"
+                className="h-11 w-auto brightness-0 invert opacity-90"
               />
-              <span className="text-lg font-semibold text-white">
+              <span className="text-lg font-semibold text-white tracking-tight">
                 Decoded Justice
               </span>
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
-              A space for clarity, organization, and preparation. Educational use only.
+              A space for clarity, organization, and preparation. Educational use only — not legal advice.
             </p>
           </div>
 
           {/* Platform links */}
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-white mb-5 uppercase tracking-wider">
               Platform
             </h3>
             <ul className="space-y-3">
@@ -84,7 +85,7 @@ export function Footer() {
 
           {/* Resources links */}
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-white mb-5 uppercase tracking-wider">
               Resources
             </h3>
             <ul className="space-y-3">
@@ -103,7 +104,7 @@ export function Footer() {
 
           {/* About */}
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-white mb-5 uppercase tracking-wider">
               About
             </h3>
             <ul className="space-y-3">
