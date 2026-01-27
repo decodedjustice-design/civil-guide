@@ -81,6 +81,17 @@ export default {
         // Logo-matched accent variants
         "accent-strong": "hsl(var(--accent-strong))",
         "accent-soft": "hsl(var(--accent-soft))",
+        // Luxury warm palette
+        navy: {
+          DEFAULT: "hsl(var(--navy))",
+          light: "hsl(var(--navy-light))",
+          soft: "hsl(var(--navy-soft))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          soft: "hsl(var(--gold-soft))",
+          muted: "hsl(var(--gold-muted))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -100,6 +111,8 @@ export default {
         "gradient-card": "var(--gradient-card)",
         "gradient-primary": "var(--gradient-primary)",
         "gradient-accent": "var(--gradient-accent)",
+        "gradient-navy": "var(--gradient-navy)",
+        "gradient-warm": "var(--gradient-warm)",
       },
       keyframes: {
         "accordion-down": {

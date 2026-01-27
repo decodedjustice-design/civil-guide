@@ -6,81 +6,95 @@
 
 @layer base {
   :root {
-    /* Decoded Justice - Calm, Light, Trauma-Aware Design System */
-    /* Brand color: #499FA4 | Supporting: #1F2933, #F4F7F8, #D8E3E6 */
+    /* Decoded Justice - Luxury Warm Justice Aesthetic */
+    /* Primary: Bright Teal #499FA4 | Structural: Deep Navy | Base: Warm Ivory */
     
-    /* Soft slate background (#F4F7F8) */
-    --background: 200 20% 97%;
-    /* Charcoal text (#1F2933) */
-    --foreground: 207 27% 16%;
+    /* Warm ivory background */
+    --background: 40 30% 97%;
+    /* Deep navy text */
+    --foreground: 220 40% 13%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 207 27% 16%;
+    /* Warm white cards */
+    --card: 40 25% 99%;
+    --card-foreground: 220 40% 13%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 207 27% 16%;
+    --popover: 40 25% 99%;
+    --popover-foreground: 220 40% 13%;
 
-    /* Primary brand color - matches logo teal #499FA4 */
+    /* Primary brand color - Bright Teal #499FA4 */
     --primary: 183 38% 46%;
     --primary-foreground: 0 0% 100%;
 
-    /* Light stone for secondary elements */
-    --secondary: 200 15% 94%;
-    --secondary-foreground: 207 27% 20%;
+    /* Warm ivory secondary */
+    --secondary: 40 20% 94%;
+    --secondary-foreground: 220 35% 20%;
 
-    /* Subtle muted tones */
-    --muted: 200 12% 93%;
-    --muted-foreground: 207 15% 40%;
+    /* Warm muted tones */
+    --muted: 40 15% 92%;
+    --muted-foreground: 220 20% 40%;
 
-    /* Brand teal #499FA4 - primary identity color */
+    /* Brand teal accent */
     --accent: 183 38% 46%;
     --accent-foreground: 0 0% 100%;
     
-    /* Teal variants for UI consistency */
-    --accent-strong: 183 42% 35%;
-    --accent-soft: 186 35% 92%;
+    /* Teal variants */
+    --accent-strong: 183 45% 38%;
+    --accent-soft: 183 30% 92%;
     --teal: 183 38% 46%;
     --teal-foreground: 0 0% 100%;
 
-    /* Soft rose for alerts/important */
-    --destructive: 0 55% 50%;
+    /* Deep navy structural color */
+    --navy: 220 40% 13%;
+    --navy-light: 220 35% 25%;
+    --navy-soft: 220 30% 35%;
+
+    /* Soft gold warmth */
+    --gold: 42 65% 55%;
+    --gold-soft: 42 40% 90%;
+    --gold-muted: 42 30% 80%;
+
+    /* Soft rose for alerts */
+    --destructive: 0 50% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    /* UI elements - divider color (#D8E3E6) */
-    --border: 195 20% 87%;
-    --input: 195 15% 90%;
+    /* UI elements - warm borders */
+    --border: 40 20% 88%;
+    --input: 40 18% 92%;
     --ring: 183 38% 46%;
 
     --radius: 0.75rem;
 
     /* Custom tokens for Decoded Justice */
-    --surface-elevated: 0 0% 100%;
-    --surface-hover: 200 15% 95%;
-    --text-soft: 207 15% 45%;
-    --text-softer: 207 12% 55%;
+    --surface-elevated: 40 25% 99%;
+    --surface-hover: 40 20% 96%;
+    --text-soft: 220 20% 45%;
+    --text-softer: 220 15% 55%;
     --success: 160 45% 35%;
-    --warning: 45 70% 45%;
+    --warning: 42 70% 45%;
     
-    /* Gradients - light theme with brand teal */
-    --gradient-hero: linear-gradient(135deg, hsl(200 20% 97%) 0%, hsl(200 25% 95%) 50%, hsl(200 20% 97%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(200 15% 98%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(183 38% 46%) 0%, hsl(183 42% 40%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(183 38% 46%) 0%, hsl(183 42% 35%) 100%);
+    /* Gradients - warm luxury theme */
+    --gradient-hero: linear-gradient(135deg, hsl(40 30% 97%) 0%, hsl(40 25% 95%) 50%, hsl(183 20% 95%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(40 25% 99%) 0%, hsl(40 20% 97%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(183 38% 46%) 0%, hsl(183 45% 40%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(183 38% 46%) 0%, hsl(183 45% 38%) 100%);
+    --gradient-navy: linear-gradient(135deg, hsl(220 40% 13%) 0%, hsl(220 35% 20%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(40 30% 97%) 0%, hsl(42 40% 95%) 100%);
 
-    /* Shadows - softer for light theme */
-    --shadow-sm: 0 2px 8px hsl(207 27% 16% / 0.05);
-    --shadow-md: 0 4px 16px hsl(207 27% 16% / 0.07);
-    --shadow-lg: 0 8px 32px hsl(207 27% 16% / 0.10);
-    --shadow-glow: 0 0 40px hsl(183 38% 46% / 0.15);
+    /* Shadows - warm luxury */
+    --shadow-sm: 0 2px 8px hsl(220 40% 13% / 0.04);
+    --shadow-md: 0 4px 20px hsl(220 40% 13% / 0.06);
+    --shadow-lg: 0 8px 40px hsl(220 40% 13% / 0.08);
+    --shadow-glow: 0 0 50px hsl(183 38% 46% / 0.15);
+    --shadow-warm: 0 8px 30px hsl(42 50% 50% / 0.08);
 
     /* Sidebar */
-    --sidebar-background: 200 15% 96%;
-    --sidebar-foreground: 207 27% 20%;
+    --sidebar-background: 40 20% 96%;
+    --sidebar-foreground: 220 40% 15%;
     --sidebar-primary: 183 38% 46%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 200 15% 92%;
-    --sidebar-accent-foreground: 207 27% 25%;
-    --sidebar-border: 195 20% 88%;
+    --sidebar-accent: 40 20% 92%;
+    --sidebar-accent-foreground: 220 35% 25%;
+    --sidebar-border: 40 20% 88%;
     --sidebar-ring: 183 38% 46%;
   }
 }
