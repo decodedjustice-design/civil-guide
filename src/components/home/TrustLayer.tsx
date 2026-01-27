@@ -1,32 +1,41 @@
-import { BookOpen, Shield, Lock, Clock, Heart } from "lucide-react";
-import { LucideIcon } from "lucide-react";
-
-interface TrustItemProps {
-  icon: LucideIcon;
-  label: string;
-}
-
-function TrustItem({ icon: Icon, label }: TrustItemProps) {
-  return (
-    <div className="flex items-center gap-3 px-5 py-3">
-      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-        <Icon className="w-5 h-5 text-primary" />
-      </div>
-      <span className="text-sm font-medium text-foreground">{label}</span>
-    </div>
-  );
-}
+import { Scale, BookOpen, ShieldCheck, FileX } from "lucide-react";
 
 export function TrustLayer() {
   return (
-    <section className="py-16 bg-gradient-warm">
+    <section className="py-20 lg:py-24 bg-gradient-to-b from-background to-secondary/20">
       <div className="container">
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
-          <TrustItem icon={BookOpen} label="Educational space" />
-          <TrustItem icon={Shield} label="Built for understanding" />
-          <TrustItem icon={Lock} label="Private by design" />
-          <TrustItem icon={Clock} label="Your pace, your control" />
-          <TrustItem icon={Heart} label="No pressure, no judgment" />
+        <div className="max-w-3xl mx-auto text-center">
+          {/* Section label */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-navy/5 mb-8">
+            <Scale className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-navy">What this is</span>
+          </div>
+
+          {/* Main statement */}
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-navy mb-6 leading-tight">
+            An educational platform for navigating public systems with clarity and dignity.
+          </h2>
+
+          {/* Clarification */}
+          <div className="flex flex-wrap justify-center gap-6 mb-10">
+            <div className="flex items-center gap-2 text-navy-soft">
+              <FileX className="w-4 h-4 text-primary/70" />
+              <span className="text-sm">Not legal advice</span>
+            </div>
+            <div className="flex items-center gap-2 text-navy-soft">
+              <ShieldCheck className="w-4 h-4 text-primary/70" />
+              <span className="text-sm">Not predictions</span>
+            </div>
+            <div className="flex items-center gap-2 text-navy-soft">
+              <BookOpen className="w-4 h-4 text-primary/70" />
+              <span className="text-sm">Not automation of justice</span>
+            </div>
+          </div>
+
+          {/* Purpose */}
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            A space for understanding, organization, and preparation.
+          </p>
         </div>
       </div>
     </section>
