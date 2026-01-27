@@ -1,4 +1,4 @@
-import heroAnalysis from "@/assets/hero-analysis.png";
+import familyPaperwork from "@/assets/family-paperwork.png";
 import { Heart, Shield, Users } from "lucide-react";
 
 export function HumanLayer() {
@@ -10,8 +10,8 @@ export function HumanLayer() {
           <div className="relative order-2 lg:order-1">
             <div className="relative rounded-3xl overflow-hidden shadow-lg">
               <img 
-                src={heroAnalysis} 
-                alt="Families and dignity" 
+                src={familyPaperwork} 
+                alt="Family working together on documents" 
                 className="w-full h-auto"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-navy/30 via-transparent to-transparent" />
