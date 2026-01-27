@@ -1,16 +1,18 @@
 import { Layout } from "@/components/layout/Layout";
-import { SafetyEntry } from "@/components/home/SafetyEntry";
-import { OrientationBlock } from "@/components/home/OrientationBlock";
-import { SupportGrid } from "@/components/home/SupportGrid";
-import { GentleNavigation } from "@/components/home/GentleNavigation";
+import { HeroSection } from "@/components/home/HeroSection";
+import { TrustLayer } from "@/components/home/TrustLayer";
+import { PurposeGrid } from "@/components/home/PurposeGrid";
+import { GuidedEntry } from "@/components/home/GuidedEntry";
+import { HumanLayer } from "@/components/home/HumanLayer";
 
 const Index = () => {
   return (
     <Layout>
-      <SafetyEntry />
-      <OrientationBlock />
-      <SupportGrid />
-      <GentleNavigation />
+      <HeroSection />
+      <TrustLayer />
+      <PurposeGrid />
+      <HumanLayer />
+      <GuidedEntry />
     </Layout>
   );
 };

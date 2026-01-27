@@ -1,131 +1,139 @@
 import { Link } from "react-router-dom";
-import { Heart } from "lucide-react";
+import { BookOpen, Shield, Lock, Scale, Heart } from "lucide-react";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const footerLinks = {
   platform: [
-    { name: "Civil Rights Analyzer", href: "/analyzer" },
-    { name: "Justice Decoder", href: "/legal-decoder" },
+    { name: "Analyzer", href: "/analyzer" },
     { name: "Rights Insight", href: "/rights-insight" },
-    { name: "Find Legal Help", href: "/find-help" },
+    { name: "Library", href: "/library" },
+    { name: "Tools", href: "/tools" },
+  ],
+  resources: [
     { name: "Support Network", href: "/support-network" },
+    { name: "Public Requests", href: "/public-request-rights" },
+    { name: "Find Legal Help", href: "/find-help" },
   ],
   about: [
-    { name: "About & Mission", href: "/about" },
-    { name: "Founder's Story", href: "/founders-story" },
-    { name: "What We Are", href: "/what-we-are" },
-  ],
-  legal: [
-    { name: "Privacy & Security", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-    { name: "Disclaimer", href: "/disclaimer" },
+    { name: "About", href: "/about" },
   ],
 };
 
+const trustSignals = [
+  { icon: BookOpen, label: "Built for understanding" },
+  { icon: Heart, label: "Designed for dignity" },
+  { icon: Lock, label: "Private by design" },
+  { icon: Shield, label: "Your information stays yours" },
+];
+
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-card/50">
-      <div className="container py-8 lg:py-10">
-        {/* Main Footer Content - Horizontal Layout */}
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-6">
-          {/* Brand Column */}
-          <div className="lg:w-[280px] shrink-0">
-            <Link to="/" className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity">
+    <footer className="bg-navy text-white/90">
+      {/* Trust signals bar */}
+      <div className="border-b border-white/10">
+        <div className="container py-8">
+          <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
+            {trustSignals.map((signal) => (
+              <div key={signal.label} className="flex items-center gap-2.5">
+                <signal.icon className="w-4 h-4 text-primary" />
+                <span className="text-sm text-white/70">{signal.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main footer */}
+      <div className="container py-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Brand */}
+          <div className="lg:col-span-1">
+            <Link to="/" className="flex items-center gap-3 mb-6">
               <img 
                 src={decodedJusticeLogo} 
                 alt="Decoded Justice" 
-                className="h-14 md:h-16 w-auto"
+                className="h-10 w-auto brightness-0 invert opacity-90"
               />
-              <span className="text-lg font-semibold text-foreground">Decoded Justice</span>
+              <span className="text-lg font-semibold text-white">
+                Decoded Justice
+              </span>
             </Link>
-            <p className="text-[10px] tracking-widest text-muted-foreground font-medium uppercase mb-2">
-              Clarity <span className="text-accent">·</span> Justice <span className="text-accent">·</span> Empathy
+            <p className="text-sm text-white/60 leading-relaxed">
+              A space for clarity, organization, and preparation. Educational use only.
             </p>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-              A supportive space to regain clarity, organize what matters, and move forward with purpose.
-            </p>
-            <div className="flex items-center gap-1.5 text-[10px] text-text-softer">
-              <Heart className="w-2.5 h-2.5 text-accent" />
-              <span>Built with care for those who need it most</span>
-            </div>
           </div>
 
-          {/* Links Columns Container */}
-          <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-6 lg:gap-8">
-            {/* Platform Links */}
-            <div>
-              <h3 className="text-xs font-semibold text-accent mb-3">Platform</h3>
-              <ul className="space-y-2">
-                {footerLinks.platform.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-xs text-muted-foreground hover:text-accent transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Platform links */}
+          <div>
+            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+              Platform
+            </h3>
+            <ul className="space-y-3">
+              {footerLinks.platform.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    to={link.href}
+                    className="text-sm text-white/60 hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            {/* About Links */}
-            <div>
-              <h3 className="text-xs font-semibold text-accent mb-3">About</h3>
-              <ul className="space-y-2">
-                {footerLinks.about.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-xs text-muted-foreground hover:text-accent transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Resources links */}
+          <div>
+            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+              Resources
+            </h3>
+            <ul className="space-y-3">
+              {footerLinks.resources.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    to={link.href}
+                    className="text-sm text-white/60 hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            {/* Legal Links */}
-            <div>
-              <h3 className="text-xs font-semibold text-accent mb-3">Legal</h3>
-              <ul className="space-y-2">
-                {footerLinks.legal.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-xs text-muted-foreground hover:text-accent transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* About */}
+          <div>
+            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+              About
+            </h3>
+            <ul className="space-y-3">
+              {footerLinks.about.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    to={link.href}
+                    className="text-sm text-white/60 hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
+      </div>
 
-        {/* Trust Footer */}
-        <div className="mt-6 p-3 rounded-lg bg-muted/50 border border-border">
-          <div className="flex flex-wrap justify-center gap-4 text-[10px] text-muted-foreground mb-2">
-            <span>Educational use only</span>
-            <span>•</span>
-            <span>Your data stays private</span>
-            <span>•</span>
-            <span>You control your information</span>
-            <span>•</span>
-            <span>Not legal advice</span>
+      {/* Bottom bar */}
+      <div className="border-t border-white/10">
+        <div className="container py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm text-white/50">
+              <Scale className="w-4 h-4" />
+              <span>Educational use only · Not legal advice</span>
+            </div>
+            <p className="text-sm text-white/40">
+              © {new Date().getFullYear()} Decoded Justice. All rights reserved.
+            </p>
           </div>
-          <p className="text-[10px] text-muted-foreground text-center">
-            For legal concerns, consult a qualified attorney.
-          </p>
-        </div>
-
-        {/* Copyright */}
-        <div className="mt-3 pt-3 border-t border-border">
-          <p className="text-[10px] text-muted-foreground text-center">
-            © {new Date().getFullYear()} Decoded Justice
-          </p>
         </div>
       </div>
     </footer>
