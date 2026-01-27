@@ -1,32 +1,25 @@
 export function OrientationBlock() {
   return (
-    <section className="py-12 lg:py-16 bg-muted/30">
-      <div className="container max-w-3xl">
-        {/* ContextLines */}
-        <div className="space-y-4 text-center">
-          <p className="text-muted-foreground leading-relaxed">
-            This is an educational space for people navigating complex public systems — 
-            courts, housing, police, child welfare, benefits, and more.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Nothing here is legal advice. Nothing here predicts outcomes. 
-            This is a place to learn, organize, and prepare.
+    <section className="py-8 bg-muted/30">
+      <div className="container max-w-2xl">
+        <div className="text-center mb-6">
+          <h2 className="text-sm font-medium text-foreground mb-2">What this is</h2>
+          <p className="text-sm text-muted-foreground">
+            An educational space for understanding public systems — not legal advice.
           </p>
         </div>
-
-        {/* ClarityMarkers */}
-        <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-            Educational only
+        <div className="flex flex-wrap justify-center gap-4 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-primary/50" />
+            Learning
           </span>
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-            No legal advice
+          <span className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-primary/50" />
+            Organization
           </span>
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-            Your pace, your control
+          <span className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-primary/50" />
+            Preparation
           </span>
         </div>
       </div>

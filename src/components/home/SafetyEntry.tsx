@@ -3,27 +3,17 @@ import { Button } from "@/components/ui/button";
 
 export function SafetyEntry() {
   return (
-    <section className="py-16 lg:py-24">
-      <div className="container max-w-3xl">
-        {/* QuietStatement */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground leading-tight mb-6">
-            A quiet place to find clarity
-          </h1>
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            When systems feel overwhelming, it helps to have a space to organize your thoughts, 
-            understand what you're facing, and prepare at your own pace.
-          </p>
-        </div>
-
-        {/* SoftAction */}
-        <div className="flex justify-center">
-          <Button variant="outline" size="lg" asChild className="text-base">
-            <Link to="/tools">
-              See what's here
-            </Link>
-          </Button>
-        </div>
+    <section className="py-12 lg:py-16">
+      <div className="container max-w-2xl text-center">
+        <h1 className="text-2xl md:text-3xl font-medium text-foreground mb-3">
+          A space for clarity when systems feel confusing
+        </h1>
+        <p className="text-muted-foreground mb-6">
+          Learn, organize, and prepare at your own pace.
+        </p>
+        <Button variant="outline" size="sm" asChild>
+          <Link to="/tools">Explore what's available</Link>
+        </Button>
       </div>
     </section>
   );

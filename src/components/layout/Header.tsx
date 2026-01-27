@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
@@ -18,22 +18,17 @@ export function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass">
-      <nav className="container flex items-center justify-between py-4">
-        {/* Logo with Brand Name and Positioning */}
-        <Link to="/" className="flex items-center gap-3 group hover:opacity-90 transition-opacity">
+      <nav className="container flex items-center justify-between py-2">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity">
           <img 
             src={decodedJusticeLogo} 
             alt="Decoded Justice" 
-            className="h-16 md:h-20 w-auto"
+            className="h-10 w-auto"
           />
-          <div className="hidden md:flex flex-col">
-            <span className="text-lg font-semibold text-foreground tracking-tight">
-              Decoded Justice
-            </span>
-            <span className="text-[10px] tracking-widest text-muted-foreground font-medium uppercase">
-              Clarity <span className="text-accent">·</span> Justice <span className="text-accent">·</span> Empathy
-            </span>
-          </div>
+          <span className="text-sm font-medium text-foreground">
+            Decoded Justice
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -43,10 +38,10 @@ export function Header() {
               key={item.name}
               to={item.href}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative",
+                "px-3 py-1.5 rounded-md text-sm transition-colors",
                 location.pathname === item.href
-                  ? "text-accent after:absolute after:bottom-0 after:left-2 after:right-2 after:h-0.5 after:bg-accent after:rounded-full"
-                  : "text-foreground hover:text-accent"
+                  ? "text-primary font-medium"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
               {item.name}
@@ -54,61 +49,58 @@ export function Header() {
           ))}
         </div>
 
-        {/* Desktop CTA */}
-        <div className="hidden lg:flex items-center gap-3">
-          <Button variant="outline" size="sm" className="hover:bg-secondary hover:border-primary/50 transition-all" asChild>
-            <Link to="/auth">Sign In</Link>
+        {/* Desktop Auth */}
+        <div className="hidden lg:flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="text-sm h-8" asChild>
+            <Link to="/auth">Log in</Link>
           </Button>
-          <Button variant="hero" size="sm" className="shadow-glow hover:shadow-lg transition-all" asChild>
-            <Link to="/analyzer">
-              Get Started
-            </Link>
+          <Button size="sm" className="text-sm h-8" asChild>
+            <Link to="/auth">Sign up</Link>
           </Button>
         </div>
 
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="lg:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-hover transition-colors"
+          className="lg:hidden p-1.5 rounded-md text-muted-foreground hover:text-foreground transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? (
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           ) : (
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           )}
         </button>
       </nav>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden glass border-t border-border animate-fade-in">
-          <div className="container py-4 space-y-2">
+        <div className="lg:hidden glass border-t border-border">
+          <div className="container py-3 space-y-1">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
-                  "block px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 border-l-4",
+                  "block px-3 py-2 rounded-md text-sm transition-colors",
                   location.pathname === item.href
-                    ? "border-accent text-accent bg-accent/5"
-                    : "border-transparent text-foreground hover:text-accent hover:border-accent/50"
+                    ? "text-primary font-medium bg-primary/5"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.name}
               </Link>
             ))}
-            <div className="pt-4 border-t border-border space-y-2">
-              <Button variant="outline" className="w-full justify-start hover:bg-secondary" asChild>
+            <div className="pt-3 border-t border-border flex gap-2">
+              <Button variant="ghost" size="sm" className="flex-1 h-8" asChild>
                 <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
-                  <User className="w-4 h-4 mr-2" />
-                  Sign In
+                  Log in
                 </Link>
               </Button>
-              <Button variant="hero" className="w-full shadow-glow" asChild>
-                <Link to="/analyzer" onClick={() => setMobileMenuOpen(false)}>
-                  Get Started
+              <Button size="sm" className="flex-1 h-8" asChild>
+                <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                  Sign up
                 </Link>
               </Button>
             </div>

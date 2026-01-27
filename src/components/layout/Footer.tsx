@@ -105,19 +105,26 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Disclaimer Banner */}
+        {/* Trust Footer */}
         <div className="mt-6 p-3 rounded-lg bg-muted/50 border border-border">
-          <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-            <strong className="text-foreground">Educational Use Only.</strong> Decoded Justice is not a law firm and does not provide legal advice. 
-            The information provided is for educational purposes only and should not be construed as legal advice. 
-            For legal concerns, please consult with a qualified attorney.
+          <div className="flex flex-wrap justify-center gap-4 text-[10px] text-muted-foreground mb-2">
+            <span>Educational use only</span>
+            <span>•</span>
+            <span>Your data stays private</span>
+            <span>•</span>
+            <span>You control your information</span>
+            <span>•</span>
+            <span>Not legal advice</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center">
+            For legal concerns, consult a qualified attorney.
           </p>
         </div>
 
         {/* Copyright */}
-        <div className="mt-4 pt-4 border-t border-border">
-          <p className="text-[10px] text-text-softer text-center">
-            © {new Date().getFullYear()} Decoded Justice. All rights reserved.
+        <div className="mt-3 pt-3 border-t border-border">
+          <p className="text-[10px] text-muted-foreground text-center">
+            © {new Date().getFullYear()} Decoded Justice
           </p>
         </div>
       </div>
