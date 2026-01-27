@@ -59,30 +59,30 @@ function SupportGroup({ title, children }: SupportGroupProps) {
 
 export function SupportGrid() {
   return (
-    <section className="py-12 lg:py-16 bg-muted/20">
+    <section className="py-10 bg-muted/20">
       <div className="container">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-xl font-medium text-foreground mb-2">
-              What's available here
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-sm font-medium text-foreground mb-1">
+              What's available
             </h2>
-            <p className="text-sm text-muted-foreground">
-              Quiet support for understanding, organizing, and preparing
+            <p className="text-xs text-muted-foreground">
+              Organized by purpose, not features
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <SupportGroup title="Understanding">
               <SupportItem
                 icon={Search}
-                label="Civil Rights Analyzer"
-                description="Understand which systems are involved"
+                label="Analyzer"
+                description="System identification"
                 href="/analyzer"
               />
               <SupportItem
                 icon={FileText}
-                label="Justice Decoder"
-                description="Plain-language explanations"
+                label="Decoder"
+                description="Plain language"
                 href="/legal-decoder"
               />
             </SupportGroup>
@@ -91,13 +91,13 @@ export function SupportGrid() {
               <SupportItem
                 icon={BookOpen}
                 label="Rights Insight"
-                description="Learn how systems work"
+                description="System education"
                 href="/rights-insight"
               />
               <SupportItem
                 icon={FileSearch}
                 label="Library"
-                description="Guides and reference materials"
+                description="Reference guides"
                 href="/library"
               />
             </SupportGroup>
@@ -106,13 +106,13 @@ export function SupportGrid() {
               <SupportItem
                 icon={FolderOpen}
                 label="Evidence Vault"
-                description="Store and organize documents"
+                description="Document storage"
                 href="/evidence-vault"
               />
               <SupportItem
                 icon={Clock}
                 label="Timeline"
-                description="Track events and dates"
+                description="Event tracking"
                 href="/timeline"
               />
             </SupportGroup>
@@ -121,13 +121,13 @@ export function SupportGrid() {
               <SupportItem
                 icon={Mic}
                 label="Transcription"
-                description="Convert audio to text"
+                description="Audio to text"
                 href="/transcription"
               />
               <SupportItem
                 icon={Users}
-                label="Support Network"
-                description="Find help and resources"
+                label="Support"
+                description="Help resources"
                 href="/support-network"
               />
             </SupportGroup>
