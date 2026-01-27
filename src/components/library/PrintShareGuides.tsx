@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, BookOpen, List, Eye, Download, Printer, Share2, ExternalLink } from "lucide-react";
+import { FileText, BookOpen, Eye, Download, Printer, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { TopicGuideGenerator } from "./TopicGuideGenerator";
 
 interface GuideOption {
   id: string;
@@ -106,48 +107,6 @@ SECTION 3: TIMELINES & DEADLINES
 This document is for educational purposes only.
 It is not legal advice.
     `
-  },
-  {
-    id: "resource-handout",
-    title: "Resource Handout by Topic",
-    description: "Focused handouts on specific topics: police, housing, CPS, courts, and more.",
-    whenUseful: [
-      "Sharing specific information with others",
-      "Focusing on one area without overwhelm",
-      "Creating topic-specific reference materials",
-      "Distributing at community meetings"
-    ],
-    icon: <List className="w-6 h-6" />,
-    previewContent: `
-RESOURCE HANDOUT
-━━━━━━━━━━━━━━━━━━━━━━
-
-SELECT YOUR TOPIC:
-□ Police Interactions
-□ Housing & Tenant Rights
-□ CPS / DCYF Matters
-□ Court Proceedings
-□ Healthcare Rights
-□ Benefits & Services
-
-EACH HANDOUT INCLUDES:
-• Key rights for that system
-• Common situations explained
-• Who to contact
-• What to document
-• Red flags to watch for
-• Helpful resources
-
-AVAILABLE FORMATS:
-• English
-• Spanish
-• Large print
-• Screen reader friendly
-
-━━━━━━━━━━━━━━━━━━━━━━
-This document is for educational purposes only.
-It is not legal advice.
-    `
   }
 ];
 
@@ -235,151 +194,157 @@ export function PrintShareGuides() {
   };
 
   return (
-    <section className="py-12 bg-soft-slate/30 rounded-2xl">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-accent mb-3">
-            Print & Share Guides
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Take your rights with you. These guides are designed to be calm, clear, and printer-friendly — 
-            perfect for court, CPS visits, housing meetings, and advocacy.
-          </p>
-          <p className="text-sm text-muted-foreground/70 mt-2">
-            You can pause anytime. These resources will be here when you're ready.
-          </p>
-        </div>
+    <div>
+      {/* Quick Reference Guides */}
+      <section className="py-12 bg-soft-slate/30 rounded-2xl mb-8">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-primary mb-3">
+              Quick Reference Guides
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Take your rights with you. These guides are designed to be calm, clear, and printer-friendly — 
+              perfect for court, CPS visits, housing meetings, and advocacy.
+            </p>
+            <p className="text-sm text-muted-foreground/70 mt-2">
+              You can pause anytime. These resources will be here when you're ready.
+            </p>
+          </div>
 
-        <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
-          {guideOptions.map((guide) => (
-            <Card 
-              key={guide.id} 
-              className="relative bg-white border-border hover:border-accent/30 hover:shadow-md transition-all"
-            >
-              {guide.popular && (
-                <div className="absolute -top-3 left-4">
-                  <span className="bg-accent text-white text-xs font-medium px-3 py-1 rounded-full">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-              
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-accent/10 text-accent">
-                    {guide.icon}
+          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+            {guideOptions.map((guide) => (
+              <Card 
+                key={guide.id} 
+                className="relative bg-white border-border hover:border-primary/30 hover:shadow-warm transition-all"
+              >
+                {guide.popular && (
+                  <div className="absolute -top-3 left-4">
+                    <span className="bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">
+                      Most Popular
+                    </span>
                   </div>
-                </div>
-                <CardTitle className="text-lg text-foreground">
-                  {guide.title}
-                </CardTitle>
-                <CardDescription className="text-sm">
-                  {guide.description}
-                </CardDescription>
-              </CardHeader>
+                )}
+                
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                      {guide.icon}
+                    </div>
+                  </div>
+                  <CardTitle className="text-lg text-foreground">
+                    {guide.title}
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    {guide.description}
+                  </CardDescription>
+                </CardHeader>
 
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-xs font-medium text-accent uppercase tracking-wide mb-2">
-                    When it's useful
-                  </p>
-                  <ul className="space-y-1">
-                    {guide.whenUseful.map((use, idx) => (
-                      <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                        <span className="text-accent mt-1">•</span>
-                        <span>{use}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <CardContent className="space-y-4">
+                  <div>
+                    <p className="text-xs font-medium text-primary uppercase tracking-wide mb-2">
+                      When it's useful
+                    </p>
+                    <ul className="space-y-1">
+                      {guide.whenUseful.map((use, idx) => (
+                        <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                          <span className="text-primary mt-1">•</span>
+                          <span>{use}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                <div className="pt-4 border-t border-border space-y-2">
-                  {/* Preview Button */}
-                  <Dialog open={previewOpen === guide.id} onOpenChange={(open) => setPreviewOpen(open ? guide.id : null)}>
-                    <DialogTrigger asChild>
+                  <div className="pt-4 border-t border-border space-y-2">
+                    {/* Preview Button */}
+                    <Dialog open={previewOpen === guide.id} onOpenChange={(open) => setPreviewOpen(open ? guide.id : null)}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          className="w-full justify-start gap-2 text-sm"
+                        >
+                          <Eye className="w-4 h-4" />
+                          Preview
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle className="text-primary">{guide.title}</DialogTitle>
+                          <DialogDescription>
+                            Preview of what will be printed or downloaded
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="mt-4 p-6 bg-white border border-border rounded-lg font-serif">
+                          <pre className="whitespace-pre-wrap text-sm text-charcoal leading-relaxed">
+                            {guide.previewContent}
+                          </pre>
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                          <Button 
+                            onClick={() => handlePrint(guide.id)}
+                            className="flex-1 gap-2"
+                          >
+                            <Printer className="w-4 h-4" />
+                            Print
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={() => handleDownload(guide.id)}
+                            className="flex-1 gap-2"
+                          >
+                            <Download className="w-4 h-4" />
+                            Download
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+
+                    {/* Action Buttons Row */}
+                    <div className="flex gap-2">
                       <Button 
                         variant="outline" 
-                        className="w-full justify-start gap-2 text-sm"
+                        size="sm"
+                        className="flex-1 gap-1.5 text-xs"
+                        onClick={() => handleDownload(guide.id)}
                       >
-                        <Eye className="w-4 h-4" />
-                        Preview
+                        <Download className="w-3.5 h-3.5" />
+                        Download
                       </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle className="text-accent">{guide.title}</DialogTitle>
-                        <DialogDescription>
-                          Preview of what will be printed or downloaded
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="mt-4 p-6 bg-white border border-border rounded-lg font-serif">
-                        <pre className="whitespace-pre-wrap text-sm text-charcoal leading-relaxed">
-                          {guide.previewContent}
-                        </pre>
-                      </div>
-                      <div className="flex gap-2 mt-4">
-                        <Button 
-                          onClick={() => handlePrint(guide.id)}
-                          className="flex-1 gap-2"
-                        >
-                          <Printer className="w-4 h-4" />
-                          Print
-                        </Button>
-                        <Button 
-                          variant="outline"
-                          onClick={() => handleDownload(guide.id)}
-                          className="flex-1 gap-2"
-                        >
-                          <Download className="w-4 h-4" />
-                          Download
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-
-                  {/* Action Buttons Row */}
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="flex-1 gap-1.5 text-xs"
-                      onClick={() => handleDownload(guide.id)}
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      Download
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="flex-1 gap-1.5 text-xs"
-                      onClick={() => handlePrint(guide.id)}
-                    >
-                      <Printer className="w-3.5 h-3.5" />
-                      Print
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="flex-1 gap-1.5 text-xs"
-                      onClick={() => handleShare(guide.id)}
-                    >
-                      <Share2 className="w-3.5 h-3.5" />
-                      Share
-                    </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="flex-1 gap-1.5 text-xs"
+                        onClick={() => handlePrint(guide.id)}
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        Print
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="flex-1 gap-1.5 text-xs"
+                        onClick={() => handleShare(guide.id)}
+                      >
+                        <Share2 className="w-3.5 h-3.5" />
+                        Share
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-xs text-muted-foreground/60 max-w-xl mx-auto">
-            These materials are for educational purposes only and do not constitute legal advice. 
-            For legal guidance, please consult with a qualified attorney.
-          </p>
+          <div className="mt-8 text-center">
+            <p className="text-xs text-muted-foreground/60 max-w-xl mx-auto">
+              These materials are for educational purposes only and do not constitute legal advice. 
+              For legal guidance, please consult with a qualified attorney.
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Topic Guide Generator */}
+      <TopicGuideGenerator />
+    </div>
   );
 }
