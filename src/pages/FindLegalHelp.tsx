@@ -1,5 +1,4 @@
-import AttorneySearch from "@/components/AttorneySearch";
-
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
   Search, 
@@ -15,19 +14,22 @@ import {
   Home,
   Briefcase,
   Accessibility,
-  Clock,
   ChevronDown
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import { useState } from "react";
+import AttorneySearch from "@/components/AttorneySearch";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
+// ============================================================================
+// DATA
+// ============================================================================
 
 const resourceTypes = [
   { id: "all", label: "All Resources" },
@@ -266,216 +268,38 @@ const resources = [
   },
 ];
 
-export default function FindLegalHelp() {
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
 
-  const filteredResources = resources.filter(resource => {
-    const matchesFilter = activeFilter === "all" || resource.type === activeFilter;
-    const matchesSearch = resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         resource.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  // Group resources by type for accordion display
-  const groupedResources = filteredResources.reduce((acc, resource) => {
-    if (!acc[resource.type]) {
-      acc[resource.type] = [];
-    }
-    acc[resource.type].push(resource);
-    return acc;
-  }, {} as Record<string, typeof resources>);
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "civil-rights": return Shield;
-      case "housing": return Home;
-      case "employment": return Briefcase;
-      case "disability": return Accessibility;
-      case "family-cps": return Users;
-      case "trauma-informed": return Heart;
-      case "legal-aid": return Users;
-      default: return Scale;
-    }
+const getTypeIcon = (type: string) => {
+  const iconMap: Record<string, React.ElementType> = {
+    "civil-rights": Shield,
+    "housing": Home,
+    "employment": Briefcase,
+    "disability": Accessibility,
+    "family-cps": Users,
+    "trauma-informed": Heart,
+    "legal-aid": Users,
   };
+  return iconMap[type] || Scale;
+};
 
-  const getTypeLabel = (type: string) => {
-    const typeObj = resourceTypes.find(t => t.id === type);
-    return typeObj?.label || type;
-  };
+const getTypeLabel = (type: string) => {
+  const typeObj = resourceTypes.find(t => t.id === type);
+  return typeObj?.label || type;
+};
 
-  return (
-    <Layout>
-      <div className="container py-12 lg:py-20">
-        {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
-            <Scale className="w-4 h-4" />
-            <span>Rooted in Justice</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Find Legal Help
-          </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Find attorneys, legal aid organizations, and support services in Washington State and beyond.
-          </p>
-        </div>
+// ============================================================================
+// SUBCOMPONENTS
+// ============================================================================
 
-        {/* Disclaimer at top */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <Disclaimer variant="prominent" />
-        </div>
-
-    {/* Attorney Search */}
-<div className="max-w-6xl mx-auto mb-12">
-  <AttorneySearch />
-</div>
-
-        {/* Search and Filter */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search resources..."
-                className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {resourceTypes.map((type) => (
-              <button
-                key={type.id}
-                onClick={() => setActiveFilter(type.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer active:scale-[0.98] ${
-                  activeFilter === type.id
-                    ? "bg-accent text-accent-foreground shadow-glow"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-2 border-transparent hover:border-accent/30"
-                }`}
-              >
-                {type.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Resources by Category - Accordion View */}
-        <div className="max-w-4xl mx-auto">
-          {activeFilter === "all" ? (
-            // Show grouped by category with accordions
-            <Accordion type="multiple" className="space-y-4">
-              {Object.entries(groupedResources).map(([type, typeResources]) => {
-                const Icon = getTypeIcon(type);
-                return (
-                  <AccordionItem 
-                    key={type} 
-                    value={type}
-                    className="rounded-2xl bg-card border border-border overflow-hidden"
-                  >
-                    <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-secondary/30 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-accent" />
-                        </div>
-                        <div className="text-left">
-                          <h3 className="font-semibold text-foreground">{getTypeLabel(type)}</h3>
-                          <p className="text-sm text-muted-foreground">{typeResources.length} resources</p>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-4">
-                      <div className="space-y-4 pt-2">
-                        {typeResources.map((resource) => (
-                          <ResourceCard key={resource.name} resource={resource} />
-                        ))}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                );
-              })}
-            </Accordion>
-          ) : (
-            // Show flat list when filtered
-            <div className="space-y-4">
-              {filteredResources.map((resource) => (
-                <ResourceCard key={resource.name} resource={resource} expanded />
-              ))}
-            </div>
-          )}
-
-          {filteredResources.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                No resources found matching your search.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Guidance Section */}
-        <div className="max-w-3xl mx-auto mt-16 p-8 rounded-2xl bg-card border border-border">
-          <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-            <span className="w-1 h-6 bg-accent rounded-full" />
-            Tips for Finding the Right Help
-          </h2>
-          <ul className="space-y-3">
-            <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">1</span>
-              <p className="text-muted-foreground">
-                <strong className="text-foreground">Start with legal aid organizations</strong> — they can often provide free consultations and help you understand your options.
-              </p>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">2</span>
-              <p className="text-muted-foreground">
-                <strong className="text-foreground">Prepare before you call</strong> — have dates, names, and a brief summary of what happened ready.
-              </p>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">3</span>
-              <p className="text-muted-foreground">
-                <strong className="text-foreground">Ask about fees upfront</strong> — many civil rights attorneys work on contingency (no fee unless you win).
-              </p>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">4</span>
-              <p className="text-muted-foreground">
-                <strong className="text-foreground">Know your deadlines</strong> — civil rights claims often have strict filing deadlines (sometimes as short as 180 days).
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        {/* CTA */}
-        <div className="max-w-2xl mx-auto mt-16 text-center">
-          <p className="text-muted-foreground mb-6">
-            Not sure what kind of help you need? The Analyzer can help you understand your situation.
-          </p>
-          <Button variant="hero" size="lg" asChild>
-            <Link to="/analyzer">
-              Start the Analyzer
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </Button>
-        </div>
-
-        {/* Disclaimer */}
-        <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-border">
-          <Disclaimer className="justify-center" />
-        </div>
-      </div>
-    </Layout>
-  );
+interface ResourceCardProps {
+  resource: typeof resources[0];
+  expanded?: boolean;
 }
 
-// Resource Card Component
-function ResourceCard({ resource, expanded = false }: { resource: typeof resources[0]; expanded?: boolean }) {
+function ResourceCard({ resource, expanded = false }: ResourceCardProps) {
   const [isOpen, setIsOpen] = useState(expanded);
   
   return (
@@ -527,5 +351,231 @@ function ResourceCard({ resource, expanded = false }: { resource: typeof resourc
         </div>
       )}
     </div>
+  );
+}
+
+// ============================================================================
+// MAIN PAGE
+// ============================================================================
+
+export default function FindLegalHelp() {
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredResources = resources.filter(resource => {
+    const matchesFilter = activeFilter === "all" || resource.type === activeFilter;
+    const matchesSearch = resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         resource.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  // Group resources by type for accordion display
+  const groupedResources = filteredResources.reduce((acc, resource) => {
+    if (!acc[resource.type]) {
+      acc[resource.type] = [];
+    }
+    acc[resource.type].push(resource);
+    return acc;
+  }, {} as Record<string, typeof resources>);
+
+  return (
+    <Layout>
+      <div className="container py-12 lg:py-20">
+        <div className="max-w-6xl mx-auto">
+          
+          {/* ================================================================
+              SECTION 1: Header
+          ================================================================ */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
+              <Scale className="w-4 h-4" />
+              <span>Rooted in Justice</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Find Legal Help
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Find attorneys, legal aid organizations, and support services in Washington State and beyond.
+            </p>
+          </div>
+
+          {/* ================================================================
+              SECTION 2: Prominent Disclaimer
+          ================================================================ */}
+          <div className="max-w-3xl mx-auto mb-12">
+            <Disclaimer variant="prominent" />
+          </div>
+
+          {/* ================================================================
+              SECTION 3: Attorney Search
+          ================================================================ */}
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+                <Search className="w-5 h-5 text-accent" />
+              </div>
+              <h2 className="text-xl font-semibold text-foreground">Attorney Search</h2>
+            </div>
+            <div className="p-6 rounded-2xl bg-card border border-border">
+              <AttorneySearch />
+            </div>
+          </section>
+
+          {/* ================================================================
+              SECTION 4: Other Legal Resources
+          ================================================================ */}
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+                <Users className="w-5 h-5 text-accent" />
+              </div>
+              <h2 className="text-xl font-semibold text-foreground">Legal Aid & Advocacy Organizations</h2>
+            </div>
+
+            {/* Search and Filter */}
+            <div className="max-w-4xl mb-6">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search resources..."
+                  className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
+                />
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {resourceTypes.map((type) => (
+                  <button
+                    key={type.id}
+                    onClick={() => setActiveFilter(type.id)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer active:scale-[0.98] ${
+                      activeFilter === type.id
+                        ? "bg-accent text-accent-foreground shadow-glow"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-2 border-transparent hover:border-accent/30"
+                    }`}
+                  >
+                    {type.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Resources Accordion / List */}
+            <div className="max-w-4xl">
+              {activeFilter === "all" ? (
+                <Accordion type="multiple" className="space-y-4">
+                  {Object.entries(groupedResources).map(([type, typeResources]) => {
+                    const Icon = getTypeIcon(type);
+                    return (
+                      <AccordionItem 
+                        key={type} 
+                        value={type}
+                        className="rounded-2xl bg-card border border-border overflow-hidden"
+                      >
+                        <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-secondary/30 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                              <Icon className="w-5 h-5 text-accent" />
+                            </div>
+                            <div className="text-left">
+                              <h3 className="font-semibold text-foreground">{getTypeLabel(type)}</h3>
+                              <p className="text-sm text-muted-foreground">{typeResources.length} resources</p>
+                            </div>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="px-6 pb-4">
+                          <div className="space-y-4 pt-2">
+                            {typeResources.map((resource) => (
+                              <ResourceCard key={resource.name} resource={resource} />
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              ) : (
+                <div className="space-y-4">
+                  {filteredResources.map((resource) => (
+                    <ResourceCard key={resource.name} resource={resource} expanded />
+                  ))}
+                </div>
+              )}
+
+              {filteredResources.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">
+                    No resources found matching your search.
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* ================================================================
+              SECTION 5: Guidance / Tips
+          ================================================================ */}
+          <section className="mb-16">
+            <div className="max-w-3xl mx-auto p-8 rounded-2xl bg-card border border-border">
+              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                <span className="w-1 h-6 bg-accent rounded-full" />
+                Tips for Finding the Right Help
+              </h2>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">1</span>
+                  <p className="text-muted-foreground">
+                    <strong className="text-foreground">Start with legal aid organizations</strong> — they can often provide free consultations and help you understand your options.
+                  </p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">2</span>
+                  <p className="text-muted-foreground">
+                    <strong className="text-foreground">Prepare before you call</strong> — have dates, names, and a brief summary of what happened ready.
+                  </p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">3</span>
+                  <p className="text-muted-foreground">
+                    <strong className="text-foreground">Ask about fees upfront</strong> — many civil rights attorneys work on contingency (no fee unless you win).
+                  </p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">4</span>
+                  <p className="text-muted-foreground">
+                    <strong className="text-foreground">Know your deadlines</strong> — civil rights claims often have strict filing deadlines (sometimes as short as 180 days).
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          {/* ================================================================
+              SECTION 6: CTA + Footer Disclaimer
+          ================================================================ */}
+          <section className="text-center">
+            <div className="max-w-2xl mx-auto mb-12">
+              <p className="text-muted-foreground mb-6">
+                Not sure what kind of help you need? The Analyzer can help you understand your situation.
+              </p>
+              <Button variant="hero" size="lg" asChild>
+                <Link to="/analyzer">
+                  Start the Analyzer
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </Button>
+            </div>
+
+            <div className="pt-8 border-t border-border">
+              <Disclaimer className="justify-center" />
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </Layout>
   );
 }
