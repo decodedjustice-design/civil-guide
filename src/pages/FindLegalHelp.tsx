@@ -1,3 +1,5 @@
+import AttorneySearch from "@/components/AttorneySearch";
+
 import { Link } from "react-router-dom";
 import { 
   Search, 
@@ -324,29 +326,10 @@ export default function FindLegalHelp() {
           <Disclaimer variant="prominent" />
         </div>
 
-        {/* Attorney Search Coming Soon */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-accent/10 to-transparent border border-accent/20">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6 text-accent" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-semibold text-foreground mb-2">
-                  Attorney Search — Coming Soon
-                </h2>
-                <p className="text-muted-foreground mb-3">
-                  We're building a searchable directory of civil rights attorneys, including those who specialize in 
-                  police misconduct, housing discrimination, employment law, and disability rights. 
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  In the meantime, use the resources below to find legal aid organizations and referral services 
-                  that can help connect you with an attorney.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+    {/* Attorney Search */}
+<div className="max-w-6xl mx-auto mb-12">
+  <AttorneySearch />
+</div>
 
         {/* Search and Filter */}
         <div className="max-w-4xl mx-auto mb-8">
