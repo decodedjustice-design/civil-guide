@@ -1,25 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
-  Search, 
   Scale, 
   Users, 
-  ExternalLink,
-  MapPin,
-  Phone,
-  Globe,
+  Search,
   ArrowRight,
-  Heart,
-  Shield,
-  Home,
   Briefcase,
-  Accessibility,
-  ChevronDown
+  Heart,
+  HandHeart
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import AttorneySearch from "@/components/AttorneySearch";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { AttorneyDirectory } from "@/components/legal/AttorneyDirectory";
+import { LegalResourceCard } from "@/components/legal/LegalResourceCard";
+import { legalResources, RESOURCE_CATEGORIES } from "@/data/legalResources";
 import {
   Accordion,
   AccordionContent,
@@ -28,355 +25,54 @@ import {
 } from "@/components/ui/accordion";
 
 // ============================================================================
-// DATA
-// ============================================================================
-
-const resourceTypes = [
-  { id: "all", label: "All Resources" },
-  { id: "civil-rights", label: "Civil Rights", icon: Shield },
-  { id: "housing", label: "Housing", icon: Home },
-  { id: "employment", label: "Employment", icon: Briefcase },
-  { id: "disability", label: "Disability", icon: Accessibility },
-  { id: "family-cps", label: "Family / CPS", icon: Users },
-  { id: "trauma-informed", label: "Trauma-Informed", icon: Heart },
-  { id: "legal-aid", label: "Legal Aid", icon: Users },
-];
-
-const resources = [
-  // Civil Rights
-  {
-    name: "ACLU of Washington",
-    type: "civil-rights",
-    serviceType: "legal",
-    description: "Legal advocacy and representation for civil liberties cases including police misconduct, discrimination, and constitutional rights.",
-    location: "Washington State",
-    website: "https://www.aclu-wa.org/",
-    phone: "(206) 624-2184",
-  },
-  {
-    name: "Northwest Justice Project",
-    type: "civil-rights",
-    serviceType: "legal",
-    description: "Free civil legal aid for low-income people in Washington, covering housing, family, benefits, and civil rights.",
-    location: "Washington State",
-    website: "https://nwjustice.org/",
-    phone: "1-888-201-1014",
-  },
-  {
-    name: "Columbia Legal Services",
-    type: "civil-rights",
-    serviceType: "legal",
-    description: "Impact litigation and advocacy for systemic change in civil rights, housing, and economic justice.",
-    location: "Washington State",
-    website: "https://columbialegal.org/",
-    phone: "(206) 464-5911",
-  },
-  {
-    name: "U.S. Department of Justice - Civil Rights Division",
-    type: "civil-rights",
-    serviceType: "informational",
-    description: "Federal agency that enforces civil rights laws. File complaints about discrimination, police misconduct, or voting rights violations.",
-    location: "Federal",
-    website: "https://www.justice.gov/crt",
-    phone: "(202) 514-4609",
-  },
-  // Housing
-  {
-    name: "Fair Housing Center of Washington",
-    type: "housing",
-    serviceType: "legal",
-    description: "Investigates housing discrimination complaints and provides legal assistance for fair housing violations.",
-    location: "Washington State",
-    website: "https://fhcwashington.org/",
-    phone: "(253) 274-9523",
-  },
-  {
-    name: "Tenant Law Center",
-    type: "housing",
-    serviceType: "legal",
-    description: "Legal assistance for tenants facing eviction, habitability issues, or landlord disputes.",
-    location: "Washington State",
-    website: "https://www.tenantlawcenter.org/",
-    phone: "(206) 324-6890",
-  },
-  {
-    name: "HUD Fair Housing (Region X)",
-    type: "housing",
-    serviceType: "legal",
-    description: "Federal agency handling housing discrimination complaints based on race, color, religion, sex, disability, familial status, or national origin.",
-    location: "Federal (WA, OR, ID, AK)",
-    website: "https://www.hud.gov/program_offices/fair_housing_equal_opp/online-complaint",
-    phone: "1-800-877-0246",
-  },
-  // Employment
-  {
-    name: "Washington State Human Rights Commission",
-    type: "employment",
-    serviceType: "legal",
-    description: "Investigates employment discrimination complaints and enforces the Washington Law Against Discrimination.",
-    location: "Washington State",
-    website: "https://www.hum.wa.gov/",
-    phone: "1-800-233-3247",
-  },
-  {
-    name: "U.S. Equal Employment Opportunity Commission (Seattle)",
-    type: "employment",
-    serviceType: "legal",
-    description: "Federal agency that investigates workplace discrimination based on protected characteristics.",
-    location: "Federal",
-    website: "https://www.eeoc.gov/",
-    phone: "1-800-669-4000",
-  },
-  {
-    name: "Legal Aid at Work",
-    type: "employment",
-    serviceType: "legal",
-    description: "Free employment law clinics and resources for workers facing wage theft, discrimination, or retaliation.",
-    location: "Nationwide",
-    website: "https://legalaidatwork.org/",
-    phone: "(415) 864-8848",
-  },
-  // Disability
-  {
-    name: "Disability Rights Washington",
-    type: "disability",
-    serviceType: "legal",
-    description: "Legal advocacy for people with disabilities, including discrimination, access, education, and institutional issues.",
-    location: "Washington State",
-    website: "https://www.disabilityrightswa.org/",
-    phone: "1-800-562-2702",
-  },
-  {
-    name: "Northwest ADA Center",
-    type: "disability",
-    serviceType: "informational",
-    description: "Information and guidance on ADA rights and responsibilities. Not legal representation but provides education.",
-    location: "Pacific Northwest",
-    website: "https://nwadacenter.org/",
-    phone: "1-800-949-4232",
-  },
-  // Trauma-Informed
-  {
-    name: "Washington State Crime Victim Service Center",
-    type: "trauma-informed",
-    serviceType: "informational",
-    description: "Support services for victims of crime, including advocacy, counseling referrals, and system navigation.",
-    location: "Washington State",
-    website: "https://www.waspc.org/crime-victims",
-    phone: "1-800-822-1067",
-  },
-  {
-    name: "Harborview Center for Sexual Assault & Traumatic Stress",
-    type: "trauma-informed",
-    serviceType: "informational",
-    description: "Trauma-informed care, counseling, and support for survivors of violence and abuse.",
-    location: "Seattle / King County",
-    website: "https://www.uwmedicine.org/locations/harborview-center-sexual-assault-traumatic-stress",
-    phone: "(206) 744-1600",
-  },
-  {
-    name: "National Domestic Violence Hotline",
-    type: "trauma-informed",
-    serviceType: "informational",
-    description: "24/7 confidential support, resources, and safety planning for survivors of domestic violence.",
-    location: "Nationwide",
-    website: "https://www.thehotline.org/",
-    phone: "1-800-799-7233",
-  },
-  {
-    name: "RAINN (Rape, Abuse & Incest National Network)",
-    type: "trauma-informed",
-    serviceType: "informational",
-    description: "24/7 hotline and online chat for survivors of sexual violence. Connects to local service providers.",
-    location: "Nationwide",
-    website: "https://www.rainn.org/",
-    phone: "1-800-656-4673",
-  },
-  // Family / CPS / DCYF
-  {
-    name: "TeamChild",
-    type: "family-cps",
-    serviceType: "legal",
-    description: "Legal advocacy for youth in foster care, juvenile justice, and education systems. Helps with dependency cases and youth rights.",
-    location: "Washington State",
-    website: "https://teamchild.org/",
-    phone: "(206) 322-2444",
-  },
-  {
-    name: "Office of the Family and Children's Ombuds (OFCO)",
-    type: "family-cps",
-    serviceType: "informational",
-    description: "Independent state agency that investigates complaints about DCYF/CPS. Can help families understand their rights and the system.",
-    location: "Washington State",
-    website: "https://ofco.wa.gov/",
-    phone: "1-800-571-7321",
-  },
-  {
-    name: "Center for Children & Youth Justice",
-    type: "family-cps",
-    serviceType: "informational",
-    description: "Advocacy and system reform for youth in foster care and juvenile justice. Resources for families navigating the system.",
-    location: "Washington State",
-    website: "https://ccyj.org/",
-    phone: "(206) 696-7503",
-  },
-  {
-    name: "Washington State DCYF - Family Rights",
-    type: "family-cps",
-    serviceType: "informational",
-    description: "Information about parent and family rights during CPS investigations and dependency proceedings.",
-    location: "Washington State",
-    website: "https://www.dcyf.wa.gov/",
-    phone: "1-866-363-4276",
-  },
-  {
-    name: "Treehouse",
-    type: "family-cps",
-    serviceType: "informational",
-    description: "Support services for youth in foster care including education advocacy, housing, and graduation support.",
-    location: "Washington State",
-    website: "https://treehouseforkids.org/",
-    phone: "(206) 767-7000",
-  },
-  // Legal Aid
-  {
-    name: "Washington LawHelp",
-    type: "legal-aid",
-    serviceType: "informational",
-    description: "Self-help legal information and resources. Find forms, guides, and legal aid organizations.",
-    location: "Washington State",
-    website: "https://www.washingtonlawhelp.org/",
-    phone: "Various",
-  },
-  {
-    name: "King County Bar Association Lawyer Referral",
-    type: "legal-aid",
-    serviceType: "legal",
-    description: "Low-cost attorney consultations ($45 for 30 minutes) with attorneys in various practice areas.",
-    location: "King County, WA",
-    website: "https://www.kcba.org/For-the-Public/Lawyer-Referral-Service",
-    phone: "(206) 267-7100",
-  },
-  {
-    name: "Washington State Bar Lawyer Referral",
-    type: "legal-aid",
-    serviceType: "legal",
-    description: "Statewide referral service to connect with attorneys offering reduced-fee initial consultations.",
-    location: "Washington State",
-    website: "https://www.wsba.org/for-the-public/find-legal-help",
-    phone: "(206) 443-9722",
-  },
-];
-
-// ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 
-const getTypeIcon = (type: string) => {
-  const iconMap: Record<string, React.ElementType> = {
-    "civil-rights": Shield,
-    "housing": Home,
-    "employment": Briefcase,
-    "disability": Accessibility,
-    "family-cps": Users,
-    "trauma-informed": Heart,
-    "legal-aid": Users,
-  };
-  return iconMap[type] || Scale;
+const getCategoryIcon = (category: string) => {
+  switch (category) {
+    case "legal-aid": return Users;
+    case "civil-rights": return Scale;
+    case "advocacy": return HandHeart;
+    default: return Briefcase;
+  }
 };
 
-const getTypeLabel = (type: string) => {
-  const typeObj = resourceTypes.find(t => t.id === type);
-  return typeObj?.label || type;
+const getCategoryDescription = (category: string) => {
+  switch (category) {
+    case "legal-aid": return "Free and low-cost legal services";
+    case "civil-rights": return "Organizations focused on civil liberties";
+    case "advocacy": return "Support and system navigation help";
+    default: return "";
+  }
 };
-
-// ============================================================================
-// SUBCOMPONENTS
-// ============================================================================
-
-interface ResourceCardProps {
-  resource: typeof resources[0];
-  expanded?: boolean;
-}
-
-function ResourceCard({ resource, expanded = false }: ResourceCardProps) {
-  const [isOpen, setIsOpen] = useState(expanded);
-  
-  return (
-    <div className="p-4 rounded-xl bg-secondary/30 border border-border hover:border-accent/30 transition-all">
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full text-left flex items-start justify-between gap-3"
-      >
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h4 className="font-medium text-foreground">{resource.name}</h4>
-            <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-              resource.serviceType === "legal" 
-                ? "bg-accent/20 text-accent border border-accent/30" 
-                : "bg-muted text-muted-foreground border border-border"
-            }`}>
-              {resource.serviceType === "legal" ? "Legal Services" : "Informational"}
-            </span>
-          </div>
-          <p className="text-sm text-muted-foreground flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            {resource.location}
-          </p>
-        </div>
-        <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
-      </button>
-      
-      {isOpen && (
-        <div className="mt-3 pt-3 border-t border-border">
-          <p className="text-sm text-muted-foreground mb-3">{resource.description}</p>
-          <div className="flex flex-wrap gap-3 text-sm">
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <Phone className="w-4 h-4" />
-              {resource.phone}
-            </span>
-            {resource.website !== "#" && (
-              <a
-                href={resource.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-accent font-medium hover:underline px-3 py-1 rounded-lg bg-accent/10 hover:bg-accent/20 transition-colors"
-              >
-                <Globe className="w-4 h-4" />
-                Visit Website
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ============================================================================
 // MAIN PAGE
 // ============================================================================
 
 export default function FindLegalHelp() {
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [resourceFilter, setResourceFilter] = useState("all");
+  const [resourceSearch, setResourceSearch] = useState("");
 
-  const filteredResources = resources.filter(resource => {
-    const matchesFilter = activeFilter === "all" || resource.type === activeFilter;
-    const matchesSearch = resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         resource.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
+  // Filter resources
+  const filteredResources = legalResources.filter(resource => {
+    const matchesCategory = resourceFilter === "all" || resource.category === resourceFilter;
+    const searchLower = resourceSearch.toLowerCase();
+    const matchesSearch = !resourceSearch || 
+      resource.name.toLowerCase().includes(searchLower) ||
+      resource.description.toLowerCase().includes(searchLower) ||
+      resource.serviceType.toLowerCase().includes(searchLower);
+    return matchesCategory && matchesSearch;
   });
 
-  // Group resources by type for accordion display
+  // Group resources by category for accordion
   const groupedResources = filteredResources.reduce((acc, resource) => {
-    if (!acc[resource.type]) {
-      acc[resource.type] = [];
+    if (!acc[resource.category]) {
+      acc[resource.category] = [];
     }
-    acc[resource.type].push(resource);
+    acc[resource.category].push(resource);
     return acc;
-  }, {} as Record<string, typeof resources>);
+  }, {} as Record<string, typeof legalResources>);
 
   return (
     <Layout>
@@ -389,13 +85,14 @@ export default function FindLegalHelp() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-6">
               <Scale className="w-4 h-4" />
-              <span>Rooted in Justice</span>
+              <span>Clarity · Justice · Empathy</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Find Legal Help
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Find attorneys, legal aid organizations, and support services in Washington State and beyond.
+              Search attorneys, legal aid organizations, and advocacy groups in Washington State. 
+              Take your time — finding the right support is an important step.
             </p>
           </div>
 
@@ -407,17 +104,20 @@ export default function FindLegalHelp() {
           </div>
 
           {/* ================================================================
-              SECTION 3: Attorney Search
+              SECTION 3: Attorney Search Directory
           ================================================================ */}
           <section className="mb-16">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
-                <Search className="w-5 h-5 text-accent" />
+                <Briefcase className="w-5 h-5 text-accent" />
               </div>
-              <h2 className="text-xl font-semibold text-foreground">Attorney Search</h2>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Attorney Directory</h2>
+                <p className="text-sm text-muted-foreground">Washington State civil rights attorneys</p>
+              </div>
             </div>
             <div className="p-6 rounded-2xl bg-card border border-border">
-              <AttorneySearch />
+              <AttorneyDirectory />
             </div>
           </section>
 
@@ -427,37 +127,40 @@ export default function FindLegalHelp() {
           <section className="mb-16">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
-                <Users className="w-5 h-5 text-accent" />
+                <Heart className="w-5 h-5 text-accent" />
               </div>
-              <h2 className="text-xl font-semibold text-foreground">Legal Aid & Advocacy Organizations</h2>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Legal Aid & Advocacy Organizations</h2>
+                <p className="text-sm text-muted-foreground">Free resources, civil rights orgs, and support services</p>
+              </div>
             </div>
 
             {/* Search and Filter */}
-            <div className="max-w-4xl mb-6">
+            <div className="max-w-4xl mb-6 space-y-4">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
+                <Input
                   type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search resources..."
-                  className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
+                  value={resourceSearch}
+                  onChange={(e) => setResourceSearch(e.target.value)}
+                  placeholder="Search organizations..."
+                  className="pl-12 h-12 rounded-xl"
                 />
               </div>
 
-              {/* Filters */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {resourceTypes.map((type) => (
+              {/* Category Filters */}
+              <div className="flex flex-wrap gap-2">
+                {RESOURCE_CATEGORIES.map((cat) => (
                   <button
-                    key={type.id}
-                    onClick={() => setActiveFilter(type.id)}
+                    key={cat.id}
+                    onClick={() => setResourceFilter(cat.id)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer active:scale-[0.98] ${
-                      activeFilter === type.id
+                      resourceFilter === cat.id
                         ? "bg-accent text-accent-foreground shadow-glow"
                         : "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-2 border-transparent hover:border-accent/30"
                     }`}
                   >
-                    {type.label}
+                    {cat.label}
                   </button>
                 ))}
               </div>
@@ -465,14 +168,15 @@ export default function FindLegalHelp() {
 
             {/* Resources Accordion / List */}
             <div className="max-w-4xl">
-              {activeFilter === "all" ? (
+              {resourceFilter === "all" ? (
                 <Accordion type="multiple" className="space-y-4">
-                  {Object.entries(groupedResources).map(([type, typeResources]) => {
-                    const Icon = getTypeIcon(type);
+                  {Object.entries(groupedResources).map(([category, categoryResources]) => {
+                    const Icon = getCategoryIcon(category);
+                    const categoryLabel = RESOURCE_CATEGORIES.find(c => c.id === category)?.label || category;
                     return (
                       <AccordionItem 
-                        key={type} 
-                        value={type}
+                        key={category} 
+                        value={category}
                         className="rounded-2xl bg-card border border-border overflow-hidden"
                       >
                         <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-secondary/30 transition-colors">
@@ -481,15 +185,17 @@ export default function FindLegalHelp() {
                               <Icon className="w-5 h-5 text-accent" />
                             </div>
                             <div className="text-left">
-                              <h3 className="font-semibold text-foreground">{getTypeLabel(type)}</h3>
-                              <p className="text-sm text-muted-foreground">{typeResources.length} resources</p>
+                              <h3 className="font-semibold text-foreground">{categoryLabel}</h3>
+                              <p className="text-sm text-muted-foreground">
+                                {getCategoryDescription(category)} · {categoryResources.length} resources
+                              </p>
                             </div>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="px-6 pb-4">
                           <div className="space-y-4 pt-2">
-                            {typeResources.map((resource) => (
-                              <ResourceCard key={resource.name} resource={resource} />
+                            {categoryResources.map((resource) => (
+                              <LegalResourceCard key={resource.id} resource={resource} />
                             ))}
                           </div>
                         </AccordionContent>
@@ -500,7 +206,7 @@ export default function FindLegalHelp() {
               ) : (
                 <div className="space-y-4">
                   {filteredResources.map((resource) => (
-                    <ResourceCard key={resource.name} resource={resource} expanded />
+                    <LegalResourceCard key={resource.id} resource={resource} expanded />
                   ))}
                 </div>
               )}
@@ -510,6 +216,16 @@ export default function FindLegalHelp() {
                   <p className="text-muted-foreground">
                     No resources found matching your search.
                   </p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => {
+                      setResourceFilter("all");
+                      setResourceSearch("");
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
               )}
             </div>
@@ -547,6 +263,12 @@ export default function FindLegalHelp() {
                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">4</span>
                   <p className="text-muted-foreground">
                     <strong className="text-foreground">Know your deadlines</strong> — civil rights claims often have strict filing deadlines (sometimes as short as 180 days).
+                  </p>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-medium shrink-0">5</span>
+                  <p className="text-muted-foreground">
+                    <strong className="text-foreground">Don't send evidence immediately</strong> — wait until an attorney confirms no conflict of interest before sharing sensitive documents.
                   </p>
                 </li>
               </ul>
