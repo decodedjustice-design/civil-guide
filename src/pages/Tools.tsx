@@ -12,7 +12,8 @@ import {
   Sparkles, 
   Mic,
   ArrowRight,
-  Compass
+  Compass,
+  Gavel
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,14 @@ const learningTools: ToolCard[] = [
     description: "Understand how different systems operate — police, courts, housing, CPS, and more.",
     href: "/rights-insight",
     buttonLabel: "Open Guides",
+    available: true,
+  },
+  {
+    icon: Gavel,
+    title: "Courts & Filing Info",
+    description: "Understand where and how to file civil rights cases in Washington State and federal courts.",
+    href: "/courts-filing-info",
+    buttonLabel: "Open Guide",
     available: true,
   },
 ];
