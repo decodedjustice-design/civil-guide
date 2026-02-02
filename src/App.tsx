@@ -24,6 +24,7 @@ import Tools from "./pages/Tools";
 import PublicRequestRights from "./pages/PublicRequestRights";
 import CourtsFilingInfo from "./pages/CourtsFilingInfo";
 import SavedAttorneys from "./pages/SavedAttorneys";
+import StarterLegalTemplates from "./pages/StarterLegalTemplates";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/public-request-rights" element={<PublicRequestRights />} />
             <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
             <Route path="/saved-attorneys" element={<SavedAttorneys />} />
+            <Route path="/legal-templates" element={<StarterLegalTemplates />} />
             <Route path="/founders-story" element={<About />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />
