@@ -27,6 +27,7 @@ import SavedAttorneys from "./pages/SavedAttorneys";
 import StarterLegalTemplates from "./pages/StarterLegalTemplates";
 import IntakePacket from "./pages/IntakePacket";
 import AttorneyContacts from "./pages/AttorneyContacts";
+import JusticePlace from "./pages/JusticePlace";
 
 const queryClient = new QueryClient();
 
@@ -39,8 +40,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/justice-place" element={<JusticePlace />} />
             <Route path="/tools" element={<Tools />} />
-            <Route path="/analyzer" element={<Analyzer />} />
             <Route path="/legal-decoder" element={<LegalDecoder />} />
             <Route path="/self-help" element={<SelfHelpTools />} />
             <Route path="/rights-insight" element={<RightsInsight />} />

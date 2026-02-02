@@ -37,6 +37,8 @@ const desktopNavItems = [
   },
 ];
 
+// Justice Place is shown as a top-level prominent link for logged-in users
+
 function DesktopNavDropdown({ item, location }: { item: typeof desktopNavItems[0]; location: ReturnType<typeof useLocation> }) {
   const [isOpen, setIsOpen] = useState(false);
   const isActive = item.items.some(subItem => location.pathname === subItem.href);
@@ -118,7 +120,21 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation - Center */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
+            {/* Justice Place - Prominent for logged in users */}
+            {user && (
+              <Link
+                to="/justice-place"
+                className={cn(
+                  "px-4 py-2 text-base font-semibold transition-colors",
+                  location.pathname === "/justice-place"
+                    ? "text-primary"
+                    : "text-navy hover:text-primary"
+                )}
+              >
+                Justice Place
+              </Link>
+            )}
             {desktopNavItems.map((item) => (
               <DesktopNavDropdown key={item.name} item={item} location={location} />
             ))}
