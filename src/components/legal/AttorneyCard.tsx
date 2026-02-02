@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   MapPin, 
   Globe, 
@@ -6,7 +7,8 @@ import {
   Mail, 
   ExternalLink,
   FileText,
-  Bookmark
+  Bookmark,
+  ClipboardList
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,11 +23,22 @@ interface AttorneyCardProps {
 }
 
 export function AttorneyCard({ attorney }: AttorneyCardProps) {
+  const navigate = useNavigate();
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const { isSaved, toggleSaved } = useSavedAttorneys();
 
   const saved = isSaved(attorney.id);
+
+  const handleGenerateIntakePacket = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const params = new URLSearchParams({
+      attorneyId: attorney.id,
+      attorneyName: attorney.name,
+      attorneyFirm: attorney.firm,
+    });
+    navigate(`/intake-packet?${params.toString()}`);
+  };
 
   const getContactIcon = () => {
     switch (attorney.contactMethod) {
@@ -118,8 +131,17 @@ export function AttorneyCard({ attorney }: AttorneyCardProps) {
           ))}
         </div>
 
-        {/* Quick Action - Stop propagation to not trigger detail modal */}
-        <div className="mt-4 pt-3 border-t border-border">
+        {/* Quick Actions - Stop propagation to not trigger detail modal */}
+        <div className="mt-4 pt-3 border-t border-border flex flex-wrap gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleGenerateIntakePacket}
+            className="gap-2 flex-1 sm:flex-none"
+          >
+            <ClipboardList className="w-4 h-4" />
+            Intake Packet
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -127,10 +149,10 @@ export function AttorneyCard({ attorney }: AttorneyCardProps) {
               e.stopPropagation();
               setShowSummaryModal(true);
             }}
-            className="gap-2 w-full sm:w-auto"
+            className="gap-2 flex-1 sm:flex-none"
           >
             <FileText className="w-4 h-4" />
-            Generate Safe Case Summary
+            Case Summary
           </Button>
         </div>
       </div>

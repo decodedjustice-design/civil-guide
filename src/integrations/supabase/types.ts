@@ -71,6 +71,59 @@ export type Database = {
         }
         Relationships: []
       }
+      attorney_contacts: {
+        Row: {
+          attorney_firm: string | null
+          attorney_id: string
+          attorney_name: string
+          contact_date: string
+          contact_method: string | null
+          created_at: string
+          id: string
+          intake_packet_id: string | null
+          notes: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attorney_firm?: string | null
+          attorney_id: string
+          attorney_name: string
+          contact_date?: string
+          contact_method?: string | null
+          created_at?: string
+          id?: string
+          intake_packet_id?: string | null
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attorney_firm?: string | null
+          attorney_id?: string
+          attorney_name?: string
+          contact_date?: string
+          contact_method?: string | null
+          created_at?: string
+          id?: string
+          intake_packet_id?: string | null
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attorney_contacts_intake_packet_id_fkey"
+            columns: ["intake_packet_id"]
+            isOneToOne: false
+            referencedRelation: "intake_packets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       case_profiles: {
         Row: {
           claim_tags: string[]
@@ -180,6 +233,81 @@ export type Database = {
           source?: string | null
           system_involved?: string | null
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      intake_packets: {
+        Row: {
+          attorney_firm: string | null
+          attorney_id: string | null
+          attorney_name: string | null
+          case_name: string
+          case_status: string
+          contact_email: string | null
+          contact_name: string
+          contact_phone: string | null
+          contact_preferred_method: string | null
+          county: string
+          created_at: string
+          evidence_snapshot: Json | null
+          id: string
+          incident_date: string | null
+          incident_month_year: string
+          issue_type: string
+          issues_checklist: string[] | null
+          narrative: string
+          opposing_party: string
+          statute_of_limitations_info: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attorney_firm?: string | null
+          attorney_id?: string | null
+          attorney_name?: string | null
+          case_name: string
+          case_status: string
+          contact_email?: string | null
+          contact_name: string
+          contact_phone?: string | null
+          contact_preferred_method?: string | null
+          county: string
+          created_at?: string
+          evidence_snapshot?: Json | null
+          id?: string
+          incident_date?: string | null
+          incident_month_year: string
+          issue_type: string
+          issues_checklist?: string[] | null
+          narrative: string
+          opposing_party: string
+          statute_of_limitations_info?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attorney_firm?: string | null
+          attorney_id?: string | null
+          attorney_name?: string | null
+          case_name?: string
+          case_status?: string
+          contact_email?: string | null
+          contact_name?: string
+          contact_phone?: string | null
+          contact_preferred_method?: string | null
+          county?: string
+          created_at?: string
+          evidence_snapshot?: Json | null
+          id?: string
+          incident_date?: string | null
+          incident_month_year?: string
+          issue_type?: string
+          issues_checklist?: string[] | null
+          narrative?: string
+          opposing_party?: string
+          statute_of_limitations_info?: string | null
           updated_at?: string
           user_id?: string
         }

@@ -42,6 +42,8 @@ const navSections = [
     label: "FIND HELP",
     items: [
       { name: "Find Attorneys", href: "/find-help" },
+      { name: "Attorney Contact Hub", href: "/attorney-contacts" },
+      { name: "Intake Packet", href: "/intake-packet" },
       { name: "Courts & Filing Info", href: "/courts-filing-info" },
       { name: "Saved Attorneys", href: "/saved-attorneys" },
     ],
