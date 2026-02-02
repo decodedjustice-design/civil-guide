@@ -12,6 +12,12 @@ interface MobileNavMenuProps {
 
 const navSections = [
   {
+    label: "YOUR SPACE",
+    items: [
+      { name: "Justice Place", href: "/justice-place", requiresAuth: true },
+    ],
+  },
+  {
     label: "HOME",
     items: [
       { name: "Home", href: "/" },
@@ -135,30 +141,41 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
 
           {/* Navigation Sections */}
           <div className="space-y-8">
-            {navSections.map((section) => (
-              <div key={section.label}>
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-                  {section.label}
-                </h3>
-                <div className="space-y-1">
-                  {section.items.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={handleLinkClick}
-                      className={cn(
-                        "flex items-center min-h-[48px] px-4 py-3 text-base font-medium transition-colors rounded-r-lg -ml-4",
-                        isActive(item.href)
-                          ? "text-primary bg-accent-soft border-l-4 border-primary"
-                          : "text-navy hover:bg-secondary/60 border-l-4 border-transparent"
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+            {navSections.map((section) => {
+              // Filter out auth-required items if user is not logged in
+              const visibleItems = section.items.filter(
+                (item) => !('requiresAuth' in item && item.requiresAuth) || user
+              );
+              
+              // Skip section if no visible items
+              if (visibleItems.length === 0) return null;
+              
+              return (
+                <div key={section.label}>
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                    {section.label}
+                  </h3>
+                  <div className="space-y-1">
+                    {visibleItems.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        onClick={handleLinkClick}
+                        className={cn(
+                          "flex items-center min-h-[48px] px-4 py-3 text-base font-medium transition-colors rounded-r-lg -ml-4",
+                          isActive(item.href)
+                            ? "text-primary bg-accent-soft border-l-4 border-primary"
+                            : "text-navy hover:bg-secondary/60 border-l-4 border-transparent",
+                          section.label === "YOUR SPACE" && "font-semibold"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

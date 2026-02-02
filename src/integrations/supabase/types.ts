@@ -313,6 +313,75 @@ export type Database = {
         }
         Relationships: []
       }
+      justice_place_bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          resource_id: string
+          resource_title: string
+          resource_type: string
+          resource_url: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          resource_id: string
+          resource_title: string
+          resource_type: string
+          resource_url?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          resource_id?: string
+          resource_title?: string
+          resource_type?: string
+          resource_url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      justice_place_cases: {
+        Row: {
+          case_name: string
+          case_status: Database["public"]["Enums"]["case_status"]
+          county: string
+          created_at: string
+          id: string
+          incident_month_year: string
+          issue_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          case_name: string
+          case_status?: Database["public"]["Enums"]["case_status"]
+          county: string
+          created_at?: string
+          id?: string
+          incident_month_year: string
+          issue_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          case_name?: string
+          case_status?: Database["public"]["Enums"]["case_status"]
+          county?: string
+          created_at?: string
+          id?: string
+          incident_month_year?: string
+          issue_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       known_patterns: {
         Row: {
           case_count: number | null
@@ -450,6 +519,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      case_status:
+        | "getting_oriented"
+        | "gathering_information"
+        | "preparing_outreach"
+        | "awaiting_responses"
+        | "reviewing_options"
+        | "taking_next_steps"
+        | "on_hold"
       civil_rights_system:
         | "police"
         | "housing"
@@ -587,6 +664,15 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      case_status: [
+        "getting_oriented",
+        "gathering_information",
+        "preparing_outreach",
+        "awaiting_responses",
+        "reviewing_options",
+        "taking_next_steps",
+        "on_hold",
+      ],
       civil_rights_system: [
         "police",
         "housing",
