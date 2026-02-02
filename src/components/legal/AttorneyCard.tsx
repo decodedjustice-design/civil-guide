@@ -5,13 +5,16 @@ import {
   Phone, 
   Mail, 
   ExternalLink,
-  FileText
+  FileText,
+  Bookmark
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Attorney } from "@/data/attorneyData";
 import { SafeCaseSummaryModal } from "./SafeCaseSummaryModal";
 import { AttorneyDetailModal } from "./AttorneyDetailModal";
+import { useSavedAttorneys } from "@/hooks/useSavedAttorneys";
+import { cn } from "@/lib/utils";
 
 interface AttorneyCardProps {
   attorney: Attorney;
@@ -20,6 +23,9 @@ interface AttorneyCardProps {
 export function AttorneyCard({ attorney }: AttorneyCardProps) {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const { isSaved, toggleSaved } = useSavedAttorneys();
+
+  const saved = isSaved(attorney.id);
 
   const getContactIcon = () => {
     switch (attorney.contactMethod) {
@@ -55,10 +61,29 @@ export function AttorneyCard({ attorney }: AttorneyCardProps) {
               {attorney.city}, WA
             </p>
           </div>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            {getContactIcon()}
-            <span className="hidden sm:inline">{getContactLabel()}</span>
-            {attorney.contactMethod === "website" && <ExternalLink className="w-3 h-3" />}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleSaved(attorney.id);
+              }}
+              className={cn(
+                "h-8 w-8",
+                saved 
+                  ? "text-accent hover:text-accent/80" 
+                  : "text-muted-foreground hover:text-accent"
+              )}
+              title={saved ? "Remove from saved" : "Save attorney"}
+            >
+              <Bookmark className={cn("w-4 h-4", saved && "fill-current")} />
+            </Button>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              {getContactIcon()}
+              <span className="hidden sm:inline">{getContactLabel()}</span>
+              {attorney.contactMethod === "website" && <ExternalLink className="w-3 h-3" />}
+            </div>
           </div>
         </div>
 

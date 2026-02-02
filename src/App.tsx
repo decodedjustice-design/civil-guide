@@ -23,6 +23,7 @@ import Transcription from "./pages/Transcription";
 import Tools from "./pages/Tools";
 import PublicRequestRights from "./pages/PublicRequestRights";
 import CourtsFilingInfo from "./pages/CourtsFilingInfo";
+import SavedAttorneys from "./pages/SavedAttorneys";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/transcription" element={<Transcription />} />
             <Route path="/public-request-rights" element={<PublicRequestRights />} />
             <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
+            <Route path="/saved-attorneys" element={<SavedAttorneys />} />
             <Route path="/founders-story" element={<About />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />
