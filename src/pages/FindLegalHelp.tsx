@@ -7,7 +7,13 @@ import {
   ArrowRight,
   Briefcase,
   Heart,
-  HandHeart
+  HandHeart,
+  BookOpen,
+  Library,
+  Building2,
+  FileText,
+  ScrollText,
+  Globe
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -16,7 +22,9 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AttorneyDirectory } from "@/components/legal/AttorneyDirectory";
 import { LegalResourceCard } from "@/components/legal/LegalResourceCard";
+import { LawLibraryCard } from "@/components/legal/LawLibraryCard";
 import { legalResources, RESOURCE_CATEGORIES } from "@/data/legalResources";
+import { lawLibraryResources, LAW_LIBRARY_CATEGORIES } from "@/data/lawLibraryResources";
 import {
   Accordion,
   AccordionContent,
@@ -43,6 +51,18 @@ const getCategoryDescription = (category: string) => {
     case "civil-rights": return "Organizations focused on civil liberties";
     case "advocacy": return "Support and system navigation help";
     default: return "";
+  }
+};
+
+const getLibraryCategoryIcon = (category: string) => {
+  switch (category) {
+    case "state-law-libraries": return Library;
+    case "county-law-libraries": return Building2;
+    case "municipal-law-libraries": return Building2;
+    case "court-forms": return FileText;
+    case "bar-association": return ScrollText;
+    case "public-records": return Globe;
+    default: return BookOpen;
   }
 };
 
@@ -232,7 +252,62 @@ export default function FindLegalHelp() {
           </section>
 
           {/* ================================================================
-              SECTION 5: Guidance / Tips
+              SECTION 5: Official Legal Resources & Law Libraries
+          ================================================================ */}
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-accent" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Official Legal Resources & Law Libraries</h2>
+                <p className="text-sm text-muted-foreground">Public law libraries, court forms, and records portals</p>
+              </div>
+            </div>
+
+            <div className="max-w-4xl">
+              <Accordion type="multiple" className="space-y-4">
+                {LAW_LIBRARY_CATEGORIES.map((category) => {
+                  const categoryResources = lawLibraryResources.filter(r => r.category === category.id);
+                  if (categoryResources.length === 0) return null;
+                  
+                  const Icon = getLibraryCategoryIcon(category.id);
+                  
+                  return (
+                    <AccordionItem 
+                      key={category.id} 
+                      value={category.id}
+                      className="rounded-2xl bg-card border border-border overflow-hidden"
+                    >
+                      <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-secondary/30 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                            <Icon className="w-5 h-5 text-accent" />
+                          </div>
+                          <div className="text-left">
+                            <h3 className="font-semibold text-foreground">{category.label}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {categoryResources.length} {categoryResources.length === 1 ? 'resource' : 'resources'}
+                            </p>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-6 pb-4">
+                        <div className="space-y-3 pt-2">
+                          {categoryResources.map((resource) => (
+                            <LawLibraryCard key={resource.id} resource={resource} />
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </div>
+          </section>
+
+          {/* ================================================================
+              SECTION 6: Guidance / Tips
           ================================================================ */}
           <section className="mb-16">
             <div className="max-w-3xl mx-auto p-8 rounded-2xl bg-card border border-border">
