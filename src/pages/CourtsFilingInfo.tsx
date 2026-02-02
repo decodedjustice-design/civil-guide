@@ -93,145 +93,248 @@ export default function CourtsFilingInfo() {
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                     <Building2 className="w-5 h-5 text-primary" />
                   </div>
-                  <CardTitle className="text-xl text-navy">Federal Courts (Western District of Washington)</CardTitle>
+                  <CardTitle className="text-xl text-navy">Federal Courts in Washington State</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <p className="text-muted-foreground leading-relaxed">
-                  The U.S. District Court for the Western District of Washington handles federal civil rights cases for western Washington, including King, Pierce, Snohomish, and surrounding counties.
+                  Washington State is divided into two federal judicial districts. Your filing location depends on where the events occurred.
                 </p>
 
-                <Accordion type="single" collapsible className="space-y-3">
-                  <AccordionItem value="locations" className="border rounded-xl px-4 bg-card">
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        <span className="font-medium text-navy">Courthouse Locations</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      <div className="space-y-4">
-                        <div className="p-4 rounded-lg bg-secondary/30">
-                          <h4 className="font-medium text-navy mb-2">Seattle Courthouse</h4>
-                          <p className="text-sm text-muted-foreground">
-                            United States Courthouse<br />
-                            700 Stewart Street<br />
-                            Seattle, WA 98101
-                          </p>
-                        </div>
-                        <div className="p-4 rounded-lg bg-secondary/30">
-                          <h4 className="font-medium text-navy mb-2">Tacoma Courthouse</h4>
-                          <p className="text-sm text-muted-foreground">
-                            Union Station Courthouse<br />
-                            1717 Pacific Avenue<br />
-                            Tacoma, WA 98402
-                          </p>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                {/* Western District */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-navy flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    Western District of Washington
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Covers western Washington counties including King, Pierce, Snohomish, Whatcom, Skagit, Thurston, Kitsap, and surrounding areas.
+                  </p>
 
-                  <AccordionItem value="filing" className="border rounded-xl px-4 bg-card">
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-4 h-4 text-primary" />
-                        <span className="font-medium text-navy">Filing Methods</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      <div className="space-y-4">
-                        <div className="p-4 rounded-lg bg-secondary/30">
-                          <h4 className="font-medium text-navy mb-2">Electronic Filing (CM/ECF)</h4>
-                          <p className="text-sm text-muted-foreground mb-3">
-                            Pro se litigants may register for CM/ECF electronic filing. This allows you to file documents online 24/7.
-                          </p>
-                          <Button variant="outline" size="sm" asChild>
-                            <a href="https://www.wawd.uscourts.gov/cm-ecf" target="_blank" rel="noopener noreferrer" className="gap-2">
-                              <Globe className="w-4 h-4" />
-                              CM/ECF Information
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
-                          </Button>
+                  <Accordion type="single" collapsible className="space-y-3">
+                    <AccordionItem value="wdwa-locations" className="border rounded-xl px-4 bg-card">
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3">
+                          <MapPin className="w-4 h-4 text-primary" />
+                          <span className="font-medium text-navy">Courthouse Locations</span>
                         </div>
-                        <div className="p-4 rounded-lg bg-secondary/30">
-                          <h4 className="font-medium text-navy mb-2">Paper Filing</h4>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <div className="space-y-4">
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Seattle Courthouse</h4>
+                            <p className="text-sm text-muted-foreground">
+                              United States Courthouse<br />
+                              700 Stewart Street<br />
+                              Seattle, WA 98101
+                            </p>
+                          </div>
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Tacoma Courthouse</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Union Station Courthouse<br />
+                              1717 Pacific Avenue<br />
+                              Tacoma, WA 98402
+                            </p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="wdwa-filing" className="border rounded-xl px-4 bg-card">
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3">
+                          <FileText className="w-4 h-4 text-primary" />
+                          <span className="font-medium text-navy">Filing Methods</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <div className="space-y-4">
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Electronic Filing (CM/ECF)</h4>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              Pro se litigants may register for CM/ECF electronic filing. This allows you to file documents online 24/7.
+                            </p>
+                            <Button variant="outline" size="sm" asChild>
+                              <a href="https://www.wawd.uscourts.gov/cm-ecf" target="_blank" rel="noopener noreferrer" className="gap-2">
+                                <Globe className="w-4 h-4" />
+                                CM/ECF Information
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </Button>
+                          </div>
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Paper Filing</h4>
+                            <p className="text-sm text-muted-foreground">
+                              You may also file documents in person at the Clerk's Office during business hours (8:00 AM - 5:00 PM, Monday-Friday).
+                            </p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="wdwa-contact" className="border rounded-xl px-4 bg-card">
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3">
+                          <Phone className="w-4 h-4 text-primary" />
+                          <span className="font-medium text-navy">Clerk's Office & Resources</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <div className="space-y-4">
                           <p className="text-sm text-muted-foreground">
-                            You may also file documents in person at the Clerk's Office during business hours (8:00 AM - 5:00 PM, Monday-Friday).
+                            <strong>Phone:</strong> (206) 370-8400<br />
+                            <strong>Hours:</strong> Monday - Friday, 8:00 AM - 5:00 PM
                           </p>
+                          <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" size="sm" asChild>
+                              <a href="https://www.wawd.uscourts.gov" target="_blank" rel="noopener noreferrer" className="gap-2">
+                                <Globe className="w-4 h-4" />
+                                WDWA Website
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </Button>
+                            <Button variant="outline" size="sm" asChild>
+                              <a href="https://www.wawd.uscourts.gov/sites/wawd/files/ProSeGuidetoFilingYourLawsuitinFederalCourt.pdf" target="_blank" rel="noopener noreferrer" className="gap-2">
+                                <BookOpen className="w-4 h-4" />
+                                Pro Se Guide (PDF)
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
 
-                  <AccordionItem value="fees" className="border rounded-xl px-4 bg-card">
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-4 h-4 text-primary" />
-                        <span className="font-medium text-navy">Filing Fees & Fee Waivers</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground">
-                          The current filing fee for a civil case is <strong>$405</strong> (as of 2024). This includes both the filing fee and administrative fee.
-                        </p>
-                        <div className="p-4 rounded-lg bg-gold-soft/50 border border-gold/20">
-                          <h4 className="font-medium text-navy mb-2">In Forma Pauperis (IFP)</h4>
-                          <p className="text-sm text-muted-foreground">
-                            If you cannot afford the filing fee, you may apply to proceed "in forma pauperis" (IFP). This requires completing a financial affidavit demonstrating financial hardship.
-                          </p>
+                {/* Eastern District */}
+                <div className="space-y-4 pt-4 border-t border-border/50">
+                  <h3 className="text-lg font-medium text-navy flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    Eastern District of Washington
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Covers eastern Washington counties including Spokane, Yakima, Benton, Franklin, Whitman, Walla Walla, and surrounding areas.
+                  </p>
+
+                  <Accordion type="single" collapsible className="space-y-3">
+                    <AccordionItem value="edwa-locations" className="border rounded-xl px-4 bg-card">
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3">
+                          <MapPin className="w-4 h-4 text-primary" />
+                          <span className="font-medium text-navy">Courthouse Locations</span>
                         </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <div className="space-y-4">
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Spokane Courthouse</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Thomas S. Foley U.S. Courthouse<br />
+                              920 West Riverside Avenue<br />
+                              Spokane, WA 99201
+                            </p>
+                          </div>
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Yakima Courthouse</h4>
+                            <p className="text-sm text-muted-foreground">
+                              William O. Douglas Federal Building<br />
+                              25 South Third Street<br />
+                              Yakima, WA 98901
+                            </p>
+                          </div>
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Richland Courthouse</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Richland Federal Building<br />
+                              825 Jadwin Avenue<br />
+                              Richland, WA 99352
+                            </p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
 
-                  <AccordionItem value="contact" className="border rounded-xl px-4 bg-card">
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-4 h-4 text-primary" />
-                        <span className="font-medium text-navy">Clerk's Office Contact</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground">
-                          <strong>Phone:</strong> (206) 370-8400<br />
-                          <strong>Hours:</strong> Monday - Friday, 8:00 AM - 5:00 PM
-                        </p>
-                        <Button variant="outline" size="sm" asChild>
-                          <a href="https://www.wawd.uscourts.gov" target="_blank" rel="noopener noreferrer" className="gap-2">
-                            <Globe className="w-4 h-4" />
-                            WDWA Court Website
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                    <AccordionItem value="edwa-filing" className="border rounded-xl px-4 bg-card">
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3">
+                          <FileText className="w-4 h-4 text-primary" />
+                          <span className="font-medium text-navy">Filing Methods</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <div className="space-y-4">
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Electronic Filing (CM/ECF)</h4>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              Pro se litigants may register for CM/ECF electronic filing after completing required training.
+                            </p>
+                            <Button variant="outline" size="sm" asChild>
+                              <a href="https://www.waed.uscourts.gov/cmecf-information" target="_blank" rel="noopener noreferrer" className="gap-2">
+                                <Globe className="w-4 h-4" />
+                                CM/ECF Information
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </Button>
+                          </div>
+                          <div className="p-4 rounded-lg bg-secondary/30">
+                            <h4 className="font-medium text-navy mb-2">Paper Filing</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Documents may be filed in person at any divisional office during business hours (9:00 AM - 4:00 PM, Monday-Friday).
+                            </p>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
 
-                  <AccordionItem value="prose" className="border rounded-xl px-4 bg-card">
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center gap-3">
-                        <BookOpen className="w-4 h-4 text-primary" />
-                        <span className="font-medium text-navy">Pro Se Resources</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      <div className="space-y-3">
-                        <p className="text-sm text-muted-foreground">
-                          The court provides resources specifically for self-represented litigants, including forms, guides, and procedural information.
-                        </p>
-                        <Button variant="outline" size="sm" asChild>
-                          <a href="https://www.wawd.uscourts.gov/sites/wawd/files/ProSeGuidetoFilingYourLawsuitinFederalCourt.pdf" target="_blank" rel="noopener noreferrer" className="gap-2">
-                            <BookOpen className="w-4 h-4" />
-                            Pro Se Litigant Guide (PDF)
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        </Button>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
+                    <AccordionItem value="edwa-contact" className="border rounded-xl px-4 bg-card">
+                      <AccordionTrigger className="hover:no-underline py-4">
+                        <div className="flex items-center gap-3">
+                          <Phone className="w-4 h-4 text-primary" />
+                          <span className="font-medium text-navy">Clerk's Office & Resources</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4">
+                        <div className="space-y-4">
+                          <div className="space-y-2 text-sm text-muted-foreground">
+                            <p><strong>Spokane:</strong> (509) 458-3400</p>
+                            <p><strong>Yakima:</strong> (509) 573-6600</p>
+                            <p><strong>Richland:</strong> (509) 376-6750</p>
+                            <p><strong>Hours:</strong> Monday - Friday, 9:00 AM - 4:00 PM</p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" size="sm" asChild>
+                              <a href="https://www.waed.uscourts.gov" target="_blank" rel="noopener noreferrer" className="gap-2">
+                                <Globe className="w-4 h-4" />
+                                EDWA Website
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </Button>
+                            <Button variant="outline" size="sm" asChild>
+                              <a href="https://www.waed.uscourts.gov/representing-yourself" target="_blank" rel="noopener noreferrer" className="gap-2">
+                                <BookOpen className="w-4 h-4" />
+                                Pro Se Resources
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            </Button>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+
+                {/* Shared Federal Info */}
+                <div className="p-4 rounded-lg bg-gold-soft/50 border border-gold/20 mt-4">
+                  <h4 className="font-medium text-navy mb-2">Filing Fees (Both Districts)</h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    The current filing fee for a federal civil case is <strong>$405</strong> (as of 2024).
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>In Forma Pauperis (IFP):</strong> If you cannot afford the filing fee, you may apply to proceed without payment by completing a financial affidavit demonstrating hardship.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </section>
