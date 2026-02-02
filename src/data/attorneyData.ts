@@ -13,6 +13,13 @@ export interface Attorney {
   contactMethod: "website" | "email" | "phone";
   contactValue: string;
   description?: string;
+  // Extended fields for detail modal
+  detailedBio?: string;
+  barAdmissions?: string[];
+  languages?: string[];
+  feeStructureDetails?: string;
+  email?: string;  // Additional email if contactMethod is not email
+  phone?: string;  // Additional phone if contactMethod is not phone
 }
 
 export const WA_COUNTIES = [
