@@ -7,7 +7,8 @@ import {
   Scale,
   Languages,
   DollarSign,
-  X
+  X,
+  Bookmark
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSavedAttorneys } from "@/hooks/useSavedAttorneys";
+import { cn } from "@/lib/utils";
 
 interface AttorneyDetailModalProps {
   attorney: Attorney | null;
@@ -36,8 +39,11 @@ interface AttorneyDetailModalProps {
 
 export function AttorneyDetailModal({ attorney, isOpen, onClose }: AttorneyDetailModalProps) {
   const isMobile = useIsMobile();
+  const { isSaved, toggleSaved } = useSavedAttorneys();
 
   if (!attorney) return null;
+
+  const saved = isSaved(attorney.id);
 
   const getContactLink = () => {
     switch (attorney.contactMethod) {
@@ -70,14 +76,30 @@ export function AttorneyDetailModal({ attorney, isOpen, onClose }: AttorneyDetai
 
   const content = (
     <div className="space-y-6">
-      {/* Header Info */}
-      <div className="space-y-2">
-        <h3 className="text-xl font-semibold text-foreground">{attorney.name}</h3>
-        <p className="text-muted-foreground font-medium">{attorney.firm}</p>
-        <p className="text-sm text-muted-foreground flex items-center gap-1">
-          <MapPin className="w-4 h-4" />
-          {attorney.city}, WA
-        </p>
+      {/* Header Info with Save Button */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold text-foreground">{attorney.name}</h3>
+          <p className="text-muted-foreground font-medium">{attorney.firm}</p>
+          <p className="text-sm text-muted-foreground flex items-center gap-1">
+            <MapPin className="w-4 h-4" />
+            {attorney.city}, WA
+          </p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => toggleSaved(attorney.id)}
+          className={cn(
+            "h-10 w-10 shrink-0",
+            saved 
+              ? "text-accent hover:text-accent/80" 
+              : "text-muted-foreground hover:text-accent"
+          )}
+          title={saved ? "Remove from saved" : "Save attorney"}
+        >
+          <Bookmark className={cn("w-5 h-5", saved && "fill-current")} />
+        </Button>
       </div>
 
       {/* Practice Areas */}
