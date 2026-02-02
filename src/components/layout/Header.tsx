@@ -1,17 +1,36 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
-const navigation = [
-  { name: "Understanding", href: "/analyzer" },
-  { name: "Learning", href: "/rights-insight" },
-  { name: "Organization", href: "/evidence-vault" },
-  { name: "Documentation", href: "/library" },
-  { name: "Tools", href: "/tools" },
+const desktopNavItems = [
+  {
+    name: "Tools",
+    items: [
+      { name: "Evidence Vault", href: "/evidence-vault" },
+      { name: "Timeline Creator", href: "/timeline" },
+      { name: "Notes", href: "/notes" },
+      { name: "Transcription", href: "/transcription" },
+    ],
+  },
+  {
+    name: "Learning",
+    items: [
+      { name: "Library", href: "/library" },
+      { name: "Rights Insight", href: "/rights-insight" },
+    ],
+  },
+  {
+    name: "Find Help",
+    items: [
+      { name: "Find Attorneys", href: "/find-help" },
+      { name: "Courts & Filing", href: "/courts-filing-info" },
+      { name: "Saved Attorneys", href: "/saved-attorneys" },
+    ],
+  },
 ];
 
 const mobileNavSections = [
@@ -58,6 +77,59 @@ const userNavSection = {
   ],
 };
 
+function DesktopNavDropdown({ item, location }: { item: typeof desktopNavItems[0]; location: ReturnType<typeof useLocation> }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const isActive = item.items.some(subItem => location.pathname === subItem.href);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        className={cn(
+          "flex items-center gap-1 px-4 py-2 text-base font-medium transition-colors",
+          isActive
+            ? "text-primary"
+            : "text-navy hover:text-primary"
+        )}
+      >
+        {item.name}
+        <ChevronDown className={cn(
+          "h-4 w-4 transition-transform duration-200",
+          isOpen && "rotate-180"
+        )} />
+      </button>
+      
+      {/* Dropdown */}
+      <div
+        className={cn(
+          "absolute left-0 top-full pt-2 z-50 transition-all duration-200",
+          isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-1"
+        )}
+      >
+        <div className="bg-card border border-border rounded-lg shadow-lg py-2 min-w-[180px]">
+          {item.items.map((subItem) => (
+            <Link
+              key={subItem.name}
+              to={subItem.href}
+              className={cn(
+                "block px-4 py-2.5 text-sm font-medium transition-colors",
+                location.pathname === subItem.href
+                  ? "text-primary bg-accent-soft"
+                  : "text-navy hover:text-primary hover:bg-secondary/60"
+              )}
+            >
+              {subItem.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -86,21 +158,21 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation - Center */}
-        <div className="hidden lg:flex items-center gap-1">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={cn(
-                "px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                location.pathname === item.href
-                  ? "text-primary bg-accent-soft"
-                  : "text-navy-soft hover:text-navy hover:bg-secondary/60"
-              )}
-            >
-              {item.name}
-            </Link>
+        <div className="hidden md:flex items-center gap-8">
+          {desktopNavItems.map((item) => (
+            <DesktopNavDropdown key={item.name} item={item} location={location} />
           ))}
+          <Link
+            to="/about"
+            className={cn(
+              "px-4 py-2 text-base font-medium transition-colors",
+              location.pathname === "/about"
+                ? "text-primary"
+                : "text-navy hover:text-primary"
+            )}
+          >
+            About
+          </Link>
         </div>
 
         {/* Desktop Auth - Right */}
