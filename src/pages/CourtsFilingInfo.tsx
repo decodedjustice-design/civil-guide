@@ -222,9 +222,9 @@ export default function CourtsFilingInfo() {
                           The court provides resources specifically for self-represented litigants, including forms, guides, and procedural information.
                         </p>
                         <Button variant="outline" size="sm" asChild>
-                          <a href="https://www.wawd.uscourts.gov/representing-yourself" target="_blank" rel="noopener noreferrer" className="gap-2">
+                          <a href="https://www.wawd.uscourts.gov/sites/wawd/files/ProSeGuidetoFilingYourLawsuitinFederalCourt.pdf" target="_blank" rel="noopener noreferrer" className="gap-2">
                             <BookOpen className="w-4 h-4" />
-                            Pro Se Litigant Guide
+                            Pro Se Litigant Guide (PDF)
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         </Button>
