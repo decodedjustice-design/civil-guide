@@ -25,6 +25,8 @@ import PublicRequestRights from "./pages/PublicRequestRights";
 import CourtsFilingInfo from "./pages/CourtsFilingInfo";
 import SavedAttorneys from "./pages/SavedAttorneys";
 import StarterLegalTemplates from "./pages/StarterLegalTemplates";
+import IntakePacket from "./pages/IntakePacket";
+import AttorneyContacts from "./pages/AttorneyContacts";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +60,8 @@ const App = () => (
             <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
             <Route path="/saved-attorneys" element={<SavedAttorneys />} />
             <Route path="/legal-templates" element={<StarterLegalTemplates />} />
+            <Route path="/intake-packet" element={<IntakePacket />} />
+            <Route path="/attorney-contacts" element={<AttorneyContacts />} />
             <Route path="/founders-story" element={<About />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />

@@ -29,6 +29,8 @@ const desktopNavItems = [
     name: "Find Help",
     items: [
       { name: "Find Attorneys", href: "/find-help" },
+      { name: "Attorney Contact Hub", href: "/attorney-contacts" },
+      { name: "Intake Packet", href: "/intake-packet" },
       { name: "Courts & Filing", href: "/courts-filing-info" },
       { name: "Saved Attorneys", href: "/saved-attorneys" },
     ],
