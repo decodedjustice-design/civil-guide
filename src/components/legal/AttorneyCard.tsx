@@ -5,20 +5,20 @@ import {
   Phone, 
   Mail, 
   ExternalLink,
-  FileText,
-  ChevronDown
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Attorney } from "@/data/attorneyData";
 import { SafeCaseSummaryModal } from "./SafeCaseSummaryModal";
+import { AttorneyDetailModal } from "./AttorneyDetailModal";
 
 interface AttorneyCardProps {
   attorney: Attorney;
 }
 
 export function AttorneyCard({ attorney }: AttorneyCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
 
   const getContactIcon = () => {
@@ -29,47 +29,42 @@ export function AttorneyCard({ attorney }: AttorneyCardProps) {
     }
   };
 
-  const getContactLink = () => {
-    switch (attorney.contactMethod) {
-      case "website": return attorney.contactValue;
-      case "email": return `mailto:${attorney.contactValue}`;
-      case "phone": return `tel:${attorney.contactValue}`;
-    }
-  };
-
   const getContactLabel = () => {
     switch (attorney.contactMethod) {
-      case "website": return "Visit Website";
-      case "email": return attorney.contactValue;
+      case "website": return "Website";
+      case "email": return "Email";
       case "phone": return attorney.contactValue;
     }
   };
 
   return (
     <>
-      <div className="p-5 rounded-xl bg-card border border-border hover:border-accent/30 transition-all shadow-sm hover:shadow-warm">
+      <div 
+        onClick={() => setShowDetailModal(true)}
+        className="p-5 rounded-xl bg-card border border-border hover:border-accent/30 transition-all shadow-sm hover:shadow-warm cursor-pointer group"
+      >
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <h3 className="font-semibold text-foreground text-lg">{attorney.name}</h3>
+            <h3 className="font-semibold text-foreground text-lg group-hover:text-accent transition-colors">
+              {attorney.name}
+            </h3>
             <p className="text-muted-foreground">{attorney.firm}</p>
             <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
               <MapPin className="w-3 h-3" />
               {attorney.city}, WA
             </p>
           </div>
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 rounded-lg hover:bg-secondary/50 transition-colors"
-            aria-label={isExpanded ? "Collapse" : "Expand"}
-          >
-            <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-          </button>
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            {getContactIcon()}
+            <span className="hidden sm:inline">{getContactLabel()}</span>
+            {attorney.contactMethod === "website" && <ExternalLink className="w-3 h-3" />}
+          </div>
         </div>
 
         {/* Practice Areas */}
         <div className="flex flex-wrap gap-2 mt-3">
-          {attorney.practiceAreas.map((area) => (
+          {attorney.practiceAreas.slice(0, 3).map((area) => (
             <Badge 
               key={area} 
               variant="secondary"
@@ -78,6 +73,11 @@ export function AttorneyCard({ attorney }: AttorneyCardProps) {
               {area}
             </Badge>
           ))}
+          {attorney.practiceAreas.length > 3 && (
+            <Badge variant="outline" className="text-muted-foreground border-border">
+              +{attorney.practiceAreas.length - 3} more
+            </Badge>
+          )}
         </div>
 
         {/* Fee Types */}
@@ -86,52 +86,35 @@ export function AttorneyCard({ attorney }: AttorneyCardProps) {
             <Badge 
               key={fee} 
               variant="outline"
-              className="text-muted-foreground border-border"
+              className="text-muted-foreground border-border text-xs"
             >
               {fee}
             </Badge>
           ))}
         </div>
 
-        {/* Expanded Content */}
-        {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-border space-y-4">
-            {attorney.description && (
-              <p className="text-sm text-muted-foreground">{attorney.description}</p>
-            )}
-
-            {/* Counties */}
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">Counties Served</p>
-              <p className="text-sm text-foreground">{attorney.counties.join(", ")}</p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-wrap gap-3">
-              <a
-                href={getContactLink()}
-                target={attorney.contactMethod === "website" ? "_blank" : undefined}
-                rel={attorney.contactMethod === "website" ? "noopener noreferrer" : undefined}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors text-sm"
-              >
-                {getContactIcon()}
-                {getContactLabel()}
-                {attorney.contactMethod === "website" && <ExternalLink className="w-3 h-3" />}
-              </a>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowSummaryModal(true)}
-                className="gap-2"
-              >
-                <FileText className="w-4 h-4" />
-                Generate Safe Case Summary
-              </Button>
-            </div>
-          </div>
-        )}
+        {/* Quick Action - Stop propagation to not trigger detail modal */}
+        <div className="mt-4 pt-3 border-t border-border">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowSummaryModal(true);
+            }}
+            className="gap-2 w-full sm:w-auto"
+          >
+            <FileText className="w-4 h-4" />
+            Generate Safe Case Summary
+          </Button>
+        </div>
       </div>
+
+      <AttorneyDetailModal
+        attorney={attorney}
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+      />
 
       <SafeCaseSummaryModal
         isOpen={showSummaryModal}
