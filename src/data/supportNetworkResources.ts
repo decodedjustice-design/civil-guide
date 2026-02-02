@@ -283,6 +283,22 @@ export const supportResources: SupportResource[] = [
     notes: "You can file about any licensed provider. Investigations take time, and that's normal.",
   },
 
+  // ===== MEDICAL / EMT OVERSIGHT =====
+  {
+    id: "wa-doh-ems",
+    name: "Washington Department of Health – EMS & Trauma",
+    jurisdiction: "washington",
+    systemTags: ["healthcare"],
+    whatTheyDo: "Oversees emergency medical services, including EMT certification and ambulance services.",
+    whenToContact: "When you have concerns about EMT or ambulance service quality or conduct.",
+    whatTheyCan: "Investigate complaints about EMS providers, certify EMT personnel, inspect ambulance services.",
+    whatTheyCannot: "Provide emergency services, award damages, or handle non-EMS healthcare complaints.",
+    officialStatus: "official",
+    website: "https://www.doh.wa.gov/licensespermitsandcertificates/facilitiesandservices/emergencymedicalservicesemstrauma",
+    phone: "360-236-2828",
+    notes: "EMS oversight includes both response time and quality of care issues.",
+  },
+
   // ===== GOVERNMENT / PUBLIC RECORDS =====
   {
     id: "wa-ago-pra",
@@ -311,6 +327,22 @@ export const supportResources: SupportResource[] = [
     website: "https://www.governor.wa.gov/contact/contact/contact-governors-office",
     phone: "360-902-4111",
     notes: "This is a last resort after trying the relevant agency directly.",
+  },
+
+  // ===== CPS/DCYF SPECIFIC =====
+  {
+    id: "dcyf-ombuds",
+    name: "Washington DCYF Constituent Services",
+    jurisdiction: "washington",
+    systemTags: ["education", "disability"],
+    whatTheyDo: "Handles concerns and questions about DCYF services and child welfare cases.",
+    whenToContact: "When you need help navigating DCYF processes or want to raise a concern.",
+    whatTheyCan: "Answer questions, connect you with case supervisors, escalate concerns within DCYF.",
+    whatTheyCannot: "Override case decisions, provide legal advice, or act as your advocate.",
+    officialStatus: "official",
+    website: "https://www.dcyf.wa.gov/contact-us",
+    phone: "1-866-363-4276",
+    notes: "This is within DCYF, not independent oversight. For independent review, contact OFCO.",
   },
 ];
 
