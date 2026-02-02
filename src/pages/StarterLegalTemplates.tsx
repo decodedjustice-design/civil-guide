@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { BookmarkButton } from "@/components/shared/BookmarkButton";
 import { cn } from "@/lib/utils";
 
 interface LegalTemplate {
@@ -367,12 +368,12 @@ function TemplateCard({ template }: { template: LegalTemplate }) {
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden">
       {/* Header */}
-      <button
-        type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full p-6 flex items-center justify-between text-left hover:bg-secondary/30 transition-colors"
-      >
-        <div className="flex items-center gap-4">
+      <div className="p-6 flex items-center justify-between hover:bg-secondary/30 transition-colors">
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex-1 flex items-center gap-4 text-left"
+        >
           <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
             <Icon className="w-6 h-6 text-accent" />
           </div>
@@ -380,14 +381,30 @@ function TemplateCard({ template }: { template: LegalTemplate }) {
             <h3 className="text-lg font-semibold text-foreground">{template.title}</h3>
             <p className="text-sm text-muted-foreground mt-1">Click to view template and guidance</p>
           </div>
+        </button>
+        
+        <div className="flex items-center gap-2 shrink-0">
+          <BookmarkButton
+            resourceType="legal_template"
+            resourceId={template.id}
+            resourceTitle={template.title}
+            resourceUrl={`/legal-templates#${template.id}`}
+            variant="icon"
+          />
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="p-2"
+          >
+            <ChevronDown 
+              className={cn(
+                "w-6 h-6 text-muted-foreground transition-transform duration-200",
+                isExpanded && "rotate-180"
+              )} 
+            />
+          </button>
         </div>
-        <ChevronDown 
-          className={cn(
-            "w-6 h-6 text-muted-foreground shrink-0 transition-transform duration-200",
-            isExpanded && "rotate-180"
-          )} 
-        />
-      </button>
+      </div>
 
       {/* Expanded Content */}
       {isExpanded && (

@@ -16,6 +16,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { libraryContent, LibrarySection, LibrarySubsection } from "@/data/libraryContent";
 import { cn } from "@/lib/utils";
+import { BookmarkButton } from "@/components/shared/BookmarkButton";
 
 const iconMap: Record<string, React.ReactNode> = {
   Building2: <Building2 className="w-5 h-5" />,
@@ -260,34 +261,44 @@ function LibrarySectionCard({
   return (
     <div id={`section-${section.id}`} className="rounded-xl border border-border bg-white overflow-hidden">
       {/* Section Header */}
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center gap-4 p-5 text-left hover:bg-slate-50 transition-colors"
-      >
-        <div className={cn(
-          "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-          isExpanded ? "bg-accent text-white" : "bg-accent/10 text-accent"
-        )}>
-          {icon}
-        </div>
-        
-        <div className="flex-1 min-w-0">
-          <h2 className={cn(
-            "font-semibold text-lg transition-colors",
-            isExpanded ? "text-accent" : "text-foreground"
+      <div className="flex items-center gap-2 p-5 hover:bg-slate-50 transition-colors">
+        <button
+          onClick={onToggle}
+          className="flex-1 flex items-center gap-4 text-left"
+        >
+          <div className={cn(
+            "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
+            isExpanded ? "bg-accent text-white" : "bg-accent/10 text-accent"
           )}>
-            {section.title}
-          </h2>
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {section.description}
-          </p>
-        </div>
+            {icon}
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <h2 className={cn(
+              "font-semibold text-lg transition-colors",
+              isExpanded ? "text-accent" : "text-foreground"
+            )}>
+              {section.title}
+            </h2>
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {section.description}
+            </p>
+          </div>
+          
+          <ChevronRight className={cn(
+            "w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-200",
+            isExpanded && "rotate-90"
+          )} />
+        </button>
         
-        <ChevronRight className={cn(
-          "w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-200",
-          isExpanded && "rotate-90"
-        )} />
-      </button>
+        <BookmarkButton
+          resourceType="library_guide"
+          resourceId={section.id}
+          resourceTitle={section.title}
+          resourceUrl={`/library?section=${section.id}`}
+          variant="icon"
+        />
+      </div>
       
       {/* Subsections */}
       <div className={cn(
