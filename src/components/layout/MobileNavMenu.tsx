@@ -27,6 +27,7 @@ const navSections = [
       { name: "Timeline Creator", href: "/timeline" },
       { name: "Notes", href: "/notes" },
       { name: "Transcription Tool", href: "/transcription" },
+      { name: "Legal Templates", href: "/legal-templates" },
     ],
   },
   {

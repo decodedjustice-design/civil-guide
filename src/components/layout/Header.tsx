@@ -15,6 +15,7 @@ const desktopNavItems = [
       { name: "Timeline Creator", href: "/timeline" },
       { name: "Notes", href: "/notes" },
       { name: "Transcription", href: "/transcription" },
+      { name: "Legal Templates", href: "/legal-templates" },
     ],
   },
   {
