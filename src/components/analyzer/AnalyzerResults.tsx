@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   ArrowRight,
@@ -20,6 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { PrintShareModal } from "@/components/shared/PrintShareModal";
+import { ClarifyingQuestions } from "./ClarifyingQuestions";
+import { SmartResourceList } from "./SmartResourceList";
+import { buildCaseContext, getRelevantQuestions, CaseContext, SystemType } from "@/hooks/useCaseContext";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
 import type { AnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
 
@@ -57,6 +60,9 @@ interface AnalyzerResultsProps {
   isGeneratingAI: boolean;
   aiError: string | null;
   onRetryGeneration?: () => void;
+  // Answers for context building
+  answers?: Record<string, string>;
+  entityName?: string;
 }
 
 const patternLabels = {
@@ -208,11 +214,44 @@ export function AnalyzerResults({
   isGeneratingAI,
   aiError,
   onRetryGeneration,
+  answers = {},
+  entityName,
 }: AnalyzerResultsProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [printShareOpen, setPrintShareOpen] = useState(false);
   const [sourcesOpen, setSourcesOpen] = useState(false);
+  const [showClarifyingQuestions, setShowClarifyingQuestions] = useState(true);
+  const [clarifyingAnswers, setClarifyingAnswers] = useState<Record<string, string>>({});
   const navigate = useNavigate();
+
+  // Build case context from answers
+  const caseContext = useMemo(() => {
+    return buildCaseContext(
+      systemId as SystemType,
+      systemLabel,
+      { ...answers, ...clarifyingAnswers },
+      patternStrength,
+      entityName,
+      location
+    );
+  }, [systemId, systemLabel, answers, clarifyingAnswers, patternStrength, entityName, location]);
+
+  // Get relevant clarifying questions
+  const clarifyingQuestions = useMemo(() => {
+    return getRelevantQuestions(caseContext);
+  }, [caseContext]);
+
+  const handleClarifyingAnswer = (questionId: string, answer: string) => {
+    setClarifyingAnswers(prev => ({ ...prev, [questionId]: answer }));
+  };
+
+  const handleSkipQuestion = (questionId: string) => {
+    // Just move on, don't save anything
+  };
+
+  const handleCompleteClarifying = () => {
+    setShowClarifyingQuestions(false);
+  };
 
   const unlockedTools = tools.filter(t => !t.isLocked);
   const lockedTools = tools.filter(t => t.isLocked);
@@ -545,6 +584,27 @@ export function AnalyzerResults({
               </Link>
             </div>
           </div>
+        </section>
+
+        {/* Optional Clarifying Questions - Only shown if relevant */}
+        {showClarifyingQuestions && clarifyingQuestions.length > 0 && (
+          <section className="mb-12">
+            <ClarifyingQuestions
+              questions={clarifyingQuestions}
+              context={caseContext}
+              onAnswer={handleClarifyingAnswer}
+              onSkip={handleSkipQuestion}
+              onComplete={handleCompleteClarifying}
+            />
+          </section>
+        )}
+
+        {/* Smart Resource List - Context-aware */}
+        <section className="mb-12">
+          <SmartResourceList
+            context={caseContext}
+            showExplanation={true}
+          />
         </section>
 
         {/* Tools That Matter Right Now */}

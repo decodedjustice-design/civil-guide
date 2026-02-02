@@ -1851,6 +1851,7 @@ export default function Analyzer() {
           <AnalyzerResults
             systemId={selectedSystem}
             systemLabel={generatedResultContent.label}
+            location="Washington State"
             patternStrength={analysis?.strength || 'none'}
             tools={generatedResultContent.tools}
             primaryGuideId={generatedResultContent.primaryGuideId}
@@ -1861,6 +1862,8 @@ export default function Analyzer() {
             aiResults={aiResults}
             isGeneratingAI={isGeneratingAI}
             aiError={aiError}
+            answers={answers}
+            entityName={entityName}
             onRetryGeneration={() => {
               const systemInfo = systemCategories.find(s => s.id === selectedSystem);
               if (systemInfo) {
