@@ -80,10 +80,10 @@ const tools = [
   },
   {
     icon: FileCheck,
-    title: "Templates & Checklists",
-    description: "Access pre-made templates and checklists to help you stay organized.",
-    href: "#",
-    status: "coming-soon"
+    title: "Legal Templates",
+    description: "Educational templates to help you understand common legal documents.",
+    href: "/legal-templates",
+    status: "available"
   },
   {
     icon: Download,
