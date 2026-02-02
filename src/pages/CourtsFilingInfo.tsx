@@ -312,7 +312,7 @@ export default function CourtsFilingInfo() {
                               </a>
                             </Button>
                             <Button variant="outline" size="sm" asChild>
-                              <a href="https://www.waed.uscourts.gov/representing-yourself" target="_blank" rel="noopener noreferrer" className="gap-2">
+                              <a href="https://www.waed.uscourts.gov/information-self-represented-litigants" target="_blank" rel="noopener noreferrer" className="gap-2">
                                 <BookOpen className="w-4 h-4" />
                                 Pro Se Resources
                                 <ExternalLink className="w-3 h-3" />
