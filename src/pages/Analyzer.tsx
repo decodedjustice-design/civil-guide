@@ -1931,6 +1931,7 @@ export default function Analyzer() {
             aiError={aiError}
             answers={answers}
             entityName={entityName}
+            entityTags={entityTags}
             onRetryGeneration={() => {
               const systemInfo = systemCategories.find(s => s.id === selectedSystem);
               if (systemInfo) {
