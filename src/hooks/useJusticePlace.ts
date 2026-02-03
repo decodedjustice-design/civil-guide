@@ -104,10 +104,21 @@ export function useJusticePlace() {
       if (error) throw error;
 
       if (data) {
+        // Cast to handle new columns not yet in generated types
+        const caseRecord = data as Record<string, unknown>;
         setCaseData({
-          ...data,
-          unlock_flags: (data.unlock_flags as UnlockFlags) || {},
-        } as JusticePlaceCase);
+          id: caseRecord.id as string,
+          user_id: caseRecord.user_id as string,
+          case_name: (caseRecord.case_name as string) || "",
+          state: (caseRecord.state as string) || "WA",
+          county: (caseRecord.county as string) || null,
+          incident_month_year: (caseRecord.incident_month_year as string) || null,
+          issue_type: caseRecord.issue_type as string,
+          case_status: caseRecord.case_status as CaseStatus,
+          unlock_flags: (caseRecord.unlock_flags as UnlockFlags) || {},
+          created_at: caseRecord.created_at as string,
+          updated_at: caseRecord.updated_at as string,
+        });
         setNeedsIntake(false);
         // Fetch bookmarks
         await fetchBookmarks();
