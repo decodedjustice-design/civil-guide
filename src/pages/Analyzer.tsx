@@ -20,10 +20,12 @@ import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { CaseProfileForm } from "@/components/analyzer/CaseProfileForm";
 import { AnalyzerResults, generateResultContent } from "@/components/analyzer/AnalyzerResults";
+import { EntityClarifyingQuestions } from "@/components/analyzer/EntityClarifyingQuestions";
 import { usePatternEngine, CivilRightsSystem } from "@/hooks/usePatternEngine";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAutoSaveAnalyzerResult } from "@/hooks/useAutoSaveAnalyzerResult";
 import { useAnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
+import { getEntityQuestionsForSystem, EntityTags, createEmptyEntityTags } from "@/hooks/useEntityTags";
 import heroImage from "@/assets/hero-analysis.png";
 
 type SystemId = 
@@ -1575,6 +1577,10 @@ export default function Analyzer() {
   const [showResults, setShowResults] = useState(false);
   const [entityName, setEntityName] = useState("");
   
+  // Entity-aware internal tags (NOT visible to users)
+  const [entityTags, setEntityTags] = useState<EntityTags>(createEmptyEntityTags());
+  const [showEntityQuestions, setShowEntityQuestions] = useState(false);
+  
   const { user } = useAuth();
   const { 
     isAnalyzing, 
@@ -1610,11 +1616,38 @@ export default function Analyzer() {
   }, [selectedSystem, answers, analyzePatterns]);
 
   const currentFollowUps = selectedSystem ? followUpQuestions[selectedSystem] : [];
-  const totalSteps = currentFollowUps.length + 1; // +1 for system selection
+  // +1 for system selection, entity questions shown before step 1
+  const totalSteps = currentFollowUps.length + 1;
+  
+  // Get entity questions for the selected system
+  const entityQuestions = selectedSystem ? getEntityQuestionsForSystem(selectedSystem) : [];
+  const hasEntityQuestions = entityQuestions.length > 0;
 
   const handleSystemSelect = (systemId: SystemId) => {
     setSelectedSystem(systemId);
     setAnswers({});
+    setEntityTags(createEmptyEntityTags());
+    // Check if this system has entity questions
+    const questions = getEntityQuestionsForSystem(systemId);
+    if (questions.length > 0) {
+      setShowEntityQuestions(true);
+      setStep(0); // Stay at step 0 but show entity questions
+    } else {
+      setShowEntityQuestions(false);
+      setStep(1);
+    }
+  };
+  
+  // Handle entity questions completion
+  const handleEntityQuestionsComplete = (tags: EntityTags) => {
+    setEntityTags(tags);
+    setShowEntityQuestions(false);
+    setStep(1);
+  };
+  
+  // Handle skipping all entity questions
+  const handleSkipEntityQuestions = () => {
+    setShowEntityQuestions(false);
     setStep(1);
   };
 
@@ -1644,6 +1677,11 @@ export default function Analyzer() {
   const handleBack = () => {
     if (showResults) {
       setShowResults(false);
+    } else if (showEntityQuestions) {
+      // Going back from entity questions returns to system selection
+      setShowEntityQuestions(false);
+      setSelectedSystem(null);
+      setEntityTags(createEmptyEntityTags());
     } else if (step > 1) {
       setStep(step - 1);
       const currentQuestion = currentFollowUps[step - 2];
@@ -1652,9 +1690,16 @@ export default function Analyzer() {
         setAnswers(remaining);
       }
     } else if (step === 1) {
-      setStep(0);
-      setSelectedSystem(null);
-      setAnswers({});
+      // Going back from step 1 - check if we should show entity questions or system selection
+      if (hasEntityQuestions) {
+        setShowEntityQuestions(true);
+        setStep(0);
+      } else {
+        setStep(0);
+        setSelectedSystem(null);
+        setAnswers({});
+        setEntityTags(createEmptyEntityTags());
+      }
     }
   };
 
@@ -1663,6 +1708,8 @@ export default function Analyzer() {
     setSelectedSystem(null);
     setAnswers({});
     setShowResults(false);
+    setShowEntityQuestions(false);
+    setEntityTags(createEmptyEntityTags());
     resetSaveState();
     resetAIResults();
   };
@@ -1746,7 +1793,7 @@ export default function Analyzer() {
           )}
 
           {/* Step 0: System Selection */}
-          {step === 0 && !showResults && (
+          {step === 0 && !showResults && !showEntityQuestions && (
             <div className="space-y-4 animate-fade-up">
               <h2 className="text-xl font-semibold text-foreground text-center mb-6">
                 Which system was involved in what you experienced?
@@ -1777,6 +1824,26 @@ export default function Analyzer() {
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Entity Clarifying Questions - shown after system selection */}
+          {showEntityQuestions && selectedSystem && selectedSystemInfo && (
+            <div className="animate-fade-up">
+              <button
+                onClick={handleBack}
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Go back
+              </button>
+              
+              <EntityClarifyingQuestions
+                systemLabel={selectedSystemInfo.label}
+                questions={entityQuestions}
+                onComplete={handleEntityQuestionsComplete}
+                onSkipAll={handleSkipEntityQuestions}
+              />
             </div>
           )}
 
