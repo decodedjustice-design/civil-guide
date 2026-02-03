@@ -353,19 +353,23 @@ export type Database = {
           county: string
           created_at: string
           id: string
-          incident_month_year: string
+          incident_month_year: string | null
           issue_type: string
+          state: string
+          unlock_flags: Json | null
           updated_at: string
           user_id: string
         }
         Insert: {
-          case_name: string
+          case_name?: string
           case_status?: Database["public"]["Enums"]["case_status"]
           county: string
           created_at?: string
           id?: string
-          incident_month_year: string
+          incident_month_year?: string | null
           issue_type: string
+          state?: string
+          unlock_flags?: Json | null
           updated_at?: string
           user_id: string
         }
@@ -375,8 +379,10 @@ export type Database = {
           county?: string
           created_at?: string
           id?: string
-          incident_month_year?: string
+          incident_month_year?: string | null
           issue_type?: string
+          state?: string
+          unlock_flags?: Json | null
           updated_at?: string
           user_id?: string
         }
