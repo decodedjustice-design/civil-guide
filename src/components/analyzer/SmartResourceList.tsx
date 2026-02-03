@@ -38,6 +38,7 @@ const categoryIcons: Record<MatchedResource['category'], React.ElementType> = {
   records_accountability: FileSearch,
   medical_oversight: Stethoscope,
   community_advocacy: Users,
+  additional_support: Users,
   general: Globe,
 };
 
@@ -69,10 +70,7 @@ function ResourceCard({
             {resource.description}
           </p>
           
-          {/* Relevance reason */}
-          <p className="text-xs text-accent font-medium">
-            {resource.relevanceReason}
-          </p>
+          {/* No relevance reason displayed - scoring is internal only */}
         </div>
         
         <div className="flex items-center gap-1 shrink-0">
@@ -289,7 +287,7 @@ export function SmartResourceList({
       {showAll ? (
         // Grouped view when showing all
         <div>
-          {(['legal_help', 'records_accountability', 'medical_oversight', 'community_advocacy', 'general'] as const).map(category => (
+          {(['legal_help', 'records_accountability', 'medical_oversight', 'community_advocacy', 'additional_support', 'general'] as const).map(category => (
             <ResourceCategory
               key={category}
               category={category}

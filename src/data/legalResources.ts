@@ -1,6 +1,24 @@
 // Washington State Legal Aid Resources
 // Legal Aid, Civil Rights Orgs, Advocacy Groups
 
+// Cultural/identity tags for targeted resources
+export type CulturalTag = 
+  | 'hispanic_latino'
+  | 'black_african_american'
+  | 'asian_pacific_islander'
+  | 'native_american'
+  | 'lgbtq'
+  | 'immigrant'
+  | 'refugee'
+  | 'veteran'
+  | 'disability'
+  | 'women'
+  | 'youth'
+  | 'senior';
+
+// Language services offered
+export type LanguageService = 'spanish' | 'chinese' | 'vietnamese' | 'korean' | 'russian' | 'somali' | 'other';
+
 export interface LegalResource {
   id: string;
   name: string;
@@ -12,6 +30,10 @@ export interface LegalResource {
   website: string;
   phone: string;
   lastVerified: string; // ISO date
+  // New fields for enhanced matching
+  culturalTags?: CulturalTag[];
+  languageServices?: LanguageService[];
+  counties?: string[]; // Specific counties served, empty = statewide
 }
 
 export const legalResources: LegalResource[] = [
@@ -26,7 +48,8 @@ export const legalResources: LegalResource[] = [
     location: "Washington State",
     website: "https://nwjustice.org/",
     phone: "1-888-201-1014",
-    lastVerified: "2025-12-15"
+    lastVerified: "2025-12-15",
+    languageServices: ['spanish'],
   },
   {
     id: "wa-lawhelp",
@@ -38,7 +61,8 @@ export const legalResources: LegalResource[] = [
     location: "Washington State",
     website: "https://www.washingtonlawhelp.org/",
     phone: "N/A",
-    lastVerified: "2025-12-20"
+    lastVerified: "2025-12-20",
+    languageServices: ['spanish'],
   },
   {
     id: "kcba",
@@ -50,7 +74,8 @@ export const legalResources: LegalResource[] = [
     location: "King County, WA",
     website: "https://www.kcba.org/For-the-Public/Lawyer-Referral-Service",
     phone: "(206) 267-7100",
-    lastVerified: "2025-11-01"
+    lastVerified: "2025-11-01",
+    counties: ['King'],
   },
   {
     id: "wsba",
@@ -62,7 +87,7 @@ export const legalResources: LegalResource[] = [
     location: "Washington State",
     website: "https://www.wsba.org/for-the-public/find-legal-help",
     phone: "(206) 443-9722",
-    lastVerified: "2025-11-15"
+    lastVerified: "2025-11-15",
   },
   {
     id: "clear",
@@ -74,7 +99,8 @@ export const legalResources: LegalResource[] = [
     location: "Washington State",
     website: "https://nwjustice.org/get-legal-help",
     phone: "1-888-201-1014",
-    lastVerified: "2025-12-01"
+    lastVerified: "2025-12-01",
+    languageServices: ['spanish'],
   },
   
   // Civil Rights Organizations
@@ -88,7 +114,7 @@ export const legalResources: LegalResource[] = [
     location: "Washington State",
     website: "https://www.aclu-wa.org/",
     phone: "(206) 624-2184",
-    lastVerified: "2025-12-10"
+    lastVerified: "2025-12-10",
   },
   {
     id: "columbia-legal",
@@ -100,7 +126,9 @@ export const legalResources: LegalResource[] = [
     location: "Washington State",
     website: "https://columbialegal.org/",
     phone: "(206) 464-5911",
-    lastVerified: "2025-11-20"
+    lastVerified: "2025-11-20",
+    culturalTags: ['immigrant', 'refugee'],
+    languageServices: ['spanish'],
   },
   {
     id: "drw",

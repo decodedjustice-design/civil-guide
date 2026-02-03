@@ -43,21 +43,64 @@ export type CaseStage =
 
 export type PatternStrength = 'none' | 'possible' | 'strong' | 'very_strong';
 
+// Protected class identifiers (voluntarily disclosed)
+export type ProtectedClass = 
+  | 'race_black'
+  | 'race_hispanic_latino'
+  | 'race_asian'
+  | 'race_native_american'
+  | 'race_pacific_islander'
+  | 'national_origin'
+  | 'religion'
+  | 'sex_gender'
+  | 'lgbtq'
+  | 'disability'
+  | 'age'
+  | 'veteran'
+  | 'prefer_not_to_say';
+
+// Language preferences
+export type LanguagePreference = 
+  | 'english'
+  | 'spanish'
+  | 'chinese'
+  | 'vietnamese'
+  | 'korean'
+  | 'russian'
+  | 'somali'
+  | 'other';
+
+// Issue categories for scoring
+export type IssueCategory = 
+  | 'force'
+  | 'housing'
+  | 'discrimination'
+  | 'medical'
+  | 'employment'
+  | 'education'
+  | 'custody'
+  | 'other';
+
 export interface CaseContext {
   // Core identifiers
   system: SystemType;
   systemLabel: string;
   issueTypes: IssueType[];
+  issueCategory: IssueCategory;
+  
+  // Entity information
+  entityType?: 'police' | 'employer' | 'landlord' | 'school' | 'hospital' | 'agency' | 'other';
+  entityName?: string;
   
   // Location & Jurisdiction
   jurisdiction: 'washington' | 'federal' | 'both';
   county?: string;
   city?: string;
+  state: string;
   
   // Case characteristics
   stage: CaseStage;
   patternStrength: PatternStrength;
-  entityName?: string;
   
   // Detected factors (from answers)
   hasInjury: boolean;
@@ -69,6 +112,12 @@ export interface CaseContext {
   hasSafetyRisk: boolean;
   hasChildrenInvolved: boolean;
   hasDisabilityFactor: boolean;
+  
+  // Protected class (voluntarily disclosed)
+  protectedClass?: ProtectedClass;
+  
+  // Language preference (optional)
+  languagePreference?: LanguagePreference;
   
   // Timing
   incidentTiming?: 'recent' | 'weeks' | 'months' | 'over_year' | 'ongoing';
@@ -157,6 +206,56 @@ function determineCaseStage(answers: Record<string, string>): CaseStage {
   return 'getting_oriented';
 }
 
+// Derive issue category from issue types
+function deriveIssueCategory(issueTypes: IssueType[], system: SystemType): IssueCategory {
+  // Check for force-related issues
+  if (issueTypes.includes('excessive_force') || issueTypes.includes('failure_to_render_aid')) {
+    return 'force';
+  }
+  // Check for housing issues
+  if (issueTypes.includes('eviction') || issueTypes.includes('habitability') || system === 'housing') {
+    return 'housing';
+  }
+  // Check for discrimination
+  if (issueTypes.includes('discrimination') || issueTypes.includes('accommodation_denial')) {
+    return 'discrimination';
+  }
+  // Check for medical
+  if (issueTypes.includes('medical_neglect') || system === 'healthcare') {
+    return 'medical';
+  }
+  // Check for employment
+  if (issueTypes.includes('wrongful_termination') || issueTypes.includes('wage_theft') || system === 'employer') {
+    return 'employment';
+  }
+  // Check for education
+  if (system === 'school') {
+    return 'education';
+  }
+  // Check for custody
+  if (issueTypes.includes('custody') || issueTypes.includes('investigation') || system === 'cps_dcyf') {
+    return 'custody';
+  }
+  return 'other';
+}
+
+// Derive entity type from system
+function deriveEntityType(system: SystemType): CaseContext['entityType'] {
+  const mapping: Record<SystemType, CaseContext['entityType']> = {
+    police: 'police',
+    employer: 'employer',
+    housing: 'landlord',
+    school: 'school',
+    healthcare: 'hospital',
+    courts: 'agency',
+    jail: 'agency',
+    government: 'agency',
+    cps_dcyf: 'agency',
+    unsure: 'other',
+  };
+  return mapping[system];
+}
+
 // Build CaseContext from Analyzer answers
 export function buildCaseContext(
   system: SystemType,
@@ -168,6 +267,8 @@ export function buildCaseContext(
 ): CaseContext {
   const issueTypes = extractIssueTypes(answers, system);
   const stage = determineCaseStage(answers);
+  const issueCategory = deriveIssueCategory(issueTypes, system);
+  const entityType = deriveEntityType(system);
   
   // Detect factors from answers
   const injury = answers['injury'];
@@ -212,11 +313,14 @@ export function buildCaseContext(
     system,
     systemLabel,
     issueTypes,
+    issueCategory,
+    entityType,
+    entityName,
     jurisdiction: 'both', // Default to showing both WA and Federal
     county,
+    state: 'WA',
     stage,
     patternStrength,
-    entityName,
     hasInjury,
     hasMedicalInvolvement,
     hasCustodyIssue,
