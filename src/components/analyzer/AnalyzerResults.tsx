@@ -22,7 +22,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { PrintShareModal } from "@/components/shared/PrintShareModal";
 import { ClarifyingQuestions } from "./ClarifyingQuestions";
 import { SmartResourceList } from "./SmartResourceList";
+import { PatternAwarenessBlock } from "./PatternAwarenessBlock";
 import { buildCaseContext, getRelevantQuestions, CaseContext, SystemType } from "@/hooks/useCaseContext";
+import { usePatternAwareness } from "@/hooks/usePatternAwareness";
+import type { EntityTags } from "@/hooks/useEntityTags";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
 import type { AnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
 
@@ -63,6 +66,8 @@ interface AnalyzerResultsProps {
   // Answers for context building
   answers?: Record<string, string>;
   entityName?: string;
+  // Entity tags for pattern awareness
+  entityTags?: EntityTags;
 }
 
 const patternLabels = {
@@ -216,6 +221,7 @@ export function AnalyzerResults({
   onRetryGeneration,
   answers = {},
   entityName,
+  entityTags = {},
 }: AnalyzerResultsProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [printShareOpen, setPrintShareOpen] = useState(false);
@@ -223,6 +229,9 @@ export function AnalyzerResults({
   const [showClarifyingQuestions, setShowClarifyingQuestions] = useState(true);
   const [clarifyingAnswers, setClarifyingAnswers] = useState<Record<string, string>>({});
   const navigate = useNavigate();
+
+  // Pattern awareness - detect aligned flags
+  const patternAwareness = usePatternAwareness(entityTags, answers, patternStrength);
 
   // Build case context from answers
   const caseContext = useMemo(() => {
@@ -540,6 +549,11 @@ export function AnalyzerResults({
               </div>
             </div>
           </section>
+        )}
+
+        {/* Pattern Awareness Copy Blocks - appears when multiple flags align */}
+        {patternAwareness.hasPattern && (
+          <PatternAwarenessBlock blocks={patternAwareness.patternBlocks} />
         )}
 
         {/* How This System Really Works — Deep Links to Rights Insight */}
