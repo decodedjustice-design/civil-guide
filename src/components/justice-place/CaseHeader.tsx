@@ -5,13 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -41,7 +34,23 @@ const ISSUE_TYPE_LABELS: Record<string, string> = {
   housing: "Housing",
   cps_dcyf: "CPS / Child Welfare",
   courts: "Courts",
+  medical: "Medical / Healthcare",
+  education: "Education / Schools",
   other: "Other",
+};
+
+const STATE_LABELS: Record<string, string> = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+  HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+  KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+  MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri",
+  MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
+  NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
+  OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina",
+  SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont",
+  VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+  DC: "District of Columbia",
 };
 
 const CASE_STATUS_OPTIONS: CaseStatus[] = [
@@ -70,7 +79,7 @@ export function CaseHeader({ caseData, onUpdate, isSaving }: CaseHeaderProps) {
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
 
   const formatIncidentDate = () => {
-    if (!caseData.incident_month_year) return "Not specified";
+    if (!caseData.incident_month_year) return null;
     try {
       const [year, month] = caseData.incident_month_year.split("-");
       return format(new Date(parseInt(year), parseInt(month) - 1), "MMMM yyyy");
@@ -79,8 +88,16 @@ export function CaseHeader({ caseData, onUpdate, isSaving }: CaseHeaderProps) {
     }
   };
 
+  const getLocationDisplay = () => {
+    const stateName = STATE_LABELS[caseData.state] || caseData.state;
+    if (caseData.county) {
+      return `${caseData.county}, ${stateName}`;
+    }
+    return stateName;
+  };
+
   const handleSaveName = async () => {
-    if (editedName.trim() && editedName !== caseData.case_name) {
+    if (editedName !== caseData.case_name) {
       const success = await onUpdate({ caseName: editedName.trim() });
       if (success) {
         setIsEditingName(false);
@@ -95,6 +112,9 @@ export function CaseHeader({ caseData, onUpdate, isSaving }: CaseHeaderProps) {
     await onUpdate({ caseStatus: newStatus });
     setStatusDialogOpen(false);
   };
+
+  const incidentDate = formatIncidentDate();
+  const displayName = caseData.case_name || "My Case";
 
   return (
     <Card className="border-accent/20 bg-gradient-to-br from-card to-accent/5">
@@ -111,6 +131,7 @@ export function CaseHeader({ caseData, onUpdate, isSaving }: CaseHeaderProps) {
                     value={editedName}
                     onChange={(e) => setEditedName(e.target.value)}
                     className="h-9 text-lg font-semibold max-w-xs"
+                    placeholder="Case nickname (optional)"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleSaveName();
@@ -144,7 +165,7 @@ export function CaseHeader({ caseData, onUpdate, isSaving }: CaseHeaderProps) {
               ) : (
                 <div className="flex items-center gap-2">
                   <h1 className="text-xl font-bold text-foreground truncate">
-                    {caseData.case_name}
+                    {displayName}
                   </h1>
                   <Button
                     size="icon"
@@ -162,12 +183,14 @@ export function CaseHeader({ caseData, onUpdate, isSaving }: CaseHeaderProps) {
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4" />
-                {caseData.county} County, WA
+                {getLocationDisplay()}
               </span>
-              <span className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
-                {formatIncidentDate()}
-              </span>
+              {incidentDate && (
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4" />
+                  {incidentDate}
+                </span>
+              )}
               <span className="flex items-center gap-1.5">
                 <Scale className="w-4 h-4" />
                 {ISSUE_TYPE_LABELS[caseData.issue_type] || caseData.issue_type}

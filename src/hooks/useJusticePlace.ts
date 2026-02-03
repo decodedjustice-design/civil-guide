@@ -12,14 +12,27 @@ export type CaseStatus =
   | "taking_next_steps"
   | "on_hold";
 
+// Internal unlock flags - NOT visible to users
+export interface UnlockFlags {
+  analyzer_started?: boolean;
+  analyzer_completed?: boolean;
+  pattern_detected?: boolean;
+  evidence_uploaded?: boolean;
+  attorney_contact_added?: boolean;
+  pro_se_intent_confirmed?: boolean;
+  complaint_draft_created?: boolean;
+}
+
 export interface JusticePlaceCase {
   id: string;
   user_id: string;
   case_name: string;
-  county: string;
-  incident_month_year: string;
+  state: string;
+  county: string | null;
+  incident_month_year: string | null;
   issue_type: string;
   case_status: CaseStatus;
+  unlock_flags: UnlockFlags;
   created_at: string;
   updated_at: string;
 }
@@ -36,9 +49,10 @@ export interface JusticePlaceBookmark {
 }
 
 export interface CaseFormData {
-  caseName: string;
-  county: string;
-  incidentMonthYear: string;
+  caseName?: string;
+  state: string;
+  county?: string;
+  incidentMonthYear?: string;
   issueType: string;
 }
 
@@ -90,7 +104,10 @@ export function useJusticePlace() {
       if (error) throw error;
 
       if (data) {
-        setCaseData(data as JusticePlaceCase);
+        setCaseData({
+          ...data,
+          unlock_flags: (data.unlock_flags as UnlockFlags) || {},
+        } as JusticePlaceCase);
         setNeedsIntake(false);
         // Fetch bookmarks
         await fetchBookmarks();
@@ -137,18 +154,23 @@ export function useJusticePlace() {
           .from("justice_place_cases")
           .insert({
             user_id: user.id,
-            case_name: formData.caseName,
-            county: formData.county,
-            incident_month_year: formData.incidentMonthYear,
+            case_name: formData.caseName || "",
+            state: formData.state,
+            county: formData.county || null,
+            incident_month_year: formData.incidentMonthYear || null,
             issue_type: formData.issueType,
             case_status: "getting_oriented",
+            unlock_flags: {},
           })
           .select()
           .single();
 
         if (error) throw error;
 
-        setCaseData(data as JusticePlaceCase);
+        setCaseData({
+          ...data,
+          unlock_flags: {},
+        } as JusticePlaceCase);
         setNeedsIntake(false);
 
         toast({
@@ -180,8 +202,9 @@ export function useJusticePlace() {
       try {
         const updateData: Record<string, unknown> = {};
         if (updates.caseName !== undefined) updateData.case_name = updates.caseName;
-        if (updates.county !== undefined) updateData.county = updates.county;
-        if (updates.incidentMonthYear !== undefined) updateData.incident_month_year = updates.incidentMonthYear;
+        if (updates.state !== undefined) updateData.state = updates.state;
+        if (updates.county !== undefined) updateData.county = updates.county || null;
+        if (updates.incidentMonthYear !== undefined) updateData.incident_month_year = updates.incidentMonthYear || null;
         if (updates.issueType !== undefined) updateData.issue_type = updates.issueType;
         if (updates.caseStatus !== undefined) updateData.case_status = updates.caseStatus;
 
@@ -194,7 +217,10 @@ export function useJusticePlace() {
 
         if (error) throw error;
 
-        setCaseData(data as JusticePlaceCase);
+        setCaseData({
+          ...data,
+          unlock_flags: (data.unlock_flags as UnlockFlags) || {},
+        } as JusticePlaceCase);
 
         toast({
           title: "Updated",
@@ -215,6 +241,39 @@ export function useJusticePlace() {
       }
     },
     [user, caseData, toast]
+  );
+
+  // Internal method to update unlock flags
+  const updateUnlockFlag = useCallback(
+    async (flag: keyof UnlockFlags, value: boolean): Promise<boolean> => {
+      if (!user || !caseData) return false;
+
+      try {
+        const newFlags = { ...caseData.unlock_flags, [flag]: value };
+        
+        const { error } = await supabase
+          .from("justice_place_cases")
+          .update({ unlock_flags: newFlags })
+          .eq("id", caseData.id);
+
+        if (error) throw error;
+
+        setCaseData((prev) => prev ? { ...prev, unlock_flags: newFlags } : null);
+        return true;
+      } catch (err) {
+        console.error("Error updating unlock flag:", err);
+        return false;
+      }
+    },
+    [user, caseData]
+  );
+
+  // Check if a feature is unlocked (internal use only)
+  const isUnlocked = useCallback(
+    (flag: keyof UnlockFlags): boolean => {
+      return caseData?.unlock_flags?.[flag] === true;
+    },
+    [caseData]
   );
 
   const addBookmark = useCallback(
@@ -319,6 +378,8 @@ export function useJusticePlace() {
     needsIntake,
     createCase,
     updateCase,
+    updateUnlockFlag,
+    isUnlocked,
     addBookmark,
     removeBookmark,
     isBookmarked,
