@@ -9,6 +9,7 @@ export function PatternAwarenessBlock({ blocks }: PatternAwarenessBlockProps) {
   if (blocks.length === 0) return null;
   
   const contextBlocks = blocks.filter(b => b.type === 'context');
+  const cautionBlocks = blocks.filter(b => b.type === 'caution');
   const disclaimerBlocks = blocks.filter(b => b.type === 'disclaimer');
   
   return (
@@ -26,6 +27,16 @@ export function PatternAwarenessBlock({ blocks }: PatternAwarenessBlockProps) {
             </p>
           ))}
         </div>
+        
+        {cautionBlocks.length > 0 && (
+          <div className="mb-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            {cautionBlocks.map((block) => (
+              <p key={block.id} className="text-amber-600 dark:text-amber-400 text-sm leading-relaxed">
+                {block.text}
+              </p>
+            ))}
+          </div>
+        )}
         
         {disclaimerBlocks.length > 0 && (
           <div className="pt-4 border-t border-border">

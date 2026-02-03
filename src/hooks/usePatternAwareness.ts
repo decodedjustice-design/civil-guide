@@ -123,6 +123,28 @@ const ALLOWED_PATTERNS = {
       },
     ],
   },
+  washington_deps_reporting: {
+    requiredFlags: ['use_of_force_flag'],
+    requiredEntityType: 'police',
+    requiredAnyFlags: ['custody_status', 'medical_involved'],
+    blocks: [
+      {
+        id: 'deps_reporting_context',
+        type: 'context' as const,
+        text: 'Washington requires reporting of certain use-of-force incidents under statewide data collection requirements.',
+      },
+      {
+        id: 'deps_dashboard_context',
+        type: 'context' as const,
+        text: 'Public dashboards exist to track statewide trends in use-of-force reporting.',
+      },
+      {
+        id: 'deps_contextual_label',
+        type: 'caution' as const,
+        text: 'This information is contextual, not a determination about any specific incident.',
+      },
+    ],
+  },
 };
 
 // Required disclaimers that ALWAYS appear when any pattern is detected
@@ -231,9 +253,27 @@ export function usePatternAwareness(
     // Check each allowed pattern
     for (const [_patternId, pattern] of Object.entries(ALLOWED_PATTERNS)) {
       const flagsMatch = checkFlags(entityTags, pattern.requiredFlags);
-      const answersMatch = checkAnswers(answers, pattern.requiredAnswers);
+      const answersMatch = 'requiredAnswers' in pattern ? checkAnswers(answers, pattern.requiredAnswers) : true;
       
-      if (flagsMatch && answersMatch) {
+      // Check entity type requirement if present
+      const entityTypeMatch = 'requiredEntityType' in pattern 
+        ? entityTags.entity_type === pattern.requiredEntityType 
+        : true;
+      
+      // Check requiredAnyFlags - at least one must be true
+      const anyFlagsMatch = 'requiredAnyFlags' in pattern
+        ? (pattern.requiredAnyFlags as string[]).some(flag => {
+            if (flag === 'custody_status') {
+              return entityTags.custody_status === 'detained' || entityTags.custody_status === 'arrested';
+            }
+            if (flag === 'medical_involved') {
+              return entityTags.medical_involved === true;
+            }
+            return false;
+          })
+        : true;
+      
+      if (flagsMatch && answersMatch && entityTypeMatch && anyFlagsMatch) {
         // Add pattern blocks if not already present
         for (const block of pattern.blocks) {
           if (!detectedBlocks.some(b => b.id === block.id)) {
