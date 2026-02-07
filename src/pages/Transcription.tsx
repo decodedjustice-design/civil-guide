@@ -97,6 +97,14 @@ export default function Transcription() {
     setError(null);
 
     try {
+      // Get user session for authenticated request
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Please sign in to use transcription.");
+        navigate("/auth?redirect=/transcription");
+        return;
+      }
+
       const formData = new FormData();
       formData.append("audio", selectedFile);
 
@@ -106,7 +114,7 @@ export default function Transcription() {
           method: "POST",
           headers: {
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: formData,
         }
