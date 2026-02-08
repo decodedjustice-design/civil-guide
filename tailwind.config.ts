@@ -18,6 +18,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Outfit', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -63,7 +64,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Custom Decoded Justice colors
+        // Decoded Justice custom colors
         surface: {
           elevated: "hsl(var(--surface-elevated))",
           hover: "hsl(var(--surface-hover))",
@@ -78,7 +79,6 @@ export default {
           DEFAULT: "hsl(var(--teal))",
           foreground: "hsl(var(--teal-foreground))",
         },
-        // Logo-matched accent variants
         "accent-strong": "hsl(var(--accent-strong))",
         "accent-soft": "hsl(var(--accent-soft))",
         // Luxury warm palette
@@ -91,6 +91,21 @@ export default {
           DEFAULT: "hsl(var(--gold))",
           soft: "hsl(var(--gold-soft))",
           muted: "hsl(var(--gold-muted))",
+        },
+        // Espresso palette
+        espresso: {
+          DEFAULT: "hsl(var(--espresso))",
+          light: "hsl(var(--espresso-light))",
+          medium: "hsl(var(--espresso-medium))",
+        },
+        cream: {
+          DEFAULT: "hsl(var(--cream))",
+          warm: "hsl(var(--cream-warm))",
+        },
+        maroon: {
+          DEFAULT: "hsl(var(--maroon))",
+          light: "hsl(var(--maroon-light))",
+          dark: "hsl(var(--maroon-dark))",
         },
       },
       borderRadius: {
@@ -128,7 +143,7 @@ export default {
           to: { opacity: "1" },
         },
         "fade-up": {
-          from: { opacity: "0", transform: "translateY(20px)" },
+          from: { opacity: "0", transform: "translateY(24px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
         "slide-in-right": {
@@ -139,8 +154,8 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.5s ease-out forwards",
-        "fade-up": "fade-up 0.6s ease-out forwards",
+        "fade-in": "fade-in 0.8s ease-out forwards",
+        "fade-up": "fade-up 0.8s ease-out forwards",
         "slide-in-right": "slide-in-right 0.3s ease-out",
       },
     },

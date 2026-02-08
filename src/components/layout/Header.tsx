@@ -37,8 +37,6 @@ const desktopNavItems = [
   },
 ];
 
-// Justice Place is shown as a top-level prominent link for logged-in users
-
 function DesktopNavDropdown({ item, location }: { item: typeof desktopNavItems[0]; location: ReturnType<typeof useLocation> }) {
   const [isOpen, setIsOpen] = useState(false);
   const isActive = item.items.some(subItem => location.pathname === subItem.href);
@@ -51,15 +49,15 @@ function DesktopNavDropdown({ item, location }: { item: typeof desktopNavItems[0
     >
       <button
         className={cn(
-          "flex items-center gap-1 px-4 py-2 text-base font-medium transition-colors",
+          "flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors tracking-wide",
           isActive
             ? "text-primary"
-            : "text-navy hover:text-primary"
+            : "text-foreground/70 hover:text-foreground"
         )}
       >
         {item.name}
         <ChevronDown className={cn(
-          "h-4 w-4 transition-transform duration-200",
+          "h-3.5 w-3.5 transition-transform duration-200",
           isOpen && "rotate-180"
         )} />
       </button>
@@ -71,16 +69,16 @@ function DesktopNavDropdown({ item, location }: { item: typeof desktopNavItems[0
           isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-1"
         )}
       >
-        <div className="bg-card border border-border rounded-lg shadow-lg py-2 min-w-[180px]">
+        <div className="bg-card border border-border rounded shadow-lg py-2 min-w-[200px]">
           {item.items.map((subItem) => (
             <Link
               key={subItem.name}
               to={subItem.href}
               className={cn(
-                "block px-4 py-2.5 text-sm font-medium transition-colors",
+                "block px-4 py-2.5 text-sm transition-colors",
                 location.pathname === subItem.href
                   ? "text-primary bg-accent-soft"
-                  : "text-navy hover:text-primary hover:bg-secondary/60"
+                  : "text-foreground/70 hover:text-foreground hover:bg-secondary/60"
               )}
             >
               {subItem.name}
@@ -103,33 +101,32 @@ export function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-b border-border/40 shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 glass">
         <nav className="container flex items-center justify-between py-3">
           {/* Logo - Left */}
-          <Link to="/" className="flex items-center gap-3 group hover:opacity-90 transition-opacity">
+          <Link to="/" className="flex items-center gap-3 group hover:opacity-80 transition-opacity">
             <img 
               src={decodedJusticeLogo} 
               alt="Decoded Justice" 
-              className="h-11 w-auto"
+              className="h-10 w-auto"
             />
             <div className="hidden sm:block">
-              <span className="text-lg font-semibold text-navy tracking-tight">
+              <span className="text-base font-medium text-foreground tracking-wide">
                 Decoded Justice
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation - Center */}
-          <div className="hidden md:flex items-center gap-6">
-            {/* Justice Place - Prominent for logged in users */}
+          <div className="hidden md:flex items-center gap-4">
             {user && (
               <Link
                 to="/justice-place"
                 className={cn(
-                  "px-4 py-2 text-base font-semibold transition-colors",
+                  "px-3 py-2 text-sm font-semibold transition-colors tracking-wide",
                   location.pathname === "/justice-place"
                     ? "text-primary"
-                    : "text-navy hover:text-primary"
+                    : "text-foreground/70 hover:text-foreground"
                 )}
               >
                 Justice Place
@@ -141,10 +138,10 @@ export function Header() {
             <Link
               to="/about"
               className={cn(
-                "px-4 py-2 text-base font-medium transition-colors",
+                "px-3 py-2 text-sm font-medium transition-colors tracking-wide",
                 location.pathname === "/about"
                   ? "text-primary"
-                  : "text-navy hover:text-primary"
+                  : "text-foreground/70 hover:text-foreground"
               )}
             >
               About
@@ -155,13 +152,13 @@ export function Header() {
           <div className="hidden lg:flex items-center gap-3">
             {user ? (
               <>
-                <span className="text-sm text-navy-soft truncate max-w-[200px]">
+                <span className="text-xs text-muted-foreground truncate max-w-[180px] tracking-wide">
                   {user.email}
                 </span>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-sm h-10 px-5 text-navy-soft hover:text-navy hover:bg-secondary/60"
+                  className="text-xs h-9 px-4 text-muted-foreground hover:text-foreground hover:bg-secondary/60 tracking-wide"
                   onClick={handleSignOut}
                 >
                   Sign out
@@ -172,14 +169,14 @@ export function Header() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-sm h-10 px-5 text-navy-soft hover:text-navy hover:bg-secondary/60" 
+                  className="text-xs h-9 px-4 text-muted-foreground hover:text-foreground hover:bg-secondary/60 tracking-wide" 
                   asChild
                 >
                   <Link to="/auth">Log in</Link>
                 </Button>
                 <Button 
                   size="sm" 
-                  className="text-sm h-10 px-6 shadow-md hover:shadow-lg transition-shadow bg-primary hover:bg-accent-strong" 
+                  className="text-xs h-9 px-6 bg-primary hover:bg-maroon-light text-white tracking-wide" 
                   asChild
                 >
                   <Link to="/auth">Sign up</Link>
@@ -188,19 +185,18 @@ export function Header() {
             )}
           </div>
 
-          {/* Mobile Menu Button - Always visible hamburger */}
+          {/* Mobile Menu Button */}
           <button
             type="button"
-            className="p-2.5 rounded-lg text-navy hover:bg-secondary/60 transition-colors"
+            className="p-2.5 rounded text-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-colors"
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open menu"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           </button>
         </nav>
       </header>
 
-      {/* Mobile Navigation Menu */}
       <MobileNavMenu
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}

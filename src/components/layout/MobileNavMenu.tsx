@@ -80,7 +80,7 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
       {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-black/50 transition-opacity duration-300",
+          "fixed inset-0 z-40 bg-black/60 transition-opacity duration-300",
           isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         )}
         onClick={onClose}
@@ -90,7 +90,7 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
       {/* Slide-in Menu */}
       <div
         className={cn(
-          "fixed top-0 right-0 z-50 h-full w-[320px] max-w-[85vw] bg-white shadow-2xl transition-transform duration-300 ease-out overflow-y-auto",
+          "fixed top-0 right-0 z-50 h-full w-[320px] max-w-[85vw] bg-card shadow-2xl transition-transform duration-300 ease-out overflow-y-auto",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
         role="dialog"
@@ -101,22 +101,22 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-lg text-navy hover:bg-secondary/60 transition-colors"
+          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded text-foreground/60 hover:text-foreground hover:bg-secondary/60 transition-colors"
           aria-label="Close menu"
         >
-          <X className="w-6 h-6" />
+          <X className="w-5 h-5" />
         </button>
 
         <div className="px-6 py-6">
           {/* User Info Section */}
           {user && (
             <div className="pb-6 mb-6 border-b border-border">
-              <p className="text-sm text-navy-soft truncate mb-3">{user.email}</p>
+              <p className="text-xs text-muted-foreground truncate mb-3 tracking-wide">{user.email}</p>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleSignOut}
-                className="w-full h-10 text-sm border-border hover:bg-secondary/60"
+                className="w-full h-10 text-sm border-border hover:bg-secondary/60 tracking-wide"
               >
                 Sign Out
               </Button>
@@ -126,12 +126,12 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
           {/* Auth Buttons (if not logged in) */}
           {!user && (
             <div className="pb-6 mb-6 border-b border-border flex gap-3">
-              <Button variant="outline" size="sm" className="flex-1 h-11 border-border" asChild>
+              <Button variant="outline" size="sm" className="flex-1 h-11 border-border tracking-wide" asChild>
                 <Link to="/auth" onClick={handleLinkClick}>
                   Log in
                 </Link>
               </Button>
-              <Button size="sm" className="flex-1 h-11" asChild>
+              <Button size="sm" className="flex-1 h-11 bg-primary hover:bg-maroon-light tracking-wide" asChild>
                 <Link to="/auth" onClick={handleLinkClick}>
                   Sign up
                 </Link>
@@ -142,17 +142,15 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
           {/* Navigation Sections */}
           <div className="space-y-8">
             {navSections.map((section) => {
-              // Filter out auth-required items if user is not logged in
               const visibleItems = section.items.filter(
                 (item) => !('requiresAuth' in item && item.requiresAuth) || user
               );
               
-              // Skip section if no visible items
               if (visibleItems.length === 0) return null;
               
               return (
                 <div key={section.label}>
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                  <h3 className="text-[10px] font-medium text-muted-foreground uppercase tracking-[0.15em] mb-4">
                     {section.label}
                   </h3>
                   <div className="space-y-1">
@@ -162,10 +160,10 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
                         to={item.href}
                         onClick={handleLinkClick}
                         className={cn(
-                          "flex items-center min-h-[48px] px-4 py-3 text-base font-medium transition-colors rounded-r-lg -ml-4",
+                          "flex items-center min-h-[44px] px-4 py-2.5 text-sm transition-colors rounded-r -ml-4 tracking-wide",
                           isActive(item.href)
-                            ? "text-primary bg-accent-soft border-l-4 border-primary"
-                            : "text-navy hover:bg-secondary/60 border-l-4 border-transparent",
+                            ? "text-primary bg-accent-soft border-l-[3px] border-primary"
+                            : "text-foreground/70 hover:text-foreground hover:bg-secondary/60 border-l-[3px] border-transparent",
                           section.label === "YOUR SPACE" && "font-semibold"
                         )}
                       >
