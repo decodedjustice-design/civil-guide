@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,96 +6,106 @@
 
 @layer base {
   :root {
-    /* Decoded Justice - Civic Luxury Aesthetic */
-    /* Primary: Teal #1FB6C1 | Structure: Deep Navy #0E1F2F | Base: Pearl #F7FAFC */
+    /* Decoded Justice — Elite Luxury Aesthetic */
+    /* Espresso #1C140F | Cream #FAF6F1 | Maroon #6B2D3E | Gold #B8965A */
     
-    /* Soft pearl background */
-    --background: 210 33% 98%;
-    /* Deep navy text */
-    --foreground: 212 53% 12%;
+    /* Warm cream background */
+    --background: 30 30% 96%;
+    /* Deep charcoal text */
+    --foreground: 20 20% 15%;
 
-    /* Warm neutral cards */
-    --card: 0 0% 100%;
-    --card-foreground: 212 53% 12%;
+    /* Cream-toned cards */
+    --card: 30 25% 98%;
+    --card-foreground: 20 20% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 212 53% 12%;
+    --popover: 30 25% 98%;
+    --popover-foreground: 20 20% 15%;
 
-    /* Primary brand color - Teal #1FB6C1 */
-    --primary: 185 72% 44%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary brand color — Deep Maroon */
+    --primary: 345 40% 30%;
+    --primary-foreground: 30 25% 96%;
 
     /* Warm neutral secondary */
-    --secondary: 200 18% 92%;
-    --secondary-foreground: 212 45% 18%;
+    --secondary: 30 18% 91%;
+    --secondary-foreground: 20 20% 20%;
 
     /* Soft muted tones */
-    --muted: 200 15% 94%;
-    --muted-foreground: 212 20% 45%;
+    --muted: 30 15% 92%;
+    --muted-foreground: 20 12% 45%;
 
-    /* Brand teal accent */
-    --accent: 185 72% 44%;
-    --accent-foreground: 0 0% 100%;
+    /* Maroon accent */
+    --accent: 345 40% 30%;
+    --accent-foreground: 30 25% 96%;
     
-    /* Teal variants */
-    --accent-strong: 185 75% 38%;
-    --accent-soft: 185 40% 94%;
-    --teal: 185 72% 44%;
-    --teal-foreground: 0 0% 100%;
+    /* Maroon variants */
+    --accent-strong: 345 45% 25%;
+    --accent-soft: 345 20% 94%;
+    --teal: 345 40% 30%;
+    --teal-foreground: 30 25% 96%;
 
-    /* Deep navy structural color */
-    --navy: 212 53% 12%;
-    --navy-light: 212 45% 22%;
-    --navy-soft: 212 35% 35%;
+    /* Deep espresso structural color */
+    --navy: 20 30% 10%;
+    --navy-light: 20 25% 18%;
+    --navy-soft: 20 15% 35%;
 
-    /* Subtle gold accent */
-    --gold: 43 51% 54%;
-    --gold-soft: 43 35% 92%;
-    --gold-muted: 43 30% 85%;
+    /* Muted gold accent */
+    --gold: 38 40% 54%;
+    --gold-soft: 38 25% 92%;
+    --gold-muted: 38 20% 85%;
 
     /* Soft rose for alerts */
     --destructive: 0 50% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    /* UI elements - warm borders */
-    --border: 200 18% 88%;
-    --input: 200 15% 94%;
-    --ring: 185 72% 44%;
+    /* UI elements — warm borders */
+    --border: 30 18% 86%;
+    --input: 30 15% 92%;
+    --ring: 345 40% 30%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Custom tokens for Decoded Justice */
-    --surface-elevated: 0 0% 100%;
-    --surface-hover: 200 15% 97%;
-    --text-soft: 212 20% 45%;
-    --text-softer: 212 15% 55%;
+    /* Custom tokens */
+    --surface-elevated: 30 25% 98%;
+    --surface-hover: 30 15% 95%;
+    --text-soft: 20 12% 45%;
+    --text-softer: 20 10% 55%;
     --success: 160 45% 35%;
-    --warning: 43 70% 45%;
-    
-    /* Gradients - civic luxury theme */
-    --gradient-hero: linear-gradient(135deg, hsl(210 33% 98%) 0%, hsl(200 18% 95%) 50%, hsl(185 30% 96%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(200 15% 98%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(185 72% 44%) 0%, hsl(185 75% 38%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(185 72% 44%) 0%, hsl(185 75% 38%) 100%);
-    --gradient-navy: linear-gradient(135deg, hsl(212 53% 12%) 0%, hsl(212 45% 18%) 100%);
-    --gradient-warm: linear-gradient(135deg, hsl(210 33% 98%) 0%, hsl(200 18% 96%) 100%);
+    --warning: 38 70% 45%;
 
-    /* Shadows - civic luxury */
-    --shadow-sm: 0 1px 3px hsl(212 53% 12% / 0.04), 0 1px 2px hsl(212 53% 12% / 0.02);
-    --shadow-md: 0 4px 12px hsl(212 53% 12% / 0.06), 0 2px 4px hsl(212 53% 12% / 0.04);
-    --shadow-lg: 0 10px 30px hsl(212 53% 12% / 0.08), 0 4px 8px hsl(212 53% 12% / 0.04);
-    --shadow-glow: 0 0 40px hsl(185 72% 44% / 0.12);
-    --shadow-warm: 0 8px 24px hsl(43 50% 50% / 0.06);
+    /* Espresso tones */
+    --espresso: 20 30% 10%;
+    --espresso-light: 20 25% 15%;
+    --espresso-medium: 20 20% 22%;
+    --cream: 30 30% 96%;
+    --cream-warm: 35 35% 93%;
+    --maroon: 345 40% 30%;
+    --maroon-light: 345 35% 38%;
+    --maroon-dark: 345 45% 22%;
+    
+    /* Gradients — luxury warm theme */
+    --gradient-hero: linear-gradient(135deg, hsl(20 30% 10%) 0%, hsl(20 25% 15%) 50%, hsl(20 20% 12%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(30 25% 98%) 0%, hsl(30 20% 96%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(345 40% 30%) 0%, hsl(345 45% 25%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(345 40% 30%) 0%, hsl(345 45% 25%) 100%);
+    --gradient-navy: linear-gradient(135deg, hsl(20 30% 10%) 0%, hsl(20 25% 15%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(30 30% 96%) 0%, hsl(35 25% 94%) 100%);
+
+    /* Shadows — luxury warm */
+    --shadow-sm: 0 1px 3px hsl(20 30% 10% / 0.06), 0 1px 2px hsl(20 30% 10% / 0.03);
+    --shadow-md: 0 4px 12px hsl(20 30% 10% / 0.08), 0 2px 4px hsl(20 30% 10% / 0.05);
+    --shadow-lg: 0 10px 30px hsl(20 30% 10% / 0.10), 0 4px 8px hsl(20 30% 10% / 0.06);
+    --shadow-glow: 0 0 40px hsl(38 40% 54% / 0.12);
+    --shadow-warm: 0 8px 24px hsl(20 30% 10% / 0.08);
 
     /* Sidebar */
-    --sidebar-background: 200 15% 97%;
-    --sidebar-foreground: 212 53% 15%;
-    --sidebar-primary: 185 72% 44%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 200 15% 94%;
-    --sidebar-accent-foreground: 212 45% 22%;
-    --sidebar-border: 200 18% 90%;
-    --sidebar-ring: 185 72% 44%;
+    --sidebar-background: 30 20% 96%;
+    --sidebar-foreground: 20 20% 15%;
+    --sidebar-primary: 345 40% 30%;
+    --sidebar-primary-foreground: 30 25% 96%;
+    --sidebar-accent: 30 15% 92%;
+    --sidebar-accent-foreground: 20 20% 20%;
+    --sidebar-border: 30 18% 88%;
+    --sidebar-ring: 345 40% 30%;
   }
 }
 
@@ -109,14 +119,14 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Outfit', system-ui, sans-serif;
   }
 
-  /* Custom scrollbar for the calm aesthetic */
+  /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -125,7 +135,7 @@
 
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted));
-    border-radius: 4px;
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -138,23 +148,33 @@
     text-wrap: balance;
   }
 
+  .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
   .glass {
-    background: hsl(var(--card) / 0.85);
-    backdrop-filter: blur(12px);
+    background: hsl(var(--card) / 0.9);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid hsl(var(--border));
-    box-shadow: 0 1px 3px hsl(25 10% 20% / 0.05);
+    box-shadow: 0 1px 3px hsl(20 30% 10% / 0.05);
+  }
+
+  .glass-dark {
+    background: hsl(var(--espresso) / 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid hsl(30 15% 20% / 0.3);
   }
 
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeIn 0.8s ease-out forwards;
   }
 
   .animate-fade-up {
-    animation: fadeUp 0.6s ease-out forwards;
+    animation: fadeUp 0.8s ease-out forwards;
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.4s ease-out forwards;
+    animation: scaleIn 0.5s ease-out forwards;
   }
 
   .animate-pulse-soft {
@@ -162,10 +182,19 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(220 25% 30%) 0%, hsl(183 38% 46%) 100%);
+    background: linear-gradient(135deg, hsl(345 40% 30%) 0%, hsl(38 40% 54%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .cinematic-overlay {
+    background: linear-gradient(
+      180deg,
+      hsl(20 30% 8% / 0.7) 0%,
+      hsl(20 30% 6% / 0.5) 40%,
+      hsl(20 30% 8% / 0.8) 100%
+    );
   }
 }
 
@@ -181,7 +210,7 @@
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -192,7 +221,7 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
