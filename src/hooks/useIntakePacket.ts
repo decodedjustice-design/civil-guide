@@ -123,7 +123,7 @@ export function useIntakePacket(options: UseIntakePacketOptions = {}) {
       try {
         const { data, error } = await supabase
           .from("intake_packets")
-          .select("*")
+          .select("id, user_id, case_name, county, incident_month_year, issue_type, opposing_party, case_status, narrative, issues_checklist, evidence_snapshot, incident_date, statute_of_limitations_info, attorney_id, attorney_name, attorney_firm, contact_name, contact_email, contact_phone, contact_preferred_method, created_at, updated_at")
           .eq("id", packetId)
           .eq("user_id", user.id)
           .single();
