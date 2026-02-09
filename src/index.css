@@ -196,6 +196,24 @@
       hsl(20 30% 8% / 0.8) 100%
     );
   }
+
+  /* Luxury hover effects */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hover-glow {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px hsl(38 40% 54% / 0.15);
+  }
 }
 
 @keyframes fadeIn {
