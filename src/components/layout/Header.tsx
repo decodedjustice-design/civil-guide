@@ -9,7 +9,7 @@ import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const desktopNavItems = [
   {
-    name: "Tools",
+    name: "Case Tools",
     items: [
       { name: "Evidence Vault", href: "/evidence-vault" },
       { name: "Timeline Creator", href: "/timeline" },
@@ -19,19 +19,19 @@ const desktopNavItems = [
     ],
   },
   {
-    name: "Learning",
+    name: "Guidance",
     items: [
-      { name: "Library", href: "/library" },
       { name: "Rights Insight", href: "/rights-insight" },
+      { name: "Civil Rights Library", href: "/library" },
+      { name: "Courts & Filing", href: "/courts-filing-info" },
     ],
   },
   {
-    name: "Find Help",
+    name: "Find Support",
     items: [
       { name: "Find Attorneys", href: "/find-help" },
       { name: "Attorney Contact Hub", href: "/attorney-contacts" },
       { name: "Intake Packet", href: "/intake-packet" },
-      { name: "Courts & Filing", href: "/courts-filing-info" },
       { name: "Saved Attorneys", href: "/saved-attorneys" },
     ],
   },
@@ -121,15 +121,15 @@ export function Header() {
           <div className="hidden md:flex items-center gap-4">
             {user && (
               <Link
-                to="/justice-place"
+                to="/dashboard"
                 className={cn(
                   "px-3 py-2 text-sm font-semibold transition-colors tracking-wide",
-                  location.pathname === "/justice-place"
+                  location.pathname === "/dashboard"
                     ? "text-primary"
                     : "text-foreground/70 hover:text-foreground"
                 )}
               >
-                Justice Place
+                Your Record
               </Link>
             )}
             {desktopNavItems.map((item) => (

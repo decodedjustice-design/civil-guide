@@ -14,6 +14,7 @@ import SupportNetwork from "./pages/SupportNetwork";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 import Notes from "./pages/Notes";
 import EvidenceVault from "./pages/EvidenceVault";
 import Timeline from "./pages/Timeline";
@@ -40,6 +41,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/analyzer" element={<Analyzer />} />
             <Route path="/justice-place" element={<JusticePlace />} />
             <Route path="/tools" element={<Tools />} />

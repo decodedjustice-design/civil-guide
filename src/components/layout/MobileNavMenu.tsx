@@ -12,8 +12,9 @@ interface MobileNavMenuProps {
 
 const navSections = [
   {
-    label: "YOUR SPACE",
+    label: "YOUR RECORD",
     items: [
+      { name: "Dashboard", href: "/dashboard", requiresAuth: true },
       { name: "Justice Place", href: "/justice-place", requiresAuth: true },
     ],
   },
@@ -22,13 +23,11 @@ const navSections = [
     items: [
       { name: "Home", href: "/" },
       { name: "About", href: "/about" },
-      { name: "Why This Exists", href: "/founders-story" },
     ],
   },
   {
-    label: "TOOLS",
+    label: "CASE TOOLS",
     items: [
-      { name: "Self-Help Tools", href: "/self-help" },
       { name: "Evidence Vault", href: "/evidence-vault" },
       { name: "Timeline Creator", href: "/timeline" },
       { name: "Notes", href: "/notes" },
@@ -37,20 +36,19 @@ const navSections = [
     ],
   },
   {
-    label: "LEARNING",
+    label: "GUIDANCE",
     items: [
-      { name: "Library", href: "/library" },
       { name: "Rights Insight", href: "/rights-insight" },
-      { name: "Quick Reference Guides", href: "/rights-insight#guides" },
+      { name: "Civil Rights Library", href: "/library" },
+      { name: "Courts & Filing Info", href: "/courts-filing-info" },
     ],
   },
   {
-    label: "FIND HELP",
+    label: "FIND SUPPORT",
     items: [
       { name: "Find Attorneys", href: "/find-help" },
       { name: "Attorney Contact Hub", href: "/attorney-contacts" },
       { name: "Intake Packet", href: "/intake-packet" },
-      { name: "Courts & Filing Info", href: "/courts-filing-info" },
       { name: "Saved Attorneys", href: "/saved-attorneys" },
     ],
   },
@@ -164,7 +162,7 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
                           isActive(item.href)
                             ? "text-primary bg-accent-soft border-l-[3px] border-primary"
                             : "text-foreground/70 hover:text-foreground hover:bg-secondary/60 border-l-[3px] border-transparent",
-                          section.label === "YOUR SPACE" && "font-semibold"
+                          section.label === "YOUR RECORD" && "font-semibold"
                         )}
                       >
                         {item.name}
