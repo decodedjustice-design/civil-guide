@@ -10,68 +10,30 @@ interface MobileNavMenuProps {
   onSignOut: () => void;
 }
 
-const navSections = [
-  {
-    label: "YOUR RECORD",
-    items: [
-      { name: "Dashboard", href: "/dashboard", requiresAuth: true },
-      { name: "Justice Place", href: "/justice-place", requiresAuth: true },
-    ],
-  },
-  {
-    label: "HOME",
-    items: [
-      { name: "Home", href: "/" },
-      { name: "About", href: "/about" },
-    ],
-  },
-  {
-    label: "CASE TOOLS",
-    items: [
-      { name: "Evidence Vault", href: "/evidence-vault" },
-      { name: "Timeline Creator", href: "/timeline" },
-      { name: "Notes", href: "/notes" },
-      { name: "Transcription Tool", href: "/transcription" },
-      { name: "Legal Templates", href: "/legal-templates" },
-    ],
-  },
-  {
-    label: "GUIDANCE",
-    items: [
-      { name: "Rights Insight", href: "/rights-insight" },
-      { name: "Civil Rights Library", href: "/library" },
-      { name: "Courts & Filing Info", href: "/courts-filing-info" },
-    ],
-  },
-  {
-    label: "FIND SUPPORT",
-    items: [
-      { name: "Find Attorneys", href: "/find-help" },
-      { name: "Attorney Contact Hub", href: "/attorney-contacts" },
-      { name: "Intake Packet", href: "/intake-packet" },
-      { name: "Saved Attorneys", href: "/saved-attorneys" },
-    ],
-  },
+const publicItems = [
+  { name: "Start Here", href: "/tools" },
+  { name: "Understanding Your Rights", href: "/rights-insight" },
+  { name: "Find Legal Help", href: "/find-help" },
+  { name: "About", href: "/about" },
+];
+
+const authItems = [
+  { name: "Dashboard", href: "/dashboard" },
+  { name: "Your Case", href: "/justice-place" },
+  { name: "Your Evidence", href: "/evidence-vault" },
+  { name: "Timeline", href: "/timeline" },
+  { name: "Case Review", href: "/analyzer" },
+  { name: "Saved Attorneys", href: "/saved-attorneys" },
+  { name: "Notes", href: "/notes" },
 ];
 
 export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMenuProps) {
   const location = useLocation();
 
-  const handleLinkClick = () => {
-    onClose();
-  };
+  const handleLinkClick = () => onClose();
+  const handleSignOut = () => { onSignOut(); onClose(); };
 
-  const handleSignOut = () => {
-    onSignOut();
-    onClose();
-  };
-
-  const isActive = (href: string) => {
-    if (href.includes("#")) {
-      return location.pathname === href.split("#")[0];
-    }
-    return location.pathname === href;
-  };
+  const items = user ? authItems : publicItems;
 
   return (
     <>
@@ -95,7 +57,6 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
         aria-modal="true"
         aria-label="Navigation menu"
       >
-        {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
@@ -106,8 +67,8 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
         </button>
 
         <div className="px-6 py-6">
-          {/* User Info Section */}
-          {user && (
+          {/* Auth section */}
+          {user ? (
             <div className="pb-6 mb-6 border-b border-border">
               <p className="text-xs text-muted-foreground truncate mb-3 tracking-wide">{user.email}</p>
               <Button
@@ -116,62 +77,36 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
                 onClick={handleSignOut}
                 className="w-full h-10 text-sm border-border hover:bg-secondary/60 tracking-wide"
               >
-                Sign Out
+                Logout
               </Button>
             </div>
-          )}
-
-          {/* Auth Buttons (if not logged in) */}
-          {!user && (
-            <div className="pb-6 mb-6 border-b border-border flex gap-3">
-              <Button variant="outline" size="sm" className="flex-1 h-11 border-border tracking-wide" asChild>
+          ) : (
+            <div className="pb-6 mb-6 border-b border-border">
+              <Button size="sm" className="w-full h-11 bg-primary hover:bg-maroon-light tracking-wide" asChild>
                 <Link to="/auth" onClick={handleLinkClick}>
-                  Log in
-                </Link>
-              </Button>
-              <Button size="sm" className="flex-1 h-11 bg-primary hover:bg-maroon-light tracking-wide" asChild>
-                <Link to="/auth" onClick={handleLinkClick}>
-                  Sign up
+                  Sign In
                 </Link>
               </Button>
             </div>
           )}
 
-          {/* Navigation Sections */}
-          <div className="space-y-8">
-            {navSections.map((section) => {
-              const visibleItems = section.items.filter(
-                (item) => !('requiresAuth' in item && item.requiresAuth) || user
-              );
-              
-              if (visibleItems.length === 0) return null;
-              
-              return (
-                <div key={section.label}>
-                  <h3 className="text-[10px] font-medium text-muted-foreground uppercase tracking-[0.15em] mb-4">
-                    {section.label}
-                  </h3>
-                  <div className="space-y-1">
-                    {visibleItems.map((item) => (
-                      <Link
-                        key={item.name}
-                        to={item.href}
-                        onClick={handleLinkClick}
-                        className={cn(
-                          "flex items-center min-h-[44px] px-4 py-2.5 text-sm transition-colors rounded-r -ml-4 tracking-wide",
-                          isActive(item.href)
-                            ? "text-primary bg-accent-soft border-l-[3px] border-primary"
-                            : "text-foreground/70 hover:text-foreground hover:bg-secondary/60 border-l-[3px] border-transparent",
-                          section.label === "YOUR RECORD" && "font-semibold"
-                        )}
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+          {/* Navigation */}
+          <div className="space-y-1">
+            {items.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={handleLinkClick}
+                className={cn(
+                  "flex items-center min-h-[44px] px-4 py-2.5 text-sm transition-colors rounded-r -ml-4 tracking-wide",
+                  location.pathname === item.href
+                    ? "text-primary bg-accent-soft border-l-[3px] border-primary"
+                    : "text-foreground/70 hover:text-foreground hover:bg-secondary/60 border-l-[3px] border-transparent"
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
