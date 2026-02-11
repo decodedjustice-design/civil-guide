@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Shield, Lock, Eye, FileText, Clock, Search, Users } from "lucide-react";
-import heroImage from "@/assets/hero-courthouse-cinematic.jpg";
+import heroImage from "@/assets/hero-workspace-calm.jpg";
 import documentsImage from "@/assets/hero-documents-night.jpg";
 import filesImage from "@/assets/hero-organized-files.jpg";
 
