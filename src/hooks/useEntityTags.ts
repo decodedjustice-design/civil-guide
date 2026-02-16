@@ -27,11 +27,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   police: [
     {
       id: 'force-used',
-      question: 'Was force used?',
+      question: 'Do you remember if force was used?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -40,11 +40,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'medical-services',
-      question: 'Were medical services involved?',
+      question: 'Do you recall if medical services were involved?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -53,12 +53,12 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'detained-arrested',
-      question: 'Were you arrested or detained?',
+      question: 'Do you remember if you were arrested or detained?',
       options: [
         { id: 'arrested', label: 'Yes — Arrested' },
         { id: 'detained', label: 'Yes — Detained but not arrested' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -69,11 +69,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'children-present',
-      question: 'Were children or vulnerable persons present?',
+      question: 'Do you recall if children or vulnerable persons were present?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -85,13 +85,13 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   healthcare: [
     {
       id: 'care-issue',
-      question: 'Was care delayed, denied, or interrupted?',
+      question: 'Do you remember if care was delayed, denied, or interrupted?',
       options: [
         { id: 'delayed', label: 'Yes — Delayed' },
         { id: 'denied', label: 'Yes — Denied' },
         { id: 'interrupted', label: 'Yes — Interrupted' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -102,11 +102,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'law-enforcement-present',
-      question: 'Was law enforcement present?',
+      question: 'Do you recall if law enforcement was present?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -115,11 +115,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'vulnerable-person',
-      question: 'Did this involve a child, elderly person, or someone with a disability?',
+      question: 'Do you recall if this involved a child, elderly person, or someone with a disability?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -131,11 +131,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   cps_dcyf: [
     {
       id: 'child-removed',
-      question: 'Has a child been removed from the home?',
+      question: 'Do you know if a child has been removed from the home?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -145,11 +145,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'court-order',
-      question: 'Is there an existing court order?',
+      question: 'Do you recall if there is an existing court order?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -158,11 +158,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'law-enforcement-involved',
-      question: 'Was law enforcement involved?',
+      question: 'Do you remember if law enforcement was involved?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -174,11 +174,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   courts: [
     {
       id: 'custody-issue',
-      question: 'Does this involve custody of a child?',
+      question: 'Do you know if this involves custody of a child?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -187,11 +187,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'detention-related',
-      question: 'Were you detained or incarcerated related to this?',
+      question: 'Do you recall if you were detained or incarcerated related to this?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -200,11 +200,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'medical-related',
-      question: 'Does this involve a medical issue or competency question?',
+      question: 'Do you remember if this involves a medical issue or competency question?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -216,13 +216,13 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   housing: [
     {
       id: 'housing-type',
-      question: 'What type of housing is this?',
+      question: 'Do you know what type of housing this involves?',
       options: [
         { id: 'private', label: 'Private rental' },
         { id: 'public', label: 'Public housing' },
         { id: 'subsidized', label: 'Subsidized / Section 8' },
         { id: 'other', label: 'Other' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -233,11 +233,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'eviction-pending',
-      question: 'Is there an eviction notice or court action pending?',
+      question: 'Do you recall if there is an eviction notice or court action pending?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -246,11 +246,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'vulnerable-household',
-      question: 'Are there children, elderly, or disabled persons in the household?',
+      question: 'Do you know if there are children, elderly, or disabled persons in the household?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -262,11 +262,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   school: [
     {
       id: 'special-education',
-      question: 'Does this involve special education services (IEP/504)?',
+      question: 'Do you know if this involves special education services (IEP/504)?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -276,11 +276,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'discipline-action',
-      question: 'Is there a suspension, expulsion, or discipline action?',
+      question: 'Do you recall if there is a suspension, expulsion, or discipline action?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -289,11 +289,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'law-enforcement-school',
-      question: 'Was law enforcement or a school resource officer involved?',
+      question: 'Do you remember if law enforcement or a school resource officer was involved?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -305,11 +305,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   government: [
     {
       id: 'benefits-related',
-      question: 'Does this involve benefits (DSHS, SSI, unemployment)?',
+      question: 'Do you know if this involves benefits (DSHS, SSI, unemployment)?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -318,11 +318,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'vulnerable-person-govt',
-      question: 'Are you or a household member elderly, disabled, or a child?',
+      question: 'Do you recall if you or a household member is elderly, disabled, or a child?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -331,11 +331,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'court-involved-govt',
-      question: 'Is there a related court case or hearing?',
+      question: 'Do you remember if there is a related court case or hearing?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -347,11 +347,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   jail: [
     {
       id: 'medical-jail',
-      question: 'Were medical services needed or requested?',
+      question: 'Do you recall if medical services were needed or requested?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -361,11 +361,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'force-jail',
-      question: 'Was force used by staff?',
+      question: 'Do you remember if force was used by staff?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -375,11 +375,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'vulnerable-jail',
-      question: 'Is there a disability, mental health, or medical condition involved?',
+      question: 'Do you know if there is a disability, mental health, or medical condition involved?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -391,11 +391,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
   employer: [
     {
       id: 'medical-employer',
-      question: 'Did this involve a workplace injury or medical leave?',
+      question: 'Do you recall if this involved a workplace injury or medical leave?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
@@ -404,11 +404,11 @@ export const entityQuestions: Record<string, EntityQuestion[]> = {
     },
     {
       id: 'disability-employer',
-      question: 'Does this involve a disability or accommodation request?',
+      question: 'Do you know if this involves a disability or accommodation request?',
       options: [
         { id: 'yes', label: 'Yes' },
         { id: 'no', label: 'No' },
-        { id: 'unsure', label: 'Unsure' },
+        { id: 'unsure', label: 'I\'m not sure' },
       ],
       applyAnswer: (answer, tags) => ({
         ...tags,
