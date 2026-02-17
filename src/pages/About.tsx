@@ -1,5 +1,6 @@
+import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Shield, Heart, Target, Eye, ArrowRight, BookOpen, User } from "lucide-react";
+import { Shield, Heart, Target, Eye, ArrowRight, BookOpen, User, Home, Scale, Landmark, Building2, FileText } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
@@ -14,13 +15,50 @@ export default function About() {
 
   // Founder's Story content
   if (isFoundersStory) {
+    const scrollTo = (id: string) => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const microNavItems = [
+      { label: "Start here", id: "origin" },
+      { label: "Why this exists", id: "the-gap" },
+      { label: "How this was built", id: "how-built" },
+      { label: "What it helps with", id: "the-response" },
+      { label: "Explore tools", id: "continue-exploring" },
+    ];
+
+    const explorationCards = [
+      { label: "Housing", description: "Understand housing systems and protections", href: "/analyzer", icon: Home },
+      { label: "Police Encounters", description: "Know your rights during interactions", href: "/rights-insight", icon: Shield },
+      { label: "Courts & Judges", description: "Navigate court procedures with clarity", href: "/courts-filing-info", icon: Scale },
+      { label: "Government Agencies", description: "Decode agency processes and timelines", href: "/analyzer", icon: Landmark },
+      { label: "Documentation Tools", description: "Organize evidence, timelines, and records", href: "/tools", icon: FileText },
+    ];
+
     return (
       <Layout>
+        {/* Micro-nav strip */}
+        <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+          <div className="container">
+            <nav className="flex items-center gap-1 py-2.5 overflow-x-auto scrollbar-none">
+              {microNavItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollTo(item.id)}
+                  className="shrink-0 px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/60 rounded-full transition-colors tracking-wide"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+
         <div className="container py-12 lg:py-20">
           <div className="max-w-3xl mx-auto">
             {/* Header */}
             <div className="text-center mb-16">
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <h1 className="text-3xl md:text-4xl font-serif font-semibold text-foreground mb-4">
                 Why This Platform Exists
               </h1>
               <div className="flex items-center justify-center gap-3 text-primary text-sm tracking-wide mt-4">
@@ -34,7 +72,7 @@ export default function About() {
 
             <div className="space-y-14">
               {/* 1. Origin (Clarity) */}
-              <section>
+              <section id="origin">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">Origin</h2>
                   <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity</span>
@@ -56,7 +94,7 @@ export default function About() {
               </section>
 
               {/* 2. The Reality (Justice) */}
-              <section>
+              <section id="the-reality">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Reality</h2>
                   <span className="text-xs text-primary/70 uppercase tracking-wider">Justice</span>
@@ -78,7 +116,7 @@ export default function About() {
               </section>
 
               {/* 3. The Human Impact (Empathy) */}
-              <section>
+              <section id="human-impact">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Human Impact</h2>
                   <span className="text-xs text-primary/70 uppercase tracking-wider">Empathy</span>
@@ -102,8 +140,47 @@ export default function About() {
                 </div>
               </section>
 
+              {/* NEW: How This Was Built */}
+              <section id="how-built">
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">How This Was Built</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Process</span>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    "Navigating multiple systems at once",
+                    "Building binders, timelines, documentation by hand",
+                    "Organizing chaos into steps",
+                    "Patterns becoming visible across systems",
+                    "Tools forming from necessity — not theory",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-3 py-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0" />
+                      <span className="text-muted-foreground leading-relaxed">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* NEW: Reality Bridge */}
+              <section id="reality-bridge" className="py-8">
+                <div className="p-6 rounded-xl bg-secondary/30 border border-border/50">
+                  <div className="space-y-4 text-muted-foreground leading-relaxed">
+                    <p>
+                      Even one system alone is overwhelming.
+                    </p>
+                    <p>
+                      Most are built for professionals and assume time, stability, and prior knowledge.
+                    </p>
+                    <p className="text-foreground font-medium">
+                      This platform exists to make navigation clearer for people encountering these systems in real life.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
               {/* 4. The Gap (Clarity + Justice) */}
-              <section>
+              <section id="the-gap">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Gap</h2>
                   <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity + Justice</span>
@@ -144,7 +221,7 @@ export default function About() {
               </section>
 
               {/* 5. The Response (Clarity + Empathy) */}
-              <section>
+              <section id="the-response">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Response</h2>
                   <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity + Empathy</span>
@@ -184,7 +261,7 @@ export default function About() {
               </section>
 
               {/* 6. The Philosophy (Identity Pillars) */}
-              <section>
+              <section id="philosophy">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Philosophy</h2>
                   <span className="text-xs text-primary/70 uppercase tracking-wider">Identity</span>
@@ -212,7 +289,7 @@ export default function About() {
               </section>
 
               {/* 7. The Mission */}
-              <section>
+              <section id="mission">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Mission</h2>
                 </div>
@@ -224,7 +301,7 @@ export default function About() {
               </section>
 
               {/* 8. Purpose Statement */}
-              <section>
+              <section id="purpose">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Purpose</h2>
                 </div>
@@ -245,15 +322,50 @@ export default function About() {
               </section>
             </div>
 
-            {/* CTA */}
-            <div className="text-center mt-16">
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/tools">
-                  Explore the Tools
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-            </div>
+            {/* Continue Exploring — Navigation Cards */}
+            <section id="continue-exploring" className="mt-20">
+              <div className="mb-8">
+                <h2 className="text-2xl font-serif font-semibold text-foreground mb-2">Continue exploring</h2>
+                <div className="w-12 h-px bg-gold" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {explorationCards.map((card) => (
+                  <Link
+                    key={card.label}
+                    to={card.href}
+                    className="group p-5 rounded-xl bg-card border border-border hover:border-primary/20 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center mb-3 group-hover:bg-primary/10 transition-colors">
+                      <card.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+                      {card.label}
+                    </h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {card.description}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+
+            {/* If This Sounds Familiar — Final Entry Point */}
+            <section className="mt-16">
+              <div className="p-8 rounded-xl bg-secondary/30 border border-border/50 text-center">
+                <h2 className="text-xl font-serif font-semibold text-foreground mb-3">
+                  If this sounds familiar
+                </h2>
+                <p className="text-muted-foreground leading-relaxed max-w-lg mx-auto mb-6">
+                  If you're navigating housing, courts, schools, agencies, or law enforcement at the same time — start here.
+                </p>
+                <Button variant="default" size="lg" asChild>
+                  <Link to="/tools">
+                    Guided Entry
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </Button>
+              </div>
+            </section>
 
             <div className="mt-12 pt-8 border-t border-border">
               <Disclaimer className="justify-center" />
