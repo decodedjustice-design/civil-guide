@@ -22,7 +22,7 @@ export default function About() {
     const microNavItems = [
       { label: "Start here", id: "origin" },
       { label: "Why this exists", id: "the-gap" },
-      { label: "How this was built", id: "how-built" },
+      { label: "Why this platform exists", id: "how-built" },
       { label: "What it helps with", id: "the-response" },
       { label: "Explore tools", id: "continue-exploring" },
     ];
@@ -140,42 +140,121 @@ export default function About() {
                 </div>
               </section>
 
-              {/* NEW: How This Was Built */}
+              {/* Why This Platform Exists */}
               <section id="how-built">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                  <h2 className="text-xl font-semibold text-foreground">How This Was Built</h2>
-                  <span className="text-xs text-primary/70 uppercase tracking-wider">Process</span>
+                  <h2 className="text-xl font-semibold text-foreground">Why This Platform Exists</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Origin</span>
                 </div>
-                <div className="space-y-3">
-                  {[
-                    "Navigating multiple systems at once",
-                    "Building binders, timelines, documentation by hand",
-                    "Organizing chaos into steps",
-                    "Patterns becoming visible across systems",
-                    "Tools forming from necessity — not theory",
-                  ].map((item) => (
-                    <div key={item} className="flex items-start gap-3 py-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0" />
-                      <span className="text-muted-foreground leading-relaxed">{item}</span>
-                    </div>
-                  ))}
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
+                  <p>
+                    While navigating housing instability, landlord abuse, social services sanctions, child support processes, and court pressure at the same time, the founder was asked to foster a young girl who had no stable home.
+                  </p>
+                  <p>
+                    That decision brought new systems into the picture overnight — child welfare services, school officials, caseworkers, compliance requirements, and constant documentation.
+                  </p>
+                  <p>
+                    Nothing existed to help make sense of how these systems overlapped or how to move through them clearly.
+                  </p>
+                  <p>
+                    So she began building her own structure — notes, timelines, binders, decision sheets — anything that could turn confusion into something manageable.
+                  </p>
+                  <p>
+                    Over time, the chaos began to organize.
+                  </p>
+                  <p>
+                    Patterns became visible.<br />
+                    Steps became clearer.<br />
+                    And what once felt impossible to track started to make sense.
+                  </p>
+                  <p>
+                    Decoded Justice grew from that process.
+                  </p>
+                  <p>
+                    It was created in the middle of navigating real systems, not after them — with the hope that others won't have to spend as long trying to understand where to start, what matters, and how to move forward.
+                  </p>
                 </div>
               </section>
 
-              {/* NEW: Reality Bridge */}
-              <section id="reality-bridge" className="py-8">
-                <div className="p-6 rounded-xl bg-secondary/30 border border-border/50">
-                  <div className="space-y-4 text-muted-foreground leading-relaxed">
-                    <p>
-                      Even one system alone is overwhelming.
-                    </p>
-                    <p>
-                      Most are built for professionals and assume time, stability, and prior knowledge.
-                    </p>
-                    <p className="text-foreground font-medium">
-                      This platform exists to make navigation clearer for people encountering these systems in real life.
-                    </p>
-                  </div>
+              {/* The Reality */}
+              <section id="reality-bridge" className="py-4">
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Reality</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Context</span>
+                </div>
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
+                  <p>
+                    Public systems rarely operate in isolation. Housing connects to employment. Schools intersect with child welfare. Courts affect benefits, transportation, and stability. A single issue can quickly expand into multiple agencies, deadlines, and expectations.
+                  </p>
+                  <p>
+                    Most people are expected to understand:
+                  </p>
+                  <ul className="space-y-2 pl-4">
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>what system they're in</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>what rules apply</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>what documentation matters</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>what happens next</span>
+                    </li>
+                  </ul>
+                  <p>
+                    …without ever being shown how those pieces connect.
+                  </p>
+                  <p>
+                    When several systems are active at once, confusion becomes the default.
+                  </p>
+                </div>
+              </section>
+
+              {/* The Gap */}
+              <section id="the-gap-detail">
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Gap</h2>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Problem</span>
+                </div>
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
+                  <p>
+                    Information exists, but it's scattered.
+                  </p>
+                  <p>
+                    Legal explanations are written for professionals.<br />
+                    Agency instructions assume familiarity.<br />
+                    Support resources focus on one system at a time.
+                  </p>
+                  <p>
+                    There is rarely a place where someone can:
+                  </p>
+                  <ul className="space-y-2 pl-4">
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>understand what they're facing</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>organize what's happening</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>see how systems interact</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>move step by step instead of all at once</span>
+                    </li>
+                  </ul>
+                  <p>
+                    That gap is where people fall behind — not because they don't care, but because nothing is designed for real-life overlap.
+                  </p>
                 </div>
               </section>
 
@@ -220,103 +299,151 @@ export default function About() {
                 </div>
               </section>
 
-              {/* 5. The Response (Clarity + Empathy) */}
+              {/* The Response */}
               <section id="the-response">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Response</h2>
-                  <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity + Empathy</span>
+                  <span className="text-xs text-primary/70 uppercase tracking-wider">Solution</span>
                 </div>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    Decoded Justice was built to address that gap.
+                    Decoded Justice was built to bring structure to that overlap.
                   </p>
                   <p>
-                    Not to provide legal advice. Not to replace attorneys. Not to promise outcomes.
+                    Not to replace professionals.<br />
+                    Not to give legal advice.<br />
+                    Not to tell people what choices to make.
                   </p>
                   <p>
-                    But to provide structure. To help people:
+                    But to help people:
                   </p>
                   <ul className="space-y-2 pl-4">
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Organize information before it becomes overwhelming</span>
+                      <span>understand their situation</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Understand how systems generally operate before having to navigate them</span>
+                      <span>identify what matters first</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Preserve records while they are still accessible</span>
+                      <span>document effectively</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>Prepare for conversations with attorneys, advocates, or officials</span>
+                      <span>follow clear steps</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>access deeper information only when they're ready</span>
                     </li>
                   </ul>
-                  <p>
-                    The platform was designed to reduce confusion—not to add another layer of complexity to an already difficult situation.
+                  <p className="text-foreground font-medium">
+                    Clarity comes before strategy.
                   </p>
                 </div>
               </section>
 
-              {/* 6. The Philosophy (Identity Pillars) */}
+              {/* The Philosophy */}
               <section id="philosophy">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Philosophy</h2>
                   <span className="text-xs text-primary/70 uppercase tracking-wider">Identity</span>
                 </div>
-                <div className="space-y-6 text-muted-foreground leading-relaxed">
-                  <div className="p-5 rounded-lg bg-card border border-border">
-                    <h3 className="font-semibold text-foreground mb-2">Clarity as Protection</h3>
-                    <p>
-                      When you understand what is happening, you are less vulnerable to being misled. When you can see the structure, you can navigate it. Clarity is not a luxury—it is a form of protection.
-                    </p>
-                  </div>
-                  <div className="p-5 rounded-lg bg-card border border-border">
-                    <h3 className="font-semibold text-foreground mb-2">Justice as Access to Understanding</h3>
-                    <p>
-                      Justice is not only what happens in courtrooms. It begins with whether people can understand the systems that govern their lives. If information is inaccessible, the system is not just. Access to understanding is a prerequisite to any meaningful participation.
-                    </p>
-                  </div>
-                  <div className="p-5 rounded-lg bg-card border border-border">
-                    <h3 className="font-semibold text-foreground mb-2">Empathy as Design Principle</h3>
-                    <p>
-                      This platform was built with the assumption that users may be stressed, afraid, or exhausted. Every interface, every instruction, every piece of content is designed with that reality in mind. Empathy is not a tone—it is a structural commitment.
-                    </p>
-                  </div>
-                </div>
-              </section>
-
-              {/* 7. The Mission */}
-              <section id="mission">
-                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                  <h2 className="text-xl font-semibold text-foreground">The Mission</h2>
-                </div>
-                <div className="p-6 rounded-xl bg-card border border-border">
-                  <p className="text-foreground leading-relaxed">
-                    Decoded Justice exists to provide clarity, structure, and educational resources for people navigating complex public systems—so they can understand what is happening, organize their information, and prepare for what comes next.
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
+                  <p>
+                    Clarity reduces pressure.<br />
+                    Structure reduces overwhelm.<br />
+                    Understanding increases confidence.
+                  </p>
+                  <p>
+                    People don't need more information.<br />
+                    They need information that meets them where they are.
+                  </p>
+                  <p>
+                    This platform is built on:
+                  </p>
+                  <ul className="space-y-2 pl-4">
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0" />
+                      <span>calm guidance</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0" />
+                      <span>plain language</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0" />
+                      <span>layered depth</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0" />
+                      <span>real-world sequencing</span>
+                    </li>
+                  </ul>
+                  <p>
+                    So users can start with what's happening now, then move forward.
                   </p>
                 </div>
               </section>
 
-              {/* 8. Purpose Statement */}
+              {/* The Mission */}
+              <section id="mission">
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
+                  <h2 className="text-xl font-semibold text-foreground">The Mission</h2>
+                </div>
+                <div className="space-y-4 text-muted-foreground leading-relaxed">
+                  <p>
+                    Decoded Justice exists to make complex systems easier to navigate.
+                  </p>
+                  <p>
+                    To help people:
+                  </p>
+                  <ul className="space-y-2 pl-4">
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>see what's happening</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>know what to do next</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>protect themselves through documentation</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                      <span>move through systems with more stability</span>
+                    </li>
+                  </ul>
+                  <p>
+                    Not perfectly.<br />
+                    Not instantly.<br />
+                    But with more clarity than they had before.
+                  </p>
+                </div>
+              </section>
+
+              {/* The Purpose */}
               <section id="purpose">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
                   <h2 className="text-xl font-semibold text-foreground">The Purpose</h2>
                 </div>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    Most people do not learn how housing courts work until they face eviction. Most people do not understand police report processes until they are named in one. Most people do not know how child welfare investigations proceed until a caseworker arrives at their door.
+                    Many people encounter housing courts, public agencies, schools, or law enforcement only when something has already gone wrong.
                   </p>
                   <p>
-                    By then, critical deadlines may have passed. Records may already exist. Decisions may have been made.
+                    By then, expectations are high and guidance is minimal.
                   </p>
-                  <p className="text-foreground font-medium">
-                    This platform exists so people do not have to learn systems only after harm occurs.
+                  <p>
+                    This platform exists so that when those moments happen, there is a place to begin — structured, steady, and built from lived experience rather than theory.
                   </p>
-                  <p className="text-sm text-muted-foreground pt-4 italic">
-                    That is the purpose. Nothing more. Nothing less.
+                  <p>
+                    There is no perfect system.<br />
+                    But there can be better tools for navigating them.
                   </p>
                 </div>
               </section>
