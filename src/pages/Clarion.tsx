@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PenLine, Clock, ChevronRight, Shield, FileText, HelpCircle, Save } from "lucide-react";
+import EmergingStructure from "@/components/clarion/EmergingStructure";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +27,7 @@ export default function Clarion() {
   const [content, setContent] = useState("");
   const [entries, setEntries] = useState<ClarionEntry[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [justSaved, setJustSaved] = useState(false);
+  const [showStructure, setShowStructure] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [entryCounts, setEntryCounts] = useState({ entries: 0, evidence: 0 });
@@ -40,7 +41,7 @@ export default function Clarion() {
   // Fetch entries on mount
   useEffect(() => {
     if (!user) return;
-    fetchEntries();
+    fetchEntries().then(() => setShowStructure(true));
     fetchCounts();
   }, [user]);
 
@@ -81,7 +82,7 @@ export default function Clarion() {
       if (error) throw error;
 
       setContent("");
-      setJustSaved(true);
+      setShowStructure(true);
       await fetchEntries();
       await fetchCounts();
 
@@ -184,7 +185,7 @@ export default function Clarion() {
           )}
 
           {/* WRITING VIEW */}
-          {view === "write" && !justSaved && (
+          {view === "write" && (
             <div className="animate-fade-up">
               <p className="text-lg text-foreground font-light leading-relaxed mb-8">
                 You can write freely here. Whatever feels important. We'll help organize it later.
@@ -212,42 +213,8 @@ export default function Clarion() {
                   Private and secure. Only you can see this.
                 </p>
               </div>
-            </div>
-          )}
 
-          {/* JUST SAVED CONFIRMATION */}
-          {view === "write" && justSaved && (
-            <div className="animate-fade-up text-center py-12">
-              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mx-auto mb-6">
-                <PenLine className="w-5 h-5 text-gold opacity-70" />
-              </div>
-
-              <h2 className="font-serif text-2xl font-medium text-foreground mb-4">
-                Here's one way to view your story.
-              </h2>
-              <p className="text-muted-foreground font-light mb-10 max-w-md mx-auto">
-                We've arranged what you shared into a timeline.
-                You can adjust anything — nothing is fixed.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button
-                  onClick={() => { setView("timeline"); setJustSaved(false); }}
-                  variant="default"
-                  className="gap-2"
-                >
-                  <Clock className="w-4 h-4" />
-                  View Timeline Draft
-                </Button>
-                <Button
-                  onClick={() => setJustSaved(false)}
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <PenLine className="w-4 h-4" />
-                  Continue Writing
-                </Button>
-              </div>
+              <EmergingStructure entries={entries} visible={showStructure} />
             </div>
           )}
 
