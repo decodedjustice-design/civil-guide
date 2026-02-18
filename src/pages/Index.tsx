@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { Shield, Lock, Eye, FileText, Clock, Search, BookOpen, Scale } from "lucide-react";
+import { Shield, Lock, Eye, FileText, Clock, Search, BookOpen, Scale, PenLine, HelpCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-private-studio.jpg";
 
@@ -72,6 +72,60 @@ const Index = () => {
             </p>
           </div>
           <div className="w-16 h-px bg-gold/40 mx-auto mt-12" />
+        </div>
+      </section>
+
+      {/* SECTION — HOW WOULD YOU LIKE TO BEGIN? */}
+      <section className="bg-background py-24 sm:py-32">
+        <div className="container max-w-4xl px-6">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground text-center mb-6 tracking-tight">
+            How would you like to begin?
+          </h2>
+          <p className="text-center text-muted-foreground font-light mb-16 max-w-xl mx-auto">
+            There is no wrong way to start. Choose what feels right.
+          </p>
+
+          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {/* Option 1: Clarion */}
+            <Link
+              to={user ? "/clarion" : "/auth?redirect=/clarion"}
+              className="group bg-card border border-border/50 rounded-lg p-8 hover:shadow-md hover:border-gold/20 transition-all duration-300"
+            >
+              <div className="w-11 h-11 rounded-lg bg-secondary flex items-center justify-center mb-5 group-hover:bg-gold/10 transition-colors">
+                <PenLine className="w-5 h-5 text-gold opacity-70 group-hover:opacity-100 transition-opacity" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-serif text-xl font-medium text-foreground mb-3 group-hover:text-primary transition-colors">
+                Tell Your Story
+              </h3>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
+                Start with your own words. We'll organize it into a timeline and identify key details for you.
+              </p>
+              <span className="inline-flex items-center text-sm font-medium text-primary gap-1.5 group-hover:gap-2.5 transition-all">
+                Start Writing
+                <span className="text-primary/60">→</span>
+              </span>
+            </Link>
+
+            {/* Option 2: Analyzer */}
+            <Link
+              to="/analyzer"
+              className="group bg-card border border-border/50 rounded-lg p-8 hover:shadow-md hover:border-gold/20 transition-all duration-300"
+            >
+              <div className="w-11 h-11 rounded-lg bg-secondary flex items-center justify-center mb-5 group-hover:bg-gold/10 transition-colors">
+                <HelpCircle className="w-5 h-5 text-gold opacity-70 group-hover:opacity-100 transition-opacity" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-serif text-xl font-medium text-foreground mb-3 group-hover:text-primary transition-colors">
+                Answer Guided Questions
+              </h3>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
+                Prefer structure? Answer a few questions to understand your situation and possible next steps.
+              </p>
+              <span className="inline-flex items-center text-sm font-medium text-primary gap-1.5 group-hover:gap-2.5 transition-all">
+                Use Civil Rights Analyzer
+                <span className="text-primary/60">→</span>
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
 
