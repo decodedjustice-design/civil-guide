@@ -13,24 +13,21 @@ import {
   ArrowRight,
   ArrowLeft,
   Search,
-  Bookmark,
-  BookmarkCheck,
-  ChevronDown,
-  ChevronUp,
   Users,
-  HelpCircle
+  HelpCircle,
+  FileText,
+  Wrench
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import { PrintShareGuides } from "@/components/library/PrintShareGuides";
+import { SystemCard } from "@/components/shared/SystemCard";
+import { ScenarioCard } from "@/components/shared/ScenarioCard";
 import {
   rightsInsightGuides,
   systemCategories,
-  type RightsInsightGuide,
   type SystemId
 } from "@/data/rightsInsightContent";
-import heroImage from "@/assets/hero-paperwork.png";
 
 type FilterId = "all" | SystemId;
 
@@ -44,63 +41,42 @@ const systemIcons: Record<string, React.ElementType> = {
   education: GraduationCap,
   healthcare: Stethoscope,
   government: Building2,
+  cps_dcyf: Users,
 };
 
 export default function RightsInsight() {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<FilterId>("all");
-  const [bookmarkedGuides, setBookmarkedGuides] = useState<Set<string>>(new Set());
-  const [expandedGuide, setExpandedGuide] = useState<string | null>(null);
+  const [expandedSystem, setExpandedSystem] = useState<string | null>(null);
 
-  // Check if user came from Analyzer
   const fromAnalyzer = searchParams.get("from") === "analyzer";
 
-  // Read filter from URL on mount
+  // Auto-expand a system if filtered via URL
   useEffect(() => {
     const filterParam = searchParams.get("filter");
-    // Handle "general" filter from Analyzer as "all"
-    if (filterParam === "general") {
-      setActiveFilter("all");
-    } else if (filterParam && systemCategories.some(c => c.id === filterParam)) {
-      setActiveFilter(filterParam as FilterId);
+    if (filterParam && filterParam !== "general" && systemCategories.some(c => c.id === filterParam)) {
+      setExpandedSystem(filterParam);
     }
   }, [searchParams]);
 
-  // Load bookmarks from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem("bookmarkedGuides");
-    if (saved) {
-      setBookmarkedGuides(new Set(JSON.parse(saved)));
-    }
-  }, []);
-
-  const toggleBookmark = (guideId: string) => {
-    setBookmarkedGuides(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(guideId)) {
-        newSet.delete(guideId);
-      } else {
-        newSet.add(guideId);
-      }
-      localStorage.setItem("bookmarkedGuides", JSON.stringify([...newSet]));
-      return newSet;
-    });
-  };
-
-  const filteredGuides = rightsInsightGuides.filter(guide => {
-    const matchesFilter = activeFilter === "all" || guide.systemId === activeFilter;
-    const matchesSearch = 
-      guide.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      guide.orientation.whatThisSystemIs.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
+  // Filter categories by search
+  const filteredCategories = systemCategories.filter(cat => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    const guidesInCat = rightsInsightGuides.filter(g => g.systemId === cat.id);
+    return (
+      cat.label.toLowerCase().includes(q) ||
+      cat.description.toLowerCase().includes(q) ||
+      guidesInCat.some(g => 
+        g.title.toLowerCase().includes(q) ||
+        g.orientation.whatThisSystemIs.toLowerCase().includes(q)
+      )
+    );
   });
-
-  const activeCategory = systemCategories.find(c => c.id === activeFilter);
 
   return (
     <Layout>
-      {/* Back to Analyzer Button - shown when coming from Analyzer */}
+      {/* Back to Analyzer */}
       {fromAnalyzer && (
         <div className="bg-accent/5 border-b border-accent/20">
           <div className="container mx-auto px-4 py-3">
@@ -115,220 +91,123 @@ export default function RightsInsight() {
         </div>
       )}
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0">
-          <img 
-            src={heroImage} 
-            alt="" 
-            className="w-full h-full object-cover opacity-25"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-background/30" />
+      {/* Header — short orientation only */}
+      <div className="container pt-12 lg:pt-16 pb-8">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
+            <BookOpen className="w-4 h-4" />
+            <span>Library</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+            Library
+          </h1>
+          <p className="text-muted-foreground">
+            Clear guidance. Step-by-step. At your pace.
+          </p>
         </div>
-        
-        <div className="container relative py-12 lg:py-16">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
-              <BookOpen className="w-4 h-4" />
-              <span>Guided by Clarity</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Library
-            </h1>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Understand how different systems work, what usually matters, and where people often lose time or focus. 
-              Plain language, at your pace.
+      </div>
+
+      <div className="container pb-16">
+        {/* Wellbeing note */}
+        <div className="max-w-3xl mx-auto mb-8">
+          <div className="p-3 rounded-xl bg-secondary/50 border border-border">
+            <p className="text-xs text-muted-foreground text-center">
+              You can pause, bookmark, or return later. Understanding systems takes time.
             </p>
           </div>
         </div>
-      </section>
 
-      <div className="container py-12 lg:py-16">
         {/* Search */}
-        <div className="max-w-3xl mx-auto mb-12">
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+        <div className="max-w-md mx-auto mb-10">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search guides..."
-              className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+              placeholder="Search topics..."
+              className="w-full h-11 pl-11 pr-4 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
         </div>
 
-        {/* Wellbeing Note */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="p-4 rounded-xl bg-secondary/50 border border-border">
-            <p className="text-sm text-muted-foreground text-center">
-              Some of this information may relate to difficult experiences. You can pause, bookmark, or return later. 
-              Understanding systems takes time, and that's okay.
-            </p>
-          </div>
-        </div>
+        {/* System Card Grid — each system is a card, guides are nested scenario cards */}
+        <div className="max-w-3xl mx-auto space-y-3">
+          {filteredCategories.map((category) => {
+            const Icon = systemIcons[category.id] || Shield;
+            const guidesForSystem = rightsInsightGuides.filter(g => g.systemId === category.id);
+            
+            // Also filter guides by search within expanded system
+            const filteredGuides = searchQuery
+              ? guidesForSystem.filter(g =>
+                  g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  g.orientation.whatThisSystemIs.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+              : guidesForSystem;
 
-        {/* Filter Pills */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex flex-wrap justify-center gap-2">
-            <button
-              onClick={() => setActiveFilter("all")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
-                activeFilter === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-              }`}
-            >
-              All Topics
-            </button>
-            {systemCategories.map((category) => {
-              const Icon = systemIcons[category.id] || Shield;
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveFilter(category.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                    activeFilter === category.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  }`}
-                >
-                  <Icon className="w-3 h-3" />
-                  {category.label.split(" & ")[0]}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+            return (
+              <SystemCard
+                key={category.id}
+                icon={Icon}
+                title={category.label}
+                subtitle={category.description}
+                guideCount={guidesForSystem.length}
+                isExpanded={expandedSystem === category.id}
+                onToggle={() => setExpandedSystem(expandedSystem === category.id ? null : category.id)}
+              >
+                <div className="space-y-2 pt-4">
+                  {filteredGuides.map((guide) => (
+                    <ScenarioCard key={guide.id} guide={guide} />
+                  ))}
+                  {filteredGuides.length === 0 && (
+                    <p className="text-sm text-muted-foreground py-4 text-center">
+                      No topics match your search in this category.
+                    </p>
+                  )}
+                </div>
+              </SystemCard>
+            );
+          })}
 
-        {/* Active filter context */}
-        {activeCategory && (
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="p-4 rounded-xl bg-card border border-border">
-              <h2 className="font-semibold text-foreground mb-1">{activeCategory.label}</h2>
-              <p className="text-sm text-muted-foreground">{activeCategory.description}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Guides */}
-        <div className="max-w-4xl mx-auto space-y-4">
-          {filteredGuides.map((guide) => (
-            <GuideCard
-              key={guide.id}
-              guide={guide}
-              isBookmarked={bookmarkedGuides.has(guide.id)}
-              isExpanded={expandedGuide === guide.id}
-              onToggleBookmark={() => toggleBookmark(guide.id)}
-              onToggleExpand={() => setExpandedGuide(expandedGuide === guide.id ? null : guide.id)}
-            />
-          ))}
-
-          {filteredGuides.length === 0 && (
+          {filteredCategories.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                No guides found matching your search.
-              </p>
+              <p className="text-muted-foreground">No topics found matching your search.</p>
             </div>
           )}
         </div>
 
-        {/* Browse by Topic (when showing all) */}
-        {activeFilter === "all" && (
-          <div className="max-w-4xl mx-auto mt-16">
-            <h2 className="text-xl font-semibold text-accent mb-6 border-l-4 border-accent pl-4">Browse by Topic</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {systemCategories.map((category) => {
-                const Icon = systemIcons[category.id] || Shield;
-                const guideCount = rightsInsightGuides.filter(g => g.systemId === category.id).length;
-                return (
-                  <button
-                    key={category.id}
-                    onClick={() => setActiveFilter(category.id)}
-                    className="group p-5 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-glow transition-all duration-300 text-left"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                        <Icon className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors mb-1">
-                          {category.label}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
-                          {category.description}
-                        </p>
-                        <p className="text-xs text-text-softer">
-                          {guideCount} {guideCount === 1 ? "guide" : "guides"}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Related links when filtered */}
-        {activeFilter !== "all" && (
-          <div className="max-w-4xl mx-auto mt-12 p-6 rounded-xl bg-card border border-border">
-            <h3 className="font-semibold text-accent mb-4 border-l-4 border-accent pl-3">Related Resources</h3>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button variant="soft" size="sm" asChild>
-                <Link to={`/support-network?filter=${activeFilter}`}>
-                  <Users className="w-4 h-4 mr-2" />
-                  Find Agencies for {activeCategory?.label}
-                </Link>
-              </Button>
-              <Button variant="soft" size="sm" asChild>
-                <Link to="/find-help">
-                  <HelpCircle className="w-4 h-4 mr-2" />
-                  Find Legal Help
-                </Link>
-              </Button>
-              <Button variant="soft" size="sm" asChild>
-                <Link to="/analyzer">
-                  <ArrowRight className="w-4 h-4 mr-2" />
-                  Start the Analyzer
-                </Link>
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Print & Share Guides Section */}
-        <div className="max-w-5xl mx-auto mt-16">
-          <PrintShareGuides />
-        </div>
-
-        {/* Related Connections */}
-        <div className="max-w-4xl mx-auto mt-12 p-6 rounded-xl bg-card border border-border">
-          <h3 className="text-sm font-semibold text-foreground mb-4">Related Platform Areas</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <Link to="/library" className="flex items-center gap-2 text-primary hover:underline">
-              <BookOpen className="w-4 h-4" />
-              Rights Insight
-            </Link>
-            <Link to="/public-request-rights" className="flex items-center gap-2 text-primary hover:underline">
-              <HelpCircle className="w-4 h-4" />
-              Public Request Rights
-            </Link>
-            <Link to="/support-network" className="flex items-center gap-2 text-primary hover:underline">
-              <Users className="w-4 h-4" />
-              Support Network
-            </Link>
-            <Link to="/tools" className="flex items-center gap-2 text-primary hover:underline">
-              <Scale className="w-4 h-4" />
-              All Tools
-            </Link>
+        {/* Bottom Navigation Pathway */}
+        <div className="max-w-3xl mx-auto mt-16">
+          <h2 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Continue exploring</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[
+              { label: "Support Network", href: "/support-network", icon: Users },
+              { label: "Find Legal Help", href: "/find-help", icon: HelpCircle },
+              { label: "Analyzer", href: "/analyzer", icon: Scale },
+              { label: "Documentation Tools", href: "/tools", icon: Wrench },
+              { label: "Public Records", href: "/public-request-rights", icon: FileText },
+              { label: "About", href: "/about", icon: BookOpen },
+            ].map((nav) => (
+              <Link
+                key={nav.href}
+                to={nav.href}
+                className="group flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <nav.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                  {nav.label}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
 
         {/* CTA */}
         <div className="max-w-2xl mx-auto mt-12 text-center">
-          <p className="text-muted-foreground mb-6">
-            Have a specific situation? The Analyzer can help point you to relevant resources.
+          <p className="text-sm text-muted-foreground mb-4">
+            Have a specific situation?
           </p>
           <Button variant="hero" size="lg" asChild>
             <Link to="/analyzer">
@@ -344,193 +223,5 @@ export default function RightsInsight() {
         </div>
       </div>
     </Layout>
-  );
-}
-
-function GuideCard({ 
-  guide, 
-  isBookmarked, 
-  isExpanded,
-  onToggleBookmark,
-  onToggleExpand 
-}: { 
-  guide: RightsInsightGuide;
-  isBookmarked: boolean;
-  isExpanded: boolean;
-  onToggleBookmark: () => void;
-  onToggleExpand: () => void;
-}) {
-  const Icon = systemIcons[guide.systemId] || Shield;
-  const categoryLabel = systemCategories.find(c => c.id === guide.systemId)?.label || "";
-
-  return (
-    <article className="rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-200 overflow-hidden">
-      {/* Header */}
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-              <Icon className="w-4 h-4 text-foreground" />
-            </div>
-            <span className="text-xs text-primary font-medium">{categoryLabel}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">{guide.readTime}</span>
-            <button 
-              onClick={onToggleBookmark}
-              className="text-muted-foreground hover:text-primary transition-colors p-1"
-              aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
-            >
-              {isBookmarked ? (
-                <BookmarkCheck className="w-4 h-4 text-primary" />
-              ) : (
-                <Bookmark className="w-4 h-4" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <h3 className="font-semibold text-foreground text-lg mb-2">
-          {guide.title}
-        </h3>
-
-        {/* Quick Orientation Summary */}
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-          {guide.orientation.whatThisSystemIs}
-        </p>
-
-        <button
-          onClick={onToggleExpand}
-          className="flex items-center gap-1 text-sm text-primary hover:underline"
-        >
-          {isExpanded ? (
-            <>
-              <ChevronUp className="w-4 h-4" />
-              Show less
-            </>
-          ) : (
-            <>
-              <ChevronDown className="w-4 h-4" />
-              Read full guide
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* Expanded Content */}
-      {isExpanded && (
-        <div className="px-5 pb-5 pt-0 space-y-6 border-t border-border mt-0 pt-5">
-          {/* Quick Orientation */}
-          <section>
-            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center">1</span>
-              Quick Orientation
-            </h4>
-            <div className="space-y-3 pl-8">
-              <div>
-                <h5 className="text-xs font-medium text-foreground mb-1">What this system is</h5>
-                <p className="text-sm text-muted-foreground">{guide.orientation.whatThisSystemIs}</p>
-              </div>
-              <div>
-                <h5 className="text-xs font-medium text-foreground mb-1">Who holds power</h5>
-                <p className="text-sm text-muted-foreground">{guide.orientation.whoHoldsPower}</p>
-              </div>
-              <div>
-                <h5 className="text-xs font-medium text-foreground mb-1">Why it feels confusing</h5>
-                <p className="text-sm text-muted-foreground">{guide.orientation.whyItFeelsConfusing}</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Common Situations */}
-          <section>
-            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center">2</span>
-              Common Situations
-            </h4>
-            <ul className="space-y-1.5 pl-8">
-              {guide.commonSituations.map((situation, idx) => (
-                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-primary mt-1">•</span>
-                  {situation}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* What Usually Matters */}
-          <section>
-            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center">3</span>
-              What Usually Matters
-            </h4>
-            <ul className="space-y-1.5 pl-8">
-              {guide.whatMatters.map((item, idx) => (
-                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-primary mt-1">✓</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* What Often Doesn't */}
-          <section>
-            <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-secondary text-muted-foreground text-xs flex items-center justify-center">4</span>
-              What Often Doesn't Matter (as much as people think)
-            </h4>
-            <ul className="space-y-1.5 pl-8">
-              {guide.whatDoesntMatter.map((item, idx) => (
-                <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-muted-foreground mt-1">○</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* Key Deadlines */}
-          {guide.keyDeadlines && (
-            <section className="p-4 rounded-lg bg-secondary/50 border border-border">
-              <h4 className="text-xs font-semibold text-foreground mb-2">⏱ Key Deadlines</h4>
-              <p className="text-sm text-muted-foreground">{guide.keyDeadlines}</p>
-            </section>
-          )}
-
-          {/* Trauma-Aware Note */}
-          {guide.traumaAwareNote && (
-            <section className="p-4 rounded-lg bg-accent/10 border border-accent/20">
-              <p className="text-sm text-muted-foreground italic">{guide.traumaAwareNote}</p>
-            </section>
-          )}
-
-          {/* Related Links */}
-          <section className="pt-4 border-t border-border">
-            <h4 className="text-xs font-semibold text-foreground mb-3">Related Resources</h4>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="soft" size="sm" asChild>
-                <Link to={`/support-network?filter=${guide.systemId}`}>
-                  <Users className="w-3 h-3 mr-1.5" />
-                  Find Agencies
-                </Link>
-              </Button>
-              <Button variant="soft" size="sm" asChild>
-                <Link to="/find-help">
-                  <HelpCircle className="w-3 h-3 mr-1.5" />
-                  Legal Help
-                </Link>
-              </Button>
-              <Button variant="soft" size="sm" asChild>
-                <Link to="/analyzer">
-                  <ArrowRight className="w-3 h-3 mr-1.5" />
-                  Analyzer
-                </Link>
-              </Button>
-            </div>
-          </section>
-        </div>
-      )}
-    </article>
   );
 }
