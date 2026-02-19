@@ -8,84 +8,57 @@ import {
   FileCheck, 
   Shield, 
   Scale,
-  ChevronRight,
+  ChevronDown,
   BookOpen,
-  ArrowLeft
+  ArrowLeft,
+  Users,
+  HelpCircle,
+  Wrench,
+  FileText,
+  ArrowRight
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { libraryContent, LibrarySection, LibrarySubsection } from "@/data/libraryContent";
+import { Disclaimer } from "@/components/shared/Disclaimer";
+import { DepthToggle, type DepthLevel } from "@/components/shared/DepthToggle";
+import { libraryContent, type LibrarySection, type LibrarySubsection } from "@/data/libraryContent";
 import { cn } from "@/lib/utils";
-import { BookmarkButton } from "@/components/shared/BookmarkButton";
 
-const iconMap: Record<string, React.ReactNode> = {
-  Building2: <Building2 className="w-5 h-5" />,
-  EyeOff: <EyeOff className="w-5 h-5" />,
-  AlertTriangle: <AlertTriangle className="w-5 h-5" />,
-  Route: <Route className="w-5 h-5" />,
-  FileCheck: <FileCheck className="w-5 h-5" />,
-  Shield: <Shield className="w-5 h-5" />,
-  Scale: <Scale className="w-5 h-5" />
+const iconMap: Record<string, React.ElementType> = {
+  Building2,
+  EyeOff,
+  AlertTriangle,
+  Route,
+  FileCheck,
+  Shield,
+  Scale,
 };
 
 export default function Library() {
   const [searchParams] = useSearchParams();
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
-  const [expandedSubsections, setExpandedSubsections] = useState<string[]>([]);
-  
-  // Check if user came from Analyzer
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
   const fromAnalyzer = searchParams.get("from") === "analyzer";
-  
+
   // Handle direct linking via URL params
   useEffect(() => {
     const section = searchParams.get("section");
-    const subsection = searchParams.get("subsection");
-    
     if (section) {
-      setExpandedSections([section]);
-      if (subsection) {
-        setExpandedSubsections([`${section}-${subsection}`]);
-        
-        // Scroll to the section after a short delay
-        setTimeout(() => {
-          const element = document.getElementById(`section-${section}`);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }, 100);
-      }
-    }
-    
-    // Scroll to top on mount if no section specified
-    if (!section) {
-      window.scrollTo(0, 0);
+      setExpandedSection(section);
+      setTimeout(() => {
+        const el = document.getElementById(`section-${section}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
     }
   }, [searchParams]);
 
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => 
-      prev.includes(sectionId) 
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
-    );
-  };
-
-  const toggleSubsection = (sectionId: string, subsectionId: string) => {
-    const key = `${sectionId}-${subsectionId}`;
-    setExpandedSubsections(prev => 
-      prev.includes(key) 
-        ? prev.filter(id => id !== key)
-        : [...prev, key]
-    );
-  };
-
   return (
     <Layout>
-      {/* Back to Analyzer Button - shown when coming from Analyzer */}
+      {/* Back to Analyzer */}
       {fromAnalyzer && (
         <div className="bg-accent/5 border-b border-accent/20">
           <div className="container mx-auto px-4 py-3">
-            <Link 
+            <Link
               to="/analyzer"
               className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
             >
@@ -96,274 +69,197 @@ export default function Library() {
         </div>
       )}
 
-      {/* Hero Section */}
-      <section className="relative py-16 md:py-20 bg-gradient-to-b from-slate-50 to-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
-              <BookOpen className="w-4 h-4" />
-              <span>Guided by Clarity</span>
-            </div>
-            
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-              Rights Insight
-            </h1>
-            
-            <p className="text-lg md:text-xl text-accent font-medium mb-4">
-              Rights Insight explains how systems actually operate — the rules they don't explain, the power they hold, and the patterns they follow.
-            </p>
-            
-            <p className="text-base text-muted-foreground/80 mb-6">
-              This is not legal advice. It's educational context about how institutions work — 
-              the patterns they follow, the assumptions they make, and the gaps between 
-              what's promised and what happens.
-            </p>
-            
-            {/* Section Questions Preview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-left max-w-2xl mx-auto mt-8">
-              <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="text-accent font-medium shrink-0">Systems & Power:</span>
-                <span>Who has control</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="text-accent font-medium shrink-0">Hidden Rules:</span>
-                <span>What they don't tell you</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="text-accent font-medium shrink-0">Patterns of Harm:</span>
-                <span>Repeated behaviors</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="text-accent font-medium shrink-0">Process Reality:</span>
-                <span>What actually happens</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="text-accent font-medium shrink-0">Evidence Truths:</span>
-                <span>What counts vs doesn't</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="text-accent font-medium shrink-0">Safety & Retaliation:</span>
-                <span>Risks of action</span>
-              </div>
-              <div className="flex items-start gap-2 text-sm text-muted-foreground md:col-span-2 justify-center">
-                <span className="text-accent font-medium shrink-0">Rights in Practice:</span>
-                <span>What rights look like in reality</span>
-              </div>
-            </div>
+      {/* Header — short orientation */}
+      <div className="container pt-12 lg:pt-16 pb-8">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
+            <BookOpen className="w-4 h-4" />
+            <span>Rights Insight</span>
           </div>
-        </div>
-      </section>
-
-      {/* Wellbeing Note */}
-      <section className="py-4 border-y border-border bg-accent/5">
-        <div className="container mx-auto px-4">
-          <p className="text-center text-sm text-muted-foreground">
-            <span className="text-accent font-medium">Wellbeing note:</span>{" "}
-            This content covers difficult realities. Take breaks as needed. You can bookmark sections and return later.
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+            Rights Insight
+          </h1>
+          <p className="text-muted-foreground">
+            How systems actually operate. Plain language. At your pace.
           </p>
         </div>
-      </section>
+      </div>
 
-      {/* Main Content */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="space-y-4">
-            {libraryContent.map((section) => (
-              <LibrarySectionCard
-                key={section.id}
-                section={section}
-                isExpanded={expandedSections.includes(section.id)}
-                expandedSubsections={expandedSubsections}
-                onToggle={() => toggleSection(section.id)}
-                onToggleSubsection={(subsectionId) => toggleSubsection(section.id, subsectionId)}
-                icon={iconMap[section.icon]}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Navigation Help */}
-      <section className="py-12 border-t border-border bg-slate-50">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <h2 className="text-xl font-semibold text-foreground mb-6 text-center">
-            Not sure where to start?
-          </h2>
-          
-          <div className="grid md:grid-cols-2 gap-4">
-            <Link 
-              to="/analyzer"
-              className="p-6 bg-white rounded-xl border border-border hover:border-accent/30 hover:shadow-sm transition-all group"
-            >
-              <h3 className="font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
-                Use the Analyzer
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Answer questions about your situation and receive personalized guidance about which sections are most relevant.
-              </p>
-            </Link>
-            
-            <Link 
-              to="/rights-insight"
-              className="p-6 bg-white rounded-xl border border-border hover:border-accent/30 hover:shadow-sm transition-all group"
-            >
-              <h3 className="font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
-                Browse Educational Guides
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Explore guides organized by system type — police, housing, CPS, employment, and more.
-              </p>
-            </Link>
-          </div>
-
-          {/* Related Connections */}
-          <div className="mt-8 p-6 rounded-xl bg-white border border-border">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Related Platform Areas</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-              <Link to="/support-network" className="flex items-center gap-2 text-accent hover:underline">
-                <Scale className="w-4 h-4" />
-                Support Network
-              </Link>
-              <Link to="/tools" className="flex items-center gap-2 text-accent hover:underline">
-                <FileCheck className="w-4 h-4" />
-                All Tools
-              </Link>
-              <Link to="/public-request-rights" className="flex items-center gap-2 text-accent hover:underline">
-                <FileCheck className="w-4 h-4" />
-                Public Request Rights
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    </Layout>
-  );
-}
-
-// Section Card Component
-interface LibrarySectionCardProps {
-  section: LibrarySection;
-  isExpanded: boolean;
-  expandedSubsections: string[];
-  onToggle: () => void;
-  onToggleSubsection: (subsectionId: string) => void;
-  icon: React.ReactNode;
-}
-
-function LibrarySectionCard({
-  section,
-  isExpanded,
-  expandedSubsections,
-  onToggle,
-  onToggleSubsection,
-  icon
-}: LibrarySectionCardProps) {
-  return (
-    <div id={`section-${section.id}`} className="rounded-xl border border-border bg-white overflow-hidden">
-      {/* Section Header */}
-      <div className="flex items-center gap-2 p-5 hover:bg-slate-50 transition-colors">
-        <button
-          onClick={onToggle}
-          className="flex-1 flex items-center gap-4 text-left"
-        >
-          <div className={cn(
-            "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-            isExpanded ? "bg-accent text-white" : "bg-accent/10 text-accent"
-          )}>
-            {icon}
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <h2 className={cn(
-              "font-semibold text-lg transition-colors",
-              isExpanded ? "text-accent" : "text-foreground"
-            )}>
-              {section.title}
-            </h2>
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {section.description}
+      <div className="container pb-16">
+        {/* Wellbeing note */}
+        <div className="max-w-3xl mx-auto mb-10">
+          <div className="p-3 rounded-xl bg-secondary/50 border border-border">
+            <p className="text-xs text-muted-foreground text-center">
+              This content covers difficult realities. Take breaks as needed. You can bookmark sections and return later.
             </p>
           </div>
-          
-          <ChevronRight className={cn(
-            "w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-200",
-            isExpanded && "rotate-90"
-          )} />
-        </button>
-        
-        <BookmarkButton
-          resourceType="library_guide"
-          resourceId={section.id}
-          resourceTitle={section.title}
-          resourceUrl={`/library?section=${section.id}`}
-          variant="icon"
-        />
-      </div>
-      
-      {/* Subsections */}
-      <div className={cn(
-        "overflow-hidden transition-all duration-300",
-        isExpanded ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
-      )}>
-        <div className="border-t border-border">
-          {section.subsections.map((subsection) => {
-            const isSubExpanded = expandedSubsections.includes(`${section.id}-${subsection.id}`);
-            
+        </div>
+
+        {/* Section Card Grid */}
+        <div className="max-w-3xl mx-auto space-y-3">
+          {libraryContent.map((section) => {
+            const Icon = iconMap[section.icon] || Shield;
+            const isExpanded = expandedSection === section.id;
+
             return (
-              <div key={subsection.id} className="border-b border-border last:border-b-0">
-                {/* Subsection Header */}
+              <div
+                key={section.id}
+                id={`section-${section.id}`}
+                className={cn(
+                  "rounded-xl border bg-card transition-all duration-300 overflow-hidden",
+                  isExpanded
+                    ? "border-primary/30 shadow-lg"
+                    : "border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
+                )}
+              >
+                {/* Section header */}
                 <button
-                  onClick={() => onToggleSubsection(subsection.id)}
-                  className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-slate-50 transition-colors"
+                  onClick={() => setExpandedSection(isExpanded ? null : section.id)}
+                  className="w-full p-5 sm:p-6 flex items-start gap-4 text-left"
                 >
-                  <div className={cn(
-                    "w-1.5 h-1.5 rounded-full shrink-0",
-                    isSubExpanded ? "bg-accent" : "bg-muted-foreground/30"
-                  )} />
-                  <span className={cn(
-                    "font-medium transition-colors",
-                    isSubExpanded ? "text-accent" : "text-foreground"
-                  )}>
-                    {subsection.title}
-                  </span>
-                  <ChevronRight className={cn(
-                    "w-4 h-4 text-muted-foreground ml-auto shrink-0 transition-transform duration-200",
-                    isSubExpanded && "rotate-90"
-                  )} />
+                  <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5 text-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-semibold text-foreground text-base mb-0.5">{section.title}</h2>
+                    <p className="text-sm text-muted-foreground line-clamp-1">{section.description}</p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-xs text-muted-foreground hidden sm:block">
+                      {section.subsections.length} topics
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "w-5 h-5 text-muted-foreground transition-transform duration-300",
+                        isExpanded && "rotate-180"
+                      )}
+                    />
+                  </div>
                 </button>
-                
-                {/* Subsection Content */}
-                <div className={cn(
-                  "overflow-hidden transition-all duration-300",
-                  isSubExpanded ? "max-h-[3000px] opacity-100" : "max-h-0 opacity-0"
-                )}>
-                  <div className="px-5 pb-5 pt-2 pl-9">
-                    {/* Trauma Note */}
-                    {subsection.traumaNote && (
-                      <div className="mb-4 p-3 rounded-lg bg-accent/5 border border-accent/20">
-                        <p className="text-sm text-muted-foreground">
-                          <span className="text-accent font-medium">Note:</span>{" "}
-                          {subsection.traumaNote}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* Content Points */}
-                    <ul className="space-y-3">
-                      {subsection.content.map((point, index) => (
-                        <li key={index} className="flex gap-3 text-sm text-foreground/90 leading-relaxed">
-                          <span className="text-accent/60 shrink-0 mt-1.5">•</span>
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
+
+                {/* Expanded: subsection cards */}
+                <div
+                  className={cn(
+                    "overflow-hidden transition-all duration-300",
+                    isExpanded ? "max-h-[8000px] opacity-100" : "max-h-0 opacity-0"
+                  )}
+                >
+                  <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0 border-t border-border/50 space-y-2 pt-4">
+                    {section.subsections.map((sub) => (
+                      <SubsectionCard key={sub.id} subsection={sub} />
+                    ))}
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Bottom Navigation Pathway */}
+        <div className="max-w-3xl mx-auto mt-16">
+          <h2 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Continue exploring</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[
+              { label: "Educational Guides", href: "/rights-insight", icon: BookOpen },
+              { label: "Support Network", href: "/support-network", icon: Users },
+              { label: "Find Legal Help", href: "/find-help", icon: HelpCircle },
+              { label: "Analyzer", href: "/analyzer", icon: Scale },
+              { label: "Documentation Tools", href: "/tools", icon: Wrench },
+              { label: "Public Records", href: "/public-request-rights", icon: FileText },
+            ].map((nav) => (
+              <Link
+                key={nav.href}
+                to={nav.href}
+                className="group flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <nav.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                  {nav.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="max-w-2xl mx-auto mt-12 text-center">
+          <p className="text-sm text-muted-foreground mb-4">Not sure where to start?</p>
+          <Button variant="hero" size="lg" asChild>
+            <Link to="/analyzer">
+              Start the Analyzer
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </Button>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-border">
+          <Disclaimer className="justify-center" />
+        </div>
       </div>
+    </Layout>
+  );
+}
+
+/** Subsection card with depth toggle */
+function SubsectionCard({ subsection }: { subsection: LibrarySubsection }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [depth, setDepth] = useState<DepthLevel>("quick");
+
+  // Split content into depth buckets
+  const quickPoints = subsection.content.slice(0, 2);
+  const understandPoints = subsection.content.slice(0, 4);
+  const fullPoints = subsection.content;
+
+  return (
+    <div
+      className={cn(
+        "rounded-lg border bg-card/50 transition-all duration-200 overflow-hidden",
+        isOpen
+          ? "border-primary/20"
+          : "border-border/70 hover:border-border hover:bg-card cursor-pointer"
+      )}
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 flex items-center justify-between text-left"
+      >
+        <span className="text-sm font-medium text-foreground">{subsection.title}</span>
+        <ChevronDown
+          className={cn(
+            "w-4 h-4 text-muted-foreground transition-transform duration-200",
+            isOpen && "rotate-180"
+          )}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="px-4 pb-4 pt-0 border-t border-border/50 space-y-4 animate-fade-in">
+          {/* Trauma note */}
+          {subsection.traumaNote && (
+            <div className="mt-3 p-3 rounded-lg bg-accent/5 border border-accent/10">
+              <p className="text-xs text-muted-foreground italic">{subsection.traumaNote}</p>
+            </div>
+          )}
+
+          {/* Depth toggle */}
+          <DepthToggle value={depth} onChange={setDepth} className="mt-3" />
+
+          {/* Content by depth */}
+          <ul className="space-y-2 animate-fade-in">
+            {(depth === "quick" ? quickPoints : depth === "understand" ? understandPoints : fullPoints).map(
+              (point, i) => (
+                <li key={i} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
+                  <span className="text-primary/60 shrink-0 mt-1">•</span>
+                  <span>{point}</span>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
