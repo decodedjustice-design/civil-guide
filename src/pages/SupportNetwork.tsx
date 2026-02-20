@@ -17,7 +17,10 @@ import {
   FileText,
   ArrowRight,
   Info,
-  MapPin
+  ChevronDown,
+  BookOpen,
+  HelpCircle,
+  Wrench
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -28,6 +31,7 @@ import {
   type SupportResource,
   type SystemTag 
 } from "@/data/supportNetworkResources";
+import { cn } from "@/lib/utils";
 
 type FilterId = "all" | SystemTag;
 
@@ -49,11 +53,10 @@ export default function SupportNetwork() {
   const [searchParams] = useSearchParams();
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Read filter from URL on mount
   useEffect(() => {
     const filterParam = searchParams.get("filter");
-    // Handle "general" filter from Analyzer as "all"
     if (filterParam === "general") {
       setActiveFilter("all");
     } else if (filterParam && systemFilterOptions.some(f => f.id === filterParam)) {
@@ -74,38 +77,34 @@ export default function SupportNetwork() {
   const officialResources = filteredResources.filter(r => r.officialStatus === "official");
   const informationalResources = filteredResources.filter(r => r.officialStatus === "informational");
 
-  const activeFilterLabel = systemFilterOptions.find(f => f.id === activeFilter)?.label || "All Resources";
-
   return (
     <Layout>
       <div className="container py-12 lg:py-20">
-        {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
-            <Users className="w-8 h-8 text-primary" />
+        {/* Header — short orientation */}
+        <div className="max-w-3xl mx-auto text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
+            <Users className="w-4 h-4" />
+            <span>Support Network</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
             Support Network
           </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Oversight agencies, enforcement bodies, and complaint offices that may help with your situation. 
-            Washington State and federal resources.
+          <p className="text-muted-foreground">
+            Oversight agencies and complaint offices. Washington State and federal.
           </p>
         </div>
 
-        {/* Wellbeing Note */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <div className="p-4 rounded-xl bg-secondary/50 border border-border">
-            <p className="text-sm text-muted-foreground text-center">
-              You don't need to have everything figured out before reaching out. 
-              Many of these offices can help you understand if your concern falls under their authority.
+        {/* Wellbeing note */}
+        <div className="max-w-3xl mx-auto mb-8">
+          <div className="p-3 rounded-xl bg-secondary/50 border border-border">
+            <p className="text-xs text-muted-foreground text-center">
+              You don't need to have everything figured out before reaching out. Many of these offices can help you understand if your concern falls under their authority.
             </p>
           </div>
         </div>
 
-        {/* Search and Filter */}
-        <div className="max-w-4xl mx-auto mb-8">
-          {/* Search */}
+        {/* Search and Filters */}
+        <div className="max-w-3xl mx-auto mb-8">
           <div className="relative mb-4">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
@@ -116,8 +115,6 @@ export default function SupportNetwork() {
               className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
-
-          {/* Filters */}
           <div className="flex flex-wrap gap-2">
             {systemFilterOptions.map((filter) => {
               const Icon = filterIcons[filter.id] || Shield;
@@ -125,11 +122,12 @@ export default function SupportNetwork() {
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id as FilterId)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5",
                     activeFilter === filter.id
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  }`}
+                  )}
                 >
                   <Icon className="w-3 h-3" />
                   {filter.label.split(" / ")[0]}
@@ -139,106 +137,79 @@ export default function SupportNetwork() {
           </div>
         </div>
 
-        {/* Active filter indicator */}
-        {activeFilter !== "all" && (
-          <div className="max-w-4xl mx-auto mb-6">
-            <p className="text-sm text-muted-foreground">
-              Showing resources for: <span className="text-foreground font-medium">{activeFilterLabel}</span>
-            </p>
-          </div>
-        )}
-
-        {/* Resources */}
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Official Resources */}
+        {/* Resource Cards */}
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Official */}
           {officialResources.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Building2 className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-semibold text-foreground">Official Oversight & Complaint Bodies</h2>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Government agencies with authority to investigate complaints, enforce laws, or require corrective action.
-              </p>
-              <div className="space-y-4">
-                {officialResources.map((resource) => (
-                  <ResourceCard key={resource.id} resource={resource} />
-                ))}
-              </div>
-            </div>
+            <ResourceGroup
+              icon={Building2}
+              title="Official Oversight & Complaint Bodies"
+              subtitle="Government agencies with authority to investigate, enforce, or require corrective action."
+              resources={officialResources}
+              expandedId={expandedId}
+              onToggle={(id) => setExpandedId(expandedId === id ? null : id)}
+            />
           )}
 
-          {/* Informational Resources */}
+          {/* Informational */}
           {informationalResources.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Info className="w-5 h-5 text-muted-foreground" />
-                <h2 className="text-lg font-semibold text-foreground">Informational & Advocacy Resources</h2>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                Organizations that provide information, guidance, or advocacy but may not have direct enforcement authority.
-              </p>
-              <div className="space-y-4">
-                {informationalResources.map((resource) => (
-                  <ResourceCard key={resource.id} resource={resource} />
-                ))}
-              </div>
-            </div>
+            <ResourceGroup
+              icon={Info}
+              title="Informational & Advocacy Resources"
+              subtitle="Organizations that provide information, guidance, or advocacy."
+              resources={informationalResources}
+              expandedId={expandedId}
+              onToggle={(id) => setExpandedId(expandedId === id ? null : id)}
+            />
           )}
 
           {filteredResources.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                No resources found matching your search.
-              </p>
+              <p className="text-muted-foreground">No resources found matching your search.</p>
             </div>
           )}
         </div>
 
-        {/* Related Connections */}
-        <div className="max-w-4xl mx-auto mt-12 p-6 rounded-xl bg-card border border-border">
-          <h3 className="text-sm font-semibold text-foreground mb-4">Related Platform Areas</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <Link to="/library" className="flex items-center gap-2 text-primary hover:underline">
-              <Info className="w-4 h-4" />
-              Rights Insight
-            </Link>
-            <Link to="/rights-insight" className="flex items-center gap-2 text-primary hover:underline">
-              <FileText className="w-4 h-4" />
-              Library Guides
-            </Link>
-            <Link to="/tools" className="flex items-center gap-2 text-primary hover:underline">
-              <Building2 className="w-4 h-4" />
-              All Tools
-            </Link>
-            <Link to="/public-request-rights" className="flex items-center gap-2 text-primary hover:underline">
-              <FileText className="w-4 h-4" />
-              Public Request Rights
-            </Link>
+        {/* Bottom Navigation Pathway */}
+        <div className="max-w-3xl mx-auto mt-16">
+          <h2 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Continue exploring</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[
+              { label: "Rights Insight", href: "/library", icon: BookOpen },
+              { label: "Educational Guides", href: "/rights-insight", icon: FileText },
+              { label: "Find Legal Help", href: "/find-help", icon: HelpCircle },
+              { label: "Analyzer", href: "/analyzer", icon: Scale },
+              { label: "Documentation Tools", href: "/tools", icon: Wrench },
+              { label: "Public Records", href: "/public-request-rights", icon: FileText },
+            ].map((nav) => (
+              <Link
+                key={nav.href}
+                to={nav.href}
+                className="group flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <nav.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                  {nav.label}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
 
         {/* CTA */}
         <div className="max-w-2xl mx-auto mt-12 text-center">
-          <p className="text-muted-foreground mb-6">
-            Not sure which agencies apply to your situation?
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button variant="hero" size="lg" asChild>
-              <Link to="/analyzer">
-                Start the Analyzer
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </Button>
-            <Button variant="soft" size="lg" asChild>
-              <Link to="/rights-insight">
-                Learn About Systems
-              </Link>
-            </Button>
-          </div>
+          <p className="text-sm text-muted-foreground mb-4">Not sure which agencies apply?</p>
+          <Button variant="hero" size="lg" asChild>
+            <Link to="/analyzer">
+              Start the Analyzer
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </Button>
         </div>
 
-        {/* Bottom Disclaimer */}
+        {/* Disclaimer */}
         <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-border">
           <Disclaimer className="justify-center" />
         </div>
@@ -247,15 +218,71 @@ export default function SupportNetwork() {
   );
 }
 
-function ResourceCard({ resource }: { resource: SupportResource }) {
-  const [expanded, setExpanded] = useState(false);
-
+/* ── Resource Group Card ── */
+function ResourceGroup({
+  icon: Icon,
+  title,
+  subtitle,
+  resources,
+  expandedId,
+  onToggle,
+}: {
+  icon: React.ElementType;
+  title: string;
+  subtitle: string;
+  resources: SupportResource[];
+  expandedId: string | null;
+  onToggle: (id: string) => void;
+}) {
   return (
-    <div className="p-5 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-200">
-      <div className="flex items-start gap-3">
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+    <div>
+      <div className="flex items-center gap-2 mb-2">
+        <Icon className="w-5 h-5 text-primary" />
+        <h2 className="text-base font-semibold text-foreground">{title}</h2>
+      </div>
+      <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
+      <div className="space-y-2">
+        {resources.map((resource) => (
+          <ResourceCard
+            key={resource.id}
+            resource={resource}
+            isExpanded={expandedId === resource.id}
+            onToggle={() => onToggle(resource.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Resource Card (progressive reveal) ── */
+function ResourceCard({
+  resource,
+  isExpanded,
+  onToggle,
+}: {
+  resource: SupportResource;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl border bg-card transition-all duration-200 overflow-hidden",
+        isExpanded
+          ? "border-primary/30 shadow-lg"
+          : "border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
+      )}
+    >
+      {/* Collapsed header */}
+      <button
+        onClick={onToggle}
+        className="w-full p-4 sm:p-5 flex items-start gap-3 text-left"
+      >
+        <div className={cn(
+          "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
           resource.officialStatus === "official" ? "bg-primary/20" : "bg-secondary"
-        }`}>
+        )}>
           {resource.officialStatus === "official" ? (
             <Building2 className="w-5 h-5 text-primary" />
           ) : (
@@ -263,32 +290,33 @@ function ResourceCard({ resource }: { resource: SupportResource }) {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-medium text-foreground">{resource.name}</h3>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                resource.jurisdiction === "washington" 
-                  ? "bg-accent/20 text-accent-foreground" 
-                  : "bg-secondary text-muted-foreground"
-              }`}>
-                {resource.jurisdiction === "washington" ? "WA" : "Federal"}
-              </span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                resource.officialStatus === "official" 
-                  ? "bg-primary/20 text-primary" 
-                  : "bg-secondary text-muted-foreground"
-              }`}>
-                {resource.officialStatus === "official" ? "Official" : "Informational"}
-              </span>
-            </div>
-          </div>
-          
-          <p className="text-sm text-muted-foreground mb-3">
-            {resource.whatTheyDo}
-          </p>
+          <h3 className="font-medium text-foreground text-sm">{resource.name}</h3>
+          <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{resource.whatTheyDo}</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className={cn(
+            "text-[10px] px-2 py-0.5 rounded-full",
+            resource.jurisdiction === "washington"
+              ? "bg-accent/20 text-accent-foreground"
+              : "bg-secondary text-muted-foreground"
+          )}>
+            {resource.jurisdiction === "washington" ? "WA" : "Federal"}
+          </span>
+          <ChevronDown className={cn(
+            "w-4 h-4 text-muted-foreground transition-transform duration-200",
+            isExpanded && "rotate-180"
+          )} />
+        </div>
+      </button>
 
-          {/* Contact info */}
-          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-3">
+      {/* Expanded content */}
+      <div className={cn(
+        "overflow-hidden transition-all duration-300",
+        isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+      )}>
+        <div className="px-4 sm:px-5 pb-5 pt-0 border-t border-border/50 space-y-4 pt-4">
+          {/* Contact row */}
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             {resource.phone && (
               <span className="flex items-center gap-1">
                 <Phone className="w-3 h-3" />
@@ -309,38 +337,30 @@ function ResourceCard({ resource }: { resource: SupportResource }) {
             )}
           </div>
 
-          {/* Expand/Collapse */}
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-xs text-primary hover:underline"
-          >
-            {expanded ? "Show less" : "Show more details"}
-          </button>
+          {/* Detail sub-cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <DetailSubCard title="When to Contact" content={resource.whenToContact} />
+            <DetailSubCard title="What They Can Do" content={resource.whatTheyCan} />
+            <DetailSubCard title="What They Cannot Do" content={resource.whatTheyCannot} />
+          </div>
 
-          {/* Expanded content */}
-          {expanded && (
-            <div className="mt-4 pt-4 border-t border-border space-y-3">
-              <div>
-                <h4 className="text-xs font-medium text-foreground mb-1">When to Contact</h4>
-                <p className="text-sm text-muted-foreground">{resource.whenToContact}</p>
-              </div>
-              <div>
-                <h4 className="text-xs font-medium text-foreground mb-1">What They Can Do</h4>
-                <p className="text-sm text-muted-foreground">{resource.whatTheyCan}</p>
-              </div>
-              <div>
-                <h4 className="text-xs font-medium text-foreground mb-1">What They Cannot Do</h4>
-                <p className="text-sm text-muted-foreground">{resource.whatTheyCannot}</p>
-              </div>
-              {resource.notes && (
-                <div className="p-3 rounded-lg bg-secondary/50">
-                  <p className="text-xs text-muted-foreground italic">{resource.notes}</p>
-                </div>
-              )}
+          {resource.notes && (
+            <div className="p-3 rounded-lg bg-secondary/50">
+              <p className="text-xs text-muted-foreground italic">{resource.notes}</p>
             </div>
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ── Detail Sub-Card ── */
+function DetailSubCard({ title, content }: { title: string; content: string }) {
+  return (
+    <div className="p-3 rounded-lg bg-secondary/30 border border-border/50">
+      <h4 className="text-[11px] font-semibold text-foreground mb-1">{title}</h4>
+      <p className="text-xs text-muted-foreground leading-relaxed">{content}</p>
     </div>
   );
 }
