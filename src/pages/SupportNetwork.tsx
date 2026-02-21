@@ -16,8 +16,7 @@ import {
   Heart,
   FileText,
   ArrowRight,
-  Info,
-  ChevronDown,
+  ChevronRight,
   BookOpen,
   HelpCircle,
   Wrench
@@ -33,10 +32,8 @@ import {
 } from "@/data/supportNetworkResources";
 import { cn } from "@/lib/utils";
 
-type FilterId = "all" | SystemTag;
-
-const filterIcons: Record<string, React.ElementType> = {
-  all: Shield,
+/* ── Icon map ── */
+const systemIcons: Record<string, React.ElementType> = {
   police: Shield,
   employment: Briefcase,
   housing: Home,
@@ -49,62 +46,55 @@ const filterIcons: Record<string, React.ElementType> = {
   "public-records": FileText,
 };
 
+/* ── System descriptions ── */
+const systemDescriptions: Record<string, string> = {
+  police: "Law enforcement oversight, complaint offices, and civilian review",
+  employment: "Workplace discrimination, wage issues, and labor rights",
+  housing: "Fair housing enforcement and discrimination complaints",
+  disability: "Disability rights advocacy and accommodation enforcement",
+  courts: "Court procedural information and systemic oversight",
+  incarceration: "Prison and jail oversight, corrections complaints",
+  education: "School civil rights, discipline, and accommodation issues",
+  healthcare: "Healthcare provider complaints and medical rights",
+  government: "Government agency navigation and constituent services",
+  "public-records": "Public records access and open government guidance",
+};
+
 export default function SupportNetwork() {
   const [searchParams] = useSearchParams();
-  const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [expandedSystem, setExpandedSystem] = useState<string | null>(null);
   const [expandedResource, setExpandedResource] = useState<string | null>(null);
 
+  // Auto-expand from URL param
   useEffect(() => {
     const filterParam = searchParams.get("filter");
-    if (filterParam === "general") {
-      setActiveFilter("all");
-    } else if (filterParam && systemFilterOptions.some(f => f.id === filterParam)) {
-      setActiveFilter(filterParam as FilterId);
+    if (filterParam && filterParam !== "all" && filterParam !== "general") {
+      setExpandedSystem(filterParam);
     }
   }, [searchParams]);
 
-  // Auto-expand groups when searching
-  useEffect(() => {
-    if (searchQuery) {
-      setExpandedGroup(null); // let both show inline
-    }
+  // Group resources by system tag (a resource can appear in multiple systems)
+  const systemGroups = useMemo(() => {
+    const systems = systemFilterOptions.filter(f => f.id !== "all");
+    const q = searchQuery.toLowerCase();
+
+    return systems.map(sys => {
+      const resources = supportResources.filter(r => {
+        const inSystem = r.systemTags.includes(sys.id as SystemTag);
+        if (!inSystem) return false;
+        if (!q) return true;
+        return (
+          r.name.toLowerCase().includes(q) ||
+          r.whatTheyDo.toLowerCase().includes(q) ||
+          r.whenToContact.toLowerCase().includes(q)
+        );
+      });
+      return { ...sys, resources };
+    }).filter(g => g.resources.length > 0);
   }, [searchQuery]);
 
-  const filteredResources = useMemo(() => {
-    return supportResources.filter(resource => {
-      const matchesFilter = activeFilter === "all" || 
-        resource.systemTags.includes(activeFilter as SystemTag);
-      const q = searchQuery.toLowerCase();
-      const matchesSearch = !q ||
-        resource.name.toLowerCase().includes(q) ||
-        resource.whatTheyDo.toLowerCase().includes(q) ||
-        resource.whenToContact.toLowerCase().includes(q);
-      return matchesFilter && matchesSearch;
-    });
-  }, [activeFilter, searchQuery]);
-
-  const officialResources = filteredResources.filter(r => r.officialStatus === "official");
-  const informationalResources = filteredResources.filter(r => r.officialStatus === "informational");
-
-  const groups = [
-    {
-      id: "official",
-      icon: Building2,
-      title: "Official Oversight & Complaint Bodies",
-      subtitle: "Government agencies with authority to investigate, enforce, or require corrective action.",
-      resources: officialResources,
-    },
-    {
-      id: "informational",
-      icon: Info,
-      title: "Informational & Advocacy Resources",
-      subtitle: "Organizations that provide information, guidance, or advocacy.",
-      resources: informationalResources,
-    },
-  ].filter(g => g.resources.length > 0);
-
+  // Auto-expand all when searching
   const isSearching = !!searchQuery;
 
   return (
@@ -125,38 +115,16 @@ export default function SupportNetwork() {
             </p>
           </div>
 
-          {/* Search — prominent at top */}
-          <div className="relative mb-4">
+          {/* Search */}
+          <div className="relative mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search agencies and organizations..."
+              placeholder="Search topics, agencies, or organizations..."
               className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
-          </div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {systemFilterOptions.map((filter) => {
-              const Icon = filterIcons[filter.id] || Shield;
-              return (
-                <button
-                  key={filter.id}
-                  onClick={() => setActiveFilter(filter.id as FilterId)}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1.5",
-                    activeFilter === filter.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  )}
-                >
-                  <Icon className="w-3 h-3" />
-                  {filter.label.split(" / ")[0]}
-                </button>
-              );
-            })}
           </div>
 
           {/* Wellbeing note */}
@@ -166,73 +134,73 @@ export default function SupportNetwork() {
             </p>
           </div>
 
-          {/* Resource Group Cards — progressive reveal */}
+          {/* System Category Cards */}
           <div className="space-y-3 mb-16">
-            {groups.map((group) => {
-              const isExpanded = isSearching || expandedGroup === group.id;
-              const Icon = group.icon;
+            {systemGroups.map((group) => {
+              const isExpanded = isSearching || expandedSystem === group.id;
+              const Icon = systemIcons[group.id] || Shield;
+              const description = systemDescriptions[group.id] || "";
 
               return (
                 <div
                   key={group.id}
-                  className="rounded-2xl bg-card border-2 border-border transition-all duration-300 hover:border-primary/30"
+                  className="rounded-2xl bg-card border border-border overflow-hidden transition-all duration-300"
                 >
-                  {/* Group header */}
+                  {/* Category header */}
                   <button
                     onClick={() => {
                       if (!isSearching) {
-                        setExpandedGroup(expandedGroup === group.id ? null : group.id);
+                        setExpandedSystem(expandedSystem === group.id ? null : group.id);
                         setExpandedResource(null);
                       }
                     }}
-                    className="w-full flex items-center gap-4 p-5 text-left cursor-pointer"
+                    className="w-full flex items-center justify-between px-5 py-5 text-left hover:bg-secondary/30 transition-colors cursor-pointer"
                   >
-                    <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <h2 className="font-semibold text-foreground text-sm sm:text-base">{group.title}</h2>
-                        <span className="text-xs text-muted-foreground shrink-0">
-                          {group.resources.length} {group.resources.length === 1 ? "resource" : "resources"}
-                        </span>
+                    <div className="flex items-center gap-4">
+                      <div className="w-11 h-11 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
+                        <Icon className="w-5 h-5 text-accent" />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">{group.subtitle}</p>
+                      <div>
+                        <h2 className="font-semibold text-foreground">{group.label}</h2>
+                        <p className="text-sm text-muted-foreground">
+                          {description} · {group.resources.length} {group.resources.length === 1 ? "resource" : "resources"}
+                        </p>
+                      </div>
                     </div>
-                    {!isSearching && (
-                      <ChevronDown
-                        className={cn(
-                          "w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-300",
-                          isExpanded && "rotate-180"
-                        )}
-                      />
-                    )}
+                    <ChevronRight
+                      className={cn(
+                        "w-5 h-5 text-muted-foreground transition-transform duration-300 shrink-0",
+                        isExpanded && "rotate-90"
+                      )}
+                    />
                   </button>
 
                   {/* Expanded resource list */}
                   {isExpanded && (
-                    <div className="px-5 pb-5 pt-1 border-t border-border/50">
-                      <div className="space-y-2 pt-3">
-                        {group.resources.map((resource) => (
-                          <ResourceCard
-                            key={resource.id}
-                            resource={resource}
-                            isExpanded={expandedResource === resource.id}
-                            onToggle={() =>
-                              setExpandedResource(expandedResource === resource.id ? null : resource.id)
-                            }
-                          />
-                        ))}
-                      </div>
+                    <div className="px-5 pb-5 space-y-2 border-t border-border/50 pt-4">
+                      {group.resources.map((resource) => (
+                        <ResourceCard
+                          key={resource.id}
+                          resource={resource}
+                          isExpanded={expandedResource === resource.id}
+                          onToggle={() =>
+                            setExpandedResource(expandedResource === resource.id ? null : resource.id)
+                          }
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
               );
             })}
 
-            {filteredResources.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No resources found matching your search.</p>
+            {systemGroups.length === 0 && (
+              <div className="text-center py-12 rounded-2xl bg-card border border-border">
+                <p className="text-muted-foreground mb-1">No agencies found matching your search.</p>
+                <p className="text-sm text-muted-foreground/70 mb-4">Try a broader term like "police" or "housing."</p>
+                <Button variant="outline" onClick={() => setSearchQuery("")}>
+                  Clear Search
+                </Button>
               </div>
             )}
           </div>
@@ -304,10 +272,10 @@ function ResourceCard({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-secondary/30 transition-all duration-200 overflow-hidden",
+        "rounded-xl border overflow-hidden transition-all duration-200",
         isExpanded
-          ? "border-primary/30 shadow-md bg-secondary/50"
-          : "border-border/50 hover:border-primary/20 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer"
+          ? "border-accent/30 shadow-md bg-secondary/40"
+          : "border-border/50 bg-secondary/20 hover:border-accent/20 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer"
       )}
     >
       <button
@@ -316,10 +284,10 @@ function ResourceCard({
       >
         <div className={cn(
           "w-9 h-9 rounded-lg flex items-center justify-center shrink-0",
-          resource.officialStatus === "official" ? "bg-primary/15" : "bg-card"
+          resource.officialStatus === "official" ? "bg-accent/15" : "bg-card"
         )}>
           {resource.officialStatus === "official" ? (
-            <Building2 className="w-4 h-4 text-primary" />
+            <Building2 className="w-4 h-4 text-accent" />
           ) : (
             <Globe className="w-4 h-4 text-muted-foreground" />
           )}
@@ -330,22 +298,22 @@ function ResourceCard({
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span className={cn(
-            "text-[10px] px-2 py-0.5 rounded-full",
+            "text-[10px] px-2 py-0.5 rounded-full font-medium",
             resource.jurisdiction === "washington"
               ? "bg-accent/20 text-accent-foreground"
               : "bg-secondary text-muted-foreground"
           )}>
             {resource.jurisdiction === "washington" ? "WA" : "Federal"}
           </span>
-          <ChevronDown className={cn(
+          <ChevronRight className={cn(
             "w-4 h-4 text-muted-foreground transition-transform duration-200",
-            isExpanded && "rotate-180"
+            isExpanded && "rotate-90"
           )} />
         </div>
       </button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 pt-0 border-t border-border/30 space-y-3 pt-3">
+        <div className="px-4 pb-4 border-t border-border/30 space-y-3 pt-3">
           {/* Contact */}
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             {resource.phone && (
