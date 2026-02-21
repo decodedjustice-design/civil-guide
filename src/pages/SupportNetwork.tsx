@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { 
   Building2, 
@@ -53,7 +53,8 @@ export default function SupportNetwork() {
   const [searchParams] = useSearchParams();
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [expandedResource, setExpandedResource] = useState<string | null>(null);
 
   useEffect(() => {
     const filterParam = searchParams.get("filter");
@@ -64,47 +65,67 @@ export default function SupportNetwork() {
     }
   }, [searchParams]);
 
-  const filteredResources = supportResources.filter(resource => {
-    const matchesFilter = activeFilter === "all" || 
-      resource.systemTags.includes(activeFilter as SystemTag);
-    const matchesSearch = 
-      resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.whatTheyDo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.whenToContact.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  // Auto-expand groups when searching
+  useEffect(() => {
+    if (searchQuery) {
+      setExpandedGroup(null); // let both show inline
+    }
+  }, [searchQuery]);
+
+  const filteredResources = useMemo(() => {
+    return supportResources.filter(resource => {
+      const matchesFilter = activeFilter === "all" || 
+        resource.systemTags.includes(activeFilter as SystemTag);
+      const q = searchQuery.toLowerCase();
+      const matchesSearch = !q ||
+        resource.name.toLowerCase().includes(q) ||
+        resource.whatTheyDo.toLowerCase().includes(q) ||
+        resource.whenToContact.toLowerCase().includes(q);
+      return matchesFilter && matchesSearch;
+    });
+  }, [activeFilter, searchQuery]);
 
   const officialResources = filteredResources.filter(r => r.officialStatus === "official");
   const informationalResources = filteredResources.filter(r => r.officialStatus === "informational");
 
+  const groups = [
+    {
+      id: "official",
+      icon: Building2,
+      title: "Official Oversight & Complaint Bodies",
+      subtitle: "Government agencies with authority to investigate, enforce, or require corrective action.",
+      resources: officialResources,
+    },
+    {
+      id: "informational",
+      icon: Info,
+      title: "Informational & Advocacy Resources",
+      subtitle: "Organizations that provide information, guidance, or advocacy.",
+      resources: informationalResources,
+    },
+  ].filter(g => g.resources.length > 0);
+
+  const isSearching = !!searchQuery;
+
   return (
     <Layout>
       <div className="container py-12 lg:py-20">
-        {/* Header — short orientation */}
-        <div className="max-w-3xl mx-auto text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
-            <Users className="w-4 h-4" />
-            <span>Support Network</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Support Network
-          </h1>
-          <p className="text-muted-foreground">
-            Oversight agencies and complaint offices. Washington State and federal.
-          </p>
-        </div>
-
-        {/* Wellbeing note */}
-        <div className="max-w-3xl mx-auto mb-8">
-          <div className="p-3 rounded-xl bg-secondary/50 border border-border">
-            <p className="text-xs text-muted-foreground text-center">
-              You don't need to have everything figured out before reaching out. Many of these offices can help you understand if your concern falls under their authority.
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
+              <Users className="w-4 h-4" />
+              <span>Support Network</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+              Support Network
+            </h1>
+            <p className="text-muted-foreground">
+              Oversight agencies and complaint offices. Washington State and federal.
             </p>
           </div>
-        </div>
 
-        {/* Search and Filters */}
-        <div className="max-w-3xl mx-auto mb-8">
+          {/* Search — prominent at top */}
           <div className="relative mb-4">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
@@ -115,7 +136,9 @@ export default function SupportNetwork() {
               className="w-full h-12 pl-12 pr-4 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-2 mb-4">
             {systemFilterOptions.map((filter) => {
               const Icon = filterIcons[filter.id] || Shield;
               return (
@@ -135,127 +158,140 @@ export default function SupportNetwork() {
               );
             })}
           </div>
-        </div>
 
-        {/* Resource Cards */}
-        <div className="max-w-3xl mx-auto space-y-6">
-          {/* Official */}
-          {officialResources.length > 0 && (
-            <ResourceGroup
-              icon={Building2}
-              title="Official Oversight & Complaint Bodies"
-              subtitle="Government agencies with authority to investigate, enforce, or require corrective action."
-              resources={officialResources}
-              expandedId={expandedId}
-              onToggle={(id) => setExpandedId(expandedId === id ? null : id)}
-            />
-          )}
-
-          {/* Informational */}
-          {informationalResources.length > 0 && (
-            <ResourceGroup
-              icon={Info}
-              title="Informational & Advocacy Resources"
-              subtitle="Organizations that provide information, guidance, or advocacy."
-              resources={informationalResources}
-              expandedId={expandedId}
-              onToggle={(id) => setExpandedId(expandedId === id ? null : id)}
-            />
-          )}
-
-          {filteredResources.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No resources found matching your search.</p>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Navigation Pathway */}
-        <div className="max-w-3xl mx-auto mt-16">
-          <h2 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Continue exploring</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              { label: "Rights Insight", href: "/library", icon: BookOpen },
-              { label: "Educational Guides", href: "/rights-insight", icon: FileText },
-              { label: "Find Legal Help", href: "/find-help", icon: HelpCircle },
-              { label: "Analyzer", href: "/analyzer", icon: Scale },
-              { label: "Documentation Tools", href: "/tools", icon: Wrench },
-              { label: "Public Records", href: "/public-request-rights", icon: FileText },
-            ].map((nav) => (
-              <Link
-                key={nav.href}
-                to={nav.href}
-                className="group flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
-              >
-                <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                  <nav.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                  {nav.label}
-                </span>
-              </Link>
-            ))}
+          {/* Wellbeing note */}
+          <div className="p-3 rounded-xl bg-secondary/50 border border-border mb-8">
+            <p className="text-xs text-muted-foreground text-center">
+              You don't need to have everything figured out before reaching out. Many of these offices can help you understand if your concern falls under their authority.
+            </p>
           </div>
-        </div>
 
-        {/* CTA */}
-        <div className="max-w-2xl mx-auto mt-12 text-center">
-          <p className="text-sm text-muted-foreground mb-4">Not sure which agencies apply?</p>
-          <Button variant="hero" size="lg" asChild>
-            <Link to="/analyzer">
-              Start the Analyzer
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </Button>
-        </div>
+          {/* Resource Group Cards — progressive reveal */}
+          <div className="space-y-3 mb-16">
+            {groups.map((group) => {
+              const isExpanded = isSearching || expandedGroup === group.id;
+              const Icon = group.icon;
 
-        {/* Disclaimer */}
-        <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-border">
-          <Disclaimer className="justify-center" />
+              return (
+                <div
+                  key={group.id}
+                  className="rounded-2xl bg-card border-2 border-border transition-all duration-300 hover:border-primary/30"
+                >
+                  {/* Group header */}
+                  <button
+                    onClick={() => {
+                      if (!isSearching) {
+                        setExpandedGroup(expandedGroup === group.id ? null : group.id);
+                        setExpandedResource(null);
+                      }
+                    }}
+                    className="w-full flex items-center gap-4 p-5 text-left cursor-pointer"
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <h2 className="font-semibold text-foreground text-sm sm:text-base">{group.title}</h2>
+                        <span className="text-xs text-muted-foreground shrink-0">
+                          {group.resources.length} {group.resources.length === 1 ? "resource" : "resources"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{group.subtitle}</p>
+                    </div>
+                    {!isSearching && (
+                      <ChevronDown
+                        className={cn(
+                          "w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-300",
+                          isExpanded && "rotate-180"
+                        )}
+                      />
+                    )}
+                  </button>
+
+                  {/* Expanded resource list */}
+                  {isExpanded && (
+                    <div className="px-5 pb-5 pt-1 border-t border-border/50">
+                      <div className="space-y-2 pt-3">
+                        {group.resources.map((resource) => (
+                          <ResourceCard
+                            key={resource.id}
+                            resource={resource}
+                            isExpanded={expandedResource === resource.id}
+                            onToggle={() =>
+                              setExpandedResource(expandedResource === resource.id ? null : resource.id)
+                            }
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {filteredResources.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No resources found matching your search.</p>
+              </div>
+            )}
+          </div>
+
+          {/* CTA */}
+          <div className="p-8 rounded-2xl bg-gradient-to-br from-card to-card/50 border border-border text-center mb-16">
+            <h2 className="text-xl font-semibold text-foreground mb-3">
+              Not sure which agencies apply?
+            </h2>
+            <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
+              The Civil Rights Analyzer helps you understand your situation and shows which agencies may be relevant.
+            </p>
+            <Button variant="hero" size="lg" asChild>
+              <Link to="/analyzer">
+                Start the Analyzer
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </Button>
+          </div>
+
+          {/* Bottom Navigation Pathway */}
+          <div>
+            <h2 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Continue exploring</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {[
+                { label: "Rights Insight", href: "/library", icon: BookOpen },
+                { label: "Educational Guides", href: "/rights-insight", icon: FileText },
+                { label: "Find Legal Help", href: "/find-help", icon: HelpCircle },
+                { label: "Analyzer", href: "/analyzer", icon: Scale },
+                { label: "Documentation Tools", href: "/tools", icon: Wrench },
+                { label: "Public Records", href: "/public-request-rights", icon: FileText },
+              ].map((nav) => (
+                <Link
+                  key={nav.href}
+                  to={nav.href}
+                  className="group flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <nav.icon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                    {nav.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="mt-12 pt-8 border-t border-border">
+            <Disclaimer className="justify-center" />
+          </div>
         </div>
       </div>
     </Layout>
   );
 }
 
-/* ── Resource Group Card ── */
-function ResourceGroup({
-  icon: Icon,
-  title,
-  subtitle,
-  resources,
-  expandedId,
-  onToggle,
-}: {
-  icon: React.ElementType;
-  title: string;
-  subtitle: string;
-  resources: SupportResource[];
-  expandedId: string | null;
-  onToggle: (id: string) => void;
-}) {
-  return (
-    <div>
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className="w-5 h-5 text-primary" />
-        <h2 className="text-base font-semibold text-foreground">{title}</h2>
-      </div>
-      <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
-      <div className="space-y-2">
-        {resources.map((resource) => (
-          <ResourceCard
-            key={resource.id}
-            resource={resource}
-            isExpanded={expandedId === resource.id}
-            onToggle={() => onToggle(resource.id)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── Resource Card (progressive reveal) ── */
+/* ── Resource Card (nested progressive reveal) ── */
 function ResourceCard({
   resource,
   isExpanded,
@@ -268,25 +304,24 @@ function ResourceCard({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-card transition-all duration-200 overflow-hidden",
+        "rounded-xl border bg-secondary/30 transition-all duration-200 overflow-hidden",
         isExpanded
-          ? "border-primary/30 shadow-lg"
-          : "border-border hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 cursor-pointer"
+          ? "border-primary/30 shadow-md bg-secondary/50"
+          : "border-border/50 hover:border-primary/20 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer"
       )}
     >
-      {/* Collapsed header */}
       <button
         onClick={onToggle}
-        className="w-full p-4 sm:p-5 flex items-start gap-3 text-left"
+        className="w-full p-4 flex items-start gap-3 text-left cursor-pointer"
       >
         <div className={cn(
-          "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
-          resource.officialStatus === "official" ? "bg-primary/20" : "bg-secondary"
+          "w-9 h-9 rounded-lg flex items-center justify-center shrink-0",
+          resource.officialStatus === "official" ? "bg-primary/15" : "bg-card"
         )}>
           {resource.officialStatus === "official" ? (
-            <Building2 className="w-5 h-5 text-primary" />
+            <Building2 className="w-4 h-4 text-primary" />
           ) : (
-            <Globe className="w-5 h-5 text-muted-foreground" />
+            <Globe className="w-4 h-4 text-muted-foreground" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -309,13 +344,9 @@ function ResourceCard({
         </div>
       </button>
 
-      {/* Expanded content */}
-      <div className={cn(
-        "overflow-hidden transition-all duration-300",
-        isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-      )}>
-        <div className="px-4 sm:px-5 pb-5 pt-0 border-t border-border/50 space-y-4 pt-4">
-          {/* Contact row */}
+      {isExpanded && (
+        <div className="px-4 pb-4 pt-0 border-t border-border/30 space-y-3 pt-3">
+          {/* Contact */}
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             {resource.phone && (
               <span className="flex items-center gap-1">
@@ -345,20 +376,19 @@ function ResourceCard({
           </div>
 
           {resource.notes && (
-            <div className="p-3 rounded-lg bg-secondary/50">
+            <div className="p-3 rounded-lg bg-card/60">
               <p className="text-xs text-muted-foreground italic">{resource.notes}</p>
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-/* ── Detail Sub-Card ── */
 function DetailSubCard({ title, content }: { title: string; content: string }) {
   return (
-    <div className="p-3 rounded-lg bg-secondary/30 border border-border/50">
+    <div className="p-3 rounded-lg bg-card/50 border border-border/30">
       <h4 className="text-[11px] font-semibold text-foreground mb-1">{title}</h4>
       <p className="text-xs text-muted-foreground leading-relaxed">{content}</p>
     </div>
