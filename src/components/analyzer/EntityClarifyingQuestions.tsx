@@ -21,6 +21,7 @@ export function EntityClarifyingQuestions({
   const [answeredCount, setAnsweredCount] = useState(0);
   const [entityTags, setEntityTags] = useState<EntityTags>({});
   const [certaintyMap, setCertaintyMap] = useState<Record<string, CertaintyLevel>>({});
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [showMoreRevealed, setShowMoreRevealed] = useState(false);
 
   const hasQuestions = questions.length > 0;
@@ -51,6 +52,7 @@ export function EntityClarifyingQuestions({
   const handleAnswer = (question: EntityQuestion, answerId: string) => {
     const newTags = question.applyAnswer(answerId, entityTags);
     setEntityTags(newTags);
+    setSelectedAnswers(prev => ({ ...prev, [question.id]: answerId }));
     setAnsweredCount(prev => {
       const next = prev + 1;
       if (!showMoreRevealed && next >= INITIAL_VISIBLE && questions.length > INITIAL_VISIBLE) {
@@ -103,7 +105,7 @@ export function EntityClarifyingQuestions({
       <div className="space-y-5">
         {visibleQuestions.map((question) => {
           const certainty = certaintyMap[question.id];
-          const isAnswered = certainty === 'not_sure' || certainty === 'dont_know' || (certainty === 'know' && answeredCount > 0);
+          const hasSelectedAnswer = !!selectedAnswers[question.id];
 
           return (
             <div
@@ -145,29 +147,49 @@ export function EntityClarifyingQuestions({
                 <>
                   {/* Show actual options */}
                   <div className="space-y-1.5">
-                    {question.options.map((option) => (
-                      <button
-                        key={option.id}
-                        onClick={() => handleAnswer(question, option.id)}
-                        className="w-full p-2.5 rounded-lg bg-muted/20 border border-border hover:border-primary/50 hover:bg-primary/5 text-left transition-all duration-200 group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
-                            {option.label}
-                          </span>
-                          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-                        </div>
-                      </button>
-                    ))}
+                    {question.options.map((option) => {
+                      const isSelected = selectedAnswers[question.id] === option.id;
+                      return (
+                        <button
+                          key={option.id}
+                          onClick={() => handleAnswer(question, option.id)}
+                          className={`w-full p-2.5 rounded-lg border text-left transition-all duration-200 group ${
+                            isSelected
+                              ? 'bg-primary/15 border-primary text-primary ring-1 ring-primary/30'
+                              : 'bg-muted/20 border-border hover:border-primary/50 hover:bg-primary/5'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={`text-xs font-medium transition-colors ${
+                              isSelected ? 'text-primary' : 'text-foreground group-hover:text-primary'
+                            }`}>
+                              {option.label}
+                            </span>
+                            {isSelected ? (
+                              <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-primary-foreground" />
+                              </div>
+                            ) : (
+                              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground italic">
                     It's okay if you're unsure — this can be clarified later.
                   </p>
                 </>
               ) : (
-                <p className="text-xs text-muted-foreground">
-                  No problem — you can revisit this anytime.
-                </p>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {certainty === 'not_sure' ? 'Marked as unsure' : 'Skipped'} — you can revisit this anytime.
+                  </p>
+                </div>
               )}
             </div>
           );
