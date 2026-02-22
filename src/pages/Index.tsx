@@ -23,9 +23,9 @@ const Index = () => {
 
         <div className="relative z-10 container max-w-4xl text-center px-6 py-32">
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white/95 leading-[1.1] tracking-tight mb-8 animate-fade-up">
-            See Clearly.<br />
-            Organize What Matters.<br />
-            Move Forward.
+            Your Truth.<br />
+            Your Timeline.<br />
+            Your Justice.
           </h1>
 
           <p className="text-lg sm:text-xl text-white/65 font-light tracking-wide mb-12 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.2s", opacity: 0 }}>
