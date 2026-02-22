@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -232,6 +233,9 @@ export default function Transcription() {
 
   return (
     <Layout>
+      <div className="container max-w-5xl mx-auto px-4 pt-6">
+        <EducationalNotice />
+      </div>
       <div className="container py-12 lg:py-20">
         <div className="max-w-3xl mx-auto">
           {/* Header */}

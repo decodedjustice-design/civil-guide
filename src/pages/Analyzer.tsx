@@ -18,6 +18,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { CaseProfileForm } from "@/components/analyzer/CaseProfileForm";
 import { AnalyzerResults, generateResultContent } from "@/components/analyzer/AnalyzerResults";
 import { EntityClarifyingQuestions } from "@/components/analyzer/EntityClarifyingQuestions";
@@ -1747,6 +1748,9 @@ export default function Analyzer() {
 
   return (
     <Layout>
+      <div className="container max-w-5xl mx-auto px-4 pt-6">
+        <EducationalNotice />
+      </div>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">

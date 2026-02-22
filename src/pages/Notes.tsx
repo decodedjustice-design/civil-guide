@@ -4,6 +4,7 @@ import { FileText, Plus, Trash2, Edit2, Save, X, ArrowLeft } from "lucide-react"
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -104,6 +105,9 @@ export default function Notes() {
 
   return (
     <Layout>
+      <div className="container max-w-5xl mx-auto px-4 pt-6">
+        <EducationalNotice />
+      </div>
       <div className="container py-12 lg:py-20">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
