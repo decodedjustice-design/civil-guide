@@ -18,6 +18,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { NextStepBanner } from "@/components/shared/NextStepBanner";
 import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { CaseProfileForm } from "@/components/analyzer/CaseProfileForm";
 import { AnalyzerResults, generateResultContent } from "@/components/analyzer/AnalyzerResults";
@@ -1948,6 +1949,19 @@ export default function Analyzer() {
               }
             }}
           />
+          
+          {/* Cross-tool navigation */}
+          <div className="bg-stone-50 px-4 py-8">
+            <div className="max-w-2xl mx-auto">
+              <NextStepBanner
+                heading="Now that you understand your situation"
+                steps={[
+                  { label: "Organize your evidence", description: "Upload and catalog documents that support your case.", href: "/evidence-vault" },
+                  { label: "Prepare an intake packet", description: "Bundle everything for an attorney consultation.", href: "/intake-packet" },
+                ]}
+              />
+            </div>
+          </div>
           
           {/* Disclaimer at bottom */}
           <div className="bg-stone-50 px-4 pb-12">

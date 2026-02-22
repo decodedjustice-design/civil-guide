@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, ArrowLeft, LogIn } from "lucide-react";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { NextStepBanner } from "@/components/shared/NextStepBanner";
 import { EducationalNotice } from "@/components/shared/EducationalNotice";
 
 type ViewState = "form" | "preview";
@@ -264,6 +265,15 @@ export default function IntakePacket() {
             packetId={savedPacket?.id}
           />
         ) : null}
+
+        {/* Cross-tool navigation */}
+        <NextStepBanner
+          heading="When your packet is ready"
+          steps={[
+            { label: "Find legal help", description: "Search for attorneys who handle your type of case.", href: "/find-help" },
+            { label: "Track attorney outreach", description: "Log consultations and follow-ups.", href: "/attorney-contacts" },
+          ]}
+        />
 
         {/* Educational Disclaimer */}
         <div className="mt-8">
