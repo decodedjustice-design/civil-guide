@@ -4,6 +4,7 @@ import { FileText, Plus, Trash2, Edit2, Save, X, ArrowLeft } from "lucide-react"
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { NextStepBanner } from "@/components/shared/NextStepBanner";
 import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -251,8 +252,17 @@ export default function Notes() {
             </div>
           )}
 
+          {/* Cross-tool navigation */}
+          <NextStepBanner
+            heading="Where to go next"
+            steps={[
+              { label: "Analyze your situation", description: "Understand which systems and rights are involved.", href: "/analyzer" },
+              { label: "Upload evidence", description: "Store documents and files securely in your vault.", href: "/evidence-vault" },
+            ]}
+          />
+
           {/* Disclaimer */}
-          <div className="mt-12 pt-8 border-t border-border">
+          <div className="mt-8 pt-8 border-t border-border">
             <Disclaimer className="justify-center" />
           </div>
         </div>

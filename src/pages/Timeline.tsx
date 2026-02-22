@@ -5,6 +5,7 @@ import { Clock, Plus, Trash2, Edit2, Save, X, ArrowLeft, Calendar, FolderOpen, F
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { NextStepBanner } from "@/components/shared/NextStepBanner";
 import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -317,20 +318,14 @@ export default function Timeline() {
             </div>
           )}
 
-          {/* Related Tools */}
-          <div className="mt-12 p-6 rounded-xl bg-card border border-border">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Related Tools</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-              <Link to="/evidence-vault" className="flex items-center gap-2 text-primary hover:underline">
-                <FolderOpen className="w-4 h-4" />
-                Evidence Vault — Store documents and files
-              </Link>
-              <Link to="/notes" className="flex items-center gap-2 text-primary hover:underline">
-                <FileText className="w-4 h-4" />
-                Notes — Record details and observations
-              </Link>
-            </div>
-          </div>
+          {/* Cross-tool navigation */}
+          <NextStepBanner
+            heading="Next in your journey"
+            steps={[
+              { label: "Store your evidence", description: "Upload documents, photos, and files that support your timeline.", href: "/evidence-vault" },
+              { label: "Analyze your situation", description: "Identify which systems and rights are involved.", href: "/analyzer" },
+            ]}
+          />
 
           {/* Disclaimer */}
           <div className="mt-12 pt-8 border-t border-border">

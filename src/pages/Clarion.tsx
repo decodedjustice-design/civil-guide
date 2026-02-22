@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PenLine, Clock, ChevronRight, Shield, FileText, HelpCircle, Save } from "lucide-react";
 import EmergingStructure from "@/components/clarion/EmergingStructure";
+import { NextStepBanner } from "@/components/shared/NextStepBanner";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -327,8 +328,17 @@ export default function Clarion() {
             </div>
           )}
 
+          {/* Cross-tool navigation */}
+          <NextStepBanner
+            heading="When you're ready to go deeper"
+            steps={[
+              { label: "Analyze your situation", description: "Identify which system you're dealing with and what rights apply.", href: "/analyzer" },
+              { label: "Build your timeline", description: "Organize events in chronological order.", href: "/timeline" },
+            ]}
+          />
+
           {/* Wellbeing note */}
-          <div className="mt-12 pt-6 border-t border-border/20">
+          <div className="mt-8 pt-6 border-t border-border/20">
             <p className="text-xs text-muted-foreground/70 text-center font-light flex items-center justify-center gap-1.5">
               <HelpCircle className="w-3.5 h-3.5" />
               You can pause anytime and return later. There is no deadline here.

@@ -4,6 +4,7 @@ import { FolderOpen, Plus, Trash2, Save, X, ArrowLeft, File, Image, FileText as 
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { NextStepBanner } from "@/components/shared/NextStepBanner";
 import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -526,23 +527,17 @@ export default function EvidenceVault() {
             </div>
           )}
 
-          {/* Related Tools */}
-          <div className="mt-12 p-6 rounded-xl bg-card border border-border">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Related Tools</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-              <Link to="/timeline" className="flex items-center gap-2 text-primary hover:underline">
-                <Clock className="w-4 h-4" />
-                Timeline — Build a chronological record
-              </Link>
-              <Link to="/transcription" className="flex items-center gap-2 text-primary hover:underline">
-                <FileTextIcon className="w-4 h-4" />
-                Transcription — Convert audio to text
-              </Link>
-            </div>
-          </div>
+          {/* Cross-tool navigation */}
+          <NextStepBanner
+            heading="Next in your journey"
+            steps={[
+              { label: "Prepare your intake packet", description: "Bundle your case info for an attorney consultation.", href: "/intake-packet" },
+              { label: "Build your timeline", description: "Organize events chronologically alongside your evidence.", href: "/timeline" },
+            ]}
+          />
 
           {/* Disclaimer */}
-          <div className="mt-12 pt-8 border-t border-border">
+          <div className="mt-8 pt-8 border-t border-border">
             <Disclaimer className="justify-center" />
           </div>
         </div>
