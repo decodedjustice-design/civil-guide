@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -1584,6 +1584,7 @@ export default function Analyzer() {
   const [showEntityQuestions, setShowEntityQuestions] = useState(false);
   
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { 
     isAnalyzing, 
     analysis, 
@@ -1661,6 +1662,12 @@ export default function Analyzer() {
     if (currentQuestionIndex < currentFollowUps.length - 1) {
       setStep(step + 1);
     } else {
+      // Auth gate: redirect to login if not authenticated
+      if (!user) {
+        navigate('/auth?redirect=/analyzer');
+        return;
+      }
+      
       setShowResults(true);
       
       // Trigger AI generation when showing results
@@ -1669,7 +1676,7 @@ export default function Analyzer() {
         generateAIResults({
           systemId: selectedSystem,
           systemLabel: systemInfo.label,
-          patternStrength: 'none', // Will be updated after pattern analysis
+          patternStrength: 'none',
           location: 'Washington State',
         });
       }
