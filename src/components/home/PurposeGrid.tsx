@@ -68,8 +68,8 @@ export function PurposeGrid() {
     },
     {
       icon: Brain,
-      title: "Prepare intelligently",
-      description: "Structure your thoughts and information for clarity.",
+      title: "See how it works",
+      description: "Understand the connected process that brings clarity to your situation.",
       href: "/tools"
     },
     {
