@@ -63,7 +63,7 @@ const Index = () => {
       <section className="bg-cream py-24 sm:py-32">
         <div className="container max-w-3xl text-center px-6">
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-10 tracking-tight">
-            What this is for
+            A Platform That Lets You Decide
           </h2>
           <div className="space-y-6 text-lg sm:text-xl text-muted-foreground leading-relaxed font-light text-left max-w-2xl mx-auto">
             <p>
