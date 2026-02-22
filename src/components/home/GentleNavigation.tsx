@@ -32,7 +32,7 @@ export function GentleNavigation() {
 
         <div className="grid grid-cols-2 gap-2">
           <PathOption label="Analyzer" href="/analyzer" />
-          <PathOption label="Tools" href="/tools" />
+          <PathOption label="How It Works" href="/tools" />
           <PathOption label="Library" href="/library" />
           <PathOption label="Support" href="/support-network" />
         </div>
