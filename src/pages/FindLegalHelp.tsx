@@ -318,6 +318,86 @@ export default function FindLegalHelp() {
             </div>
           </section>
 
+          {/* ── Trauma & Wellness Support ── */}
+          <section className="mb-10">
+            <div className="flex items-center gap-4 mb-5">
+              <div className="w-11 h-11 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
+                <Heart className="w-5 h-5 text-accent" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Trauma & Wellness Support</h2>
+                <p className="text-sm text-muted-foreground">Crisis lines, victim advocates, and trauma-informed care — WA &amp; Federal</p>
+              </div>
+            </div>
+
+            <div className="max-w-4xl space-y-3">
+              <p className="text-sm text-muted-foreground font-light mb-4">
+                Civil rights situations can be deeply stressful. These resources specialize in helping people who have experienced institutional harm, trauma, or crisis.
+              </p>
+
+              {/* Crisis Lines */}
+              <div className="rounded-xl bg-card border border-border p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                  Crisis &amp; Immediate Support
+                </h3>
+                <div className="space-y-3">
+                  {[
+                    { name: "988 Suicide & Crisis Lifeline", phone: "988", desc: "24/7 crisis support. Call or text 988.", url: "https://988lifeline.org" },
+                    { name: "Crisis Text Line", phone: "Text HOME to 741741", desc: "Free 24/7 crisis counseling via text.", url: "https://www.crisistextline.org" },
+                    { name: "National Domestic Violence Hotline", phone: "1-800-799-7233", desc: "24/7 support for domestic violence survivors.", url: "https://www.thehotline.org" },
+                    { name: "WA State Crisis Line", phone: "1-866-427-4747", desc: "Washington State 24/7 crisis and referral line.", url: "https://www.crisisconnections.org" },
+                  ].map((resource) => (
+                    <div key={resource.name} className="flex items-start justify-between gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">{resource.name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{resource.desc}</p>
+                        <p className="text-xs text-primary font-medium mt-1">{resource.phone}</p>
+                      </div>
+                      <a href={resource.url} target="_blank" rel="noopener noreferrer" className="shrink-0 mt-1">
+                        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground hover:text-primary transition-colors" />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Victim Advocates & Trauma Specialists */}
+              <div className="rounded-xl bg-card border border-border p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-3">Victim Advocates &amp; Trauma-Informed Services</h3>
+                <div className="space-y-3">
+                  {[
+                    { name: "WA State Crime Victim Service Center", desc: "Free advocacy, counseling referrals, and help navigating systems for crime victims.", phone: "1-800-822-1067", url: "https://www.commerce.wa.gov/serving-communities/crime-victims-and-witnesses/" },
+                    { name: "Office for Victims of Crime (Federal)", desc: "Federal resources and funding for victim services nationwide.", phone: "N/A", url: "https://ovc.ojp.gov" },
+                    { name: "National Center for Victims of Crime", desc: "Information, referrals, and advocacy for all types of victimization.", phone: "1-855-4-VICTIM", url: "https://victimsofcrime.org" },
+                    { name: "WA Coalition Against Domestic Violence", desc: "Statewide network of shelters, advocates, and legal help for DV survivors.", phone: "(206) 795-4244", url: "https://wscadv.org" },
+                    { name: "Psychology Today — Trauma Therapist Finder", desc: "Search for trauma-specialized therapists in your area. Filter by insurance, specialty, and identity.", phone: "N/A", url: "https://www.psychologytoday.com/us/therapists/trauma-and-ptsd/wa" },
+                  ].map((resource) => (
+                    <div key={resource.name} className="flex items-start justify-between gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">{resource.name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{resource.desc}</p>
+                        {resource.phone !== "N/A" && (
+                          <p className="text-xs text-primary font-medium mt-1">{resource.phone}</p>
+                        )}
+                      </div>
+                      <a href={resource.url} target="_blank" rel="noopener noreferrer" className="shrink-0 mt-1">
+                        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground hover:text-primary transition-colors" />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Wellbeing note */}
+              <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                <p className="text-sm text-muted-foreground text-center">
+                  <strong className="text-foreground">You don't have to do this alone.</strong> Reaching out for support — legal or emotional — is a sign of strength, not weakness.
+                </p>
+              </div>
+            </div>
+          </section>
+
           {/* ── Law Libraries Cards ── */}
           <section className="mb-10">
             <div className="flex items-center gap-4 mb-5">
