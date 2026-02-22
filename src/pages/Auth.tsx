@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { lovable } from "@/integrations/lovable/index";
-import heroImage from "@/assets/hero-courthouse-cinematic.jpg";
+import heroImage from "@/assets/hero-auth-workspace.jpg";
 
 /**
  * Validates redirect URL to prevent open redirect attacks.
