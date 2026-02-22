@@ -1878,20 +1878,35 @@ export default function Analyzer() {
                 </h2>
 
                 <div className="space-y-3">
-                  {currentQuestion.options.map((option) => (
-                    <button
-                      key={option.id}
-                      onClick={() => handleAnswer(currentQuestion.id, option.id)}
-                      className="w-full p-4 rounded-xl bg-secondary border-2 border-transparent hover:border-primary/50 hover:bg-secondary/80 text-left transition-all duration-200 group cursor-pointer active:scale-[0.99]"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-foreground group-hover:text-primary transition-colors">
-                          {option.label}
-                        </span>
-                        <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                      </div>
-                    </button>
-                  ))}
+                  {currentQuestion.options.map((option) => {
+                    const isSelected = answers[currentQuestion.id] === option.id;
+                    return (
+                      <button
+                        key={option.id}
+                        onClick={() => handleAnswer(currentQuestion.id, option.id)}
+                        className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 group cursor-pointer active:scale-[0.99] ${
+                          isSelected
+                            ? 'bg-primary/15 border-primary ring-1 ring-primary/30'
+                            : 'bg-secondary border-transparent hover:border-primary/50 hover:bg-secondary/80'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className={`font-medium transition-colors ${
+                            isSelected ? 'text-primary' : 'text-foreground group-hover:text-primary'
+                          }`}>
+                            {option.label}
+                          </span>
+                          {isSelected ? (
+                            <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                              <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                            </div>
+                          ) : (
+                            <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
