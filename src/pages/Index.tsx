@@ -23,13 +23,13 @@ const Index = () => {
 
         <div className="relative z-10 container max-w-4xl text-center px-6 py-32">
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white/95 leading-[1.1] tracking-tight mb-8 animate-fade-up">
-            Your Truth.<br />
-            Your Timeline.<br />
-            Your Justice.
+            See Clearly.<br />
+            Organize What Matters.<br />
+            Move Forward.
           </h1>
 
           <p className="text-lg sm:text-xl text-white/65 font-light tracking-wide mb-12 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.2s", opacity: 0 }}>
-            A private, structured space to document what happened, preserve evidence, and move forward with clarity.
+            A private, structured space to understand what's happening, organize your situation, and decide your next step with clarity.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-fade-up" style={{ animationDelay: "0.4s", opacity: 0 }}>
@@ -37,7 +37,7 @@ const Index = () => {
               to={user ? "/dashboard" : "/auth"}
               className="inline-flex items-center justify-center h-14 px-10 bg-primary hover:bg-maroon-light text-white font-medium text-base tracking-wide rounded transition-all duration-300 hover:shadow-lg"
             >
-              {user ? "Go to Dashboard" : "Begin Your Record"}
+              {user ? "Go to Dashboard" : "Get Started"}
             </Link>
             <Link
               to="/tools"
@@ -53,22 +53,25 @@ const Index = () => {
         </div>
       </section>
 
-      {/* SECTION 2 — WHY DOCUMENTATION MATTERS */}
+      {/* SECTION 2 — WHAT THIS IS FOR */}
       <section className="bg-cream py-24 sm:py-32">
         <div className="container max-w-3xl text-center px-6">
           <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-10 tracking-tight">
-            Why documentation matters
+            What this is for
           </h2>
-          <div className="space-y-6 text-lg sm:text-xl text-muted-foreground leading-relaxed font-light">
+          <div className="space-y-6 text-lg sm:text-xl text-muted-foreground leading-relaxed font-light text-left max-w-2xl mx-auto">
             <p>
-              When something happens, details fade. Witnesses move on.
-              Records get harder to obtain. The clearest version of events
-              is the one created closest to when they occurred.
+              This site is built for people dealing with police, courts, housing, child welfare, employers, medical systems, or other institutions where something doesn't feel right and clarity is hard to find.
             </p>
             <p>
-              A structured, private record gives you clarity — and clarity
-              creates options. Whether you pursue legal action, file a complaint,
-              or simply want to preserve the truth, documentation is the foundation.
+              It helps you organize what feels scattered and overwhelming, understand what's actually happening, and bring everything into one clear structure so you can make a grounded decision.
+            </p>
+            <p>
+              The tools work together to reduce confusion, connect the pieces, and replace reaction with understanding.
+            </p>
+            <p className="text-foreground font-normal">
+              It doesn't tell you what to do.<br />
+              It helps you see clearly, choose your direction, and organize your move forward.
             </p>
           </div>
           <div className="w-16 h-px bg-gold/40 mx-auto mt-12" />
@@ -139,33 +142,33 @@ const Index = () => {
             {[
               {
                 icon: FileText,
-                title: "Private Record Journal",
-                description: "A secure, chronological space to document what happened — in your own words, at your own pace.",
+                title: "Clarify Your Thoughts",
+                description: "Write freely about what happened. The platform helps you organize your words into a clear, structured picture.",
               },
               {
                 icon: Shield,
-                title: "Evidence Organizer",
-                description: "Upload and categorize medical records, videos, reports, witness statements, and financial documents.",
+                title: "Understand the System",
+                description: "Learn how the system you're dealing with actually works — who has power, what usually happens, and where people get stuck.",
               },
               {
                 icon: Clock,
-                title: "Deadline Awareness",
+                title: "Know What's Time-Sensitive",
                 description: "Surface time-sensitive information calmly, so you can make informed decisions without pressure.",
               },
               {
                 icon: BookOpen,
-                title: "Legal Language Decoder",
+                title: "Decode Legal Language",
                 description: "AI-powered plain-language explanations of legal documents. Educational only — never legal advice.",
               },
               {
                 icon: Search,
-                title: "Structured Timeline Builder",
-                description: "Build a clear, chronological record of events to see the full picture and identify patterns.",
+                title: "See the Full Picture",
+                description: "Bring events, people, and details together in a timeline so patterns and connections become visible.",
               },
               {
                 icon: Lock,
-                title: "Secure Dashboard",
-                description: "Your private command center — evidence, notes, timeline, and preparation tools in one place.",
+                title: "Organize Everything",
+                description: "Your private space — notes, files, timeline, and tools in one place so nothing gets lost.",
               },
             ].map((card) => (
               <div
@@ -195,7 +198,7 @@ const Index = () => {
               </div>
               <h3 className="font-serif text-2xl font-medium text-foreground mb-4">Clarity</h3>
               <p className="text-muted-foreground text-sm leading-relaxed font-light">
-                Confusion is normal when systems are fragmented. We help you see the structure, understand the process, and organize what matters.
+                When systems are fragmented, confusion is the first barrier. We help you see the structure, understand the process, and organize what matters.
               </p>
             </div>
             <div className="text-center">
@@ -204,7 +207,7 @@ const Index = () => {
               </div>
               <h3 className="font-serif text-2xl font-medium text-foreground mb-4">Justice</h3>
               <p className="text-muted-foreground text-sm leading-relaxed font-light">
-                Every person deserves the ability to document their experience and prepare their case — regardless of resources or legal expertise.
+                Every person deserves the ability to understand their situation and organize their path forward — regardless of resources or legal expertise.
               </p>
             </div>
             <div className="text-center">
@@ -248,13 +251,13 @@ const Index = () => {
             Ready to begin?
           </h2>
           <p className="text-lg text-muted-foreground font-light mb-12 max-w-xl mx-auto">
-            Your record is private. Your pace is yours. Start whenever you're ready.
+            Your space is private. Your pace is yours. Start whenever you're ready.
           </p>
           <Link
             to={user ? "/dashboard" : "/auth"}
             className="inline-flex items-center justify-center h-14 px-12 bg-primary hover:bg-maroon-light text-white font-medium text-base tracking-wide rounded transition-all duration-300 hover:shadow-lg"
           >
-            {user ? "Go to Dashboard" : "Begin Your Record"}
+            {user ? "Go to Dashboard" : "Get Started"}
           </Link>
         </div>
       </section>
