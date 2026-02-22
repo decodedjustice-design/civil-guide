@@ -1,74 +1,44 @@
 
 
-## Rebuild Self-Help Tools into "Your Path to Clarity"
+## Dashboard Phase-Aware Progress Tracking
 
-**What changes:** Replace the current flat grid of tools on `/self-help` with a 5-phase guided system flow that shows how each tool connects to the next.
+**What changes:** Enhance Dashboard with a 5-phase progress overview showing completion signals, plus a "Suggested Next Step" block.
 
-**File affected:** `src/pages/SelfHelpTools.tsx` (full rewrite of content/layout, same route)
-
----
-
-### New Page Structure
-
-The page title becomes **"Your Path to Clarity"** with a subtitle reinforcing the guided nature of the platform.
-
-**Layout:** A vertical flow of 5 collapsible phase sections, each containing:
-- Phase number and title
-- 2-3 sentence reassurance/explanation
-- Tool cards (linking to existing routes) with brief descriptions
-- A subtle connector line between phases showing progression
+**File affected:** `src/pages/Dashboard.tsx` (rewrite layout, same route)
 
 ---
 
-### The 5 Phases
+### New Dashboard Structure
 
-**Phase 1 -- Tell Your Story**
-- Clarion (/clarion)
-- Timeline Creator (/timeline)
-- Notes (/notes)
-- Transcription Tool (/transcription)
+1. **Welcome header** (keep existing)
+2. **Phase Progress Bar** — 5 horizontal phase indicators showing which phases have activity (based on DB counts: evidence, timeline, notes, analyzer results, intake packets, attorney contacts)
+3. **Suggested Next Step** — contextual CTA based on what's empty (no notes → "Start with Clarion", no evidence → "Upload your first document", etc.)
+4. **Quick Actions** — streamlined to 4 primary actions (keep existing)
+5. **Case Stats** — keep existing counters
+6. **Resource links** — keep existing 3-column guidance/legal prep/support
+7. **Privacy note** — keep existing
 
-**Phase 2 -- Understand Your Case**
-- Civil Rights Analyzer (/analyzer)
-- Legal Decoder (/legal-decoder)
-- Rights Insight (/rights-insight)
-- Library (/library)
+### Data Queries
 
-**Phase 3 -- Organize Your Proof**
-- Evidence Vault (/evidence-vault)
-- Public Request Rights (/public-request-rights)
+Expand the existing stats fetch to also count:
+- `analyzer_results` (Phase 2 signal)
+- `intake_packets` (Phase 4 signal)
+- `attorney_contacts` (Phase 5 signal)
+- `clarion_entries` (Phase 1 signal)
 
-**Phase 4 -- Prepare for Action**
-- Legal Templates (/legal-templates)
-- Intake Packet (/intake-packet)
-- Courts and Filing Info (/courts-filing-info)
+### Phase Completion Logic
 
-**Phase 5 -- Connect and Advocate**
-- Find Legal Help (/find-help)
-- Attorney Contacts (/attorney-contacts)
-- Saved Attorneys (/saved-attorneys)
-- Support Network (/support-network)
-
----
-
-### Design Details
-
-- Maintains the existing dark theme and warm styling
-- Each phase card uses the existing card/border styling patterns
-- Vertical connector lines (thin gold/accent) between phases
-- Wellbeing note at the top: "You don't have to follow every phase. Start wherever feels right."
-- Auth-aware: tools requiring login show the redirect pattern already in place
-- "Coming Soon" items (Deadlines, Case Summary Dashboard, Export Tools) appear as muted preview items within their respective phases with a "Coming Soon" badge -- no dead-end links
-- Educational Guides section at bottom is removed (already accessible via Library/Rights Insight)
-- Sign-in CTA block remains for logged-out users
+Each phase shows a simple visual indicator:
+- **Started** (has ≥1 item in any related table)
+- **Not started** (no items yet)
+- No numeric percentages — keeps it pressure-free per the command-center spec
 
 ---
 
 ### Technical Notes
 
-- Single file change: `src/pages/SelfHelpTools.tsx`
-- No new components, no new routes, no backend changes
-- All linked routes already exist and are functional
-- Keeps the existing auth check pattern for protected tools
-- Uses existing UI components (Card, Button, icons from lucide-react)
+- Single file change
+- No new routes, no new components, no backend changes
+- All tables already exist in the schema
+- Maintains existing auth redirect pattern
 
