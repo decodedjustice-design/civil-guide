@@ -10,7 +10,7 @@ import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 const navItems = [
   { name: "Home", href: "/" },
   { name: "Private Record", href: "/dashboard" },
-  { name: "Tools", href: "/tools" },
+  { name: "How It Works", href: "/tools" },
   { name: "Learn", href: "/library" },
   { name: "Find Help", href: "/find-help" },
   { name: "About", href: "/about" },

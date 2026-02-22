@@ -43,7 +43,7 @@ export function GuidedEntry() {
         <div className="max-w-xl mx-auto grid gap-4">
           <EntryPath icon={Search} label="Analyzer" href="/analyzer" />
           <EntryPath icon={BookOpen} label="Library" href="/library" />
-          <EntryPath icon={Wrench} label="Tools" href="/tools" />
+          <EntryPath icon={Wrench} label="How It Works" href="/tools" />
           <EntryPath icon={Users} label="Support" href="/support-network" />
         </div>
       </div>
