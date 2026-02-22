@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, ArrowLeft, LogIn } from "lucide-react";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { EducationalNotice } from "@/components/shared/EducationalNotice";
 
 type ViewState = "form" | "preview";
 
@@ -214,6 +215,9 @@ export default function IntakePacket() {
 
   return (
     <Layout>
+      <div className="container max-w-3xl mx-auto px-4 pt-6">
+        <EducationalNotice />
+      </div>
       <div className="container max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">

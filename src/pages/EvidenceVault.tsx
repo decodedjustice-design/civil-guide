@@ -4,6 +4,7 @@ import { FolderOpen, Plus, Trash2, Save, X, ArrowLeft, File, Image, FileText as 
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -207,6 +208,9 @@ export default function EvidenceVault() {
 
   return (
     <Layout>
+      <div className="container max-w-5xl mx-auto px-4 pt-6">
+        <EducationalNotice />
+      </div>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">
