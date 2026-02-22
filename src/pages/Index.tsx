@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Shield, Lock, Eye, FileText, Clock, Search, BookOpen, Scale, PenLine, HelpCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -6,6 +7,18 @@ import heroImage from "@/assets/hero-private-studio.jpg";
 
 const Index = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Handle OAuth redirect: if user just signed in via Google and has a stored redirect target
+  useEffect(() => {
+    if (user) {
+      const storedRedirect = sessionStorage.getItem("auth_redirect");
+      if (storedRedirect) {
+        sessionStorage.removeItem("auth_redirect");
+        navigate(storedRedirect, { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   return (
     <Layout>

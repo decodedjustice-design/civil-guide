@@ -40,7 +40,14 @@ export default function Auth() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate(redirectTo, { replace: true });
+      // Check for a stored redirect (from OAuth flow)
+      const storedRedirect = sessionStorage.getItem("auth_redirect");
+      if (storedRedirect) {
+        sessionStorage.removeItem("auth_redirect");
+        navigate(getValidatedRedirect(storedRedirect), { replace: true });
+      } else {
+        navigate(redirectTo, { replace: true });
+      }
     }
   }, [user, navigate, redirectTo]);
 
@@ -95,6 +102,8 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
+      // Store redirect target before OAuth navigates away
+      sessionStorage.setItem("auth_redirect", redirectTo);
       const { error } = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
       });
