@@ -54,14 +54,25 @@ const Index = () => {
       </section>
 
       {/* BANNER — WHAT THIS IS FOR */}
-      <div className="bg-cream/80 border-y border-border/30 py-6 sm:py-8">
-        <div className="container max-w-4xl px-6">
-          <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed text-center">
-            This platform is built for people dealing with police, courts, housing, child welfare, employers, medical systems, or other institutions where something doesn't feel right and clarity is hard to find. It helps you organize what feels scattered, understand what's actually happening, and move forward with a grounded decision.{" "}
-            <span className="text-foreground/80 font-normal">It doesn't tell you what to do — it helps you see clearly and choose your direction.</span>
-          </p>
+      <section className="bg-cream py-24 sm:py-32">
+        <div className="container max-w-3xl text-center px-6">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-10 tracking-tight">
+            What this is for
+          </h2>
+          <div className="space-y-6 text-lg sm:text-xl text-muted-foreground leading-relaxed font-light text-left max-w-2xl mx-auto">
+            <p>
+              This platform is built for people dealing with police, courts, housing, child welfare, employers, medical systems, or other institutions where something doesn't feel right and clarity is hard to find.
+            </p>
+            <p>
+              It helps you organize what feels scattered, understand what's actually happening, and move forward with a grounded decision.
+            </p>
+            <p className="text-foreground/80 font-normal">
+              It doesn't tell you what to do — it helps you see clearly and choose your direction.
+            </p>
+          </div>
+          <div className="w-16 h-px bg-gold/40 mx-auto mt-12" />
         </div>
-      </div>
+      </section>
 
       {/* SECTION — HOW WOULD YOU LIKE TO BEGIN? */}
       <section className="bg-background py-24 sm:py-32">
