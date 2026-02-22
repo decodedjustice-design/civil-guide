@@ -8,7 +8,14 @@ import {
   Shield, 
   Upload,
   Scale,
-  Activity
+  Activity,
+  CheckCircle2,
+  Circle,
+  Feather,
+  Search,
+  Archive,
+  Briefcase,
+  Users
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,6 +26,17 @@ interface CaseStats {
   timelineCount: number;
   notesCount: number;
   lastActivity: string | null;
+  clarionCount: number;
+  analyzerCount: number;
+  intakeCount: number;
+  attorneyContactCount: number;
+}
+
+interface PhaseInfo {
+  number: number;
+  title: string;
+  icon: React.ElementType;
+  started: boolean;
 }
 
 export default function Dashboard() {
@@ -29,6 +47,10 @@ export default function Dashboard() {
     timelineCount: 0,
     notesCount: 0,
     lastActivity: null,
+    clarionCount: 0,
+    analyzerCount: 0,
+    intakeCount: 0,
+    attorneyContactCount: 0,
   });
 
   useEffect(() => {
@@ -41,13 +63,16 @@ export default function Dashboard() {
     if (!user) return;
 
     const fetchStats = async () => {
-      const [evidenceRes, timelineRes, notesRes] = await Promise.all([
+      const [evidenceRes, timelineRes, notesRes, clarionRes, analyzerRes, intakeRes, attorneyRes] = await Promise.all([
         supabase.from("evidence").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("timeline_entries").select("id", { count: "exact", head: true }).eq("user_id", user.id),
         supabase.from("notes").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("clarion_entries").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("analyzer_results").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("intake_packets").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("attorney_contacts").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
 
-      // Get last activity from most recent entries
       const { data: recentEvidence } = await supabase
         .from("evidence")
         .select("updated_at")
@@ -72,6 +97,10 @@ export default function Dashboard() {
         timelineCount: timelineRes.count || 0,
         notesCount: notesRes.count || 0,
         lastActivity: dates[0] || null,
+        clarionCount: clarionRes.count || 0,
+        analyzerCount: analyzerRes.count || 0,
+        intakeCount: intakeRes.count || 0,
+        attorneyContactCount: attorneyRes.count || 0,
       });
     };
 
@@ -89,6 +118,62 @@ export default function Dashboard() {
   }
 
   const displayName = user.email?.split("@")[0] || "there";
+
+  // Phase definitions with started logic
+  const phases: PhaseInfo[] = [
+    {
+      number: 1,
+      title: "Tell Your Story",
+      icon: Feather,
+      started: stats.clarionCount > 0 || stats.notesCount > 0 || stats.timelineCount > 0,
+    },
+    {
+      number: 2,
+      title: "Understand Your Case",
+      icon: Search,
+      started: stats.analyzerCount > 0,
+    },
+    {
+      number: 3,
+      title: "Organize Your Proof",
+      icon: Archive,
+      started: stats.evidenceCount > 0,
+    },
+    {
+      number: 4,
+      title: "Prepare for Action",
+      icon: Briefcase,
+      started: stats.intakeCount > 0,
+    },
+    {
+      number: 5,
+      title: "Connect & Advocate",
+      icon: Users,
+      started: stats.attorneyContactCount > 0,
+    },
+  ];
+
+  // Suggested next step logic
+  const getSuggestedStep = () => {
+    if (stats.clarionCount === 0 && stats.notesCount === 0 && stats.timelineCount === 0) {
+      return { text: "Start by writing down what happened", href: "/clarion", label: "Open Clarion" };
+    }
+    if (stats.analyzerCount === 0) {
+      return { text: "Understand what system you're dealing with", href: "/analyzer", label: "Open Analyzer" };
+    }
+    if (stats.evidenceCount === 0) {
+      return { text: "Upload your first piece of evidence", href: "/evidence-vault", label: "Open Evidence Vault" };
+    }
+    if (stats.intakeCount === 0) {
+      return { text: "Build your intake packet for an attorney", href: "/intake-packet", label: "Create Intake Packet" };
+    }
+    if (stats.attorneyContactCount === 0) {
+      return { text: "Find and reach out to an attorney", href: "/find-help", label: "Find Legal Help" };
+    }
+    return { text: "You're making strong progress — keep building your record", href: "/justice-place", label: "Continue" };
+  };
+
+  const suggestedStep = getSuggestedStep();
 
   const primaryActions = [
     {
@@ -137,6 +222,65 @@ export default function Dashboard() {
           <p className="text-lg text-white/50 font-light tracking-wide animate-fade-up" style={{ animationDelay: "0.15s", opacity: 0 }}>
             Your private civil-rights documentation workspace.
           </p>
+        </div>
+      </section>
+
+      {/* Phase Progress Bar */}
+      <section className="bg-cream py-10 sm:py-12">
+        <div className="container max-w-5xl px-6">
+          <h2 className="font-serif text-xl font-medium text-foreground mb-6">Your Journey</h2>
+          <div className="flex items-center gap-0">
+            {phases.map((phase, index) => (
+              <div key={phase.number} className="flex items-center flex-1 min-w-0">
+                <div className="flex flex-col items-center text-center flex-1">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
+                    phase.started 
+                      ? "border-gold bg-gold/15 text-gold" 
+                      : "border-border bg-card text-muted-foreground/40"
+                  }`}>
+                    {phase.started ? (
+                      <CheckCircle2 className="w-5 h-5" strokeWidth={1.5} />
+                    ) : (
+                      <Circle className="w-5 h-5" strokeWidth={1.5} />
+                    )}
+                  </div>
+                  <p className={`text-xs mt-2 font-medium tracking-wide leading-tight ${
+                    phase.started ? "text-foreground" : "text-muted-foreground"
+                  }`}>
+                    {phase.title}
+                  </p>
+                </div>
+                {index < phases.length - 1 && (
+                  <div className={`h-px flex-shrink-0 w-6 sm:w-10 mt-[-1rem] ${
+                    phase.started ? "bg-gold/40" : "bg-border"
+                  }`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Suggested Next Step */}
+      <section className="bg-cream-warm py-8">
+        <div className="container max-w-5xl px-6">
+          <div className="bg-card border border-gold/20 rounded-lg p-6 flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+                <ArrowRight className="w-4 h-4 text-gold" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground tracking-wide mb-0.5">Suggested Next Step</p>
+                <p className="text-sm font-medium text-foreground">{suggestedStep.text}</p>
+              </div>
+            </div>
+            <Link
+              to={suggestedStep.href}
+              className="text-sm font-medium text-primary hover:text-maroon-light transition-colors whitespace-nowrap"
+            >
+              {suggestedStep.label} →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -208,7 +352,6 @@ export default function Dashboard() {
       <section className="bg-cream py-12 sm:py-16">
         <div className="container max-w-5xl px-6">
           <div className="grid sm:grid-cols-3 gap-6">
-            {/* Guidance */}
             <div className="bg-card border border-border/50 rounded-lg p-7">
               <h3 className="font-serif text-xl font-medium text-foreground mb-4">Guidance</h3>
               <p className="text-sm text-muted-foreground font-light mb-5 leading-relaxed">
@@ -230,7 +373,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Legal Prep */}
             <div className="bg-card border border-border/50 rounded-lg p-7">
               <h3 className="font-serif text-xl font-medium text-foreground mb-4">Legal Prep</h3>
               <p className="text-sm text-muted-foreground font-light mb-5 leading-relaxed">
@@ -252,7 +394,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Support */}
             <div className="bg-card border border-border/50 rounded-lg p-7">
               <h3 className="font-serif text-xl font-medium text-foreground mb-4">Support</h3>
               <p className="text-sm text-muted-foreground font-light mb-5 leading-relaxed">
