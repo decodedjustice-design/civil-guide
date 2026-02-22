@@ -317,9 +317,9 @@ function PhaseSection({
                     >
                       {tool.title}
                     </h3>
-                    {tool.comingSoon && (
-                      <span className="px-1.5 py-0.5 text-[10px] rounded bg-muted text-muted-foreground">
-                        Coming Soon
+                {tool.comingSoon && (
+                      <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-accent/10 text-accent/70 border border-accent/20 font-medium tracking-wide uppercase">
+                        In Progress
                       </span>
                     )}
                   </div>
