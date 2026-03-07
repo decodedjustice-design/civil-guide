@@ -44,6 +44,7 @@ const systemIcons: Record<string, React.ElementType> = {
   healthcare: Stethoscope,
   government: Building2,
   "public-records": FileText,
+  cps_dcyf: Users,
 };
 
 /* ── System descriptions ── */
