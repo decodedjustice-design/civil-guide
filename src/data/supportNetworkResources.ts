@@ -335,7 +335,7 @@ export const supportResources: SupportResource[] = [
     id: "dcyf-ombuds",
     name: "Washington DCYF Constituent Services",
     jurisdiction: "washington",
-    systemTags: ["education", "disability"],
+    systemTags: ["cps_dcyf"],
     whatTheyDo: "Handles concerns and questions about DCYF services and child welfare cases.",
     whenToContact: "When you need help navigating DCYF processes or want to raise a concern.",
     whatTheyCan: "Answer questions, connect you with case supervisors, escalate concerns within DCYF.",
