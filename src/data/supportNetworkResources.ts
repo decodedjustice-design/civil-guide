@@ -360,4 +360,5 @@ export const systemFilterOptions = [
   { id: "healthcare", label: "Healthcare" },
   { id: "government", label: "Government Benefits" },
   { id: "public-records", label: "Public Records" },
+  { id: "cps_dcyf", label: "CPS / DCYF (Family Rights)" },
 ] as const;

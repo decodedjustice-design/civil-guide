@@ -59,6 +59,7 @@ const systemDescriptions: Record<string, string> = {
   healthcare: "Healthcare provider complaints and medical rights",
   government: "Government agency navigation and constituent services",
   "public-records": "Public records access and open government guidance",
+  cps_dcyf: "Child welfare, DCYF oversight, and family rights advocacy",
 };
 
 export default function SupportNetwork() {
