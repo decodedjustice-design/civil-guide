@@ -11,7 +11,8 @@ export type SystemTag =
   | "education"
   | "healthcare"
   | "government"
-  | "public-records";
+  | "public-records"
+  | "cps_dcyf";
 
 export interface SupportResource {
   id: string;
