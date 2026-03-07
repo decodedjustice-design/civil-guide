@@ -332,6 +332,20 @@ export const supportResources: SupportResource[] = [
 
   // ===== CPS/DCYF SPECIFIC =====
   {
+    id: "ofco",
+    name: "Office of the Family and Children's Ombuds (OFCO)",
+    jurisdiction: "washington",
+    systemTags: ["cps_dcyf"],
+    whatTheyDo: "Independent state agency that investigates complaints about DCYF/CPS actions and helps families understand their rights.",
+    whenToContact: "When you have concerns about how DCYF or CPS handled your case, or need help understanding the system.",
+    whatTheyCan: "Investigate complaints, review case decisions, recommend corrective action, help you understand your rights.",
+    whatTheyCannot: "Override DCYF decisions, provide legal representation, or remove children from care.",
+    officialStatus: "official",
+    website: "https://ofco.wa.gov/",
+    phone: "1-800-571-7321",
+    notes: "OFCO is independent from DCYF. You do not need a lawyer to file a complaint.",
+  },
+  {
     id: "dcyf-ombuds",
     name: "Washington DCYF Constituent Services",
     jurisdiction: "washington",
@@ -344,6 +358,20 @@ export const supportResources: SupportResource[] = [
     website: "https://www.dcyf.wa.gov/contact-us",
     phone: "1-866-363-4276",
     notes: "This is within DCYF, not independent oversight. For independent review, contact OFCO.",
+  },
+  {
+    id: "teamchild-support",
+    name: "TeamChild",
+    jurisdiction: "washington",
+    systemTags: ["cps_dcyf", "education"],
+    whatTheyDo: "Legal advocacy for youth in foster care, juvenile justice, and education systems.",
+    whenToContact: "When a young person needs help with dependency cases, school discipline, or youth rights.",
+    whatTheyCan: "Provide legal advocacy, help with education access, assist with dependency proceedings.",
+    whatTheyCannot: "Represent adults, handle custody disputes, or provide ongoing case management.",
+    officialStatus: "official",
+    website: "https://teamchild.org/",
+    phone: "(206) 322-2444",
+    notes: "For youth under 21 in Washington state systems.",
   },
 ];
 
