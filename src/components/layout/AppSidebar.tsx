@@ -109,7 +109,7 @@ export function AppSidebar() {
           );
 
           return (
-            <SidebarGroup key={group.label} defaultOpen={isGroupActive || group.label === "Overview"}>
+            <SidebarGroup key={group.label}>
               <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 font-medium px-3">
                 {group.label}
               </SidebarGroupLabel>
