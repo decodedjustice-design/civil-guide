@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-paperwork.png";
+import { emptyStateNoDocuments } from "@/assets/index";
 
 interface Evidence {
   id: string;
