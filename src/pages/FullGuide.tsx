@@ -379,17 +379,8 @@ export default function FullGuide() {
 
   return (
     <Layout>
-      {/* Hero Image Banner */}
-      <section className="relative overflow-hidden">
-        {/* Background image */}
-        <div className="absolute inset-0">
-          {heroImage ? (
-            <img src={heroImage} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full bg-secondary" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
-        </div>
+      {/* Hero Image Banner with Parallax */}
+      <ParallaxHero heroImage={heroImage} />
 
         <div className="container relative pt-8 pb-12 lg:pt-12 lg:pb-16">
           <div className="max-w-3xl mx-auto">
