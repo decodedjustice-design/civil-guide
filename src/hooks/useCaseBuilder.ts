@@ -70,18 +70,6 @@ export function useCaseBuilder() {
 
   const currentStepIndex = CASE_BUILDER_STEPS.findIndex((s) => s.id === currentStep);
   
-  const goToStep = (step: CaseBuilderStep) => setCurrentStep(step);
-  const goNext = () => {
-    if (currentStepIndex < CASE_BUILDER_STEPS.length - 1) {
-      setCurrentStep(CASE_BUILDER_STEPS[currentStepIndex + 1].id);
-    }
-  };
-  const goBack = () => {
-    if (currentStepIndex > 0) {
-      setCurrentStep(CASE_BUILDER_STEPS[currentStepIndex - 1].id);
-    }
-  };
-
   const isStepComplete = (step: CaseBuilderStep): boolean => {
     switch (step) {
       case "incident-intake": return progress.incidentIntakeComplete;
@@ -90,6 +78,30 @@ export function useCaseBuilder() {
       case "legal-issue-mapping": return progress.legalIssuesIdentified;
       case "case-packet": return progress.casePacketGenerated;
       default: return false;
+    }
+  };
+
+  const isStepUnlocked = (step: CaseBuilderStep): boolean => {
+    const stepIndex = CASE_BUILDER_STEPS.findIndex((s) => s.id === step);
+    if (stepIndex === 0) return true; // First step always unlocked
+    // A step is unlocked if the previous step is complete
+    const prevStep = CASE_BUILDER_STEPS[stepIndex - 1];
+    return isStepComplete(prevStep.id);
+  };
+
+  const goToStep = (step: CaseBuilderStep) => {
+    if (isStepUnlocked(step)) {
+      setCurrentStep(step);
+    }
+  };
+  const goNext = () => {
+    if (currentStepIndex < CASE_BUILDER_STEPS.length - 1) {
+      setCurrentStep(CASE_BUILDER_STEPS[currentStepIndex + 1].id);
+    }
+  };
+  const goBack = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStep(CASE_BUILDER_STEPS[currentStepIndex - 1].id);
     }
   };
 
