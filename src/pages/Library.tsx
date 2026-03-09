@@ -70,19 +70,31 @@ export default function Library() {
         </div>
       )}
 
-      {/* Header — short orientation */}
-      <div className="container pt-12 lg:pt-16 pb-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
-            <BookOpen className="w-4 h-4" />
-            <span>Rights Insight</span>
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={bannerLibrary}
+            alt=""
+            className="w-full h-full object-cover opacity-40"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
+        </div>
+        
+        {/* Header — short orientation */}
+        <div className="container relative pt-12 lg:pt-16 pb-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
+              <BookOpen className="w-4 h-4" />
+              <span>Rights Insight</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+              Rights Insight
+            </h1>
+            <p className="text-muted-foreground">
+              How systems actually operate. Plain language. At your pace.
+            </p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Rights Insight
-          </h1>
-          <p className="text-muted-foreground">
-            How systems actually operate. Plain language. At your pace.
-          </p>
         </div>
       </div>
 
