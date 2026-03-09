@@ -181,6 +181,7 @@ export default function Dashboard() {
       });
       setRecentActivity(activities.slice(0, 8));
       setAnalyzerInsights(recentAn.data || []);
+      setJusticeCase(justiceCaseRes.data || null);
     };
 
     fetchAll();
