@@ -398,6 +398,17 @@ export default function FullGuide() {
   const [printShareOpen, setPrintShareOpen] = useState(false);
 
   const guide = allEducationalGuides.find((g) => g.id === guideId);
+
+  // Track recently viewed
+  useEffect(() => {
+    if (!guideId) return;
+    try {
+      const key = "dj_recently_viewed_guides";
+      const recent: string[] = JSON.parse(localStorage.getItem(key) || "[]");
+      const updated = [guideId, ...recent.filter((id) => id !== guideId)].slice(0, 10);
+      localStorage.setItem(key, JSON.stringify(updated));
+    } catch { /* ignore */ }
+  }, [guideId]);
   const category = guide ? getGuideCategory(guide) : undefined;
   const heroImage = category ? categoryImages[category.id] : undefined;
 
