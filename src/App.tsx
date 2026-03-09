@@ -30,6 +30,7 @@ import IntakePacket from "./pages/IntakePacket";
 import AttorneyContacts from "./pages/AttorneyContacts";
 import JusticePlace from "./pages/JusticePlace";
 import Clarion from "./pages/Clarion";
+import EducationLibrary from "./pages/EducationLibrary";
 
 const queryClient = new QueryClient();
 
