@@ -54,7 +54,7 @@ export function HeroSection() {
               className="h-14 px-10 text-base border-2 border-navy/15 text-navy hover:bg-navy/5 hover:border-navy/25 rounded-xl" 
               asChild
             >
-              <Link to="/auth">Create your space</Link>
+              <Link to="/case-builder">Start Your Case</Link>
             </Button>
           </div>
         </div>
