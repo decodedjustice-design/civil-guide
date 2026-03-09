@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { GuideAccordionSection } from "@/components/guides/GuideAccordionSection";
 import { PrintShareModal } from "@/components/shared/PrintShareModal";
+import { GuideActions } from "@/components/guides/GuideActions";
 import { allEducationalGuides, type EducationalGuide } from "@/data/educationalGuides";
 import { libraryCategories } from "@/data/legalEducationLibrary";
 import { categoryImages } from "@/assets/index";
