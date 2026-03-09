@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   BookOpen,
@@ -354,7 +354,44 @@ function FullLegalGuideTab({ guide }: { guide: EducationalGuide }) {
   );
 }
 
-/* ─── Main Page ─── */
+/* ─── Parallax Hero ─── */
+function ParallaxHero({ heroImage, children }: { heroImage?: string; children: React.ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      // Only apply parallax when hero is in view
+      if (rect.bottom > 0) {
+        setOffset(window.scrollY * 0.35);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <section ref={ref} className="relative overflow-hidden">
+      <div className="absolute inset-0">
+        {heroImage ? (
+          <img
+            src={heroImage}
+            alt=""
+            className="w-full h-full object-cover will-change-transform transition-none"
+            style={{ transform: `translateY(${offset * 0.5}px) scale(1.1)` }}
+          />
+        ) : (
+          <div className="w-full h-full bg-secondary" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export default function FullGuide() {
   const { guideId } = useParams<{ guideId: string }>();
   const [printShareOpen, setPrintShareOpen] = useState(false);
@@ -379,18 +416,8 @@ export default function FullGuide() {
 
   return (
     <Layout>
-      {/* Hero Image Banner */}
-      <section className="relative overflow-hidden">
-        {/* Background image */}
-        <div className="absolute inset-0">
-          {heroImage ? (
-            <img src={heroImage} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full bg-secondary" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
-        </div>
-
+      {/* Hero Image Banner with Parallax */}
+      <ParallaxHero heroImage={heroImage}>
         <div className="container relative pt-8 pb-12 lg:pt-12 lg:pb-16">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -425,7 +452,7 @@ export default function FullGuide() {
             <p className="text-muted-foreground">{guide.readTime} • Comprehensive guide with sources</p>
           </div>
         </div>
-      </section>
+      </ParallaxHero>
 
       {/* Tabs */}
       <div className="container py-10 lg:py-14">
