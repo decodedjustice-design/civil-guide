@@ -117,6 +117,14 @@ export default function Dashboard() {
   });
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
   const [analyzerInsights, setAnalyzerInsights] = useState<AnalyzerInsight[]>([]);
+  const [justiceCase, setJusticeCase] = useState<{
+    case_name: string;
+    case_status: string;
+    issue_type: string;
+    state: string;
+    county: string;
+    created_at: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -141,12 +149,13 @@ export default function Dashboard() {
       ]);
 
       // Recent activity feed — pull latest 3 from each source
-      const [recentEv, recentTl, recentNt, recentCl, recentAn] = await Promise.all([
+      const [recentEv, recentTl, recentNt, recentCl, recentAn, justiceCaseRes] = await Promise.all([
         supabase.from("evidence").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("timeline_entries").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("notes").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("clarion_entries").select("id, content, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("analyzer_results").select("id, system_label, pattern_strength, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
+        supabase.from("justice_place_cases").select("case_name, case_status, issue_type, state, county, created_at").eq("user_id", user.id).maybeSingle(),
       ]);
 
       // Build activity feed
@@ -172,6 +181,7 @@ export default function Dashboard() {
       });
       setRecentActivity(activities.slice(0, 8));
       setAnalyzerInsights(recentAn.data || []);
+      setJusticeCase(justiceCaseRes.data || null);
     };
 
     fetchAll();
@@ -373,7 +383,36 @@ export default function Dashboard() {
                 })()}
               </Widget>
 
-              {/* Activity Feed */}
+              {/* Justice Place Case */}
+              <Widget title="Justice Place" action={{ label: "Open", href: "/justice-place" }}>
+                {justiceCase ? (
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {justiceCase.case_name || "Untitled Case"}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {justiceCase.issue_type} · {justiceCase.state}{justiceCase.county ? `, ${justiceCase.county}` : ""}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary capitalize">
+                        {justiceCase.case_status.replace(/_/g, " ")}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Created {new Date(justiceCase.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="py-6 text-center">
+                    <Scale className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">No active case yet.</p>
+                    <Link to="/justice-place" className="text-xs text-primary mt-1 inline-block hover:underline">Set up Justice Place →</Link>
+                  </div>
+                )}
+              </Widget>
+
               <Widget title="Recent Activity" action={{ label: "All Notes", href: "/notes" }}>
                 {recentActivity.length > 0 ? (
                   <div className="space-y-1">
