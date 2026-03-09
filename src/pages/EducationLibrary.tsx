@@ -8,7 +8,7 @@ import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducati
 import { categoryImages } from "@/assets/index";
 import { cn } from "@/lib/utils";
 
-function CategoryCard({ category }: { category: LibraryCategoryCard }) {
+function CategoryCard({ category, index }: { category: LibraryCategoryCard; index: number }) {
   const Icon = category.icon;
   const categoryImage = categoryImages[category.id];
 
