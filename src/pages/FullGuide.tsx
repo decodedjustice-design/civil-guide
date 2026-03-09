@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { GuideAccordionSection } from "@/components/guides/GuideAccordionSection";
 import { PrintShareModal } from "@/components/shared/PrintShareModal";
-import { educationalGuides, type EducationalGuide } from "@/data/educationalGuides";
+import { allEducationalGuides, type EducationalGuide } from "@/data/educationalGuides";
 
 export default function FullGuide() {
   const { guideId } = useParams<{ guideId: string }>();
