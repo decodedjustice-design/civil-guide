@@ -218,7 +218,12 @@ export default function Timeline() {
               <p className="text-muted-foreground">Loading timeline...</p>
             </div>
           ) : entries.length === 0 ? (
-            <div className="text-center py-12 p-6 rounded-2xl bg-card border border-border">
+            <div className="text-center py-12 p-6 rounded-2xl bg-card border border-border overflow-hidden">
+              <img
+                src={emptyStateNoTimeline}
+                alt=""
+                className="w-full h-40 object-cover rounded-xl mb-6 opacity-80"
+              />
               <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">No timeline entries yet</h3>
               <p className="text-muted-foreground mb-4">Start building your timeline by adding events.</p>
