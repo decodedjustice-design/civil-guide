@@ -323,11 +323,11 @@ export default function Dashboard() {
               <Widget title="Progress by Phase">
                 {(() => {
                   const phaseChartData = [
-                    { name: "Tell Your Story", value: phases[0].started ? 1 : 0, fill: phases[0].started ? "hsl(var(--primary))" : "hsl(var(--muted))" },
-                    { name: "Understand", value: phases[1].started ? 1 : 0, fill: phases[1].started ? "hsl(var(--gold))" : "hsl(var(--muted))" },
-                    { name: "Organize Proof", value: phases[2].started ? 1 : 0, fill: phases[2].started ? "hsl(var(--teal))" : "hsl(var(--muted))" },
-                    { name: "Prepare", value: phases[3].started ? 1 : 0, fill: phases[3].started ? "hsl(var(--accent-strong))" : "hsl(var(--muted))" },
-                    { name: "Connect", value: phases[4].started ? 1 : 0, fill: phases[4].started ? "hsl(var(--navy))" : "hsl(var(--muted))" },
+                    { name: "Tell Your Story", value: 1, fill: phases[0].started ? "hsl(var(--primary))" : "hsl(var(--muted))" },
+                    { name: "Understand", value: 1, fill: phases[1].started ? "hsl(var(--gold))" : "hsl(var(--muted))" },
+                    { name: "Organize Proof", value: 1, fill: phases[2].started ? "hsl(var(--teal))" : "hsl(var(--muted))" },
+                    { name: "Prepare", value: 1, fill: phases[3].started ? "hsl(var(--accent-strong))" : "hsl(var(--muted))" },
+                    { name: "Connect", value: 1, fill: phases[4].started ? "hsl(var(--navy))" : "hsl(var(--muted))" },
                   ];
                   const startedCount = phases.filter(p => p.started).length;
                   return (
