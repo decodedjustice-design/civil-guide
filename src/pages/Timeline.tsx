@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-paperwork.png";
+import { emptyStateNoTimeline } from "@/assets/index";
 import { Clock, Plus, Trash2, Edit2, Save, X, ArrowLeft, Calendar, FolderOpen, FileText } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";

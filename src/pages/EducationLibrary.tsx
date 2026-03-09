@@ -110,7 +110,7 @@ function CategoryCard({ category }: { category: LibraryCategoryCard }) {
         </Button>
       </div>
     </div>
-  );
+    );
 }
 
 export default function EducationLibrary() {
