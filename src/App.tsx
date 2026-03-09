@@ -31,6 +31,7 @@ import AttorneyContacts from "./pages/AttorneyContacts";
 import JusticePlace from "./pages/JusticePlace";
 import Clarion from "./pages/Clarion";
 import EducationLibrary from "./pages/EducationLibrary";
+import CaseBuilder from "./pages/CaseBuilder";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,7 @@ const App = () => (
             <Route path="/intake-packet" element={<IntakePacket />} />
             <Route path="/attorney-contacts" element={<AttorneyContacts />} />
             <Route path="/founders-story" element={<About />} />
+            <Route path="/case-builder" element={<CaseBuilder />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />
             <Route path="/terms" element={<About />} />
