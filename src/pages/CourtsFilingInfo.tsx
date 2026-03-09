@@ -3,6 +3,7 @@ import { Disclaimer } from "@/components/shared/Disclaimer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { bannerCourtsFiling } from "@/assets/index";
 import { 
   Scale, 
   Building2, 
