@@ -120,6 +120,7 @@ export function useCaseBuilder() {
     goNext,
     goBack,
     isStepComplete,
+    isStepUnlocked,
     refetchProgress: fetchProgress,
   };
 }
