@@ -80,8 +80,8 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
           ) : (
             <div className="pb-6 mb-6 border-b border-border">
               <Button size="sm" className="w-full h-11 bg-primary hover:bg-maroon-light tracking-wide" asChild>
-                <Link to="/auth" onClick={handleLinkClick}>
-                  Begin Your Record
+                <Link to="/case-builder" onClick={handleLinkClick}>
+                  Start Your Case
                 </Link>
               </Button>
             </div>

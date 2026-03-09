@@ -83,7 +83,7 @@ export function Header() {
                 className="text-xs h-9 px-6 bg-primary hover:bg-maroon-light text-white tracking-wide"
                 asChild
               >
-                <Link to="/auth">Begin Your Record</Link>
+                <Link to="/case-builder">Start Your Case</Link>
               </Button>
             )}
           </div>

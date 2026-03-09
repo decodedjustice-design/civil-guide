@@ -27,6 +27,7 @@ export default function CaseBuilder() {
     goNext,
     goBack,
     isStepComplete,
+    isStepUnlocked,
     refetchProgress,
   } = useCaseBuilder();
 
@@ -97,6 +98,7 @@ export default function CaseBuilder() {
           <CaseBuilderProgress
             currentStep={currentStep}
             isStepComplete={isStepComplete}
+            isStepUnlocked={isStepUnlocked}
             onStepClick={goToStep}
             progressPercent={progressPercent}
           />
