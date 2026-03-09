@@ -62,6 +62,7 @@ const App = () => (
             <Route path="/timeline" element={<Timeline />} />
             <Route path="/guide/:guideId" element={<FullGuide />} />
             <Route path="/library" element={<Library />} />
+            <Route path="/education-library" element={<EducationLibrary />} />
             <Route path="/transcription" element={<Transcription />} />
             <Route path="/public-request-rights" element={<PublicRequestRights />} />
             <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />

@@ -30,7 +30,7 @@ export default function FullGuide() {
   const { guideId } = useParams<{ guideId: string }>();
   const [printShareOpen, setPrintShareOpen] = useState(false);
   
-  const guide = educationalGuides.find(g => g.id === guideId);
+  const guide = allEducationalGuides.find(g => g.id === guideId);
   
   if (!guide) {
     return (

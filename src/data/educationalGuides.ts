@@ -443,7 +443,20 @@ export const educationalGuides: EducationalGuide[] = [
   }
 ];
 
+import { additionalEducationalGuides } from "./educationFullGuides";
+
+// Combined list of all educational guides
+export const allEducationalGuides: EducationalGuide[] = [
+  ...educationalGuides,
+  ...additionalEducationalGuides,
+];
+
+// Helper to get guide by ID from all guides
+export const getGuideById = (guideId: string): EducationalGuide | undefined => {
+  return allEducationalGuides.find(g => g.id === guideId);
+};
+
 // Helper to get guide by system ID
 export const getGuideBySystem = (systemId: string): EducationalGuide | undefined => {
-  return educationalGuides.find(g => g.systemId === systemId);
+  return allEducationalGuides.find(g => g.systemId === systemId);
 };
