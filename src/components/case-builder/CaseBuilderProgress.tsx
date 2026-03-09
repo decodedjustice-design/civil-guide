@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Lock } from "lucide-react";
 import { CASE_BUILDER_STEPS, CaseBuilderStep } from "@/hooks/useCaseBuilder";
 
 interface CaseBuilderProgressProps {
   currentStep: CaseBuilderStep;
   isStepComplete: (step: CaseBuilderStep) => boolean;
+  isStepUnlocked: (step: CaseBuilderStep) => boolean;
   onStepClick: (step: CaseBuilderStep) => void;
   progressPercent: number;
 }
@@ -12,6 +13,7 @@ interface CaseBuilderProgressProps {
 export function CaseBuilderProgress({
   currentStep,
   isStepComplete,
+  isStepUnlocked,
   onStepClick,
   progressPercent,
 }: CaseBuilderProgressProps) {
@@ -34,15 +36,16 @@ export function CaseBuilderProgress({
         {CASE_BUILDER_STEPS.map((step, index) => {
           const isActive = step.id === currentStep;
           const isComplete = isStepComplete(step.id);
+          const isUnlocked = isStepUnlocked(step.id);
 
           return (
             <button
               key={step.id}
               onClick={() => onStepClick(step.id)}
+              disabled={!isUnlocked}
               className={cn(
-                "flex flex-col items-center text-center flex-1 min-w-0 group cursor-pointer transition-colors",
-                isActive && "text-primary",
-                !isActive && !isComplete && "text-muted-foreground"
+                "flex flex-col items-center text-center flex-1 min-w-0 group transition-colors",
+                isUnlocked ? "cursor-pointer" : "cursor-not-allowed opacity-50"
               )}
             >
               <div
@@ -50,11 +53,14 @@ export function CaseBuilderProgress({
                   "w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all mb-1.5",
                   isComplete && "border-gold bg-gold/15 text-gold",
                   isActive && !isComplete && "border-primary bg-primary/10 text-primary",
-                  !isActive && !isComplete && "border-border bg-card text-muted-foreground/40 group-hover:border-muted-foreground/60"
+                  !isActive && !isComplete && isUnlocked && "border-border bg-card text-muted-foreground/40 group-hover:border-muted-foreground/60",
+                  !isUnlocked && "border-border/50 bg-muted/30 text-muted-foreground/30"
                 )}
               >
                 {isComplete ? (
                   <CheckCircle2 className="w-4 h-4" strokeWidth={1.5} />
+                ) : !isUnlocked ? (
+                  <Lock className="w-3.5 h-3.5" />
                 ) : (
                   <span className="text-xs font-medium">{index + 1}</span>
                 )}
@@ -62,7 +68,7 @@ export function CaseBuilderProgress({
               <span
                 className={cn(
                   "text-[10px] sm:text-xs font-medium leading-tight tracking-wide",
-                  isActive ? "text-primary" : isComplete ? "text-foreground" : "text-muted-foreground"
+                  isActive ? "text-primary" : isComplete ? "text-foreground" : isUnlocked ? "text-muted-foreground" : "text-muted-foreground/40"
                 )}
               >
                 {step.shortLabel}
