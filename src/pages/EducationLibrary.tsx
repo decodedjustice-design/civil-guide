@@ -41,6 +41,9 @@ function CategoryCard({ category }: { category: LibraryCategoryCard }) {
   const Icon = category.icon;
 
   return (
+    const categoryImage = categoryImages[category.id];
+
+    return (
     <div
       className={cn(
         "group rounded-2xl border transition-all duration-300 overflow-hidden",
@@ -50,6 +53,18 @@ function CategoryCard({ category }: { category: LibraryCategoryCard }) {
         "hover:shadow-lg hover:-translate-y-1"
       )}
     >
+      {/* Category Image */}
+      {categoryImage && (
+        <div className="relative h-36 overflow-hidden">
+          <img
+            src={categoryImage}
+            alt=""
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+        </div>
+      )}
+
       {/* Card Header */}
       <div className="p-6">
         <div className="flex items-start gap-4">
