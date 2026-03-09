@@ -455,6 +455,14 @@ export default function FullGuide() {
         </div>
       </ParallaxHero>
 
+      {/* Guide Actions Bar */}
+      <div className="container py-6">
+        <div className="max-w-3xl mx-auto p-4 rounded-xl bg-card border border-border">
+          <p className="text-xs text-muted-foreground mb-3 font-medium tracking-wide uppercase">Guide Actions</p>
+          <GuideActions guide={guide} categoryTitle={category?.title} />
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="container py-10 lg:py-14">
         <div className="max-w-3xl mx-auto">

@@ -468,32 +468,8 @@ export default function Dashboard() {
                 )}
               </Widget>
 
-              {/* Saved Resources / Guides */}
-              <Widget title="Saved Guides & Resources" action={{ label: "Library", href: "/education-library" }}>
-                <div className="space-y-2">
-                  <Link to="/education-library" className="flex items-center gap-3 p-3 rounded-lg bg-muted/20 border border-border/40 hover:border-gold/30 transition-colors group">
-                    <BookOpen className="w-4 h-4 text-gold/60 group-hover:text-gold transition-colors" strokeWidth={1.5} />
-                    <span className="text-sm text-foreground">Legal Education Library</span>
-                    <ArrowRight className="w-3 h-3 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link to="/rights-insight" className="flex items-center gap-3 p-3 rounded-lg bg-muted/20 border border-border/40 hover:border-gold/30 transition-colors group">
-                    <Shield className="w-4 h-4 text-gold/60 group-hover:text-gold transition-colors" strokeWidth={1.5} />
-                    <span className="text-sm text-foreground">Rights Insight</span>
-                    <ArrowRight className="w-3 h-3 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link to="/library" className="flex items-center gap-3 p-3 rounded-lg bg-muted/20 border border-border/40 hover:border-gold/30 transition-colors group">
-                    <BookOpen className="w-4 h-4 text-gold/60 group-hover:text-gold transition-colors" strokeWidth={1.5} />
-                    <span className="text-sm text-foreground">Civil Rights Library</span>
-                    <ArrowRight className="w-3 h-3 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                </div>
-                {stats.bookmarkCount > 0 && (
-                  <Link to="/justice-place" className="mt-3 text-xs text-primary hover:underline flex items-center gap-1">
-                    <Bookmark className="w-3 h-3" />
-                    {stats.bookmarkCount} saved bookmark{stats.bookmarkCount !== 1 ? "s" : ""}
-                  </Link>
-                )}
-              </Widget>
+              {/* Saved Guides */}
+              <SavedGuidesWidget userId={user.id} />
             </div>
           </div>
         </div>
