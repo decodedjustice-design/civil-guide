@@ -457,7 +457,12 @@ export default function EvidenceVault() {
               <p className="text-muted-foreground">Loading evidence...</p>
             </div>
           ) : evidence.length === 0 ? (
-            <div className="text-center py-12 p-6 rounded-2xl bg-card border border-border">
+            <div className="text-center py-12 p-6 rounded-2xl bg-card border border-border overflow-hidden">
+              <img
+                src={emptyStateNoDocuments}
+                alt=""
+                className="w-full h-40 object-cover rounded-xl mb-6 opacity-80"
+              />
               <FolderOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">No evidence cataloged yet</h3>
               <p className="text-muted-foreground mb-4">Start organizing your evidence by adding items.</p>

@@ -39,11 +39,9 @@ function CategoryCard({ category }: { category: LibraryCategoryCard }) {
   const [showFacts, setShowFacts] = useState(false);
   const colors = colorMap[category.color];
   const Icon = category.icon;
+  const categoryImage = categoryImages[category.id];
 
   return (
-    const categoryImage = categoryImages[category.id];
-
-    return (
     <div
       className={cn(
         "group rounded-2xl border transition-all duration-300 overflow-hidden",
