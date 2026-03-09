@@ -383,7 +383,36 @@ export default function Dashboard() {
                 })()}
               </Widget>
 
-              {/* Activity Feed */}
+              {/* Justice Place Case */}
+              <Widget title="Justice Place" action={{ label: "Open", href: "/justice-place" }}>
+                {justiceCase ? (
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-foreground truncate">
+                        {justiceCase.case_name || "Untitled Case"}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {justiceCase.issue_type} · {justiceCase.state}{justiceCase.county ? `, ${justiceCase.county}` : ""}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary capitalize">
+                        {justiceCase.case_status.replace(/_/g, " ")}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Created {new Date(justiceCase.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="py-6 text-center">
+                    <Scale className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">No active case yet.</p>
+                    <Link to="/justice-place" className="text-xs text-primary mt-1 inline-block hover:underline">Set up Justice Place →</Link>
+                  </div>
+                )}
+              </Widget>
+
               <Widget title="Recent Activity" action={{ label: "All Notes", href: "/notes" }}>
                 {recentActivity.length > 0 ? (
                   <div className="space-y-1">
