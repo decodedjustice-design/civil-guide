@@ -31,6 +31,7 @@ import AttorneyContacts from "./pages/AttorneyContacts";
 import JusticePlace from "./pages/JusticePlace";
 import Clarion from "./pages/Clarion";
 import EducationLibrary from "./pages/EducationLibrary";
+import CaseBuilder from "./pages/CaseBuilder";
 
 const queryClient = new QueryClient();
 
