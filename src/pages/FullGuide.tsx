@@ -354,7 +354,44 @@ function FullLegalGuideTab({ guide }: { guide: EducationalGuide }) {
   );
 }
 
-/* ─── Main Page ─── */
+/* ─── Parallax Hero ─── */
+function ParallaxHero({ heroImage, children }: { heroImage?: string; children: React.ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      // Only apply parallax when hero is in view
+      if (rect.bottom > 0) {
+        setOffset(window.scrollY * 0.35);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <section ref={ref} className="relative overflow-hidden">
+      <div className="absolute inset-0">
+        {heroImage ? (
+          <img
+            src={heroImage}
+            alt=""
+            className="w-full h-full object-cover will-change-transform transition-none"
+            style={{ transform: `translateY(${offset * 0.5}px) scale(1.1)` }}
+          />
+        ) : (
+          <div className="w-full h-full bg-secondary" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export default function FullGuide() {
   const { guideId } = useParams<{ guideId: string }>();
   const [printShareOpen, setPrintShareOpen] = useState(false);
