@@ -29,6 +29,8 @@ import emptyStateNoTimeline from "@/assets/empty-state-no-timeline.jpg";
 
 /** Map category IDs to their illustration */
 export const categoryImages: Record<string, string> = {
+  police: categoryPolice,
+  traffic: categoryTraffic,
   courts: categoryCourts,
   housing: categoryHousing,
   disability: categoryDisability,
