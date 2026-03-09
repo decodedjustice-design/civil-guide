@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { GuideAccordionSection } from "@/components/guides/GuideAccordionSection";
 import { PrintShareModal } from "@/components/shared/PrintShareModal";
+import { GuideActions } from "@/components/guides/GuideActions";
 import { allEducationalGuides, type EducationalGuide } from "@/data/educationalGuides";
 import { libraryCategories } from "@/data/legalEducationLibrary";
 import { categoryImages } from "@/assets/index";
@@ -453,6 +454,14 @@ export default function FullGuide() {
           </div>
         </div>
       </ParallaxHero>
+
+      {/* Guide Actions Bar */}
+      <div className="container py-6">
+        <div className="max-w-3xl mx-auto p-4 rounded-xl bg-card border border-border">
+          <p className="text-xs text-muted-foreground mb-3 font-medium tracking-wide uppercase">Guide Actions</p>
+          <GuideActions guide={guide} categoryTitle={category?.title} />
+        </div>
+      </div>
 
       {/* Tabs */}
       <div className="container py-10 lg:py-14">
