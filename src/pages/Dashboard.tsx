@@ -107,6 +107,58 @@ function relativeTime(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+/* ─── Saved Guides Widget ─── */
+function SavedGuidesWidget({ userId }: { userId: string }) {
+  const [guides, setGuides] = useState<{ id: string; resource_id: string; resource_title: string; resource_url: string | null }[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("justice_place_bookmarks")
+      .select("id, resource_id, resource_title, resource_url")
+      .eq("user_id", userId)
+      .eq("resource_type", "guide")
+      .order("created_at", { ascending: false })
+      .limit(5)
+      .then(({ data }) => {
+        setGuides(data || []);
+        setLoaded(true);
+      });
+  }, [userId]);
+
+  return (
+    <Widget title="Saved Guides" action={{ label: "Library", href: "/education-library" }}>
+      {loaded && guides.length > 0 ? (
+        <div className="space-y-1">
+          {guides.map((g) => (
+            <Link
+              key={g.id}
+              to={g.resource_url || `/guide/${g.resource_id}`}
+              className="flex items-center gap-3 p-3 rounded-lg bg-muted/20 border border-border/40 hover:border-gold/30 transition-colors group"
+            >
+              <BookOpen className="w-4 h-4 text-gold/60 group-hover:text-gold transition-colors" strokeWidth={1.5} />
+              <span className="text-sm text-foreground truncate">{g.resource_title}</span>
+              <ArrowRight className="w-3 h-3 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+            </Link>
+          ))}
+        </div>
+      ) : loaded ? (
+        <div className="py-6 text-center">
+          <BookOpen className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">No saved guides yet.</p>
+          <Link to="/education-library" className="text-xs text-primary mt-1 inline-block hover:underline">
+            Browse the Library →
+          </Link>
+        </div>
+      ) : (
+        <div className="py-6 text-center">
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        </div>
+      )}
+    </Widget>
+  );
+}
+
 /* ─── Dashboard ─── */
 export default function Dashboard() {
   const { user, loading } = useAuth();
