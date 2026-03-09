@@ -28,6 +28,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  PieChart,
+  Pie,
 } from "recharts";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DjPageHeader } from "@/components/ui/dj-page-header";
@@ -315,8 +317,62 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Right column — activity feed + analyzer insights (2/5) */}
+            {/* Right column — phase chart + activity feed + analyzer insights (2/5) */}
             <div className="lg:col-span-2 space-y-6">
+              {/* Phase Progress Donut Chart */}
+              <Widget title="Progress by Phase">
+                {(() => {
+                  const phaseChartData = [
+                    { name: "Tell Your Story", value: 1, fill: phases[0].started ? "hsl(var(--primary))" : "hsl(var(--muted))" },
+                    { name: "Understand", value: 1, fill: phases[1].started ? "hsl(var(--gold))" : "hsl(var(--muted))" },
+                    { name: "Organize Proof", value: 1, fill: phases[2].started ? "hsl(var(--teal))" : "hsl(var(--muted))" },
+                    { name: "Prepare", value: 1, fill: phases[3].started ? "hsl(var(--accent-strong))" : "hsl(var(--muted))" },
+                    { name: "Connect", value: 1, fill: phases[4].started ? "hsl(var(--navy))" : "hsl(var(--muted))" },
+                  ];
+                  const startedCount = phases.filter(p => p.started).length;
+                  return (
+                    <div className="h-48 relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={phaseChartData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={50}
+                            outerRadius={70}
+                            paddingAngle={3}
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {phaseChartData.map((entry, idx) => (
+                              <Cell key={idx} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{
+                              background: "hsl(var(--card))",
+                              border: "1px solid hsl(var(--border))",
+                              borderRadius: 8,
+                              fontSize: 12,
+                            }}
+                            formatter={(value: number, name: string) => [
+                              value === 1 ? "Started" : "Not started",
+                              name
+                            ]}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="text-center">
+                          <p className="text-2xl font-serif font-medium text-foreground">{startedCount}/5</p>
+                          <p className="text-[10px] text-muted-foreground">phases</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </Widget>
+
               {/* Activity Feed */}
               <Widget title="Recent Activity" action={{ label: "All Notes", href: "/notes" }}>
                 {recentActivity.length > 0 ? (
