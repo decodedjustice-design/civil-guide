@@ -149,7 +149,7 @@ export default function Dashboard() {
       ]);
 
       // Recent activity feed — pull latest 3 from each source
-      const [recentEv, recentTl, recentNt, recentCl, recentAn] = await Promise.all([
+      const [recentEv, recentTl, recentNt, recentCl, recentAn, justiceCaseRes] = await Promise.all([
         supabase.from("evidence").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("timeline_entries").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("notes").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
