@@ -1,4 +1,6 @@
 // Category illustrations
+import categoryPolice from "@/assets/category-police-encounters.jpg";
+import categoryTraffic from "@/assets/category-traffic-stops.jpg";
 import categoryCourts from "@/assets/hero-courthouse-cinematic.jpg";
 import categoryHousing from "@/assets/category-housing-rights.jpg";
 import categoryDisability from "@/assets/category-disability-rights.jpg";
