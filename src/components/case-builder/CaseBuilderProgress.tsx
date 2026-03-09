@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { CheckCircle2, Lock } from "lucide-react";
 import { CASE_BUILDER_STEPS, CaseBuilderStep } from "@/hooks/useCaseBuilder";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CaseBuilderProgressProps {
   currentStep: CaseBuilderStep;
