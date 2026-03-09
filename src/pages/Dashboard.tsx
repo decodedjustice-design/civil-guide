@@ -117,6 +117,14 @@ export default function Dashboard() {
   });
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
   const [analyzerInsights, setAnalyzerInsights] = useState<AnalyzerInsight[]>([]);
+  const [justiceCase, setJusticeCase] = useState<{
+    case_name: string;
+    case_status: string;
+    issue_type: string;
+    state: string;
+    county: string;
+    created_at: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
