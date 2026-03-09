@@ -317,7 +317,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Right column — activity feed + analyzer insights (2/5) */}
+            {/* Right column — phase chart + activity feed + analyzer insights (2/5) */}
             <div className="lg:col-span-2 space-y-6">
               {/* Activity Feed */}
               <Widget title="Recent Activity" action={{ label: "All Notes", href: "/notes" }}>
