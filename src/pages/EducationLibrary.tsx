@@ -5,6 +5,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducationLibrary";
+import { categoryImages } from "@/assets/index";
 import { cn } from "@/lib/utils";
 
 const colorMap = {
