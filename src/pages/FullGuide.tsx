@@ -380,8 +380,7 @@ export default function FullGuide() {
   return (
     <Layout>
       {/* Hero Image Banner with Parallax */}
-      <ParallaxHero heroImage={heroImage} />
-
+      <ParallaxHero heroImage={heroImage}>
         <div className="container relative pt-8 pb-12 lg:pt-12 lg:pb-16">
           <div className="max-w-3xl mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -416,7 +415,7 @@ export default function FullGuide() {
             <p className="text-muted-foreground">{guide.readTime} • Comprehensive guide with sources</p>
           </div>
         </div>
-      </section>
+      </ParallaxHero>
 
       {/* Tabs */}
       <div className="container py-10 lg:py-14">
