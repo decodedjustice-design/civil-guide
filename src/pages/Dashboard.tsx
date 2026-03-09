@@ -28,6 +28,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  PieChart,
+  Pie,
 } from "recharts";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { DjPageHeader } from "@/components/ui/dj-page-header";
