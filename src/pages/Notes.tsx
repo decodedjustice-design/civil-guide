@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FileText, Plus, Trash2, Edit2, Save, X, ArrowLeft } from "lucide-react";
+import { emptyStateNoEntries } from "@/assets/index";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
