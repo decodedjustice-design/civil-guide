@@ -57,6 +57,6 @@ export {
   emptyStateNoTimeline,
 };
 
-// Re-export placeholders for assets referenced elsewhere that may not exist yet
+// Aliases for assets referenced by other components
 export const emptyStateNoDocuments = emptyStateNoCases;
 export const emptyStateNoEntries = emptyStateNoTimeline;
