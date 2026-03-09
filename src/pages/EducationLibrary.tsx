@@ -124,8 +124,8 @@ export default function EducationLibrary() {
 
         {/* Category Cards Grid */}
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((category) => (
-            <CategoryCard key={category.id} category={category} />
+          {filtered.map((category, i) => (
+            <CategoryCard key={category.id} category={category} index={i} />
           ))}
         </div>
 
