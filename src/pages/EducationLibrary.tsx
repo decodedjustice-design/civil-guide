@@ -15,7 +15,8 @@ function CategoryCard({ category, index }: { category: LibraryCategoryCard; inde
   return (
     <Link
       to={`/guide/${category.guideId}`}
-      className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+      style={{ animationDelay: `${index * 80}ms`, animationFillMode: "both" }}
+      className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 animate-fade-in"
     >
       {/* Large Hero Image */}
       <div className="relative h-52 sm:h-56 overflow-hidden">
