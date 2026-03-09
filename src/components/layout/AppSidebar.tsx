@@ -54,7 +54,8 @@ const sidebarGroups = [
       { title: "Analyzer", url: "/analyzer", icon: Search },
       { title: "Legal Decoder", url: "/legal-decoder", icon: BookOpen },
       { title: "Rights Insight", url: "/rights-insight", icon: Shield },
-      { title: "Library", url: "/library", icon: BookOpen },
+      { title: "Library", url: "/education-library", icon: BookOpen },
+      { title: "Saved Guides", url: "/education-library?tab=saved", icon: Bookmark },
     ],
   },
   {
