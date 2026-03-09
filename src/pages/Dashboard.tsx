@@ -155,6 +155,7 @@ export default function Dashboard() {
         supabase.from("notes").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("clarion_entries").select("id, content, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
         supabase.from("analyzer_results").select("id, system_label, pattern_strength, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
+        supabase.from("justice_place_cases").select("case_name, case_status, issue_type, state, county, created_at").eq("user_id", user.id).maybeSingle(),
       ]);
 
       // Build activity feed
