@@ -3,6 +3,7 @@ import { Disclaimer } from "@/components/shared/Disclaimer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { bannerCourtsFiling } from "@/assets/index";
 import { 
   Scale, 
   Building2, 
@@ -21,19 +22,34 @@ export default function CourtsFilingInfo() {
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-b from-background via-secondary/20 to-background">
-        <div className="container max-w-4xl py-12 px-4">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-4">
-              <Scale className="w-7 h-7 text-primary" />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-semibold text-navy mb-3">
-              Courts & Filing Information
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Understanding where and how to file civil rights cases in Washington State and federal courts.
-            </p>
+        {/* Hero Banner */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0">
+            <img
+              src={bannerCourtsFiling}
+              alt=""
+              className="w-full h-full object-cover opacity-30"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/30" />
           </div>
+          
+          <div className="container relative max-w-4xl py-12 px-4">
+            {/* Header */}
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-4">
+                <Scale className="w-7 h-7 text-primary" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-semibold text-navy mb-3">
+                Courts & Filing Information
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                Understanding where and how to file civil rights cases in Washington State and federal courts.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="container max-w-4xl pb-12 px-4">
 
           {/* Prominent Disclaimer */}
           <Disclaimer variant="prominent" className="mb-10" />

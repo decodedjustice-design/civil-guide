@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FileText, Plus, Trash2, Edit2, Save, X, ArrowLeft } from "lucide-react";
+import { emptyStateNoEntries } from "@/assets/index";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
@@ -174,7 +175,12 @@ export default function Notes() {
               <p className="text-muted-foreground">Loading notes...</p>
             </div>
           ) : notes.length === 0 ? (
-            <div className="text-center py-12 p-6 rounded-2xl bg-card border border-border">
+            <div className="text-center py-12 p-6 rounded-2xl bg-card border border-border overflow-hidden">
+              <img
+                src={emptyStateNoEntries}
+                alt=""
+                className="w-full h-40 object-cover rounded-xl mb-6 opacity-80"
+              />
               <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">No notes yet</h3>
               <p className="text-muted-foreground mb-4">Create your first note to get started.</p>
