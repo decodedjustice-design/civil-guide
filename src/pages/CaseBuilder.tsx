@@ -27,6 +27,7 @@ export default function CaseBuilder() {
     goNext,
     goBack,
     isStepComplete,
+    isStepUnlocked,
     refetchProgress,
   } = useCaseBuilder();
 
