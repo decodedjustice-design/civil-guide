@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FormSection, FormFieldWrapper, DjInput, DjTextarea } from "@/components/ui/dj-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight, Heart } from "lucide-react";
+import { ArrowRight, Heart, Radar, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { CaseSignalReview, type CaseSignals, type SignalIssue, type SignalEvidence, type SignalTimeline } from "./CaseSignalReview";
 
 const issueTypes = [
   { value: "police", label: "Police / Law Enforcement" },
@@ -36,6 +37,9 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [signals, setSignals] = useState<CaseSignals | null>(null);
 
   const [caseName, setCaseName] = useState("");
   const [issueType, setIssueType] = useState("");
@@ -44,12 +48,82 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
   const [description, setDescription] = useState("");
   const [opposingParty, setOpposingParty] = useState("");
 
+  const runSignalEngine = async () => {
+    if (!description.trim() || description.trim().length < 10) {
+      toast({ title: "More detail needed", description: "Please write at least a couple sentences about what happened.", variant: "destructive" });
+      return;
+    }
+    setIsAnalyzing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("case-signal-engine", {
+        body: { narrative: description, issueType, opposingParty },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setSignals(data as CaseSignals);
+    } catch (err: any) {
+      console.error("Signal engine error:", err);
+      toast({ title: "Analysis error", description: err.message || "Could not analyze narrative.", variant: "destructive" });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const applySignals = async (selected: {
+    issues: SignalIssue[];
+    evidence: SignalEvidence[];
+    timeline: SignalTimeline[];
+  }) => {
+    if (!user) return;
+    setIsApplying(true);
+    try {
+      const promises: Promise<any>[] = [];
+
+      // Add evidence suggestions as evidence items
+      if (selected.evidence.length > 0) {
+        const evidenceRows = selected.evidence.map((ev) => ({
+          user_id: user.id,
+          title: ev.type,
+          description: ev.why,
+          source: "Case Signal Engine suggestion",
+          relevance_notes: `Related to: ${ev.related_issue} (${ev.priority} priority)`,
+        }));
+        promises.push(supabase.from("evidence").insert(evidenceRows));
+      }
+
+      // Add timeline suggestions as timeline entries
+      if (selected.timeline.length > 0) {
+        const timelineRows = selected.timeline.map((t) => ({
+          user_id: user.id,
+          title: t.title,
+          description: `${t.description} (approx: ${t.approximate_date})`,
+          event_date: new Date().toISOString().split("T")[0], // placeholder date
+        }));
+        promises.push(supabase.from("timeline_entries").insert(timelineRows));
+      }
+
+      await Promise.all(promises);
+
+      const parts: string[] = [];
+      if (selected.issues.length) parts.push(`${selected.issues.length} issue(s)`);
+      if (selected.evidence.length) parts.push(`${selected.evidence.length} evidence suggestion(s)`);
+      if (selected.timeline.length) parts.push(`${selected.timeline.length} timeline event(s)`);
+
+      toast({ title: "Signals applied", description: `Added ${parts.join(", ")} to your case.` });
+      setSignals(null);
+    } catch (err) {
+      console.error("Apply signals error:", err);
+      toast({ title: "Error", description: "Could not apply some suggestions.", variant: "destructive" });
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!user || !issueType || !county) return;
 
     setIsSaving(true);
     try {
-      // Check if case already exists
       const { data: existing } = await supabase
         .from("justice_place_cases")
         .select("id")
@@ -57,7 +131,6 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
         .maybeSingle();
 
       if (existing) {
-        // Update existing
         await supabase
           .from("justice_place_cases")
           .update({
@@ -68,7 +141,6 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
           })
           .eq("id", existing.id);
       } else {
-        // Create new
         await supabase.from("justice_place_cases").insert({
           user_id: user.id,
           case_name: caseName || "My Case",
@@ -79,7 +151,6 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
         });
       }
 
-      // Also save a clarion entry with the description if provided
       if (description.trim()) {
         await supabase.from("clarion_entries").insert({
           user_id: user.id,
@@ -170,7 +241,38 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
             rows={5}
           />
         </FormFieldWrapper>
+
+        {/* Signal Engine trigger */}
+        {description.trim().length >= 10 && !signals && (
+          <Button
+            variant="soft"
+            size="sm"
+            onClick={runSignalEngine}
+            disabled={isAnalyzing}
+            className="mt-2"
+          >
+            {isAnalyzing ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-1 animate-spin" /> Analyzing your narrative…
+              </>
+            ) : (
+              <>
+                <Radar className="w-4 h-4 mr-1" /> Detect Issues & Evidence
+              </>
+            )}
+          </Button>
+        )}
       </FormSection>
+
+      {/* Signal Review */}
+      {signals && (
+        <CaseSignalReview
+          signals={signals}
+          onConfirm={applySignals}
+          onDismiss={() => setSignals(null)}
+          isApplying={isApplying}
+        />
+      )}
 
       <div className="flex justify-end gap-3 pt-2">
         <Button
