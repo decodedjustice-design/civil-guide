@@ -88,7 +88,7 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
           source: "Case Signal Engine suggestion",
           relevance_notes: `Related to: ${ev.related_issue} (${ev.priority} priority)`,
         }));
-        promises.push(supabase.from("evidence").insert(evidenceRows));
+        promises.push(supabase.from("evidence").insert(evidenceRows).then());
       }
 
       // Add timeline suggestions as timeline entries
@@ -99,7 +99,7 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
           description: `${t.description} (approx: ${t.approximate_date})`,
           event_date: new Date().toISOString().split("T")[0], // placeholder date
         }));
-        promises.push(supabase.from("timeline_entries").insert(timelineRows));
+        promises.push(supabase.from("timeline_entries").insert(timelineRows).then());
       }
 
       await Promise.all(promises);
