@@ -1,3 +1,22 @@
+/**
+ * useEntityTags / EntityTags
+ *
+ * Defines internal "entity tags" — structured detail flags collected after a
+ * user selects their system type (police, housing, healthcare, etc.). Tags are
+ * used internally for pattern detection and resource scoring; they are NEVER
+ * shown directly to the user.
+ *
+ * Each system has a list of `EntityQuestion` entries (e.g. "Was force used?",
+ * "Was there a medical response?"). Answers are applied via `applyAnswer` to
+ * produce an `EntityTags` object.
+ *
+ * Key exports:
+ *   - `EntityTags` — interface of all possible internal flags
+ *   - `entityQuestions` — system-keyed map of clarifying questions
+ *   - `getEntityQuestionsForSystem(systemId)` — returns questions for a given system
+ *   - `createEmptyEntityTags()` — returns a blank tag object as a starting point
+ */
+
 // Entity-aware internal tags - NOT visible to users
 export interface EntityTags {
   entity_type?: 'police' | 'sheriff' | 'state_patrol' | 'federal' | 'private_security' | 'corrections' | 'medical' | 'emt' | 'hospital' | 'clinic' | 'landlord' | 'property_mgmt' | 'public_housing' | 'cps' | 'dcyf' | 'court' | 'prosecutor' | 'school_district' | 'college' | 'other';

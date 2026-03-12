@@ -1,3 +1,19 @@
+/**
+ * useCaseContext
+ *
+ * Derives a structured CaseContext from the raw questionnaire answers collected
+ * during the Analyzer / Clarion intake flow. CaseContext is the single source
+ * of truth for what the user's situation is; it drives both pattern detection
+ * (usePatternAwareness) and resource matching (useResourceMatching).
+ *
+ * Key exports:
+ *   - `buildCaseContext(system, label, answers, patternStrength)` — pure function
+ *     that maps raw answers to a typed CaseContext object.
+ *   - `clarifyingQuestions` — conditional follow-up questions shown after the
+ *     main questionnaire (e.g. "Was there a medical response?").
+ *   - `useCaseContext(...)` hook — memoized wrapper that returns the context and
+ *     the subset of clarifying questions relevant to that context.
+ */
 import { useMemo } from 'react';
 
 // Core Case Context types

@@ -1,3 +1,22 @@
+/**
+ * usePatternAwareness
+ *
+ * Cross-references a user's EntityTags and questionnaire answers against a
+ * predefined set of known patterns (use of force, delayed medical care in
+ * custody, CPS child removal, etc.) to surface contextual "pattern blocks" —
+ * short copy snippets grounded in public records language.
+ *
+ * Safety rules enforced in code:
+ *   - Pattern blocks only appear when patternStrength >= 'possible' AND at
+ *     least 2 entity flags align (or strength is 'strong'/'very_strong').
+ *   - Three mandatory disclaimer blocks are ALWAYS appended whenever any
+ *     pattern block is shown (no wrongdoing assertion, not legal advice,
+ *     individual case caveat).
+ *   - All language is probabilistic ("has been reported", "may experience") —
+ *     never conclusory about the user's specific case.
+ *
+ * Returns `{ hasPattern, patternBlocks }`.
+ */
 import { useMemo } from 'react';
 import { EntityTags } from './useEntityTags';
 

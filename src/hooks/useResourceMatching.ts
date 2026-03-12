@@ -1,3 +1,25 @@
+/**
+ * useResourceMatching
+ *
+ * Scores and ranks legal + community resources from the static data files
+ * (`legalResources` and `supportResources`) against the current CaseContext.
+ *
+ * Scoring factors include: system match, issue category, medical involvement,
+ * CPS/DCYF specifics, disability factors, geographic county match, language
+ * preference, protected class / cultural alignment, and pattern strength.
+ * Relevance scores are internal-only and never surfaced in the UI.
+ *
+ * Key exports (pure functions):
+ *   - `matchResources(context)` — returns all resources with scores > threshold
+ *   - `groupResourcesByCategory(resources)` — groups into named buckets
+ *   - `categoryLabels` — display names for each category bucket
+ *
+ * Hook (`useResourceMatching(context)`):
+ *   - Memoized scoring + grouping
+ *   - Dismiss / undo-dismiss per resource (session state only)
+ *   - `topResources` — top 6 non-dismissed resources for summary views
+ *   - `additionalSupportResources` — cultural/identity-matched resources
+ */
 import { useMemo, useState, useCallback } from 'react';
 import { CaseContext, SystemType, IssueType, CaseStage, ProtectedClass, LanguagePreference, IssueCategory } from './useCaseContext';
 import { legalResources, LegalResource, CulturalTag, LanguageService } from '@/data/legalResources';

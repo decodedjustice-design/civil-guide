@@ -1,3 +1,15 @@
+/**
+ * useAnalyzerResultsAI
+ *
+ * Calls the `generate-analyzer-results` Supabase Edge Function to produce
+ * AI-generated guidance for a user's civil-rights situation. Returns a
+ * structured result covering power dynamics, priority actions, and a closing
+ * affirmation — none of which constitute legal advice.
+ *
+ * Usage:
+ *   const { generateResults, generatedResults, isGenerating } = useAnalyzerResultsAI();
+ *   await generateResults({ systemId, systemLabel, patternStrength });
+ */
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 

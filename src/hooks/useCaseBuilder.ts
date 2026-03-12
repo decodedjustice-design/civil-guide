@@ -1,3 +1,19 @@
+/**
+ * useCaseBuilder
+ *
+ * Manages the 5-step CaseBuilder wizard flow:
+ *   1. Incident Intake  — describe the event and parties involved
+ *   2. Evidence Vault   — upload and organize supporting documents
+ *   3. Timeline Builder — build a chronological record
+ *   4. Legal Issue Mapping — identify relevant legal issues
+ *   5. Case Packet Generator — produce a professional case summary
+ *
+ * Steps are sequential: each step unlocks only after the previous one is
+ * complete. Progress is fetched from Supabase so it persists across sessions.
+ *
+ * Returns step navigation helpers (goNext, goBack, goToStep), completion
+ * state per step, and an overall progressPercent (0–100).
+ */
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";

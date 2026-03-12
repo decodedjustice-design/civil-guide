@@ -1,3 +1,17 @@
+/**
+ * useIntakePacket
+ *
+ * Saves, loads, and deletes attorney intake packets in the `intake_packets`
+ * Supabase table. When a packet is generated for a specific attorney
+ * (options.attorneyId provided), it also logs an entry in `attorney_contacts`
+ * so the user can track their outreach history.
+ *
+ * All operations require the user to be authenticated; unauthenticated saves
+ * show a toast prompting sign-in.
+ *
+ * Usage:
+ *   const { savePacket, isSaving, savedPacket } = useIntakePacket({ attorneyId, attorneyName });
+ */
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
