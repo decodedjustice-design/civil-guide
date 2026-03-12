@@ -77,7 +77,7 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
     if (!user) return;
     setIsApplying(true);
     try {
-      const promises: Promise<any>[] = [];
+      const promises: Promise<unknown>[] = [];
 
       // Add evidence suggestions as evidence items
       if (selected.evidence.length > 0) {
