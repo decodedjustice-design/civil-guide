@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.transcribe-audio]
 verify_jwt = false
+
+[functions.case-signal-engine]
+verify_jwt = false
