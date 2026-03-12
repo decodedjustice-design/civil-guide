@@ -88,7 +88,7 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
           source: "Case Signal Engine suggestion",
           relevance_notes: `Related to: ${ev.related_issue} (${ev.priority} priority)`,
         }));
-        promises.push(supabase.from("evidence").insert(evidenceRows).then());
+        promises.push(Promise.resolve(supabase.from("evidence").insert(evidenceRows)));
       }
 
       // Add timeline suggestions as timeline entries
