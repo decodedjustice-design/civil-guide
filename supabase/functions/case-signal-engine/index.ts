@@ -34,7 +34,9 @@ Rules:
 - Use plain language
 
 The user's situation involves: ${issueType || "unknown system"}
-${opposingParty ? `Opposing party: ${opposingParty}` : ""}`;
+${opposingParty ? `Opposing party: ${opposingParty}` : ""}
+
+Today's date is ${new Date().toISOString().split("T")[0]}. Use this to resolve relative date references like "last week", "two months ago", etc.`;
 
     const userPrompt = `Analyze this narrative and extract signals:
 
