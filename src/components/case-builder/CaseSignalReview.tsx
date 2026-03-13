@@ -39,6 +39,7 @@ export interface SignalTimeline {
   title: string;
   description: string;
   approximate_date: string;
+  iso_date?: string;
 }
 
 export interface CaseSignals {
