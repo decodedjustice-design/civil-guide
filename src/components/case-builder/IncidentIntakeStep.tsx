@@ -97,7 +97,7 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
           user_id: user.id,
           title: t.title,
           description: `${t.description} (approx: ${t.approximate_date})`,
-          event_date: new Date().toISOString().split("T")[0], // placeholder date
+          event_date: t.iso_date && /^\d{4}-\d{2}-\d{2}$/.test(t.iso_date) ? t.iso_date : new Date().toISOString().split("T")[0],
         }));
         promises.push(Promise.resolve(supabase.from("timeline_entries").insert(timelineRows)));
       }
