@@ -1,0 +1,1 @@
+DELETE FROM justice_place_cases WHERE user_id = '31d8d714-aa9c-47a3-aff4-d542d33a2e82';
