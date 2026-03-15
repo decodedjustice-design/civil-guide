@@ -143,7 +143,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               {
                 icon: Briefcase,
@@ -172,6 +172,20 @@ const Index = () => {
                 description: "Structured guides for 10 core civil rights areas — from police encounters to housing rights.",
                 href: "/education-library",
                 cta: "Browse guides",
+              },
+              {
+                icon: FileText,
+                title: "Legal Templates",
+                description: "Starter outlines for records requests, tort claims, and civil rights complaint preparation.",
+                href: "/legal-templates",
+                cta: "View templates",
+              },
+              {
+                icon: Scale,
+                title: "Courts & Filing",
+                description: "Understand jurisdiction, filing procedures, and fee waivers for WA state and federal courts.",
+                href: "/courts-filing-info",
+                cta: "Learn more",
               },
             ].map((tool) => (
               <Link
