@@ -48,6 +48,7 @@ export function Footer() {
               <div className="flex flex-col gap-2">
                 <Link to="/case-builder" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Case Builder</Link>
                 <Link to="/analyzer" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Analyzer</Link>
+                <Link to="/transcription" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Transcription</Link>
                 <Link to="/tools" className="text-sm text-white/40 hover:text-gold transition-colors font-light">How It Works</Link>
               </div>
             </div>
