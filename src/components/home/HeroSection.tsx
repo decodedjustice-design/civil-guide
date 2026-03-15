@@ -31,9 +31,13 @@ export function HeroSection() {
           </div>
 
           {/* Headlines */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-navy leading-[1.15] mb-8 tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-navy leading-[1.15] mb-4 tracking-tight">
             A modern space for clarity, dignity, and understanding in complex systems.
           </h1>
+
+          <p className="text-base md:text-lg text-primary font-medium tracking-wide mb-8 max-w-2xl mx-auto">
+            Understand, organize, and present your civil rights case.
+          </p>
           
           <p className="text-lg md:text-xl text-navy-soft leading-relaxed mb-12 max-w-2xl mx-auto">
             Decoded Justice exists to help people understand systems that shape their lives — calmly, clearly, and with respect.
