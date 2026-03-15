@@ -279,12 +279,14 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { icon: Scale, title: "Find Legal Help", description: "Attorney search and legal aid resources.", href: "/find-help" },
               { icon: Users, title: "Support Network", description: "Organizations, advocates, and community resources.", href: "/support-network" },
+              { icon: FileText, title: "Intake Packet", description: "Prepare a structured inquiry for attorney consultations.", href: "/intake-packet" },
+              { icon: Shield, title: "Public Records", description: "Understand and organize your public records requests.", href: "/public-request-rights" },
               { icon: Wrench, title: "Self-Help Tools", description: "Templates, guides, and preparation resources.", href: "/self-help" },
-              { icon: HelpCircle, title: "How It Works", description: "See how all the tools connect together.", href: "/tools" },
+              { icon: Heart, title: "Founder's Story", description: "Why this platform exists and who built it.", href: "/founders-story" },
             ].map((resource) => (
               <Link
                 key={resource.title}

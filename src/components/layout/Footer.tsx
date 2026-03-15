@@ -19,23 +19,50 @@ export function Footer() {
             </span>
           </div>
 
-          {/* Links row */}
-          <div className="flex flex-wrap gap-x-8 gap-y-3 mb-10">
-            <Link to="/about" className="text-sm text-white/40 hover:text-gold transition-colors font-light">
-              About
-            </Link>
-            <Link to="/disclaimer" className="text-sm text-white/40 hover:text-gold transition-colors font-light">
-              Legal Disclaimer
-            </Link>
-            <Link to="/privacy" className="text-sm text-white/40 hover:text-gold transition-colors font-light">
-              Privacy Policy
-            </Link>
-            <Link to="/terms" className="text-sm text-white/40 hover:text-gold transition-colors font-light">
-              Terms
-            </Link>
-            <Link to="/support-network" className="text-sm text-white/40 hover:text-gold transition-colors font-light">
-              Resource Directory
-            </Link>
+          {/* Links grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-6 mb-10">
+            {/* Prepare for Action */}
+            <div>
+              <p className="text-xs text-white/25 uppercase tracking-[0.15em] font-medium mb-3">Prepare</p>
+              <div className="flex flex-col gap-2">
+                <Link to="/legal-templates" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Legal Templates</Link>
+                <Link to="/intake-packet" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Intake Packet</Link>
+                <Link to="/courts-filing-info" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Courts & Filing</Link>
+                <Link to="/public-request-rights" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Public Records</Link>
+              </div>
+            </div>
+
+            {/* Connect */}
+            <div>
+              <p className="text-xs text-white/25 uppercase tracking-[0.15em] font-medium mb-3">Connect</p>
+              <div className="flex flex-col gap-2">
+                <Link to="/find-help" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Find Legal Help</Link>
+                <Link to="/support-network" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Support Network</Link>
+                <Link to="/education-library" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Legal Library</Link>
+              </div>
+            </div>
+
+            {/* Tools */}
+            <div>
+              <p className="text-xs text-white/25 uppercase tracking-[0.15em] font-medium mb-3">Tools</p>
+              <div className="flex flex-col gap-2">
+                <Link to="/case-builder" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Case Builder</Link>
+                <Link to="/analyzer" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Analyzer</Link>
+                <Link to="/tools" className="text-sm text-white/40 hover:text-gold transition-colors font-light">How It Works</Link>
+              </div>
+            </div>
+
+            {/* About */}
+            <div>
+              <p className="text-xs text-white/25 uppercase tracking-[0.15em] font-medium mb-3">About</p>
+              <div className="flex flex-col gap-2">
+                <Link to="/founders-story" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Founder's Story</Link>
+                <Link to="/about" className="text-sm text-white/40 hover:text-gold transition-colors font-light">About</Link>
+                <Link to="/disclaimer" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Legal Disclaimer</Link>
+                <Link to="/privacy" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Privacy Policy</Link>
+                <Link to="/terms" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Terms</Link>
+              </div>
+            </div>
           </div>
 
           {/* Divider */}
