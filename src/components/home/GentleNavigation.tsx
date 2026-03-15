@@ -30,10 +30,12 @@ export function GentleNavigation() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           <PathOption label="Analyzer" href="/analyzer" />
           <PathOption label="How It Works" href="/tools" />
-          <PathOption label="Library" href="/library" />
+          <PathOption label="Library" href="/education-library" />
+          <PathOption label="Legal Templates" href="/legal-templates" />
+          <PathOption label="Courts & Filing" href="/courts-filing-info" />
           <PathOption label="Support" href="/support-network" />
         </div>
       </div>

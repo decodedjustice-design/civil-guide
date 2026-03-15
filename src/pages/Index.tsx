@@ -143,7 +143,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               {
                 icon: Briefcase,
@@ -172,6 +172,20 @@ const Index = () => {
                 description: "Structured guides for 10 core civil rights areas — from police encounters to housing rights.",
                 href: "/education-library",
                 cta: "Browse guides",
+              },
+              {
+                icon: FileText,
+                title: "Legal Templates",
+                description: "Starter outlines for records requests, tort claims, and civil rights complaint preparation.",
+                href: "/legal-templates",
+                cta: "View templates",
+              },
+              {
+                icon: Scale,
+                title: "Courts & Filing",
+                description: "Understand jurisdiction, filing procedures, and fee waivers for WA state and federal courts.",
+                href: "/courts-filing-info",
+                cta: "Learn more",
               },
             ].map((tool) => (
               <Link
@@ -265,12 +279,14 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { icon: Scale, title: "Find Legal Help", description: "Attorney search and legal aid resources.", href: "/find-help" },
               { icon: Users, title: "Support Network", description: "Organizations, advocates, and community resources.", href: "/support-network" },
+              { icon: FileText, title: "Intake Packet", description: "Prepare a structured inquiry for attorney consultations.", href: "/intake-packet" },
+              { icon: Shield, title: "Public Records", description: "Understand and organize your public records requests.", href: "/public-request-rights" },
               { icon: Wrench, title: "Self-Help Tools", description: "Templates, guides, and preparation resources.", href: "/self-help" },
-              { icon: HelpCircle, title: "How It Works", description: "See how all the tools connect together.", href: "/tools" },
+              { icon: Heart, title: "Founder's Story", description: "Why this platform exists and who built it.", href: "/founders-story" },
             ].map((resource) => (
               <Link
                 key={resource.title}
