@@ -50,7 +50,11 @@ const Index = () => {
             Your Justice.
           </h1>
 
-          <p className="text-lg sm:text-xl text-white/60 font-light tracking-wide mb-14 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+          <p className="text-base sm:text-lg text-gold font-medium tracking-wide mb-6 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
+            Understand, organize, and present your civil rights case.
+          </p>
+
+          <p className="text-lg sm:text-xl text-white/60 font-light tracking-wide mb-14 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
             A private, structured space to understand what's happening, organize your situation, and decide your next step with clarity.
           </p>
 
