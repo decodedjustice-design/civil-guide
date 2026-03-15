@@ -44,10 +44,8 @@ const Index = () => {
             <div className="w-12 h-px bg-gold/40" />
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white/95 leading-[1.1] tracking-tight mb-8 animate-fade-up">
-            Your Story.<br />
-            Your Rights.<br />
-            Your Justice.
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white/95 leading-[1.25] tracking-wide mb-8 animate-fade-up">
+            Your Story. Your Rights. Your Justice.
           </h1>
 
           <p className="text-base sm:text-lg text-gold font-medium tracking-wide mb-6 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
