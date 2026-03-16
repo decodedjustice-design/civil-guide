@@ -26,6 +26,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, ChevronLeft, ChevronRight, Sparkles, X } from "lucide-react";
 import type { IntakePrefillData } from "@/hooks/useIntakePrefill";
+import { SolWarning } from "@/components/intake/SolWarning";
 import { cn } from "@/lib/utils";
 
 const CIVIL_RIGHTS_CATEGORIES = [
@@ -164,6 +165,8 @@ export function IntakePacketForm({
   }, [prefillData]);
 
   const narrative = form.watch("narrative");
+  const incidentDate = form.watch("incidentDate");
+  const issueType = form.watch("issueType");
   const wordCount = narrative ? narrative.trim().split(/\s+/).filter(Boolean).length : 0;
 
   const validateCurrentStep = async () => {
@@ -603,22 +606,27 @@ export function IntakePacketForm({
                     )}
                   />
 
-                  <div className="p-3 rounded-lg bg-warning/5 border border-warning/20 text-sm">
-                    <p className="font-medium text-foreground mb-1">
-                      Important Deadline Information
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      Civil rights claims have strict filing deadlines. Common timeframes include:
-                    </p>
-                    <ul className="text-xs text-muted-foreground mt-2 space-y-1">
-                      <li>• WA State Tort Claims: 60 days to file notice</li>
-                      <li>• Federal §1983 Claims: Generally 3 years in WA</li>
-                      <li>• Administrative complaints: Varies by agency</li>
-                    </ul>
-                    <p className="text-xs text-muted-foreground mt-2 italic">
-                      This is general information only—consult an attorney for specific deadlines.
-                    </p>
-                  </div>
+                  {/* Dynamic SOL warning — updates as the user changes the incident date */}
+                  {incidentDate ? (
+                    <SolWarning incidentDate={incidentDate} issueType={issueType} />
+                  ) : (
+                    <div className="p-3 rounded-lg bg-warning/5 border border-warning/20 text-sm">
+                      <p className="font-medium text-foreground mb-1">
+                        Important: Enter your incident date above
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Once you enter a date, we will show you which deadline windows may apply to your situation.
+                      </p>
+                      <ul className="text-xs text-muted-foreground mt-2 space-y-1">
+                        <li>• WA State Tort Claims: 60 days to file notice</li>
+                        <li>• Federal §1983 Claims: Generally 3 years in WA</li>
+                        <li>• Administrative complaints: Varies by agency</li>
+                      </ul>
+                      <p className="text-xs text-muted-foreground mt-2 italic">
+                        This is general information only — consult an attorney for specific deadlines.
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
