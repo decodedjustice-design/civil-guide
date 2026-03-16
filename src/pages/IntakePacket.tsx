@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useIntakePrefill } from "@/hooks/useIntakePrefill";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { IntakePacketForm, IntakeFormData } from "@/components/intake/IntakePacketForm";
@@ -27,6 +28,8 @@ export default function IntakePacket() {
   const [viewState, setViewState] = useState<ViewState>("form");
   const [formData, setFormData] = useState<IntakeFormData | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+
+  const { prefillData, isLoading: isPrefillLoading } = useIntakePrefill();
 
   const { isSaving, savedPacket, savePacket } = useIntakePacket({
     attorneyId,
@@ -251,6 +254,7 @@ export default function IntakePacket() {
             attorneyFirm={attorneyFirm}
             onSubmit={handleFormSubmit}
             onCancel={handleCancel}
+            prefillData={isPrefillLoading ? null : prefillData}
           />
         ) : formData ? (
           <IntakePacketPreview

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -24,7 +24,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Sparkles, X } from "lucide-react";
+import type { IntakePrefillData } from "@/hooks/useIntakePrefill";
 import { cn } from "@/lib/utils";
 
 const CIVIL_RIGHTS_CATEGORIES = [
@@ -104,6 +105,8 @@ interface IntakePacketFormProps {
   onSubmit: (data: IntakeFormData) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
+  /** Optional pre-fill data sourced from the user's Clarion, Timeline, and Evidence Vault */
+  prefillData?: IntakePrefillData | null;
 }
 
 const STEPS = [
@@ -120,8 +123,10 @@ export function IntakePacketForm({
   onSubmit,
   onCancel,
   isSubmitting = false,
+  prefillData,
 }: IntakePacketFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [prefillBannerDismissed, setPrefillBannerDismissed] = useState(false);
 
   const form = useForm<IntakeFormData>({
     resolver: zodResolver(formSchema),
@@ -142,6 +147,21 @@ export function IntakePacketForm({
       contactPreferredMethod: "email",
     },
   });
+
+  // When prefill data arrives (async from parent), populate fields that are still empty
+  useEffect(() => {
+    if (!prefillData) return;
+    const current = form.getValues();
+    form.reset({
+      ...current,
+      narrative: current.narrative || prefillData.narrative,
+      incidentDate: current.incidentDate || prefillData.incidentDate,
+      incidentMonthYear: current.incidentMonthYear || prefillData.incidentMonthYear,
+      evidenceItems: current.evidenceItems || prefillData.evidenceItems,
+      issueType: current.issueType || prefillData.issueType,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefillData]);
 
   const narrative = form.watch("narrative");
   const wordCount = narrative ? narrative.trim().split(/\s+/).filter(Boolean).length : 0;
@@ -185,8 +205,45 @@ export function IntakePacketForm({
     onSubmit(data);
   };
 
+  const showPrefillBanner =
+    !prefillBannerDismissed &&
+    prefillData &&
+    (prefillData.hasClarion || prefillData.hasTimeline || prefillData.hasEvidence || prefillData.hasAnalyzer);
+
   return (
     <div className="space-y-6">
+      {/* Pre-fill Banner */}
+      {showPrefillBanner && (
+        <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-3">
+          <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-foreground mb-1">
+              We found your existing notes
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-2">
+              We pre-filled what we could from your workspace:
+            </p>
+            <ul className="text-xs text-muted-foreground space-y-0.5">
+              {prefillData!.hasClarion && <li>• Your Clarion entries → narrative field</li>}
+              {prefillData!.hasTimeline && <li>• Your earliest timeline event → incident date</li>}
+              {prefillData!.hasEvidence && <li>• Your Evidence Vault items → evidence list</li>}
+              {prefillData!.hasAnalyzer && <li>• Your Analyzer result → issue type</li>}
+            </ul>
+            <p className="text-xs text-muted-foreground mt-2 italic">
+              Review and edit everything before generating. You are in control.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setPrefillBannerDismissed(true)}
+            className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            aria-label="Dismiss pre-fill notice"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Warning Banner */}
       <div className="p-4 rounded-xl bg-warning/10 border border-warning/30 flex items-start gap-3">
         <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
