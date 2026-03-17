@@ -7,14 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { MobileNavMenu } from "./MobileNavMenu";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
-const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Private Record", href: "/dashboard" },
-  { name: "How It Works", href: "/tools" },
-  { name: "Learn", href: "/library" },
-  { name: "Find Help", href: "/find-help" },
-  { name: "About", href: "/about" },
-];
+import { primaryNavItems } from "@/data/navigation";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -45,7 +38,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
+            {primaryNavItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}

@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { primaryNavItems } from "@/data/navigation";
 
 interface MobileNavMenuProps {
   isOpen: boolean;
@@ -9,15 +10,6 @@ interface MobileNavMenuProps {
   user: { email?: string } | null;
   onSignOut: () => void;
 }
-
-const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Private Record", href: "/dashboard" },
-  { name: "How It Works", href: "/tools" },
-  { name: "Learn", href: "/library" },
-  { name: "Find Help", href: "/find-help" },
-  { name: "About", href: "/about" },
-];
 
 export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMenuProps) {
   const location = useLocation();
@@ -89,7 +81,7 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
 
           {/* Navigation Links */}
           <div className="space-y-1">
-            {navItems.map((item) => (
+            {primaryNavItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
