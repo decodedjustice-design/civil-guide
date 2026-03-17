@@ -32,6 +32,7 @@ import JusticePlace from "./pages/JusticePlace";
 import Clarion from "./pages/Clarion";
 import EducationLibrary from "./pages/EducationLibrary";
 import CaseBuilder from "./pages/CaseBuilder";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -44,7 +45,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/analyzer" element={<Analyzer />} />
             <Route path="/justice-place" element={<JusticePlace />} />
             <Route path="/clarion" element={<Clarion />} />
@@ -58,21 +59,21 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/signin" element={<Auth />} />
             <Route path="/signup" element={<Auth />} />
-            <Route path="/notes" element={<Notes />} />
-            <Route path="/evidence-vault" element={<EvidenceVault />} />
-            <Route path="/timeline" element={<Timeline />} />
+            <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
+            <Route path="/evidence-vault" element={<ProtectedRoute><EvidenceVault /></ProtectedRoute>} />
+            <Route path="/timeline" element={<ProtectedRoute><Timeline /></ProtectedRoute>} />
             <Route path="/guide/:guideId" element={<FullGuide />} />
             <Route path="/library" element={<Library />} />
             <Route path="/education-library" element={<EducationLibrary />} />
-            <Route path="/transcription" element={<Transcription />} />
+            <Route path="/transcription" element={<ProtectedRoute><Transcription /></ProtectedRoute>} />
             <Route path="/public-request-rights" element={<PublicRequestRights />} />
             <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
-            <Route path="/saved-attorneys" element={<SavedAttorneys />} />
+            <Route path="/saved-attorneys" element={<ProtectedRoute><SavedAttorneys /></ProtectedRoute>} />
             <Route path="/legal-templates" element={<StarterLegalTemplates />} />
-            <Route path="/intake-packet" element={<IntakePacket />} />
-            <Route path="/attorney-contacts" element={<AttorneyContacts />} />
+            <Route path="/intake-packet" element={<ProtectedRoute><IntakePacket /></ProtectedRoute>} />
+            <Route path="/attorney-contacts" element={<ProtectedRoute><AttorneyContacts /></ProtectedRoute>} />
             <Route path="/founders-story" element={<About />} />
-            <Route path="/case-builder" element={<CaseBuilder />} />
+            <Route path="/case-builder" element={<ProtectedRoute><CaseBuilder /></ProtectedRoute>} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<About />} />
             <Route path="/terms" element={<About />} />
