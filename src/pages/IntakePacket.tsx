@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useIntakePrefill } from "@/hooks/useIntakePrefill";
-import { useCaseBriefGenerator } from "@/hooks/useCaseBriefGenerator";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { IntakePacketForm, IntakeFormData } from "@/components/intake/IntakePacketForm";
 import { IntakePacketPreview } from "@/components/intake/IntakePacketPreview";
-import { CaseBriefGenerator } from "@/components/intake/CaseBriefGenerator";
+import { CaseBriefViewer } from "@/components/intake/CaseBriefViewer";
 import { useIntakePacket } from "@/hooks/useIntakePacket";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -33,8 +32,6 @@ export default function IntakePacket() {
   const [isExporting, setIsExporting] = useState(false);
 
   const { prefillData, isLoading: isPrefillLoading } = useIntakePrefill();
-  const { data: caseBriefData, isLoading: isCaseBriefLoading, error: caseBriefError } = useCaseBriefGenerator();
-
   const { isSaving, savedPacket, savePacket } = useIntakePacket({
     attorneyId,
     attorneyName,
@@ -101,13 +98,7 @@ export default function IntakePacket() {
         </div>
 
         {mode === "brief" ? (
-          isCaseBriefLoading ? (
-            <Card><CardContent className="p-6 text-sm text-muted-foreground">Compiling Clarion, Timeline, Evidence Vault, and incident date data...</CardContent></Card>
-          ) : caseBriefError ? (
-            <Card><CardContent className="p-6 text-sm text-destructive">{caseBriefError}</CardContent></Card>
-          ) : (
-            <CaseBriefGenerator data={caseBriefData} />
-          )
+          <CaseBriefViewer />
         ) : viewState === "form" ? (
           <IntakePacketForm
             attorneyId={attorneyId}
