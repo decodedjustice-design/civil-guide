@@ -75,11 +75,12 @@ const App = () => (
             <Route path="/legal-templates" element={<StarterLegalTemplates />} />
             <Route path="/intake-packet" element={<IntakePacket />} />
             <Route path="/attorney-contacts" element={<AttorneyContacts />} />
-            <Route path="/founders-story" element={<About />} />
+            <Route path="/founders-story" element={<FoundersStory />} />
             <Route path="/case-builder" element={<CaseBuilder />} />
             <Route path="/what-we-are" element={<About />} />
-            <Route path="/privacy" element={<About />} />
-            <Route path="/terms" element={<About />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/disclaimer" element={<DisclaimerPage />} />
             <Route path="/disclaimer" element={<About />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
