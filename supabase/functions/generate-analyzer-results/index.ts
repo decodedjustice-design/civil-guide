@@ -12,9 +12,59 @@ interface AnalyzerInput {
   patternStrength: 'none' | 'possible' | 'strong' | 'very_strong';
   location?: string;
   entityName?: string;
+  clarionNarrative?: string;
+  timelineEntries?: TimelineEntry[];
+  evidenceItems?: EvidenceItem[];
+  answeredQuestions?: Array<{ questionId: string; answer: string }>;
+  maxQuestions?: number;
+}
+
+interface TimelineEntry {
+  id?: string;
+  title?: string;
+  description?: string;
+  date?: string;
+  actors?: string[];
+  outcome?: string;
+}
+
+interface EvidenceItem {
+  id?: string;
+  type?: string;
+  title?: string;
+  description?: string;
+  linkedTimelineEntryId?: string;
+  linkedDate?: string;
+}
+
+type GapCategory = 'timeline' | 'evidence' | 'identity' | 'harm_outcome' | 'context';
+
+interface GapQuestion {
+  id: string;
+  category: GapCategory;
+  priority: number;
+  gapType: string;
+  relatedEntryId?: string;
+  prompt: string;
+  rationale: string;
 }
 
 interface AnalyzerResultsAI {
+  mode: "case_gap_guided_questions";
+  summary: {
+    totalGapsFound: number;
+    unresolvedGapCount: number;
+    resolvedByUserAnswers: string[];
+  };
+  categories: Array<{
+    id: GapCategory;
+    label: string;
+    unresolvedCount: number;
+  }>;
+  questions: GapQuestion[];
+  nextQuestions: GapQuestion[];
+  safetyNotice: string;
+  // Legacy fields kept for compatibility with existing UI consumers.
   systemIdentification: string;
   powerDynamics: {
     whoHasControl: string[];
@@ -29,107 +79,21 @@ interface AnalyzerResultsAI {
   closingAffirmation: string;
 }
 
-// SYSTEM PROMPT: Verbatim "Analyzer Results Rules" from Project Knowledge
-// DO NOT SUMMARIZE. DO NOT IMPROVISE. DO NOT CHANGE STRUCTURE. FOLLOW EXACTLY.
-const SYSTEM_PROMPT = `You are generating Analyzer Results for Decoded Justice.
+const CATEGORY_LABELS: Record<GapCategory, string> = {
+  timeline: "Timeline gaps",
+  evidence: "Evidence gaps",
+  identity: "Identity gaps",
+  harm_outcome: "Harm / outcome gaps",
+  context: "Context gaps",
+};
 
-Your job is to produce a finished, calm, specific, trauma-aware, one-page result that helps a person understand how a system usually works without overwhelming them or giving legal advice.
+const hasText = (value?: string) => Boolean(value && value.trim().length > 0);
 
-HARD RULES (DO NOT BREAK)
-• Do not give legal advice
-• Do not list statutes, case law, or procedural steps
-• Do not include options, menus, or multiple paths
-• Do not speculate about outcomes
-• Do not overwhelm with detail
-• Assume the reader may be stressed, scared, or confused
-
-Write with clarity, steadiness, and authority.
-
-⸻
-
-REQUIRED STRUCTURE (ALWAYS USE ALL 7 SECTIONS)
-
-1. What System You're Actually In
-Explain what system the user is dealing with and why it often feels confusing or disconnected from expectations.
-
-2. Who Has Power (And Who Does Not)
-Clearly separate:
-• What this system controls
-• What it does not control
-• Who actually makes decisions
-
-Avoid blame. Avoid reassurance.
-
-3. What Usually Happens Next
-Describe typical patterns, not promises.
-Use calm, neutral language.
-No timelines unless unavoidable.
-
-4. Where People Commonly Get Stuck
-Explain misunderstandings without implying fault.
-
-5. If You Do Nothing Else
-Give exactly three grounding priorities.
-• No tactics
-• No steps
-• No escalation language
-
-6. Reference Anchors (3–4 only)
-Provide high-level orientation anchors, such as:
-• "Internal review processes"
-• "Administrative decision standards"
-• "Oversight models"
-Do not cite statutes or cases.
-
-7. Gentle Reality Check
-One short paragraph acknowledging emotional reality without discouragement or false hope.
-
-⸻
-
-TONE REQUIREMENTS
-• Calm
-• Plain language
-• Non-alarmist
-• Non-judgmental
-• Respectful of lived experience
-
-⸻
-
-OUTPUT LENGTH
-• One page maximum
-• No bullet overload
-• White space matters
-
-⸻
-
-FINAL LINE (REQUIRED)
-
-End with a sentence that affirms clarity over action, such as:
-
-"Clarity often comes before resolution — and sometimes clarity is what allows people to decide what comes next."
-
-⸻
-
-OUTPUT FORMAT:
-You must respond with valid JSON matching this exact structure:
-{
-  "systemIdentification": "string - explanation of what system they're in and why it feels confusing",
-  "powerDynamics": {
-    "whoHasControl": ["array of 2-3 things this system controls"],
-    "whoDoesNotControl": ["array of 2-3 things this system does NOT control"],
-    "decisionMakers": ["array of 2-3 decision-makers in this system"]
-  },
-  "usualProcess": ["array of 2-3 typical patterns of what usually happens next"],
-  "commonStuckPoints": ["array of 2-3 common misunderstandings - no fault implied"],
-  "priorityActions": [
-    {"title": "First grounding priority", "description": "Brief description - no tactics, no steps, no escalation"},
-    {"title": "Second grounding priority", "description": "Brief description - no tactics, no steps, no escalation"},
-    {"title": "Third grounding priority", "description": "Brief description - no tactics, no steps, no escalation"}
-  ],
-  "referenceAnchors": ["array of 3-4 high-level orientation anchors - no statutes or cases"],
-  "gentleRealityCheck": "One short paragraph acknowledging emotional reality without discouragement or false hope",
-  "closingAffirmation": "A sentence affirming clarity over action"
-}`;
+const safeDate = (value?: string) => {
+  if (!value) return null;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? null : parsed;
+};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -161,128 +125,172 @@ serve(async (req) => {
       );
     }
 
-    const { systemId, systemLabel, patternStrength, location, entityName } = await req.json() as AnalyzerInput;
+    const {
+      systemId,
+      systemLabel,
+      clarionNarrative,
+      timelineEntries = [],
+      evidenceItems = [],
+      answeredQuestions = [],
+      maxQuestions = 5,
+    } = await req.json() as AnalyzerInput;
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
-    }
-
-    // Build user prompt with context
-    let userPrompt = `Generate Analyzer Results for someone navigating the ${systemLabel} system.`;
-    
-    if (location) {
-      userPrompt += ` They are located in ${location}.`;
-    }
-    
-    if (entityName) {
-      userPrompt += ` The specific entity involved is: ${entityName}.`;
-    }
-    
-    if (patternStrength !== 'none') {
-      const strengthDescriptions: Record<string, string> = {
-        possible: "There are some indications of a broader pattern with this entity.",
-        strong: "This pattern has been documented in multiple cases.",
-        very_strong: "This is a well-documented pattern with significant supporting evidence."
-      };
-      userPrompt += ` ${strengthDescriptions[patternStrength] || ''}`;
-    }
-
-    userPrompt += `
-
-System ID: ${systemId}
-System Label: ${systemLabel}
-Pattern Strength: ${patternStrength}
-
-Generate the complete Analyzer Results following the exact 7-section structure required. Remember:
-- One page maximum
-- Trauma-aware, calm, educational only
-- No legal advice, no statutes, no case law
-- No steps, tactics, menus, or escalation language
-- End with a clarity-affirming sentence`;
-
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: userPrompt }
-        ],
-        temperature: 0.3, // Lower temperature for more consistent, calm output
-      }),
+    const gaps: GapQuestion[] = [];
+    const resolvedByUserAnswers: string[] = [];
+    const entryEvidenceMap = new Map<string, number>();
+    evidenceItems.forEach((item) => {
+      if (item.linkedTimelineEntryId) {
+        entryEvidenceMap.set(item.linkedTimelineEntryId, (entryEvidenceMap.get(item.linkedTimelineEntryId) || 0) + 1);
+      }
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Payment required, please add funds to your Lovable AI workspace." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      return new Response(JSON.stringify({ error: "AI generation temporarily unavailable" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+    if (timelineEntries.length === 0) {
+      gaps.push({
+        id: "timeline_missing",
+        category: "timeline",
+        priority: 100,
+        gapType: "missing_timeline_events",
+        prompt: "Can you add the key events in order, even if some dates are approximate?",
+        rationale: "A basic event sequence helps organize the case record.",
       });
     }
 
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    timelineEntries.forEach((entry, index) => {
+      const entryLabel = entry.title || `event ${index + 1}`;
+      const entryId = entry.id || `timeline_${index}`;
 
-    if (!content) {
-      throw new Error("No content in AI response");
-    }
+      if (!hasText(entry.date)) {
+        gaps.push({
+          id: `missing_date_${entryId}`,
+          category: "timeline",
+          priority: 90,
+          gapType: "missing_date",
+          relatedEntryId: entry.id,
+          prompt: `Do you know when "${entryLabel}" happened, even an estimated date or time range?`,
+          rationale: "Dates improve sequence clarity and case consistency.",
+        });
+      }
 
-    // Parse the JSON response
-    let results: AnalyzerResultsAI;
-    try {
-      // Handle potential markdown code blocks in the response
-      const jsonContent = content.replace(/```json\n?|\n?```/g, '').trim();
-      results = JSON.parse(jsonContent);
-    } catch (parseError) {
-      console.error("Failed to parse AI response:", content);
-      throw new Error("Failed to parse AI response as JSON");
-    }
+      if ((entryEvidenceMap.get(entry.id || "") || 0) === 0) {
+        gaps.push({
+          id: `missing_evidence_${entryId}`,
+          category: "evidence",
+          priority: 85,
+          gapType: "event_without_supporting_evidence",
+          relatedEntryId: entry.id,
+          prompt: `Do you have any photos, video, messages, reports, or documents related to "${entryLabel}"?`,
+          rationale: "Supporting items strengthen record completeness for each event.",
+        });
+      }
 
-    // Validate required fields - all 7 sections must be present
-    const requiredFields = [
-      'systemIdentification',
-      'powerDynamics',
-      'usualProcess',
-      'commonStuckPoints',
-      'priorityActions',
-      'referenceAnchors',
-      'gentleRealityCheck',
-      'closingAffirmation'
-    ];
+      if (!entry.actors || entry.actors.length === 0) {
+        gaps.push({
+          id: `missing_actor_${entryId}`,
+          category: "identity",
+          priority: 88,
+          gapType: "unclear_actor",
+          relatedEntryId: entry.id,
+          prompt: `Who was involved in "${entryLabel}"? If known, names, roles, or badge numbers are helpful.`,
+          rationale: "Identifying involved people or roles reduces ambiguity.",
+        });
+      }
 
-    for (const field of requiredFields) {
-      if (!(field in results)) {
-        throw new Error(`Missing required field: ${field}`);
+      if (!hasText(entry.outcome)) {
+        gaps.push({
+          id: `missing_outcome_${entryId}`,
+          category: "harm_outcome",
+          priority: 86,
+          gapType: "missing_outcome",
+          relatedEntryId: entry.id,
+          prompt: `What was the immediate outcome of "${entryLabel}"? For example, any harm, injury, loss, or result.`,
+          rationale: "Outcomes clarify impact and what happened next.",
+        });
+      }
+    });
+
+    const datedEvents = timelineEntries
+      .map((entry, index) => ({ entry, index, ts: safeDate(entry.date) }))
+      .filter((item) => item.ts !== null)
+      .sort((a, b) => (a.ts || 0) - (b.ts || 0));
+
+    for (let i = 0; i < datedEvents.length - 1; i++) {
+      const current = datedEvents[i];
+      const next = datedEvents[i + 1];
+      if ((next.ts! - current.ts!) > 1000 * 60 * 60 * 24 * 30) {
+        gaps.push({
+          id: `sequence_gap_${current.index}_${next.index}`,
+          category: "timeline",
+          priority: 82,
+          gapType: "sequence_gap_between_events",
+          prompt: `What happened between "${current.entry.title || `event ${current.index + 1}`}" and "${next.entry.title || `event ${next.index + 1}`}"?`,
+          rationale: "Large timeline gaps can hide important connecting events.",
+        });
       }
     }
 
-    // Validate priorityActions has exactly 3 items
-    if (!Array.isArray(results.priorityActions) || results.priorityActions.length !== 3) {
-      throw new Error("priorityActions must have exactly 3 items");
+    if (!hasText(clarionNarrative)) {
+      gaps.push({
+        id: "missing_context_clarion",
+        category: "context",
+        priority: 84,
+        gapType: "missing_context",
+        prompt: "Can you describe what led up to the first event in this case?",
+        rationale: "Lead-up context helps explain why events began.",
+      });
     }
 
-    // Validate referenceAnchors has 3-4 items
-    if (!Array.isArray(results.referenceAnchors) || results.referenceAnchors.length < 3 || results.referenceAnchors.length > 4) {
-      throw new Error("referenceAnchors must have 3-4 items");
-    }
+    const normalizedAnswers = answeredQuestions
+      .map((item) => item.answer.trim())
+      .filter((answer) => answer.length > 0)
+      .join(" ")
+      .toLowerCase();
+    const unresolvedGaps = gaps.filter((gap) => {
+      if (!normalizedAnswers) return true;
+      const resolved = gap.gapType.split("_").some((part) => normalizedAnswers.includes(part));
+      if (resolved) resolvedByUserAnswers.push(gap.id);
+      return !resolved;
+    });
+
+    const sorted = unresolvedGaps.sort((a, b) => b.priority - a.priority);
+    const limitedCount = Math.min(Math.max(maxQuestions, 3), 5);
+    const nextQuestions = sorted.slice(0, limitedCount);
+
+    const categories = (Object.keys(CATEGORY_LABELS) as GapCategory[]).map((id) => ({
+      id,
+      label: CATEGORY_LABELS[id],
+      unresolvedCount: unresolvedGaps.filter((gap) => gap.category === id).length,
+    }));
+
+    const results: AnalyzerResultsAI = {
+      mode: "case_gap_guided_questions",
+      summary: {
+        totalGapsFound: gaps.length,
+        unresolvedGapCount: unresolvedGaps.length,
+        resolvedByUserAnswers,
+      },
+      categories,
+      questions: sorted,
+      nextQuestions,
+      safetyNotice: "These follow-up prompts are for organizing your case record. They do not evaluate case strength or provide legal conclusions.",
+      systemIdentification: `Case gap analysis for ${systemLabel} generated from your existing case records.`,
+      powerDynamics: {
+        whoHasControl: ["Case record completeness", "Event sequencing clarity"],
+        whoDoesNotControl: ["Legal outcomes", "Agency decisions"],
+        decisionMakers: ["You as the record owner"],
+      },
+      usualProcess: ["Identify unresolved gaps", "Ask the next high-priority follow-up questions", "Update and re-prioritize after each answer"],
+      commonStuckPoints: ["Missing dates", "Unclear actors", "Events without supporting evidence"],
+      priorityActions: nextQuestions.slice(0, 3).map((question, index) => ({
+        title: `Follow-up priority ${index + 1}`,
+        description: question.prompt,
+      })).concat(Array.from({ length: Math.max(0, 3 - nextQuestions.length) }).map((_, index) => ({
+        title: `Follow-up priority ${nextQuestions.length + index + 1}`,
+        description: "Add more case details to unlock targeted follow-up prompts.",
+      }))),
+      referenceAnchors: ["Timeline consistency", "Evidence linkage", "Actor identification"],
+      gentleRealityCheck: "Building a case record can feel heavy. Adding one clear detail at a time is enough progress.",
+      closingAffirmation: "Clarity often comes before resolution — and each clear detail helps you decide what comes next.",
+    };
 
     return new Response(JSON.stringify({ success: true, results }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
