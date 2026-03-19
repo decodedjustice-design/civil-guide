@@ -32,6 +32,10 @@ import JusticePlace from "./pages/JusticePlace";
 import Clarion from "./pages/Clarion";
 import EducationLibrary from "./pages/EducationLibrary";
 import CaseBuilder from "./pages/CaseBuilder";
+import FoundersStory from "./pages/FoundersStory";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import DisclaimerPage from "./pages/Disclaimer";
 
 const queryClient = new QueryClient();
 
