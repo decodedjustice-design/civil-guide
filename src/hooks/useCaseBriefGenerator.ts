@@ -13,6 +13,7 @@ interface TimelineEntry {
   title: string;
   description: string | null;
   event_date: string;
+  evidenceCount?: number;
 }
 
 interface EvidenceItem {
@@ -33,7 +34,7 @@ export interface CaseBriefData {
     narrativeSummary: string;
   };
   timeline: TimelineEntry[];
-  evidenceIndex: Array<EvidenceItem & { linkedEventTitle: string | null; linkStrength: "exact" | "nearby" | "unlinked" }>;
+  evidenceIndex: Array<EvidenceItem & { linkedEventId: string | null; linkedEventTitle: string | null; linkStrength: "exact" | "nearby" | "unlinked" }>;
   keyFacts: string[];
   possibleLegalIssues: string[];
   deadlines: {
@@ -111,7 +112,7 @@ export function useCaseBriefGenerator() {
     const evidenceIndex = evidence.map((item) => {
       const evDate = item.document_date ? new Date(item.document_date).getTime() : null;
       if (!evDate) {
-        return { ...item, linkedEventTitle: null, linkStrength: "unlinked" as const };
+        return { ...item, linkedEventId: null, linkedEventTitle: null, linkStrength: "unlinked" as const };
       }
 
       let exactMatch: TimelineEntry | null = null;
@@ -129,13 +130,24 @@ export function useCaseBriefGenerator() {
       }
 
       if (exactMatch) {
-        return { ...item, linkedEventTitle: exactMatch.title, linkStrength: "exact" as const };
+        return { ...item, linkedEventId: exactMatch.id, linkedEventTitle: exactMatch.title, linkStrength: "exact" as const };
       }
       if (nearbyMatch) {
-        return { ...item, linkedEventTitle: nearbyMatch.title, linkStrength: "nearby" as const };
+        return { ...item, linkedEventId: nearbyMatch.id, linkedEventTitle: nearbyMatch.title, linkStrength: "nearby" as const };
       }
-      return { ...item, linkedEventTitle: null, linkStrength: "unlinked" as const };
+      return { ...item, linkedEventId: null, linkedEventTitle: null, linkStrength: "unlinked" as const };
     });
+
+    const evidenceCountByEventId = evidenceIndex.reduce<Record<string, number>>((acc, item) => {
+      if (!item.linkedEventId) return acc;
+      acc[item.linkedEventId] = (acc[item.linkedEventId] || 0) + 1;
+      return acc;
+    }, {});
+
+    const timelineWithEvidenceCounts = timeline.map((event) => ({
+      ...event,
+      evidenceCount: evidenceCountByEventId[event.id] || 0,
+    }));
 
     const keyFacts = [
       ...timeline.slice(0, 6).map((event) => `${event.event_date}: ${event.title}${event.description ? ` — ${event.description}` : ""}`),
@@ -170,7 +182,7 @@ export function useCaseBriefGenerator() {
         incidentDate,
         narrativeSummary,
       },
-      timeline,
+      timeline: timelineWithEvidenceCounts,
       evidenceIndex,
       keyFacts: keyFacts.length ? keyFacts : ["No key facts could be derived from existing records."],
       possibleLegalIssues: Array.from(issueSet),

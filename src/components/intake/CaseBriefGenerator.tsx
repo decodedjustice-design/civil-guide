@@ -55,7 +55,12 @@ export function CaseBriefGenerator({ data }: Props) {
           <CardContent className="space-y-3 text-sm">
             {data.timeline.length ? data.timeline.map((event) => (
               <div key={event.id}>
-                <p><strong>{event.event_date}</strong> — {event.title}</p>
+                <p>
+                  <strong>{event.event_date}</strong> — {event.title}
+                  <span className="text-xs text-muted-foreground ml-2">
+                    ({event.evidenceCount || 0} linked evidence item{(event.evidenceCount || 0) === 1 ? "" : "s"})
+                  </span>
+                </p>
                 {event.description && <p className="text-muted-foreground">{event.description}</p>}
               </div>
             )) : <p className="text-muted-foreground italic">No timeline events found.</p>}
@@ -73,7 +78,7 @@ export function CaseBriefGenerator({ data }: Props) {
                   <Badge variant="secondary">{item.file_type || "file"}</Badge>
                   <Badge variant="outline">{item.linkStrength === "exact" ? "Exact date link" : item.linkStrength === "nearby" ? "Nearby date link" : "No timeline link"}</Badge>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Linked event: {item.linkedEventTitle || "Not linked"}. Source: {item.source || "Not provided"}.</p>
+                <p className="text-xs text-muted-foreground mt-1">Linked event: {item.linkedEventTitle || "Not linked"} ({item.linkedEventId || "no id"}). Source: {item.source || "Not provided"}.</p>
               </div>
             )) : <p className="text-muted-foreground italic">No evidence records found.</p>}
           </CardContent>
@@ -128,10 +133,10 @@ function toPlainText(data: CaseBriefData) {
     `Narrative summary: ${data.caseOverview.narrativeSummary}`,
     "",
     "SECTION 2: CHRONOLOGICAL TIMELINE",
-    ...data.timeline.map((e) => `- ${e.event_date}: ${e.title}${e.description ? ` — ${e.description}` : ""}`),
+    ...data.timeline.map((e) => `- ${e.event_date}: ${e.title}${e.description ? ` — ${e.description}` : ""} | linked evidence: ${e.evidenceCount || 0}`),
     "",
     "SECTION 3: EVIDENCE INDEX",
-    ...data.evidenceIndex.map((e) => `- ${e.title}${e.document_date ? ` (${e.document_date})` : ""} | link: ${e.linkStrength} | event: ${e.linkedEventTitle || "none"} | source: ${e.source || "n/a"}`),
+    ...data.evidenceIndex.map((e) => `- ${e.title}${e.document_date ? ` (${e.document_date})` : ""} | link: ${e.linkStrength} | eventId: ${e.linkedEventId || "none"} | event: ${e.linkedEventTitle || "none"} | source: ${e.source || "n/a"}`),
     "",
     "SECTION 4: KEY FACTS",
     ...data.keyFacts.map((f) => `- ${f}`),

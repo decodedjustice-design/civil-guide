@@ -103,6 +103,9 @@ export function CaseBriefViewer() {
                 {data.timeline.map((event) => (
                   <li key={event.id}>
                     <span className="font-medium">{event.event_date}</span>: {event.title}
+                    <span className="text-xs text-muted-foreground ml-2">
+                      ({event.evidenceCount || 0} linked evidence item{(event.evidenceCount || 0) === 1 ? "" : "s"})
+                    </span>
                     {event.description ? <p className="text-muted-foreground mt-1">{event.description}</p> : null}
                   </li>
                 ))}
@@ -137,7 +140,7 @@ export function CaseBriefViewer() {
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Linked event: {item.linkedEventTitle || "Not linked"}. Source: {item.source || "Not provided"}.
+                    Linked event: {item.linkedEventTitle || "Not linked"} ({item.linkedEventId || "no id"}). Source: {item.source || "Not provided"}.
                   </p>
                 </div>
               ))
@@ -251,14 +254,14 @@ function toPlainText(data: CaseBriefData) {
     "",
     "2. CHRONOLOGICAL TIMELINE",
     ...(data.timeline.length
-      ? data.timeline.map((e) => `- ${e.event_date}: ${e.title}${e.description ? ` — ${e.description}` : ""}`)
+      ? data.timeline.map((e) => `- ${e.event_date}: ${e.title}${e.description ? ` — ${e.description}` : ""} | linked evidence: ${e.evidenceCount || 0}`)
       : ["- No timeline events found."]),
     "",
     "3. EVIDENCE INDEX",
     ...(data.evidenceIndex.length
       ? data.evidenceIndex.map(
           (e) =>
-            `- ${e.title}${e.document_date ? ` (${e.document_date})` : ""} | link: ${e.linkStrength} | event: ${e.linkedEventTitle || "none"} | source: ${e.source || "n/a"}`,
+            `- ${e.title}${e.document_date ? ` (${e.document_date})` : ""} | link: ${e.linkStrength} | eventId: ${e.linkedEventId || "none"} | event: ${e.linkedEventTitle || "none"} | source: ${e.source || "n/a"}`,
         )
       : ["- No evidence records found."]),
     "",
