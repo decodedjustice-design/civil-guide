@@ -10,11 +10,11 @@ export type CaseBuilderStep =
   | "case-packet";
 
 export const CASE_BUILDER_STEPS: { id: CaseBuilderStep; label: string; shortLabel: string; description: string }[] = [
-  { id: "incident-intake", label: "Incident Intake", shortLabel: "Intake", description: "Describe what happened and who was involved." },
-  { id: "evidence-vault", label: "Evidence Vault", shortLabel: "Evidence", description: "Upload and organize your supporting documents." },
-  { id: "timeline-builder", label: "Timeline Builder", shortLabel: "Timeline", description: "Build a chronological record of events." },
-  { id: "legal-issue-mapping", label: "Legal Issue Mapping", shortLabel: "Issues", description: "Identify the legal issues in your situation." },
-  { id: "case-packet", label: "Case Packet Generator", shortLabel: "Packet", description: "Generate a professional case summary." },
+  { id: "incident-intake", label: "Write Your Story", shortLabel: "Story", description: "Explain what happened in plain language." },
+  { id: "timeline-builder", label: "Build Timeline", shortLabel: "Timeline", description: "Place events in clear chronological order." },
+  { id: "evidence-vault", label: "Upload Evidence", shortLabel: "Evidence", description: "Add documents, photos, and files." },
+  { id: "legal-issue-mapping", label: "Review Key Issues", shortLabel: "Issues", description: "Surface patterns and key legal issue areas." },
+  { id: "case-packet", label: "Generate Case Packet", shortLabel: "Packet", description: "Create an attorney-ready case packet PDF." },
 ];
 
 export interface CaseBuilderProgress {
@@ -73,8 +73,8 @@ export function useCaseBuilder() {
   const isStepComplete = (step: CaseBuilderStep): boolean => {
     switch (step) {
       case "incident-intake": return progress.incidentIntakeComplete;
-      case "evidence-vault": return progress.evidenceCount > 0;
       case "timeline-builder": return progress.timelineCount > 0;
+      case "evidence-vault": return progress.evidenceCount > 0;
       case "legal-issue-mapping": return progress.legalIssuesIdentified;
       case "case-packet": return progress.casePacketGenerated;
       default: return false;

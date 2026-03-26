@@ -2,10 +2,8 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import {
-  Shield, Lock, Eye, FileText, Clock, Search,
-  BookOpen, Scale, PenLine, HelpCircle,
-  FolderOpen, Upload, Briefcase, ArrowRight,
-  Users, Wrench, Heart,
+  FileText, Clock, Search,
+  BookOpen, PenLine, FolderOpen, ArrowRight,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { libraryCategories } from "@/data/legalEducationLibrary";
@@ -45,15 +43,15 @@ const Index = () => {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white/95 leading-[1.25] tracking-wide mb-8 animate-fade-up">
-            Your Story. Your Rights. Your Justice.
+            Turn your incident into an attorney-ready case packet.
           </h1>
 
           <p className="text-base sm:text-lg text-gold font-medium tracking-wide mb-6 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
-            Understand, organize, and present your civil rights case.
+            One guided flow. One clear outcome.
           </p>
 
           <p className="text-lg sm:text-xl text-white/60 font-light tracking-wide mb-14 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
-            A private, structured space to understand what's happening, organize your situation, and decide your next step with clarity.
+            In about 30–60 minutes, build a structured timeline, organize your evidence, and generate a professional PDF packet you can send to an attorney.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-fade-up" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
@@ -77,37 +75,49 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── THREE-STEP PROCESS ── */}
+      {/* ── CANONICAL FLOW ── */}
       <section className="bg-cream py-24 sm:py-32">
-        <div className="container max-w-4xl px-6">
+        <div className="container max-w-5xl px-6">
           <div className="text-center mb-16">
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground tracking-tight mb-4">
               How it works
             </h2>
             <p className="text-muted-foreground font-light max-w-xl mx-auto">
-              A calm, guided process from confusion to clarity — at your own pace.
+              A single guided system designed for people under stress.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+          <div className="grid md:grid-cols-5 gap-6 max-w-5xl mx-auto">
             {[
               {
                 step: 1,
                 icon: PenLine,
-                title: "Tell Your Story",
-                description: "Start in your own words. Describe what happened, who was involved, and what felt wrong. We help you structure it.",
+                title: "Write what happened",
+                description: "Tell your story in plain language.",
               },
               {
                 step: 2,
-                icon: FolderOpen,
-                title: "Organize Your Evidence",
-                description: "Upload documents, build a timeline, and connect the pieces into a clear, organized picture of your situation.",
+                icon: Clock,
+                title: "Build timeline",
+                description: "Put events in order with dates and locations.",
               },
               {
                 step: 3,
-                icon: BookOpen,
-                title: "Understand Your Rights",
-                description: "Learn how the system you're in actually works — who has power, what usually happens, and what you can do.",
+                icon: FolderOpen,
+                title: "Upload evidence",
+                description: "Add photos, files, records, and notes.",
+              },
+              {
+                step: 4,
+                icon: Search,
+                title: "Review key issues",
+                description: "Spot issue areas and missing details.",
+              },
+              {
+                step: 5,
+                icon: FileText,
+                title: "Generate case packet",
+                description: "Export a structured attorney-ready PDF.",
               },
             ].map((item, i) => (
               <div key={item.step} className="text-center animate-fade-in" style={{ animationDelay: `${i * 150}ms`, animationFillMode: "both" }}>
@@ -130,67 +140,44 @@ const Index = () => {
         </div>
       </div>
 
-      {/* ── PLATFORM TOOLS ── */}
+      {/* ── WHAT YOU'LL GET ── */}
       <section className="bg-cream py-24 sm:py-28">
-        <div className="container max-w-5xl px-6">
+        <div className="container max-w-4xl px-6">
           <div className="text-center mb-14">
             <div className="w-10 h-px bg-gold/40 mx-auto mb-8" />
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground tracking-tight mb-4">
-              Your tools, connected
+              What you'll get
             </h2>
             <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Everything works together — so nothing gets lost and every piece builds on the last.
+              Every step builds toward one final deliverable.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
               {
-                icon: Briefcase,
-                title: "Case Builder",
-                description: "A guided, step-by-step workflow that takes you from intake to a professional case packet.",
-                href: "/case-builder",
-                cta: "Start building",
+                icon: Clock,
+                title: "Structured timeline",
+                description: "A chronological event record attorneys can scan quickly.",
               },
               {
-                icon: Upload,
-                title: "Evidence Vault",
-                description: "Securely upload and organize documents, photos, and audio with metadata tags.",
-                href: "/evidence-vault",
-                cta: "Open vault",
-              },
-              {
-                icon: Search,
-                title: "Incident Analyzer",
-                description: "Answer guided questions to understand your system, who has power, and what usually happens.",
-                href: "/analyzer",
-                cta: "Run analysis",
-              },
-              {
-                icon: BookOpen,
-                title: "Legal Library",
-                description: "Structured guides for 10 core civil rights areas — from police encounters to housing rights.",
-                href: "/education-library",
-                cta: "Browse guides",
+                icon: FolderOpen,
+                title: "Organized evidence",
+                description: "Files and records grouped in one place.",
               },
               {
                 icon: FileText,
-                title: "Legal Templates",
-                description: "Starter outlines for records requests, tort claims, and civil rights complaint preparation.",
-                href: "/legal-templates",
-                cta: "View templates",
+                title: "Professional case packet (PDF)",
+                description: "A neutral, structured summary for legal intake.",
               },
               {
-                icon: Scale,
-                title: "Courts & Filing",
-                description: "Understand jurisdiction, filing procedures, and fee waivers for WA state and federal courts.",
-                href: "/courts-filing-info",
-                cta: "Learn more",
+                icon: BookOpen,
+                title: "Something you can send to an attorney",
+                description: "Clear enough for first review without legal jargon.",
               },
             ].map((tool) => (
-              <Link
+              <div
                 key={tool.title}
-                to={tool.href}
                 className="group bg-background border border-border/60 rounded-lg p-8 hover:shadow-warm hover:border-gold/25 transition-all duration-300"
               >
                 <div className="w-11 h-11 rounded-lg bg-secondary flex items-center justify-center mb-5 group-hover:bg-gold/10 transition-colors">
@@ -202,12 +189,17 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
                   {tool.description}
                 </p>
-                <span className="inline-flex items-center text-sm font-medium text-primary gap-1.5 group-hover:gap-2.5 transition-all">
-                  {tool.cta}
-                  <span className="text-primary/60">→</span>
-                </span>
-              </Link>
+              </div>
             ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link
+              to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
+              className="inline-flex items-center text-sm font-medium text-primary gap-1.5 hover:gap-2.5 transition-all"
+            >
+              Start the guided case flow
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

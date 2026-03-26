@@ -1,21 +1,12 @@
 import {
-  Feather,
   Search,
-  Archive,
-  Briefcase,
-  Users,
   LayoutDashboard,
-  FileText,
   Clock,
   Upload,
-  Mic,
   Scale,
   BookOpen,
-  Shield,
-  Gavel,
-  Phone,
-  Heart,
-  Bookmark,
+  Feather,
+  FileText,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -37,50 +28,25 @@ const sidebarGroups = [
     label: "Overview",
     items: [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Case Builder", url: "/case-builder", icon: Scale },
     ],
   },
   {
-    label: "Tell Your Story",
+    label: "Build Your Case Packet",
     items: [
-      { title: "Clarion", url: "/clarion", icon: Feather },
-      { title: "Timeline", url: "/timeline", icon: Clock },
-      { title: "Notes", url: "/notes", icon: FileText },
-      { title: "Transcription", url: "/transcription", icon: Mic },
+      { title: "Write Your Story", url: "/clarion", icon: Feather },
+      { title: "Build Timeline", url: "/timeline", icon: Clock },
+      { title: "Upload Evidence", url: "/evidence-vault", icon: Upload },
+      { title: "Review Key Issues", url: "/analyzer", icon: Search },
+      { title: "Generate Case Packet", url: "/intake-packet", icon: FileText },
     ],
-  },
-  {
-    label: "Understand Your Case",
+  },{
+    label: "Learn & Support",
     items: [
-      { title: "Analyzer", url: "/analyzer", icon: Search },
-      { title: "Legal Decoder", url: "/legal-decoder", icon: BookOpen },
-      { title: "Rights Insight", url: "/rights-insight", icon: Shield },
-      { title: "Library", url: "/education-library", icon: BookOpen },
-      { title: "Saved Guides", url: "/education-library?tab=saved", icon: Bookmark },
-    ],
-  },
-  {
-    label: "Organize Your Proof",
-    items: [
-      { title: "Evidence Vault", url: "/evidence-vault", icon: Archive },
-      { title: "Public Records", url: "/public-request-rights", icon: Upload },
-    ],
-  },
-  {
-    label: "Prepare for Action",
-    items: [
-      { title: "Legal Templates", url: "/legal-templates", icon: Briefcase },
-      { title: "Intake Packet", url: "/intake-packet", icon: FileText },
-      { title: "Courts & Filing", url: "/courts-filing-info", icon: Gavel },
-    ],
-  },
-  {
-    label: "Connect & Advocate",
-    items: [
-      { title: "Find Legal Help", url: "/find-help", icon: Scale },
-      { title: "Attorney Contacts", url: "/attorney-contacts", icon: Phone },
-      { title: "Saved Attorneys", url: "/saved-attorneys", icon: Bookmark },
-      { title: "Support Network", url: "/support-network", icon: Heart },
-    ],
+      { title: "Understand Documents", url: "/legal-decoder", icon: BookOpen },
+      { title: "Learn Your Rights", url: "/education-library", icon: BookOpen },
+      { title: "Find Help", url: "/find-help", icon: Scale },
+    ]
   },
 ];
 

@@ -193,6 +193,18 @@ export function IntakePacketPreview({
                 <dt className="text-muted-foreground">Opposing Party</dt>
                 <dd className="font-medium">{data.opposingParty}</dd>
               </div>
+              <div className="sm:col-span-2">
+                <dt className="text-muted-foreground">Parties Involved (Full Names)</dt>
+                <dd className="font-medium whitespace-pre-wrap">{data.partiesInvolved}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Agencies Involved</dt>
+                <dd className="font-medium">{data.agenciesInvolved}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Jurisdiction / Location</dt>
+                <dd className="font-medium">{data.jurisdictionLocation}</dd>
+              </div>
               <div>
                 <dt className="text-muted-foreground">Case Status</dt>
                 <dd className="font-medium">{data.caseStatus}</dd>
@@ -206,7 +218,7 @@ export function IntakePacketPreview({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              2. Case Narrative
+              2. Factual Narrative (Neutral Summary)
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -257,12 +269,31 @@ export function IntakePacketPreview({
           </CardContent>
         </Card>
 
-        {/* Section 5: Deadlines Awareness */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              5. Injuries / Damages and Requested Outcome
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Injuries / Damages</p>
+              <p className="text-sm whitespace-pre-wrap">{data.injuriesDamages}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Requested Outcome</p>
+              <p className="text-sm whitespace-pre-wrap">{data.requestedOutcome}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 6: Deadlines Awareness */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              5. Deadline Awareness
+              6. Deadline Awareness
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -291,12 +322,12 @@ export function IntakePacketPreview({
           </CardContent>
         </Card>
 
-        {/* Section 6: Contact Information */}
+        {/* Section 7: Contact Information */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5" />
-              6. Contact Information
+              7. Contact Information
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -375,11 +406,14 @@ function generatePlainText(
   lines.push(`Incident Month/Year: ${data.incidentMonthYear}`);
   lines.push(`Issue Type: ${ISSUE_TYPE_LABELS[data.issueType] || data.issueType}`);
   lines.push(`Opposing Party: ${data.opposingParty}`);
+  lines.push(`Parties Involved (Full Names): ${data.partiesInvolved}`);
+  lines.push(`Agencies Involved: ${data.agenciesInvolved}`);
+  lines.push(`Jurisdiction / Location: ${data.jurisdictionLocation}`);
   lines.push(`Case Status: ${data.caseStatus}`);
   lines.push("");
   
   lines.push("─".repeat(60));
-  lines.push("2. CASE NARRATIVE");
+  lines.push("2. FACTUAL NARRATIVE (NEUTRAL SUMMARY)");
   lines.push("─".repeat(60));
   lines.push(data.narrative);
   lines.push("");
@@ -398,7 +432,14 @@ function generatePlainText(
   lines.push("");
   
   lines.push("─".repeat(60));
-  lines.push("5. DEADLINE AWARENESS");
+  lines.push("5. INJURIES / DAMAGES AND REQUESTED OUTCOME");
+  lines.push("─".repeat(60));
+  lines.push(`Injuries / Damages: ${data.injuriesDamages}`);
+  lines.push(`Requested Outcome: ${data.requestedOutcome}`);
+  lines.push("");
+
+  lines.push("─".repeat(60));
+  lines.push("6. DEADLINE AWARENESS");
   lines.push("─".repeat(60));
   if (data.incidentDate) {
     lines.push(`Incident Date: ${data.incidentDate}`);
@@ -409,7 +450,7 @@ function generatePlainText(
   lines.push("");
   
   lines.push("─".repeat(60));
-  lines.push("6. CONTACT INFORMATION");
+  lines.push("7. CONTACT INFORMATION");
   lines.push("─".repeat(60));
   lines.push(`Name: ${data.contactName}`);
   if (data.contactEmail) lines.push(`Email: ${data.contactEmail}`);

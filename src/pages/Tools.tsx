@@ -1,14 +1,11 @@
 import { Link } from "react-router-dom";
 import { 
   Feather, 
-  Scale, 
-  BookOpen, 
   Clock, 
-  FileSearch, 
   FolderOpen, 
   FileText,
   ArrowRight,
-  Compass,
+  Scale,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -26,51 +23,37 @@ const stages: Stage[] = [
   {
     step: 1,
     icon: Feather,
-    title: "Clarion",
-    description: "Organize your thoughts, feelings, and story without pressure or panic.",
+    title: "Write Your Story",
+    description: "Describe what happened in your own words. Focus on people, actions, and impact.",
     href: "/clarion",
   },
   {
     step: 2,
-    icon: Scale,
-    title: "Analyzer",
-    description: "Understand what may matter in your situation and bring structure to it.",
-    href: "/analyzer",
-  },
-  {
-    step: 3,
-    icon: BookOpen,
-    title: "Guides",
-    description: "Learn how the systems involved actually operate and what typically matters inside them.",
-    href: "/rights-insight",
-  },
-  {
-    step: 4,
     icon: Clock,
-    title: "Timeline",
-    description: "Place events in order so the full picture becomes visible.",
+    title: "Build Timeline",
+    description: "Put key events in order with dates, times, and locations.",
     href: "/timeline",
   },
   {
-    step: 5,
-    icon: FileSearch,
-    title: "Decoder",
-    description: "Translate paperwork, forms, and legal language into plain meaning.",
-    href: "/legal-decoder",
-  },
-  {
-    step: 6,
+    step: 3,
     icon: FolderOpen,
-    title: "Evidence Vault",
-    description: "Bring documents and records into one organized place.",
+    title: "Upload Evidence",
+    description: "Add photos, documents, audio, and records in one organized place.",
     href: "/evidence-vault",
   },
   {
-    step: 7,
+    step: 4,
+    icon: Scale,
+    title: "Review Key Issues",
+    description: "Identify possible legal issue areas and factual gaps to address.",
+    href: "/analyzer",
+  },
+  {
+    step: 5,
     icon: FileText,
-    title: "Notes & Transcription",
-    description: "Capture details and conversations as they happen.",
-    href: "/notes",
+    title: "Generate Case Packet",
+    description: "Create a structured packet you can send to an attorney.",
+    href: "/intake-packet",
   },
 ];
 
@@ -82,19 +65,15 @@ export default function Tools() {
 
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
-              <Compass className="w-4 h-4" />
-              <span>The Process</span>
-            </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              How Decoded Justice Works With You
+              One Clear Path to an Attorney-Ready Case Packet
             </h1>
             <div className="space-y-4 text-muted-foreground max-w-2xl mx-auto">
               <p>
-                When something feels confusing or overwhelming, this system brings structure to it.
+                Decoded Justice now uses one guided flow from start to finish.
               </p>
               <p>
-                It works with you to move from scattered thoughts to clear understanding through a connected process.
+                Most people complete a strong first draft packet in 30 to 60 minutes, then refine it over time.
               </p>
             </div>
           </div>
@@ -102,7 +81,7 @@ export default function Tools() {
           {/* Wellbeing Note */}
           <div className="p-3 rounded-xl bg-secondary/50 border border-border mb-12">
             <p className="text-xs text-muted-foreground text-center">
-              <strong className="text-foreground">Go at your own pace.</strong> You don't have to move through every stage. Start with what feels right, and return whenever you need.
+              <strong className="text-foreground">Go at your own pace.</strong> You can pause anytime and return without losing progress.
             </p>
           </div>
 
@@ -143,41 +122,37 @@ export default function Tools() {
             })}
           </div>
 
-          {/* When You're Ready */}
+          {/* Supporting tools */}
           <div className="p-8 rounded-2xl bg-card border-2 border-border mb-16">
             <h2 className="text-xl font-semibold text-foreground mb-4">
-              When You're Ready to Move Forward
+              Supporting Tools
             </h2>
             <p className="text-muted-foreground mb-5 text-sm">
-              Once your situation is clearer and more organized, you may choose to:
+              These tools support the main case packet flow:
             </p>
             <ul className="space-y-2.5 text-sm text-muted-foreground mb-6">
               <li className="flex items-start gap-2">
                 <span className="text-accent mt-0.5">•</span>
-                Explore oversight or complaint pathways
+                Understand Documents (Decoder)
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-accent mt-0.5">•</span>
-                Seek legal support
+                Learn Your Rights guides
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-accent mt-0.5">•</span>
-                Prepare structured information for conversations
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent mt-0.5">•</span>
-                Continue organizing as new details emerge
+                Find Help directory
               </li>
             </ul>
             <p className="text-sm text-muted-foreground">
-              Support and legal tools exist to assist that next step — when and if you decide to take it.
+              You only need to choose from many options after your packet is generated.
             </p>
             <div className="flex flex-wrap gap-3 mt-6">
               <Button variant="outline" size="sm" asChild>
-                <Link to="/find-help">Find Legal Help</Link>
+                <Link to="/legal-decoder">Understand Documents</Link>
               </Button>
               <Button variant="outline" size="sm" asChild>
-                <Link to="/support-network">Support Network</Link>
+                <Link to="/education-library">Learn Your Rights</Link>
               </Button>
             </div>
           </div>
@@ -186,13 +161,13 @@ export default function Tools() {
           <div className="text-center max-w-2xl mx-auto mb-12">
             <div className="space-y-3 text-muted-foreground text-sm leading-relaxed">
               <p>
-                This process is designed to reduce confusion, connect the pieces, and replace reaction with understanding.
+                This flow is designed to reduce overwhelm and keep you focused on one outcome.
               </p>
               <p>
-                It doesn't tell you what to do.
+                You stay in control of what to include and when to share.
               </p>
               <p className="text-foreground/80 font-medium">
-                It helps you see clearly, choose your direction, and organize your move forward.
+                The goal is simple: a clear packet an attorney can review quickly.
               </p>
             </div>
           </div>
