@@ -36,6 +36,9 @@ import FoundersStory from "./pages/FoundersStory";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import DisclaimerPage from "./pages/Disclaimer";
+import DecodedJusticeDashboard from "./pages/decoded-justice/DecodedJusticeDashboard";
+import DecodedJusticeBuilder from "./pages/decoded-justice/DecodedJusticeBuilder";
+import DecodedJusticePacket from "./pages/decoded-justice/DecodedJusticePacket";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +80,9 @@ const App = () => (
             <Route path="/attorney-contacts" element={<AttorneyContacts />} />
             <Route path="/founders-story" element={<FoundersStory />} />
             <Route path="/case-builder" element={<CaseBuilder />} />
+            <Route path="/decoded-justice/dashboard" element={<DecodedJusticeDashboard />} />
+            <Route path="/decoded-justice/builder" element={<DecodedJusticeBuilder />} />
+            <Route path="/decoded-justice/packet" element={<DecodedJusticePacket />} />
             <Route path="/what-we-are" element={<About />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
