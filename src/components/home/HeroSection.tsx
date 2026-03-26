@@ -32,7 +32,7 @@ export function HeroSection() {
 
           {/* Headlines */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-navy leading-[1.15] mb-4 tracking-wide">
-            Your Experience. Your Timeline. Your Justice.
+            Your Experience. Your Rights. Your Justice.
           </h1>
 
           <p className="text-base md:text-lg text-primary font-medium tracking-wide mb-8 max-w-2xl mx-auto">
