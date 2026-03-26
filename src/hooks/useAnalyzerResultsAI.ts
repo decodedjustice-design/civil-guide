@@ -22,6 +22,25 @@ interface GenerateInput {
   patternStrength: 'none' | 'possible' | 'strong' | 'very_strong';
   location?: string;
   entityName?: string;
+  clarionNarrative?: string;
+  timelineEntries?: Array<{
+    id?: string;
+    title?: string;
+    description?: string;
+    date?: string;
+    actors?: string[];
+    outcome?: string;
+  }>;
+  evidenceItems?: Array<{
+    id?: string;
+    type?: string;
+    title?: string;
+    description?: string;
+    linkedTimelineEntryId?: string;
+    linkedDate?: string;
+  }>;
+  answeredQuestions?: Array<{ questionId: string; answer: string }>;
+  maxQuestions?: number;
 }
 
 interface UseAnalyzerResultsAIReturn {
