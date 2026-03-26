@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import {
   FileText, Clock, Search,
   BookOpen, PenLine, FolderOpen, ArrowRight,
+  Scale, Users, Shield, Wrench, Heart, Eye, Lock,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { libraryCategories } from "@/data/legalEducationLibrary";
