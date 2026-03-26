@@ -24,6 +24,18 @@ interface EvidenceItem {
   file_type: string | null;
 }
 
+interface NarrativeSections {
+  incidentOverview: string;
+  keyActors: string[];
+  whatHappened: string[];
+  outcomeHarm: string[];
+}
+
+interface PrioritizedTimelineEntry extends TimelineEntry {
+  hasLinkedEvidence: boolean;
+  linkedEvidenceCount: number;
+}
+
 export interface CaseBriefData {
   generatedAt: string;
   caseOverview: {
@@ -31,8 +43,10 @@ export interface CaseBriefData {
     likelySystem: string;
     incidentDate: string | null;
     narrativeSummary: string;
+    narrativeSections: NarrativeSections;
   };
   timeline: TimelineEntry[];
+  prioritizedTimeline: PrioritizedTimelineEntry[];
   evidenceIndex: Array<EvidenceItem & { linkedEventTitle: string | null; linkStrength: "exact" | "nearby" | "unlinked" }>;
   keyFacts: string[];
   possibleLegalIssues: string[];
@@ -54,6 +68,26 @@ const SYSTEM_LABELS: Record<string, string> = {
   employment: "Employment",
   other: "Other",
 };
+
+const ACTOR_TERMS = ["officer", "deputy", "police", "sheriff", "detective", "judge", "teacher", "landlord", "supervisor", "staff", "security", "caseworker", "cps", "dcyf", "hospital", "official"];
+const HARM_TERMS = ["injur", "pain", "harm", "bruise", "hospital", "fracture", "bleed", "fear", "trauma", "lost", "damage", "distress"];
+const FORCE_TERMS = ["force", "restrain", "tackle", "handcuff", "grab", "push", "spray", "taser", "hit", "choke"];
+
+function splitSentences(entries: ClarionEntry[]) {
+  return entries
+    .flatMap((entry) => entry.content.split(/(?<=[.!?])\s+|\n+/))
+    .map((line) => line.trim())
+    .filter((line) => line.length > 20);
+}
+
+function unique(items: string[]) {
+  return Array.from(new Set(items));
+}
+
+function sentenceHasAny(sentence: string, terms: string[]) {
+  const lower = sentence.toLowerCase();
+  return terms.some((term) => lower.includes(term));
+}
 
 export function useCaseBriefGenerator() {
   const { user } = useAuth();
@@ -137,15 +171,69 @@ export function useCaseBriefGenerator() {
       return { ...item, linkedEventTitle: null, linkStrength: "unlinked" as const };
     });
 
-    const keyFacts = [
-      ...timeline.slice(0, 6).map((event) => `${event.event_date}: ${event.title}${event.description ? ` — ${event.description}` : ""}`),
-      ...clarion
-        .slice(0, 3)
-        .flatMap((entry) => entry.content.split(/[.\n]/))
-        .map((x) => x.trim())
-        .filter((x) => x.length > 30)
-        .slice(0, 4),
-    ].slice(0, 10);
+    const evidenceLinksByEvent = evidenceIndex.reduce<Record<string, number>>((acc, item) => {
+      if (!item.linkedEventTitle) return acc;
+      acc[item.linkedEventTitle] = (acc[item.linkedEventTitle] || 0) + 1;
+      return acc;
+    }, {});
+
+    const prioritizedTimeline = [...timeline]
+      .sort((a, b) => {
+        const evidenceDelta = (evidenceLinksByEvent[b.title] || 0) - (evidenceLinksByEvent[a.title] || 0);
+        if (evidenceDelta !== 0) return evidenceDelta;
+
+        const aText = `${a.title} ${a.description || ""}`.toLowerCase();
+        const bText = `${b.title} ${b.description || ""}`.toLowerCase();
+        const scoreA = Number(sentenceHasAny(aText, FORCE_TERMS)) + Number(sentenceHasAny(aText, HARM_TERMS));
+        const scoreB = Number(sentenceHasAny(bText, FORCE_TERMS)) + Number(sentenceHasAny(bText, HARM_TERMS));
+        if (scoreB !== scoreA) return scoreB - scoreA;
+
+        return new Date(a.event_date).getTime() - new Date(b.event_date).getTime();
+      })
+      .slice(0, 6)
+      .map((event) => ({
+        ...event,
+        hasLinkedEvidence: Boolean(evidenceLinksByEvent[event.title]),
+        linkedEvidenceCount: evidenceLinksByEvent[event.title] || 0,
+      }));
+
+    const sentences = splitSentences(clarion);
+    const actorCandidates = unique(
+      sentences
+        .filter((s) => sentenceHasAny(s, ACTOR_TERMS) || /\b(i|we|they|he|she)\b/i.test(s))
+        .slice(0, 6),
+    );
+
+    const whatHappened = unique(
+      [
+        ...prioritizedTimeline.map((event) => `${event.event_date}: ${event.title}${event.description ? ` — ${event.description}` : ""}`),
+        ...sentences.filter((s) => sentenceHasAny(s, FORCE_TERMS) || sentenceHasAny(s, ["arrive", "stop", "called", "removed", "detain", "search"]))
+      ]
+        .map((s) => s.trim())
+        .filter(Boolean),
+    ).slice(0, 6);
+
+    const outcomeHarm = unique(
+      [
+        ...sentences.filter((s) => sentenceHasAny(s, HARM_TERMS)),
+        ...timeline
+          .map((event) => `${event.title}${event.description ? ` — ${event.description}` : ""}`)
+          .filter((s) => sentenceHasAny(s, HARM_TERMS)),
+      ],
+    ).slice(0, 4);
+
+    const incidentOverview = sentences[0]
+      ? `Records indicate an incident involving ${SYSTEM_LABELS[system] || "civil systems"}. The reporting narrative describes events that may implicate official conduct and resulting harm.`
+      : "No narrative overview is available from current records.";
+
+    const keyFacts = unique(
+      [
+        ...prioritizedTimeline.map((event) => `${event.event_date}: ${event.title}${event.description ? ` — ${event.description}` : ""}`),
+        ...sentences.filter((s) => sentenceHasAny(s, FORCE_TERMS) || sentenceHasAny(s, HARM_TERMS) || sentenceHasAny(s, ACTOR_TERMS)),
+      ]
+        .map((fact) => fact.replace(/\s+/g, " ").trim())
+        .filter((fact) => fact.length > 25),
+    ).slice(0, 8);
 
     const issueSet = new Set<string>();
     issueSet.add(`Potential ${SYSTEM_LABELS[system] || "civil rights"} claims for attorney review.`);
@@ -169,8 +257,15 @@ export function useCaseBriefGenerator() {
         likelySystem: SYSTEM_LABELS[system] || "Other",
         incidentDate,
         narrativeSummary,
+        narrativeSections: {
+          incidentOverview,
+          keyActors: actorCandidates.length ? actorCandidates : ["No clear actor details captured in current records."],
+          whatHappened: whatHappened.length ? whatHappened : ["No sequence details available from current records."],
+          outcomeHarm: outcomeHarm.length ? outcomeHarm : ["No concrete harm details captured in current records."],
+        },
       },
       timeline,
+      prioritizedTimeline,
       evidenceIndex,
       keyFacts: keyFacts.length ? keyFacts : ["No key facts could be derived from existing records."],
       possibleLegalIssues: Array.from(issueSet),
