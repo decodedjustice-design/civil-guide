@@ -78,7 +78,7 @@ export default function CaseBuilder() {
     <Layout>
       <DjPageHeader
         title="Case Builder"
-        subtitle="Build your case step by step — organized, structured, and ready for action."
+        subtitle="Follow one guided flow to produce a clear, attorney-ready case packet."
         variant="espresso"
       />
 
@@ -119,18 +119,18 @@ export default function CaseBuilder() {
             isAlreadyComplete={isStepComplete("incident-intake")}
           />
         )}
-        {currentStep === "evidence-vault" && (
-          <EvidenceVaultStep
-            onNext={goNext}
-            onBack={goBack}
-            evidenceCount={progress.evidenceCount}
-          />
-        )}
         {currentStep === "timeline-builder" && (
           <TimelineBuilderStep
             onNext={goNext}
             onBack={goBack}
             timelineCount={progress.timelineCount}
+          />
+        )}
+        {currentStep === "evidence-vault" && (
+          <EvidenceVaultStep
+            onNext={goNext}
+            onBack={goBack}
+            evidenceCount={progress.evidenceCount}
           />
         )}
         {currentStep === "legal-issue-mapping" && (

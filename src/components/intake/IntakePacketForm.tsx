@@ -76,6 +76,11 @@ const formSchema = z.object({
   incidentMonthYear: z.string().min(1, "Incident month/year is required"),
   issueType: z.string().min(1, "Issue type is required"),
   opposingParty: z.string().min(1, "Opposing party is required").max(200),
+  partiesInvolved: z.string().min(5, "List parties with full names"),
+  agenciesInvolved: z.string().min(3, "List agencies involved"),
+  jurisdictionLocation: z.string().min(3, "Jurisdiction/location is required"),
+  injuriesDamages: z.string().min(10, "Describe injuries or damages"),
+  requestedOutcome: z.string().min(10, "Describe requested outcome"),
   caseStatus: z.string().min(1, "Case status is required"),
   
   // Narrative
@@ -137,6 +142,11 @@ export function IntakePacketForm({
       incidentMonthYear: "",
       issueType: "",
       opposingParty: "",
+      partiesInvolved: "",
+      agenciesInvolved: "",
+      jurisdictionLocation: "",
+      injuriesDamages: "",
+      requestedOutcome: "",
       caseStatus: "",
       narrative: "",
       issuesChecklist: [],
@@ -174,7 +184,7 @@ export function IntakePacketForm({
     
     switch (currentStep) {
       case 1:
-        fieldsToValidate = ["caseName", "county", "incidentMonthYear", "issueType", "opposingParty", "caseStatus"];
+        fieldsToValidate = ["caseName", "county", "incidentMonthYear", "issueType", "opposingParty", "partiesInvolved", "agenciesInvolved", "jurisdictionLocation", "injuriesDamages", "requestedOutcome", "caseStatus"];
         break;
       case 2:
         fieldsToValidate = ["narrative"];
@@ -415,6 +425,77 @@ export function IntakePacketForm({
                         />
                       </FormControl>
                       <FormDescription>The government entity or party involved</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="partiesInvolved"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Parties Involved (Full Names)</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="List each person or entity and role (e.g., John Doe - reporting party; Officer Jane Smith - arresting officer)." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="agenciesInvolved"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Agencies Involved</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Seattle Police Department, King County Jail" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="jurisdictionLocation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Jurisdiction / Location</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Seattle, King County, Washington (state and potential federal jurisdiction)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="injuriesDamages"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Injuries / Damages</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Describe physical injuries, emotional harm, financial losses, or property damage in neutral terms." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="requestedOutcome"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Requested Outcome</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Describe the outcome you are seeking (e.g., legal review, representation, damages, policy changes)." {...field} />
+                      </FormControl>
+                      <FormDescription>Keep this factual and specific.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

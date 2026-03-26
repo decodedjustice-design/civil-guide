@@ -10,10 +10,10 @@ interface CasePacketStepProps {
 
 export function CasePacketStep({ onBack, progress }: CasePacketStepProps) {
   const readinessItems = [
-    { label: "Incident intake completed", done: progress.incidentIntakeComplete },
-    { label: "Evidence uploaded", done: progress.evidenceCount > 0 },
+    { label: "Write Your Story completed", done: progress.incidentIntakeComplete },
     { label: "Timeline events recorded", done: progress.timelineCount > 0 },
-    { label: "Legal issues identified", done: progress.legalIssuesIdentified },
+    { label: "Evidence uploaded", done: progress.evidenceCount > 0 },
+    { label: "Key issues reviewed", done: progress.legalIssuesIdentified },
   ];
   const readyCount = readinessItems.filter((i) => i.done).length;
 
@@ -21,7 +21,7 @@ export function CasePacketStep({ onBack, progress }: CasePacketStepProps) {
     <div className="space-y-6">
       <div className="p-4 rounded-xl bg-muted/50 border border-border">
         <p className="text-sm text-muted-foreground text-center">
-          <strong className="text-foreground">Generate your case packet.</strong> This creates a professional, conflict-safe document you can share with an attorney.
+          <strong className="text-foreground">Generate your case packet.</strong> This creates a neutral, structured summary an attorney can review quickly.
         </p>
       </div>
 

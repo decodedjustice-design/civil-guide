@@ -82,8 +82,8 @@ const typeLabels: Record<ActivityItem["type"], string> = {
   evidence: "Evidence",
   timeline: "Timeline",
   note: "Note",
-  clarion: "Clarion",
-  analyzer: "Analyzer",
+  clarion: "Write Your Story",
+  analyzer: "Review Key Issues",
   intake: "Intake Packet",
   attorney: "Attorney Contact",
 };
@@ -261,30 +261,38 @@ export default function Dashboard() {
   const displayName = user.email?.split("@")[0] || "there";
 
   const phases = [
-    { number: 1, title: "Tell Your Story", icon: Feather, started: stats.clarionCount > 0 || stats.notesCount > 0 || stats.timelineCount > 0 },
-    { number: 2, title: "Understand Your Case", icon: Search, started: stats.analyzerCount > 0 },
-    { number: 3, title: "Organize Your Proof", icon: Archive, started: stats.evidenceCount > 0 },
-    { number: 4, title: "Prepare for Action", icon: Briefcase, started: stats.intakeCount > 0 },
-    { number: 5, title: "Connect & Advocate", icon: Users, started: stats.attorneyContactCount > 0 },
+    { number: 1, title: "Write what happened", icon: Feather, started: stats.clarionCount > 0 || stats.notesCount > 0 },
+    { number: 2, title: "Build timeline", icon: Clock, started: stats.timelineCount > 0 },
+    { number: 3, title: "Upload evidence", icon: Archive, started: stats.evidenceCount > 0 },
+    { number: 4, title: "Review key issues", icon: Search, started: stats.analyzerCount > 0 },
+    { number: 5, title: "Generate case packet", icon: Briefcase, started: stats.intakeCount > 0 },
   ];
+
+  const readinessPercent = Math.round((phases.filter((phase) => phase.started).length / phases.length) * 100);
+  const missingItems: string[] = [];
+  if (!stats.clarionCount && !stats.notesCount) missingItems.push("story details");
+  if (!stats.timelineCount) missingItems.push("timeline events");
+  if (!stats.evidenceCount) missingItems.push("additional evidence");
+  if (!stats.analyzerCount) missingItems.push("key issue review");
+  if (!stats.intakeCount) missingItems.push("generated case packet");
 
   const getSuggestedStep = () => {
     if (stats.clarionCount === 0 && stats.notesCount === 0 && stats.timelineCount === 0) {
-      return { text: "Start by writing down what happened", href: "/clarion", label: "Open Clarion" };
+      return { text: "Start by writing what happened", href: "/clarion", label: "Write Your Story" };
     }
-    if (stats.analyzerCount === 0) {
-      return { text: "Understand what system you're dealing with", href: "/analyzer", label: "Open Analyzer" };
+    if (stats.timelineCount === 0) {
+      return { text: "Add your first timeline event", href: "/timeline", label: "Build Timeline" };
     }
     if (stats.evidenceCount === 0) {
-      return { text: "Upload your first piece of evidence", href: "/evidence-vault", label: "Open Evidence Vault" };
+      return { text: "Upload your first piece of evidence", href: "/evidence-vault", label: "Upload Evidence" };
+    }
+    if (stats.analyzerCount === 0) {
+      return { text: "Review key issues and identify missing facts", href: "/analyzer", label: "Review Key Issues" };
     }
     if (stats.intakeCount === 0) {
-      return { text: "Build your intake packet for an attorney", href: "/intake-packet", label: "Create Intake Packet" };
+      return { text: "Generate your attorney-ready case packet", href: "/intake-packet", label: "Generate Case Packet" };
     }
-    if (stats.attorneyContactCount === 0) {
-      return { text: "Find and reach out to an attorney", href: "/find-help", label: "Find Legal Help" };
-    }
-    return { text: "You're making strong progress — keep building your record", href: "/justice-place", label: "Continue" };
+    return { text: "Your packet draft is ready to share with an attorney", href: "/find-help", label: "Find Help" };
   };
   const suggestedStep = getSuggestedStep();
 
@@ -295,7 +303,7 @@ export default function Dashboard() {
       {/* Header */}
       <DjPageHeader
         title={`Welcome back, ${displayName}.`}
-        subtitle="Your private civil-rights documentation workspace."
+        subtitle="Track one guided flow from incident details to an attorney-ready packet."
       />
 
       {/* Phase Progress */}
@@ -310,6 +318,21 @@ export default function Dashboard() {
       <section className="bg-cream-warm py-8">
         <div className="container max-w-5xl px-6">
           <SuggestedAction text={suggestedStep.text} href={suggestedStep.href} label={suggestedStep.label} />
+          <div className="mt-4 p-4 rounded-xl bg-card border border-border">
+            <p className="text-sm font-medium text-foreground">Case Readiness: {readinessPercent}%</p>
+            {missingItems.length > 0 ? (
+              <div className="mt-2">
+                <p className="text-xs text-muted-foreground mb-1">Missing:</p>
+                <ul className="text-sm text-muted-foreground list-disc list-inside">
+                  {missingItems.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground mt-2">All core sections are complete.</p>
+            )}
+          </div>
         </div>
       </section>
 
@@ -372,10 +395,10 @@ export default function Dashboard() {
 
               {/* Quick Actions */}
               <div className="grid sm:grid-cols-2 gap-4">
-                <ActionCard icon={Scale} title="Continue Your Record" description="Return to your case workspace." href="/justice-place" delay={0.1} />
-                <ActionCard icon={Upload} title="Upload Evidence" description="Add documents to your vault." href="/evidence-vault" delay={0.15} />
-                <ActionCard icon={Clock} title="Build Timeline" description="Add chronological events." href="/timeline" delay={0.2} />
-                <ActionCard icon={Briefcase} title="Case Builder" description="Step-by-step case assembly." href="/case-builder" delay={0.25} />
+                <ActionCard icon={Feather} title="Write Your Story" description="Document what happened in plain language." href="/clarion" delay={0.1} />
+                <ActionCard icon={Clock} title="Build Timeline" description="Add events in chronological order." href="/timeline" delay={0.15} />
+                <ActionCard icon={Upload} title="Upload Evidence" description="Add files and records." href="/evidence-vault" delay={0.2} />
+                <ActionCard icon={Briefcase} title="Generate Case Packet" description="Create a packet you can send to an attorney." href="/intake-packet" delay={0.25} />
               </div>
             </div>
 
