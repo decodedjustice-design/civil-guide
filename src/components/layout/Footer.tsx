@@ -58,7 +58,6 @@ export function Footer() {
             <div>
               <p className="text-xs text-white/25 uppercase tracking-[0.15em] font-medium mb-3">About</p>
               <div className="flex flex-col gap-2">
-                <Link to="/founders-story" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Founder's Story</Link>
                 <Link to="/about" className="text-sm text-white/40 hover:text-gold transition-colors font-light">About</Link>
                 <Link to="/disclaimer" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Legal Disclaimer</Link>
                 <Link to="/privacy" className="text-sm text-white/40 hover:text-gold transition-colors font-light">Privacy Policy</Link>
