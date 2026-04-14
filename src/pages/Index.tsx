@@ -44,15 +44,15 @@ const Index = () => {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white/95 leading-[1.25] tracking-wide mb-8 animate-fade-up">
-            Turn your incident into an attorney-ready case packet.
+            Turn your Washington civil rights experience into a clear legal record.
           </h1>
 
           <p className="text-base sm:text-lg text-gold font-medium tracking-wide mb-6 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
-            One guided flow. One clear outcome.
+            Your Experience. Your Rights. Your Justice.
           </p>
 
           <p className="text-lg sm:text-xl text-white/60 font-light tracking-wide mb-14 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
-            In about 30–60 minutes, build a structured timeline, organize your evidence, and generate a professional PDF packet you can send to an attorney.
+            In one guided flow, document what happened, organize your evidence, and prepare a packet you can use for Washington legal support.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-fade-up" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
@@ -76,6 +76,34 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ── WHAT DECODED JUSTICE DOES ── */}
+      <section className="bg-background py-20 sm:py-24">
+        <div className="container max-w-4xl px-6">
+          <div className="text-center mb-10">
+            <h2 className="font-serif text-3xl sm:text-4xl font-medium text-foreground tracking-tight mb-4">
+              What Decoded Justice Does
+            </h2>
+            <p className="text-muted-foreground font-light max-w-2xl mx-auto">
+              Built for people in Washington State who need a clear, step-by-step way to move forward after a civil rights violation.
+            </p>
+          </div>
+
+          <ul className="max-w-2xl mx-auto space-y-4">
+            {[
+              "Document civil rights violations",
+              "Organize evidence",
+              "Understand Washington-specific rights",
+              "Prepare for legal action",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-3 text-foreground">
+                <span className="mt-2 block w-1.5 h-1.5 rounded-full bg-primary/80" />
+                <span className="text-base sm:text-lg leading-relaxed">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* ── CANONICAL FLOW ── */}
       <section className="bg-cream py-24 sm:py-32">
         <div className="container max-w-5xl px-6">
@@ -84,7 +112,7 @@ const Index = () => {
               How it works
             </h2>
             <p className="text-muted-foreground font-light max-w-xl mx-auto">
-              A single guided system designed for people under stress.
+              A single guided system for Washington residents under stress.
             </p>
           </div>
 
@@ -112,7 +140,7 @@ const Index = () => {
                 step: 4,
                 icon: Search,
                 title: "Review key issues",
-                description: "Spot issue areas and missing details.",
+                description: "Identify legal issue areas and missing details.",
               },
               {
                 step: 5,
@@ -214,7 +242,7 @@ const Index = () => {
               Know your rights
             </h2>
             <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Plain-language guides covering the systems people encounter most. Each one explains how the system works, not just what the law says.
+              Plain-language Washington legal guides for the systems people encounter most. Learn how each process works and what rights apply in this state.
             </p>
           </div>
 
@@ -297,26 +325,26 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── CLARITY · JUSTICE · EMPATHY ── */}
+      {/* ── YOUR EXPERIENCE · YOUR RIGHTS · YOUR JUSTICE ── */}
       <section className="bg-background py-24 sm:py-32">
         <div className="container max-w-4xl px-6">
           <div className="w-10 h-px bg-gold/40 mx-auto mb-16" />
           <div className="grid md:grid-cols-3 gap-16 md:gap-12">
             {[
               {
-                icon: Eye,
-                title: "Clarity",
-                text: "When systems are fragmented, confusion is the first barrier. We help you see the structure, understand the process, and organize what matters.",
+                icon: PenLine,
+                title: "Your Experience",
+                text: "Capture what happened in plain language, with dates, locations, and context so your account is complete and clear.",
               },
               {
                 icon: Scale,
-                title: "Justice",
-                text: "Every person deserves the ability to understand their situation and organize their path forward — regardless of resources or legal expertise.",
+                title: "Your Rights",
+                text: "Understand Washington law, including RCW protections and federal civil rights, so you can make informed decisions.",
               },
               {
-                icon: Heart,
-                title: "Empathy",
-                text: "This platform was built by someone who understands what it feels like. Every feature reflects that lived experience and the need for dignity.",
+                icon: Shield,
+                title: "Your Justice",
+                text: "Take informed action with organized records you can use for attorney outreach, agency complaints, or court preparation.",
               },
             ].map((item) => (
               <div key={item.title} className="text-center">
