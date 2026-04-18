@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Scale } from "lucide-react";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
+import { disclaimerText } from "@/legal/safetyRules";
 
 export function Footer() {
   return (
@@ -73,7 +74,7 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-xs text-white/30">
               <Scale className="w-3.5 h-3.5" />
-              <span className="tracking-wide">Educational use only · Not legal advice</span>
+              <span className="tracking-wide">{disclaimerText}</span>
             </div>
             <p className="text-xs text-white/25 tracking-wide">
               © {new Date().getFullYear()} Decoded Justice

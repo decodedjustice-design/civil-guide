@@ -1099,7 +1099,7 @@ export const topicGuides: Record<string, TopicGuide> = {
           "Memorize important phone numbers in case you don't have your phone.",
           "Create a code word with trusted people to signal you need help.",
           "Know the location of domestic violence resources in your area.",
-          "Have a plan for pets if you need to leave suddenly.",
+          "Have a plan for pets if you may need to leave suddenly.",
           "Consider new accounts and devices the abuser doesn't know about.",
           "Plan for children's safety including school notification if needed."
         ]

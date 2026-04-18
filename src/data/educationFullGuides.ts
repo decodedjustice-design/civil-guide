@@ -373,7 +373,7 @@ export const additionalEducationalGuides: EducationalGuide[] = [
         "The judge appeared biased or didn't follow proper procedures",
         "New evidence has emerged that wasn't available during trial",
         "You believe the law was applied incorrectly",
-        "Your rights were violated during the process",
+        "Your rights may have been impacted during the process",
       ],
     },
 
@@ -401,7 +401,7 @@ export const additionalEducationalGuides: EducationalGuide[] = [
       grounding:
         "Navigating systems while managing a disability is exhausting — physically, emotionally, and bureaucratically. If you're here, you're already doing something important: seeking to understand a system that should be working for you.",
       consent:
-        "Take this at your own pace. Skip sections that don't apply. Come back when you need to. Your energy matters.",
+        "Take this at your own pace. Skip sections that don't apply. Come back when it feels helpful. Your energy matters.",
     },
 
     whatThisSystemIs: {
@@ -438,7 +438,7 @@ export const additionalEducationalGuides: EducationalGuide[] = [
 
     successReframe: {
       reality:
-        "Success in disability rights isn't about 'winning' against a system. It's about getting the access and support you need to participate equally. That might look different than what you initially imagined.",
+        "Success in disability rights isn't about 'winning' against a system. It's about getting the access and support that may help you participate equally. That might look different than what you initially imagined.",
       examples: [
         "Getting a workplace accommodation that lets you do your job effectively",
         "Having a housing modification approved that makes your home accessible",
@@ -616,7 +616,7 @@ export const additionalEducationalGuides: EducationalGuide[] = [
       "Stay aware of your surroundings and any police announcements",
       "If arrested, invoke your right to remain silent and ask for a lawyer",
       "Don't post details on social media that could be used against you or others",
-      "Contact the National Lawyers Guild or ACLU if your rights were violated",
+      "Contact the National Lawyers Guild or ACLU if your rights may have been impacted",
       "After the event, document what happened while it's fresh in your mind",
     ],
 
@@ -1040,7 +1040,7 @@ export const additionalEducationalGuides: EducationalGuide[] = [
       grounding:
         "Dealing with the healthcare system while managing a health concern is inherently stressful. Power imbalances between patients and providers, confusing insurance rules, and the vulnerability of being sick or injured can make everything harder. Your need to understand this system is completely valid.",
       consent:
-        "Take what's useful from this guide and leave the rest. You can return whenever you need to. Your health — physical and emotional — comes first.",
+        "Take what's useful from this guide and leave the rest. You can return whenever it feels helpful. Your health — physical and emotional — comes first.",
     },
 
     whatThisSystemIs: {

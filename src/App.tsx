@@ -3,7 +3,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LegalGate, hasAcceptedLegalGate } from "@/components/LegalGate";
 import Index from "./pages/Index";
 import Analyzer from "./pages/Analyzer";
 import LegalDecoder from "./pages/LegalDecoder";
@@ -39,61 +41,81 @@ import DisclaimerPage from "./pages/Disclaimer";
 import DecodedJusticeDashboard from "./pages/decoded-justice/DecodedJusticeDashboard";
 import DecodedJusticeBuilder from "./pages/decoded-justice/DecodedJusticeBuilder";
 import DecodedJusticePacket from "./pages/decoded-justice/DecodedJusticePacket";
+import LegalHelp from "./pages/LegalHelp";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/analyzer" element={<Analyzer />} />
-            <Route path="/justice-place" element={<JusticePlace />} />
-            <Route path="/clarion" element={<Clarion />} />
-            <Route path="/tools" element={<Tools />} />
-            <Route path="/legal-decoder" element={<LegalDecoder />} />
-            <Route path="/self-help" element={<SelfHelpTools />} />
-            <Route path="/rights-insight" element={<RightsInsight />} />
-            <Route path="/find-help" element={<FindLegalHelp />} />
-            <Route path="/support-network" element={<SupportNetwork />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/signin" element={<Auth />} />
-            <Route path="/signup" element={<Auth />} />
-            <Route path="/notes" element={<Notes />} />
-            <Route path="/evidence-vault" element={<EvidenceVault />} />
-            <Route path="/timeline" element={<Timeline />} />
-            <Route path="/guide/:guideId" element={<FullGuide />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/education-library" element={<EducationLibrary />} />
-            <Route path="/transcription" element={<Transcription />} />
-            <Route path="/public-request-rights" element={<PublicRequestRights />} />
-            <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
-            <Route path="/saved-attorneys" element={<SavedAttorneys />} />
-            <Route path="/legal-templates" element={<StarterLegalTemplates />} />
-            <Route path="/intake-packet" element={<IntakePacket />} />
-            <Route path="/attorney-contacts" element={<AttorneyContacts />} />
-            <Route path="/founders-story" element={<FoundersStory />} />
-            <Route path="/case-builder" element={<CaseBuilder />} />
-            <Route path="/decoded-justice/dashboard" element={<DecodedJusticeDashboard />} />
-            <Route path="/decoded-justice/builder" element={<DecodedJusticeBuilder />} />
-            <Route path="/decoded-justice/packet" element={<DecodedJusticePacket />} />
-            <Route path="/what-we-are" element={<About />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/disclaimer" element={<DisclaimerPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [isGateAccepted, setIsGateAccepted] = useState(hasAcceptedLegalGate());
+
+  useEffect(() => {
+    const refreshGateState = () => setIsGateAccepted(hasAcceptedLegalGate());
+    window.addEventListener("legal-gate-updated", refreshGateState);
+    window.addEventListener("storage", refreshGateState);
+    return () => {
+      window.removeEventListener("legal-gate-updated", refreshGateState);
+      window.removeEventListener("storage", refreshGateState);
+    };
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            {isGateAccepted ? (
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/analyzer" element={<Analyzer />} />
+                <Route path="/justice-place" element={<JusticePlace />} />
+                <Route path="/clarion" element={<Clarion />} />
+                <Route path="/tools" element={<Tools />} />
+                <Route path="/legal-decoder" element={<LegalDecoder />} />
+                <Route path="/self-help" element={<SelfHelpTools />} />
+                <Route path="/rights-insight" element={<RightsInsight />} />
+                <Route path="/find-help" element={<FindLegalHelp />} />
+                <Route path="/legal-help" element={<LegalHelp />} />
+                <Route path="/support-network" element={<SupportNetwork />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/signin" element={<Auth />} />
+                <Route path="/signup" element={<Auth />} />
+                <Route path="/notes" element={<Notes />} />
+                <Route path="/evidence-vault" element={<EvidenceVault />} />
+                <Route path="/timeline" element={<Timeline />} />
+                <Route path="/guide/:guideId" element={<FullGuide />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/education-library" element={<EducationLibrary />} />
+                <Route path="/transcription" element={<Transcription />} />
+                <Route path="/public-request-rights" element={<PublicRequestRights />} />
+                <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
+                <Route path="/saved-attorneys" element={<SavedAttorneys />} />
+                <Route path="/legal-templates" element={<StarterLegalTemplates />} />
+                <Route path="/intake-packet" element={<IntakePacket />} />
+                <Route path="/attorney-contacts" element={<AttorneyContacts />} />
+                <Route path="/founders-story" element={<FoundersStory />} />
+                <Route path="/case-builder" element={<CaseBuilder />} />
+                <Route path="/decoded-justice/dashboard" element={<DecodedJusticeDashboard />} />
+                <Route path="/decoded-justice/builder" element={<DecodedJusticeBuilder />} />
+                <Route path="/decoded-justice/packet" element={<DecodedJusticePacket />} />
+                <Route path="/what-we-are" element={<About />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/disclaimer" element={<DisclaimerPage />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            ) : (
+              <LegalGate />
+            )}
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

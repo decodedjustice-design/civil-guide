@@ -44,7 +44,7 @@ const Index = () => {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white/95 leading-[1.25] tracking-wide mb-8 animate-fade-up">
-            Turn your Washington civil rights experience into a clear legal record.
+            Understand your experience. Organize what matters. Move forward with clarity.
           </h1>
 
           <p className="text-base sm:text-lg text-gold font-medium tracking-wide mb-6 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
@@ -52,7 +52,7 @@ const Index = () => {
           </p>
 
           <p className="text-lg sm:text-xl text-white/60 font-light tracking-wide mb-14 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
-            In one guided flow, document what happened, organize your evidence, and prepare a packet you can use for Washington legal support.
+            In one guided flow, document what happened, organize your evidence, and prepare information you can review with trusted support.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-fade-up" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
@@ -84,7 +84,7 @@ const Index = () => {
               What Decoded Justice Does
             </h2>
             <p className="text-muted-foreground font-light max-w-2xl mx-auto">
-              Built for people in Washington State who need a clear, step-by-step way to move forward after a civil rights violation.
+              Built for people in Washington State who need a clear, step-by-step way to understand and organize what happened.
             </p>
           </div>
 
@@ -93,7 +93,7 @@ const Index = () => {
               "Document civil rights violations",
               "Organize evidence",
               "Understand Washington-specific rights",
-              "Prepare for legal action",
+              "Prepare for conversations with legal support",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-foreground">
                 <span className="mt-2 block w-1.5 h-1.5 rounded-full bg-primary/80" />

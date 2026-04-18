@@ -1237,7 +1237,7 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
     whatThisMeans: "People in this situation often experience a mix of confusion, frustration, and sometimes fear about what happened and what comes next. You may be unsure whether what occurred was normal, legal, or appropriate. That uncertainty is common — and it's why understanding the system is a powerful first step.",
     misunderstandings: [
       "That filing a complaint will automatically result in punishment for the officer",
-      "That you need to prove your case before filing a complaint — you don't",
+      "That one possible option may be to prove your case before filing a complaint — often, this is not required at that stage",
       "That internal affairs will contact you with updates — they often don't",
       "That the incident 'wasn't bad enough' to document — document it anyway",
       "That talking to a lawyer is the same as suing — it's not; consultations are just information"
@@ -1271,7 +1271,7 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
     whatThisMeans: "Workplace problems often make people feel trapped — you may depend on the job, fear retaliation, or feel like 'it's your word against theirs.' Many people minimize what happened or wait too long to act. Know that documentation and deadlines are critical, and you don't have to have everything figured out to start.",
     misunderstandings: [
       "That HR is there to protect you — HR protects the company first",
-      "That you need to file a lawsuit to make anything happen — you don't",
+      "That one possible option may be to file a lawsuit to make anything happen — often, other pathways may also exist",
       "That retaliation after a complaint is illegal — it is, but proving it requires documentation",
       "That discrimination has to be 'obvious' or 'intentional' to count — subtle patterns matter too",
       "That you can file anytime — EEOC deadlines can be as short as 180 days"
@@ -1542,7 +1542,7 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
     explanation: "It's okay not to be sure which system applies. Many situations involve overlapping issues or multiple institutions. Gathering information and documenting what happened can help clarify next steps.",
     whatThisMeans: "Feeling uncertain is completely normal. Many situations don't fit neatly into one category — and that's okay. The first step is simply documenting what happened, who was involved, and how it affected you. That information will help any professional you speak with later.",
     misunderstandings: [
-      "That you need to 'know your legal issue' to get help — advocates can help you figure it out",
+      "That one possible option may be to 'know your legal issue' to get help — advocates can also help you identify it",
       "That your situation 'isn't serious enough' — if it's affecting you, it matters",
       "That you have to do everything at once — take one step at a time",
       "That asking for help is a burden — advocacy organizations exist to help",

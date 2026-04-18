@@ -140,7 +140,7 @@ export const educationalGuides: EducationalGuide[] = [
     misunderstandings: {
       traps: [
         "That an eviction notice means you must leave immediately — it doesn't; it starts a process",
-        "That landlords can change locks or shut off utilities — this is illegal in Washington",
+        "That landlords can change locks or shut off utilities — this may raise legal concerns in Washington",
         "That you can't fight an eviction if you owe rent — there may be procedural defenses or partial payment rules",
         "That verbal agreements override the lease — usually, the written lease controls",
         "That your landlord's 'notice' is the same as a court order — only a judge can order eviction",

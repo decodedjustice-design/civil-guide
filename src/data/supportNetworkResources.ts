@@ -199,7 +199,7 @@ export const supportResources: SupportResource[] = [
     jurisdiction: "washington",
     systemTags: ["courts"],
     whatTheyDo: "Provides information about court procedures and self-help resources for Washington courts.",
-    whenToContact: "When you need to understand court processes, forms, or find self-help resources.",
+    whenToContact: "When you may want to understand court processes, forms, or find self-help resources.",
     whatTheyCan: "Provide procedural information, court forms, and self-help resources.",
     whatTheyCannot: "Provide legal advice, represent you, or intervene in your case.",
     officialStatus: "official",
