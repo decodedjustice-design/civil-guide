@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { CaseSignalReview, type CaseSignals, type SignalIssue, type SignalEvidence, type SignalTimeline } from "./CaseSignalReview";
+import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 
 const issueTypes = [
   { value: "police", label: "Police / Law Enforcement" },
@@ -60,7 +61,7 @@ export function IncidentIntakeStep({ onComplete, isAlreadyComplete }: IncidentIn
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      setSignals(data as CaseSignals);
+      setSignals(sanitizeSafetyLanguage(data as CaseSignals));
     } catch (err: any) {
       console.error("Signal engine error:", err);
       toast({ title: "Analysis error", description: err.message || "Could not analyze narrative.", variant: "destructive" });

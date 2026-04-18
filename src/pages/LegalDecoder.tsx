@@ -4,11 +4,13 @@ import { FileText, Sparkles, HelpCircle, Copy, Check, BookOpen, Upload, Calendar
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { SafetyBanner } from "@/components/SafetyBanner";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import heroImage from "@/assets/hero-analysis.png";
+import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 
 interface DecodedResult {
   plainLanguageSummary: string;
@@ -117,7 +119,7 @@ export default function LegalDecoder() {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      setResult(data);
+      setResult(sanitizeSafetyLanguage(data));
     } catch (err: any) {
       console.error("Decode error:", err);
       toast({
@@ -383,6 +385,7 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
           {/* Results Section */}
           {result && (
             <div className="space-y-6 animate-fade-up">
+              <SafetyBanner />
               {/* Plain Language Summary */}
               <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
                 <div className="flex items-start justify-between gap-4 mb-4">

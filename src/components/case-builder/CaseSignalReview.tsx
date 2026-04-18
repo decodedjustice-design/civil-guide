@@ -15,6 +15,7 @@ import {
   ChevronUp,
   Sparkles,
 } from "lucide-react";
+import { SafetyBanner } from "@/components/SafetyBanner";
 
 export interface SignalActor {
   name: string;
@@ -115,6 +116,7 @@ export function CaseSignalReview({ signals, onConfirm, onDismiss, isApplying }: 
 
   return (
     <div className="space-y-4 animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+      <SafetyBanner />
       {/* Header */}
       <div className="p-4 rounded-xl bg-accent/5 border border-accent/20 flex items-start gap-3">
         <Sparkles className="w-5 h-5 text-accent shrink-0 mt-0.5" />

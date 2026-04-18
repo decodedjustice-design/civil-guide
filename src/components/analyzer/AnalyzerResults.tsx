@@ -25,6 +25,7 @@ import { SmartResourceList } from "./SmartResourceList";
 import { PatternAwarenessBlock } from "./PatternAwarenessBlock";
 import { buildCaseContext, getRelevantQuestions, CaseContext, SystemType } from "@/hooks/useCaseContext";
 import { usePatternAwareness } from "@/hooks/usePatternAwareness";
+import { SafetyBanner } from "@/components/SafetyBanner";
 import type { EntityTags } from "@/hooks/useEntityTags";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
 import type { AnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
@@ -332,6 +333,7 @@ export function AnalyzerResults({
   return (
     <div className="min-h-screen bg-gradient-hero">
       <div className="max-w-2xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <SafetyBanner />
         
         {/* Save Status Banner */}
         {isLoggedIn ? (

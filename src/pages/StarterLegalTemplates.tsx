@@ -84,7 +84,7 @@ DISCLAIMER: This is an educational template only. It does not constitute legal a
     title: "Public Records Request (WA PRA)",
     icon: FileSearch,
     whatItIs: "A formal request under Washington's Public Records Act (RCW 42.56) asking a government agency to provide copies of public records. Washington has one of the strongest public records laws in the nation, and agencies must respond within 5 business days.",
-    whenUsed: "When you need to obtain documents from Washington State or local government agencies, including police reports, emails, policies, contracts, personnel records (with limitations), or other government documents.",
+    whenUsed: "One possible option may be to obtain documents from Washington State or local government agencies, including police reports, emails, policies, contracts, personnel records (with limitations), or other government documents.",
     whatItDoesNot: [
       "Guarantee you will receive all records requested (some exemptions apply)",
       "Apply to federal agencies (use FOIA instead)",

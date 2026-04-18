@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 
 export interface AnalyzerResultsAI {
   systemIdentification: string;
@@ -82,7 +83,7 @@ export function useAnalyzerResultsAI(): UseAnalyzerResultsAIReturn {
         return false;
       }
 
-      setGeneratedResults(data.results);
+      setGeneratedResults(sanitizeSafetyLanguage(data.results));
       return true;
 
     } catch (err) {

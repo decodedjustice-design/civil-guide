@@ -3,7 +3,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LegalGate, hasAcceptedLegalGate } from "@/components/LegalGate";
 import Index from "./pages/Index";
 import Analyzer from "./pages/Analyzer";
 import LegalDecoder from "./pages/LegalDecoder";
@@ -39,18 +41,33 @@ import DisclaimerPage from "./pages/Disclaimer";
 import DecodedJusticeDashboard from "./pages/decoded-justice/DecodedJusticeDashboard";
 import DecodedJusticeBuilder from "./pages/decoded-justice/DecodedJusticeBuilder";
 import DecodedJusticePacket from "./pages/decoded-justice/DecodedJusticePacket";
+import LegalHelp from "./pages/LegalHelp";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
+const App = () => {
+  const [isGateAccepted, setIsGateAccepted] = useState(hasAcceptedLegalGate());
+
+  useEffect(() => {
+    const refreshGateState = () => setIsGateAccepted(hasAcceptedLegalGate());
+    window.addEventListener("legal-gate-updated", refreshGateState);
+    window.addEventListener("storage", refreshGateState);
+    return () => {
+      window.removeEventListener("legal-gate-updated", refreshGateState);
+      window.removeEventListener("storage", refreshGateState);
+    };
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            {!isGateAccepted && <LegalGate />}
+            <Routes>
+              <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/analyzer" element={<Analyzer />} />
             <Route path="/justice-place" element={<JusticePlace />} />
@@ -59,7 +76,8 @@ const App = () => (
             <Route path="/legal-decoder" element={<LegalDecoder />} />
             <Route path="/self-help" element={<SelfHelpTools />} />
             <Route path="/rights-insight" element={<RightsInsight />} />
-            <Route path="/find-help" element={<FindLegalHelp />} />
+              <Route path="/find-help" element={<FindLegalHelp />} />
+              <Route path="/legal-help" element={<LegalHelp />} />
             <Route path="/support-network" element={<SupportNetwork />} />
             <Route path="/about" element={<About />} />
             <Route path="/auth" element={<Auth />} />
@@ -88,12 +106,13 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/disclaimer" element={<DisclaimerPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
