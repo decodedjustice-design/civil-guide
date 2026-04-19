@@ -1,326 +1,137 @@
-import { Link } from "react-router-dom";
-import { Shield, Home, Scale, Landmark, FileText, ArrowRight } from "lucide-react";
+import { useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { Disclaimer } from "@/components/shared/Disclaimer";
+import { Masthead } from "@/components/founder/Masthead";
+import { Section } from "@/components/founder/Section";
+import { PullQuote } from "@/components/founder/PullQuote";
+import { Timeline } from "@/components/founder/Timeline";
+import { Closing } from "@/components/founder/Closing";
+import styles from "@/components/founder/FoundersStory.module.css";
+
+const timelineItems = [
+  {
+    date: "Housing",
+    text: "Fighting her housing authority over a bedroom-size accommodation required by her foster care license. The accommodation request had been misrouted between departments for months. She built a detailed fair housing argument combining federal statutes, HUD guidance, and regulatory requirements — then prepared for a formal hearing, alone, with days to submit evidence.",
+  },
+  {
+    date: "Child Welfare",
+    text: "Managing her foster daughter's dependency case in court, producing dozens of formal documents for attorney briefing and submission. Simultaneously, a child protective services intake had been filed regarding her son — containing allegations directly contradicted by documented evidence and a witness whose account changed materially within 48 hours.",
+  },
+  {
+    date: "Foster Licensing",
+    text: "Maintaining her active kinship foster care license — a process requiring compliance documentation, formal agency correspondence, and demonstrated stability — while in active crisis across every other system at the same time.",
+  },
+  {
+    date: "Legislation",
+    text: "Developing a full legislative advocacy packet to complete implementation of a Washington State youth behavioral health law — including a bill draft, policy framework, and advocacy toolkit targeting state legislators — because the gaps in the law were gaps she had watched harm people firsthand.",
+  },
+  {
+    date: "Platform",
+    text: "Building Decoded Justice. Not as a future project. As survival infrastructure — because she was learning everything too late, and she could not stop the clock for anyone else going through the same thing.",
+  },
+];
+
+const setMetaTag = (selector: string, attributes: Record<string, string>) => {
+  let tag = document.head.querySelector(selector) as HTMLMetaElement | null;
+  if (!tag) {
+    tag = document.createElement("meta");
+    Object.entries(attributes).forEach(([key, value]) => {
+      if (key !== "content") {
+        tag?.setAttribute(key, value);
+      }
+    });
+    document.head.appendChild(tag);
+  }
+  if (tag) {
+    tag.setAttribute("content", attributes.content);
+  }
+};
 
 export default function FoundersStory() {
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const microNavItems = [
-    { label: "Start here", id: "origin" },
-    { label: "Why this exists", id: "the-gap" },
-    { label: "Why this platform exists", id: "how-built" },
-    { label: "What it helps with", id: "the-response" },
-    { label: "Explore tools", id: "continue-exploring" },
-  ];
-
-  const explorationCards = [
-    { label: "Housing", description: "Understand housing systems and protections", href: "/analyzer", icon: Home },
-    { label: "Police Encounters", description: "Know your rights during interactions", href: "/rights-insight", icon: Shield },
-    { label: "Courts & Judges", description: "Navigate court procedures with clarity", href: "/courts-filing-info", icon: Scale },
-    { label: "Government Agencies", description: "Decode agency processes and timelines", href: "/analyzer", icon: Landmark },
-    { label: "Documentation Tools", description: "Organize evidence, timelines, and records", href: "/tools", icon: FileText },
-  ];
+  useEffect(() => {
+    document.title = "Founder's Story — Decoded Justice";
+    setMetaTag('meta[name="description"]', {
+      name: "description",
+      content: "How Decoded Justice was built from real experience navigating civil rights, housing, and child welfare systems simultaneously.",
+    });
+    setMetaTag('meta[property="og:title"]', {
+      property: "og:title",
+      content: "Founder's Story — Decoded Justice",
+    });
+    setMetaTag('meta[property="og:description"]', {
+      property: "og:description",
+      content: "How Decoded Justice was built from real experience navigating civil rights, housing, and child welfare systems simultaneously.",
+    });
+    setMetaTag('meta[property="og:type"]', {
+      property: "og:type",
+      content: "article",
+    });
+  }, []);
 
   return (
     <Layout>
-      {/* Micro-nav strip */}
-      <div className="sticky top-[72px] z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container">
-          <nav className="flex items-center gap-1 py-2.5 overflow-x-auto scrollbar-none">
-            {microNavItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
-                className="shrink-0 px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/60 rounded-full transition-colors tracking-wide"
-              >
-                {item.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-      </div>
+      <article className={styles.storyPage}>
+        <Masthead />
 
-      <div className="container py-12 lg:py-20">
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-3xl md:text-4xl font-serif font-semibold text-foreground mb-4">
-              Why This Platform Exists
-            </h1>
-            <div className="flex items-center justify-center gap-3 text-primary text-sm tracking-wide mt-4">
-              <span>Clarity</span>
-              <span className="w-1 h-1 rounded-full bg-primary" />
-              <span>Justice</span>
-              <span className="w-1 h-1 rounded-full bg-primary" />
-              <span>Empathy</span>
-            </div>
-          </div>
+        <main className={styles.storyWrap}>
+          <p className={styles.lede}>
+            This platform was not designed in a boardroom. It was built in the hours after midnight, by someone who was simultaneously managing a federal civil rights case, a foster care licensing fight, a housing authority battle, a child welfare court matter, and a young son who deserved a mother who wasn't drowning.
+          </p>
 
-          <div className="space-y-14">
-            {/* 1. Origin */}
-            <section id="origin">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">Origin</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Decoded Justice began when one person could not find a single place that explained how the systems affecting their life actually worked.</p>
-                <p>It was not a business idea. It was not a product concept. It started as an attempt to organize scattered information—court filings, agency letters, case numbers, deadlines—into something that made sense.</p>
-                <p>The confusion was not personal failure. It was structural. The systems were designed without coordination, without explanation, without a map.</p>
-                <p>So one was built.</p>
-              </div>
-            </section>
+          <Section label="The Beginning" title="It Started With Something Done to Her" style={{ animationDelay: "0.15s" }}>
+            <p className={styles.bodyParagraph}>The founder of Decoded Justice was a passenger in a vehicle when her life changed. What followed was a law enforcement encounter involving excessive force — a multi-agency pursuit, repeated vehicle rammings at highway speeds, and a use of force that left her partner unconscious and hospitalized in intensive care with serious neurological injuries.</p>
+            <p className={styles.bodyParagraph}>She was uninjured physically but left with severe PTSD, dental damage from the incident, and a legal situation she had no preparation for. Her partner could not advocate for himself. Their young son was affected. And neither of them had an attorney.</p>
+            <p className={styles.bodyParagraph}>She had police reports. She had dashcam evidence. She had medical records. She had documentation showing that a supervisor had ordered the officers to stand down — and that order had been ignored before the most serious force was used.</p>
+            <p className={styles.bodyParagraph}>What she did not have was anyone to help her understand what to do with any of it.</p>
+          </Section>
 
-            {/* 2. The Reality */}
-            <section id="the-reality">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Reality</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Justice</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Public systems—courts, housing authorities, police departments, child welfare agencies, public defense offices, benefits programs—do not operate as a unified structure. They run independently. They do not share information. They do not coordinate timelines.</p>
-                <p>Each system assumes you already understand how it works. Each expects compliance without providing explanation. Each creates records that may be used later in ways you did not anticipate.</p>
-                <p>Power is distributed unevenly. Institutions have staff, attorneys, and established procedures. Most people navigating these systems have none of those resources.</p>
-                <p>This is not a conspiracy. It is structural design. And that design produces consistent outcomes: confusion, delay, missed deadlines, and decisions made without informed participation.</p>
-              </div>
-            </section>
+          <PullQuote
+            quote="Your situation sounds like a nightmare — but what you've built here reflects a level of preparation most represented clients don't achieve."
+            cite="— Civil rights attorney, upon reviewing case materials"
+          />
 
-            {/* 3. The Human Impact */}
-            <section id="human-impact">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Human Impact</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Empathy</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>What does this actually feel like?</p>
-                <p>It feels like receiving mail you do not fully understand. It feels like deadlines that passed before you knew they existed. It feels like being spoken to in language designed for professionals, not for you.</p>
-                <p>It feels like overwhelm. Isolation. Fear of making the wrong choice. Fear of saying the wrong thing. Fear that one mistake will cascade into something you cannot undo.</p>
-                <p>And often, it feels like shame—because the confusion gets internalized as personal failure, when it is actually system failure.</p>
-                <p>This platform does not forget that reality. Every design decision accounts for it.</p>
-              </div>
-            </section>
+          <Section label="The Self-Education" title="Learning What No One Will Teach You" style={{ animationDelay: "0.22s" }}>
+            <p className={styles.bodyParagraph}>She did not have a legal background. She had a case, a deadline, and no alternative.</p>
+            <p className={styles.bodyParagraph}>She taught herself evidence preservation — how documents are authenticated, how metadata matters, how chain of custody works. She studied federal civil rights law and court procedure. She learned how police agencies document use of force, how internal investigations are structured, and what the gap between an officer's narrative and dashcam footage can mean legally.</p>
+            <p className={styles.bodyParagraph}>She obtained the complete documentary record — incident reports, investigation files, use-of-force documentation, dispatch logs, medical records, and communications — and organized everything into a litigation binder with an evidence matrix and constitutional violation analysis. She calculated damages. She prepared attorney outreach that described the timeline with forensic precision, because she had learned that attorneys evaluate cases on facts, not feelings.</p>
+            <p className={styles.bodyParagraph}>When attorneys reviewed her materials, they told her the work was exceptional. What they could not see was what building it had cost her.</p>
+          </Section>
 
-            {/* Why This Platform Exists */}
-            <section id="how-built">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">Why This Platform Exists</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Origin</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>While navigating housing instability, landlord abuse, social services sanctions, child support processes, and court pressure at the same time, the founder was asked to foster a young girl who had no stable home.</p>
-                <p>That decision brought new systems into the picture overnight — child welfare services, school officials, caseworkers, compliance requirements, and constant documentation.</p>
-                <p>Nothing existed to help make sense of how these systems overlapped or how to move through them clearly.</p>
-                <p>So she began building her own structure — notes, timelines, binders, decision sheets — anything that could turn confusion into something manageable.</p>
-                <p>Over time, the chaos began to organize.</p>
-                <p>Patterns became visible.<br />Steps became clearer.<br />And what once felt impossible to track started to make sense.</p>
-                <p>Decoded Justice grew from that process.</p>
-                <p>It was created in the middle of navigating real systems, not after them — with the hope that others won't have to spend as long trying to understand where to start, what matters, and how to move forward.</p>
-              </div>
-            </section>
+          <Section label="The Real Weight" title="She Was Not Navigating One System. She Was Navigating All of Them." style={{ animationDelay: "0.29s" }}>
+            <p className={styles.bodyParagraph}>While building her civil rights case, she was managing everything else at the same time:</p>
+            <Timeline items={timelineItems} />
+          </Section>
 
-            {/* The Reality (Context) */}
-            <section id="reality-bridge" className="py-4">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Reality</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Context</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Public systems rarely operate in isolation. Housing connects to employment. Schools intersect with child welfare. Courts affect benefits, transportation, and stability. A single issue can quickly expand into multiple agencies, deadlines, and expectations.</p>
-                <p>Most people are expected to understand:</p>
-                <ul className="space-y-2 pl-4">
-                  {["what system they're in", "what rules apply", "what documentation matters", "what happens next"].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p>…without ever being shown how those pieces connect.</p>
-                <p>When several systems are active at once, confusion becomes the default.</p>
-              </div>
-            </section>
+          <PullQuote
+            quote="She did not build Decoded Justice after surviving the systems. She built it while they were still running her through."
+            cite="— The Founder's Story"
+          />
 
-            {/* The Gap (Detail) */}
-            <section id="the-gap-detail">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Gap</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Problem</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Information exists, but it's scattered.</p>
-                <p>Legal explanations are written for professionals.<br />Agency instructions assume familiarity.<br />Support resources focus on one system at a time.</p>
-                <p>There is rarely a place where someone can:</p>
-                <ul className="space-y-2 pl-4">
-                  {["understand what they're facing", "organize what's happening", "see how systems interact", "move step by step instead of all at once"].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p>That gap is where people fall behind — not because they don't care, but because nothing is designed for real-life overlap.</p>
-              </div>
-            </section>
+          <Section label="The Realization" title="The System Does Not Explain Itself. That Is Not an Accident." style={{ animationDelay: "0.36s" }}>
+            <p className={styles.bodyParagraph}>Every document she produced — the evidence matrix, the housing accommodation brief, the licensing correspondence, the child welfare declarations, the legislative packet — represented knowledge that took months to acquire under extreme pressure and that should have been available from day one.</p>
+            <p className={styles.bodyParagraph}>The patterns were not random. Housing authorities misroute accommodation requests. Child welfare agencies produce declarations they expect will go unchallenged. Police reports contain discrepancies between written narratives and recorded evidence. Courts have deadlines that move silently. The systems that intersect each other — housing and foster care, child welfare and criminal justice, benefits and health — do not connect those dots for the people caught between them.</p>
+            <p className={styles.bodyParagraph}>She built the tools she needed. By the time she had them, she had already lost ground she could not get back.</p>
+            <p className={styles.bodyParagraph}>
+              <strong className={styles.strong}>Decoded Justice exists so that other people do not have to build those tools from scratch, at midnight, while in crisis, alone.</strong>
+            </p>
+          </Section>
 
-            {/* The Gap (Clarity + Justice) */}
-            <section id="the-gap">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Gap</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Clarity + Justice</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>When navigating these systems, there was no central resource to:</p>
-                <ul className="space-y-2 pl-4">
-                  {[
-                    "Explain which system you are actually in and how it typically operates",
-                    "Organize documents, records, and communications coherently",
-                    "Build a timeline of events that makes chronological sense",
-                    "Access plain-language explanations written for clarity, not for legal professionals",
-                    "Receive guidance that acknowledges the emotional weight of the situation",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p>Legal aid is limited. Attorneys are expensive. And by the time most people seek help, critical deadlines have passed or records have been created without their input.</p>
-                <p>The gap was not access to legal advice. The gap was access to understanding—before crisis.</p>
-              </div>
-            </section>
+          <Section label="The Platform" title="What Decoded Justice Is — and What It Isn't" style={{ animationDelay: "0.43s" }}>
+            <p className={styles.bodyParagraph}>Decoded Justice is a trauma-informed civil rights legal technology platform focused on Washington State. It has over two dozen feature areas covering the systems that most frequently intersect in civil rights and government accountability matters — law enforcement, housing, child welfare, public benefits, and courts. It is built entirely by its founder, on an iPad, using modern development tools learned alongside everything else in this story.</p>
+            <p className={styles.bodyParagraph}>The platform does not provide legal advice. That is the domain of attorneys. What it provides is something attorneys cannot always give: <strong className={styles.strong}>the preparation that makes legal help possible</strong>. The structure that transforms chaos into something a professional can act on. The language that explains which system you're in, what typically happens there, what documentation matters, and what deadlines are moving before they pass.</p>
+            <p className={styles.bodyParagraph}>It was designed for the person who learns that asking for clarity gets used against them. For the parent who cannot show vulnerability without risking custody. For the trauma survivor who is still expected to navigate federal procedure without error. For the person managing multiple intersecting government systems while raising children and trying to heal.</p>
+            <p className={styles.bodyParagraph}>Its guiding principle:</p>
+            <p className={styles.italicBlock}>The most important guide is the one that exists. Better to help one person in crisis today than a hundred people someday.</p>
+          </Section>
 
-            {/* The Response */}
-            <section id="the-response">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Response</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Solution</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Decoded Justice was built to bring structure to that overlap.</p>
-                <p>Not to replace professionals.<br />Not to give legal advice.<br />Not to tell people what choices to make.</p>
-                <p>But to help people:</p>
-                <ul className="space-y-2 pl-4">
-                  {["understand their situation", "identify what matters first", "document effectively", "follow clear steps", "access deeper information only when they're ready"].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-foreground font-medium">Clarity comes before strategy.</p>
-              </div>
-            </section>
+          <Section label="The Person Behind It" title="Who the Founder Is" style={{ animationDelay: "0.5s" }}>
+            <p className={styles.bodyParagraph}>She is a licensed kinship foster caregiver in Washington State, a housing voucher holder who has navigated — and challenged — one of the state's largest housing authorities. She is an active pro se civil rights litigant. She is a policy advocate who has drafted legislation. She is a mother to a young son and a foster daughter whose dependency case she has fought to influence at every available legal moment.</p>
+            <p className={styles.bodyParagraph}>She is writing a non-fiction personal narrative — <em>Between the Cracks</em> — because the story that produced this platform deserves to be told in full, not summarized.</p>
+            <p className={styles.bodyParagraph}>And she still finds time for art. For creative work. For the detail-oriented projects that bring beauty into spaces that have none. Not as a luxury — but because staying whole, when the world keeps working to take you apart, is its own form of resistance.</p>
+          </Section>
 
-            {/* The Philosophy */}
-            <section id="philosophy">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Philosophy</h2>
-                <span className="text-xs text-primary/70 uppercase tracking-wider">Identity</span>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Clarity reduces pressure.<br />Structure reduces overwhelm.<br />Understanding increases confidence.</p>
-                <p>People don't need more information.<br />They need information that meets them where they are.</p>
-                <p>This platform is built on:</p>
-                <ul className="space-y-2 pl-4">
-                  {["calm guidance", "plain language", "layered depth", "real-world sequencing"].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gold mt-2 shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p>So users can start with what's happening now, then move forward.</p>
-              </div>
-            </section>
-
-            {/* The Mission */}
-            <section id="mission">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Mission</h2>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Decoded Justice exists to make complex systems easier to navigate.</p>
-                <p>To help people:</p>
-                <ul className="space-y-2 pl-4">
-                  {["see what's happening", "know what to do next", "protect themselves through documentation", "move through systems with more stability"].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p>Not perfectly.<br />Not instantly.<br />But with more clarity than they had before.</p>
-              </div>
-            </section>
-
-            {/* The Purpose */}
-            <section id="purpose">
-              <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">The Purpose</h2>
-              </div>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>Many people encounter housing courts, public agencies, schools, or law enforcement only when something has already gone wrong.</p>
-                <p>By then, expectations are high and guidance is minimal.</p>
-                <p>This platform exists so that when those moments happen, there is a place to begin — structured, steady, and built from lived experience rather than theory.</p>
-                <p>There is no perfect system.<br />But there can be better tools for navigating them.</p>
-              </div>
-            </section>
-          </div>
-
-          {/* Continue Exploring */}
-          <section id="continue-exploring" className="mt-20">
-            <div className="mb-8">
-              <h2 className="text-2xl font-serif font-semibold text-foreground mb-2">Continue exploring</h2>
-              <div className="w-12 h-px bg-gold" />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {explorationCards.map((card) => (
-                <Link
-                  key={card.label}
-                  to={card.href}
-                  className="group p-5 rounded-xl bg-card border border-border hover:border-primary/20 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center mb-3 group-hover:bg-primary/10 transition-colors">
-                    <card.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-                    {card.label}
-                  </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {card.description}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          {/* If This Sounds Familiar */}
-          <section className="mt-16">
-            <div className="p-8 rounded-xl bg-secondary/30 border border-border/50 text-center">
-              <h2 className="text-xl font-serif font-semibold text-foreground mb-3">
-                If this sounds familiar
-              </h2>
-              <p className="text-muted-foreground leading-relaxed max-w-lg mx-auto mb-6">
-                If you're navigating housing, courts, schools, agencies, or law enforcement at the same time — start here.
-              </p>
-              <Button variant="default" size="lg" asChild>
-                <Link to="/tools">
-                  Guided Entry
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-            </div>
-          </section>
-
-          <div className="mt-12 pt-8 border-t border-border">
-            <Disclaimer className="justify-center" />
-          </div>
-        </div>
-      </div>
+          <Closing style={{ animationDelay: "0.57s" }} />
+        </main>
+      </article>
     </Layout>
   );
 }
