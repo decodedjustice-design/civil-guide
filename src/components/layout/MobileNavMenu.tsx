@@ -17,6 +17,7 @@ const navItems = [
   { name: "Find Help", href: "/find-help" },
   { name: "Dashboard", href: "/dashboard" },
   { name: "About", href: "/about" },
+  { name: "Founder's Story", href: "/founders-story" },
 ];
 
 export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMenuProps) {
