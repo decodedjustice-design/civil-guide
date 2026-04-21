@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { libraryCategories } from "@/data/legalEducationLibrary";
 import { categoryImages } from "@/assets/index";
 import heroImage from "@/assets/hero-private-studio.jpg";
+import { LegalGate } from "@/components/LegalGate";
 
 const Index = () => {
   const { user } = useAuth();
@@ -36,7 +37,7 @@ const Index = () => {
           <div className="cinematic-overlay absolute inset-0" />
         </div>
 
-        <div className="relative z-10 container max-w-4xl text-center px-6 py-32">
+        <div className="relative z-10 container max-w-5xl text-center px-6 py-24 sm:py-28">
           <div className="flex items-center justify-center gap-4 mb-12 animate-fade-in">
             <div className="w-12 h-px bg-gold/40" />
             <div className="w-1.5 h-1.5 rounded-full bg-gold/50" />
@@ -44,18 +45,30 @@ const Index = () => {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white/95 leading-[1.25] tracking-wide mb-8 animate-fade-up">
-            Understand your experience. Organize what matters. Move forward with clarity.
+            Understand Your Rights. Organize Your Story. Take Your Next Step.
           </h1>
 
-          <p className="text-base sm:text-lg text-gold font-medium tracking-wide mb-6 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
-            Your Experience. Your Rights. Your Justice.
+          <p className="text-lg sm:text-xl text-white/70 font-light tracking-wide mb-12 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
+            A guided tool to help you make sense of what happened and what you can do next.
           </p>
 
-          <p className="text-lg sm:text-xl text-white/60 font-light tracking-wide mb-14 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
-            In one guided flow, document what happened, organize your evidence, and prepare information you can review with trusted support.
-          </p>
+          <div
+            className="mx-auto mb-12 grid max-w-3xl gap-3 rounded-xl border border-white/15 bg-black/25 p-4 sm:grid-cols-3 animate-fade-up"
+            style={{ animationDelay: "0.25s", animationFillMode: "both" }}
+          >
+            {["Share what happened", "Learn what rights may apply", "Get next-step guidance"].map((step, index) => (
+              <div key={step} className="rounded-lg border border-white/15 bg-white/5 px-3 py-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-gold/90 mb-2">Step {index + 1}</p>
+                <p className="text-sm sm:text-base text-white/90">{step}</p>
+              </div>
+            ))}
+          </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-fade-up" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
+          <div className="mb-10 flex justify-center animate-fade-up" style={{ animationDelay: "0.35s", animationFillMode: "both" }}>
+            <LegalGate />
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 animate-fade-up" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
             <Link
               to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
               className="inline-flex items-center justify-center h-14 px-10 bg-primary hover:bg-maroon-light text-white font-medium text-base tracking-wide rounded transition-all duration-300 hover:shadow-lg"
