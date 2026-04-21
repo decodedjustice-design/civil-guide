@@ -44,15 +44,15 @@ const Index = () => {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white/95 leading-[1.25] tracking-wide mb-8 animate-fade-up">
-            Understand your experience. Organize what matters. Move forward with clarity.
+            You deserve a clear place to sort out what happened.
           </h1>
 
           <p className="text-base sm:text-lg text-gold font-medium tracking-wide mb-6 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
-            Your Experience. Your Rights. Your Justice.
+            You're not overreacting. You're trying to make sense of something hard.
           </p>
 
           <p className="text-lg sm:text-xl text-white/60 font-light tracking-wide mb-14 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
-            In one guided flow, document what happened, organize your evidence, and prepare information you can review with trusted support.
+            Write down what happened, keep your documents in one place, and see your next steps one at a time.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 animate-fade-up" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
@@ -60,18 +60,30 @@ const Index = () => {
               to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
               className="inline-flex items-center justify-center h-14 px-10 bg-primary hover:bg-maroon-light text-white font-medium text-base tracking-wide rounded transition-all duration-300 hover:shadow-lg"
             >
-              Start Your Case
+              Start organizing your experience
             </Link>
-            <Link
-              to="/education-library"
+            <a
+              href="#how-it-works"
               className="inline-flex items-center justify-center h-14 px-10 border border-white/20 hover:border-white/35 text-white/70 hover:text-white font-medium text-base tracking-wide rounded transition-all duration-300"
             >
-              Explore Your Rights
-            </Link>
+              See how it works
+            </a>
           </div>
 
           <p className="text-xs text-white/35 tracking-[0.25em] uppercase animate-fade-in" style={{ animationDelay: "0.7s", animationFillMode: "both" }}>
-            Private · Secure · No legal promises
+            Private · Secure · You stay in control
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-background py-16 sm:py-20">
+        <div className="container max-w-3xl px-6 text-center">
+          <h2 className="font-serif text-3xl sm:text-4xl font-medium text-foreground tracking-tight mb-5">
+            Why this exists
+          </h2>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            When something feels wrong, it's hard to know where to start.
+            <br className="hidden sm:block" /> Decoded Justice helps you slow things down, organize what happened, and understand what your options might be.
           </p>
         </div>
       </section>
@@ -81,19 +93,19 @@ const Index = () => {
         <div className="container max-w-4xl px-6">
           <div className="text-center mb-10">
             <h2 className="font-serif text-3xl sm:text-4xl font-medium text-foreground tracking-tight mb-4">
-              What Decoded Justice Does
+              What you can do here
             </h2>
             <p className="text-muted-foreground font-light max-w-2xl mx-auto">
-              Built for people in Washington State who need a clear, step-by-step way to understand and organize what happened.
+              Built for people in Washington who need a calmer way to sort through a hard experience.
             </p>
           </div>
 
           <ul className="max-w-2xl mx-auto space-y-4">
             {[
-              "Document civil rights violations",
-              "Organize evidence",
-              "Understand Washington-specific rights",
-              "Prepare for conversations with legal support",
+              "Write down your experience in plain words",
+              "Keep evidence and notes together",
+              "Learn what rights may apply in Washington",
+              "Get ready to ask for support",
             ].map((item) => (
               <li key={item} className="flex items-start gap-3 text-foreground">
                 <span className="mt-2 block w-1.5 h-1.5 rounded-full bg-primary/80" />
@@ -105,14 +117,14 @@ const Index = () => {
       </section>
 
       {/* ── CANONICAL FLOW ── */}
-      <section className="bg-cream py-24 sm:py-32">
+      <section id="how-it-works" className="bg-cream py-24 sm:py-32">
         <div className="container max-w-5xl px-6">
           <div className="text-center mb-16">
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground tracking-tight mb-4">
               How it works
             </h2>
             <p className="text-muted-foreground font-light max-w-xl mx-auto">
-              A single guided system for Washington residents under stress.
+              One step at a time, so you don't have to figure everything out at once.
             </p>
           </div>
 
@@ -140,13 +152,13 @@ const Index = () => {
                 step: 4,
                 icon: Search,
                 title: "Review key issues",
-                description: "Identify legal issue areas and missing details.",
+                description: "Spot what might matter and what's still missing.",
               },
               {
                 step: 5,
                 icon: FileText,
                 title: "Generate case packet",
-                description: "Export a structured attorney-ready PDF.",
+                description: "Create a clean summary you can share when you're ready.",
               },
             ].map((item, i) => (
               <div key={item.step} className="text-center animate-fade-in" style={{ animationDelay: `${i * 150}ms`, animationFillMode: "both" }}>
@@ -178,7 +190,7 @@ const Index = () => {
               What you'll get
             </h2>
             <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Every step builds toward one final deliverable.
+              By the end, you'll have something clear and useful.
             </p>
           </div>
 
@@ -187,7 +199,7 @@ const Index = () => {
               {
                 icon: Clock,
                 title: "Structured timeline",
-                description: "A chronological event record attorneys can scan quickly.",
+                description: "A simple timeline of what happened.",
               },
               {
                 icon: FolderOpen,
@@ -196,13 +208,13 @@ const Index = () => {
               },
               {
                 icon: FileText,
-                title: "Professional case packet (PDF)",
-                description: "A neutral, structured summary for legal intake.",
+                title: "Shareable summary (PDF)",
+                description: "A clear summary you can keep or send.",
               },
               {
                 icon: BookOpen,
                 title: "Something you can send to an attorney",
-                description: "Clear enough for first review without legal jargon.",
+                description: "Clear enough for a first conversation.",
               },
             ].map((tool) => (
               <div
@@ -242,7 +254,7 @@ const Index = () => {
               Know your rights
             </h2>
             <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Plain-language Washington legal guides for the systems people encounter most. Learn how each process works and what rights apply in this state.
+              Simple guides for common Washington systems, so you can understand what to expect next.
             </p>
           </div>
 
@@ -296,17 +308,17 @@ const Index = () => {
               When you're ready to connect
             </h2>
             <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Resources for finding help, building support, and taking your next step with confidence.
+              Places to find help, support, and your next step.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { icon: Scale, title: "Find Legal Help", description: "Attorney search and legal aid resources.", href: "/find-help" },
-              { icon: Users, title: "Support Network", description: "Organizations, advocates, and community resources.", href: "/support-network" },
-              { icon: FileText, title: "Intake Packet", description: "Prepare a structured inquiry for attorney consultations.", href: "/intake-packet" },
-              { icon: Shield, title: "Public Records", description: "Understand and organize your public records requests.", href: "/public-request-rights" },
-              { icon: Wrench, title: "Self-Help Tools", description: "Templates, guides, and preparation resources.", href: "/self-help" },
+              { icon: Scale, title: "Find Legal Help", description: "Find legal aid and attorneys.", href: "/find-help" },
+              { icon: Users, title: "Support Network", description: "Find organizations, advocates, and community support.", href: "/support-network" },
+              { icon: FileText, title: "Intake Packet", description: "Put your details in one packet for first meetings.", href: "/intake-packet" },
+              { icon: Shield, title: "Public Records", description: "Learn how to request records and stay organized.", href: "/public-request-rights" },
+              { icon: Wrench, title: "Self-Help Tools", description: "Use templates and guides to prepare.", href: "/self-help" },
               { icon: Heart, title: "Founder's Story", description: "Why this platform exists and who built it.", href: "/founders-story" },
             ].map((resource) => (
               <Link
@@ -339,12 +351,12 @@ const Index = () => {
               {
                 icon: Scale,
                 title: "Your Rights",
-                text: "Understand Washington law, including RCW protections and federal civil rights, so you can make informed decisions.",
+                text: "Understand which Washington and federal rights may connect to your experience.",
               },
               {
                 icon: Shield,
                 title: "Your Justice",
-                text: "Take informed action with organized records you can use for attorney outreach, agency complaints, or court preparation.",
+                text: "Take your next step with organized records you can share if and when you choose.",
               },
             ].map((item) => (
               <div key={item.title} className="text-center">
@@ -394,14 +406,14 @@ const Index = () => {
               to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
               className="inline-flex items-center justify-center h-14 px-12 bg-primary hover:bg-maroon-light text-white font-medium text-base tracking-wide rounded transition-all duration-300 hover:shadow-lg"
             >
-              Start Your Case
+              Start organizing your experience
             </Link>
-            <Link
-              to="/education-library"
+            <a
+              href="#how-it-works"
               className="inline-flex items-center justify-center h-14 px-10 border border-border/60 hover:border-primary/30 text-foreground hover:text-primary font-medium text-base tracking-wide rounded transition-all duration-300"
             >
-              Explore Your Rights
-            </Link>
+              See how it works
+            </a>
           </div>
         </div>
       </section>
