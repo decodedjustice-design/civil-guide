@@ -238,7 +238,7 @@ const Index = () => {
               to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
               className="inline-flex items-center text-sm font-medium text-primary gap-1.5 hover:gap-2.5 transition-all"
             >
-              Start the guided case flow
+              Start organizing your experience
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
