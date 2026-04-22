@@ -12,10 +12,12 @@ interface MobileNavMenuProps {
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Case Builder", href: "/case-builder" },
+  { name: "My Cases", href: "/cases" },
+  { name: "Case Pipeline", href: "/cases/kanban" },
+  { name: "Deadline Calendar", href: "/cases/calendar" },
+  { name: "Global Search", href: "/cases/search" },
   { name: "Learn Your Rights", href: "/education-library" },
   { name: "Find Help", href: "/find-help" },
-  { name: "Dashboard", href: "/dashboard" },
   { name: "About", href: "/about" },
   { name: "Founder's Story", href: "/founders-story" },
 ];
