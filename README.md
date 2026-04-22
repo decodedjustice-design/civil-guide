@@ -71,3 +71,27 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Decoded Justice integration
+
+This project now includes Decoded Justice case-management routes embedded through an iframe wrapper.
+
+1. Set the deployed Decoded Justice URL in your environment:
+
+```sh
+VITE_DECODED_JUSTICE_URL="https://YOUR_DECODED_JUSTICE_URL.manus.space"
+```
+
+2. Visit any of the integrated routes:
+
+- `/cases`
+- `/cases/kanban`
+- `/cases/calendar`
+- `/cases/search`
+- `/wa-statutes`
+- `/wa-rights`
+- `/wa-sol`
+- `/wa-templates`
+- `/cases/:id/*`
+
+If `VITE_DECODED_JUSTICE_URL` is missing, the app shows a setup notice instead of an empty frame.

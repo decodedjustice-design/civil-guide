@@ -40,6 +40,7 @@ import DecodedJusticeDashboard from "./pages/decoded-justice/DecodedJusticeDashb
 import DecodedJusticeBuilder from "./pages/decoded-justice/DecodedJusticeBuilder";
 import DecodedJusticePacket from "./pages/decoded-justice/DecodedJusticePacket";
 import LegalHelp from "./pages/LegalHelp";
+import DecodedJusticeEmbed from "./pages/decoded-justice/DecodedJusticeEmbed";
 
 const queryClient = new QueryClient();
 
@@ -86,6 +87,28 @@ const App = () => {
               <Route path="/decoded-justice/dashboard" element={<DecodedJusticeDashboard />} />
               <Route path="/decoded-justice/builder" element={<DecodedJusticeBuilder />} />
               <Route path="/decoded-justice/packet" element={<DecodedJusticePacket />} />
+              <Route path="/cases" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/kanban" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/calendar" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/search" element={<DecodedJusticeEmbed />} />
+              <Route path="/wa-statutes" element={<DecodedJusticeEmbed />} />
+              <Route path="/wa-rights" element={<DecodedJusticeEmbed />} />
+              <Route path="/wa-rights/:section" element={<DecodedJusticeEmbed />} />
+              <Route path="/wa-sol" element={<DecodedJusticeEmbed />} />
+              <Route path="/wa-templates" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/evidence" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/timeline" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/people" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/claims" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/documents" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/communications" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/deadlines" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/financials" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/notes" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/activity" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/sharing" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id/ai" element={<DecodedJusticeEmbed />} />
               <Route path="/what-we-are" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
