@@ -41,6 +41,8 @@ import DecodedJusticeBuilder from "./pages/decoded-justice/DecodedJusticeBuilder
 import DecodedJusticePacket from "./pages/decoded-justice/DecodedJusticePacket";
 import LegalHelp from "./pages/LegalHelp";
 import DecodedJusticeEmbed from "./pages/decoded-justice/DecodedJusticeEmbed";
+import ProSeToolkit from "./pages/pro-se/ProSeToolkit";
+import ProSeDashboard from "./pages/pro-se/ProSeDashboard";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +115,8 @@ const App = () => {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/disclaimer" element={<DisclaimerPage />} />
+              <Route path="/pro-se-toolkit" element={<ProSeToolkit />} />
+              <Route path="/pro-se-toolkit/dashboard" element={<ProSeDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
