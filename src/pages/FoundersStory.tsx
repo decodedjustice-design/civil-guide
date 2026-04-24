@@ -47,8 +47,25 @@ const setMetaTag = (selector: string, attributes: Record<string, string>) => {
   }
 };
 
+const setLinkTag = (selector: string, attributes: Record<string, string>) => {
+  let tag = document.head.querySelector(selector) as HTMLLinkElement | null;
+  if (!tag) {
+    tag = document.createElement("link");
+    Object.entries(attributes).forEach(([key, value]) => {
+      if (key !== "href") {
+        tag?.setAttribute(key, value);
+      }
+    });
+    document.head.appendChild(tag);
+  }
+  if (tag) {
+    tag.setAttribute("href", attributes.href);
+  }
+};
+
 export default function FoundersStory() {
   useEffect(() => {
+    const pageUrl = new URL("/founders-story", window.location.origin).toString();
     const absoluteOgImage = new URL(founderOgImage, window.location.origin).toString();
 
     document.title = "Founder's Story — Decoded Justice";
@@ -68,9 +85,29 @@ export default function FoundersStory() {
       property: "og:type",
       content: "article",
     });
+    setMetaTag('meta[property="og:url"]', {
+      property: "og:url",
+      content: pageUrl,
+    });
     setMetaTag('meta[property="og:image"]', {
       property: "og:image",
       content: absoluteOgImage,
+    });
+    setMetaTag('meta[name="twitter:title"]', {
+      name: "twitter:title",
+      content: "Founder's Story — Decoded Justice",
+    });
+    setMetaTag('meta[name="twitter:description"]', {
+      name: "twitter:description",
+      content: "How Decoded Justice was built from real experience navigating civil rights, housing, and child welfare systems simultaneously.",
+    });
+    setMetaTag('meta[name="twitter:image"]', {
+      name: "twitter:image",
+      content: absoluteOgImage,
+    });
+    setLinkTag('link[rel="canonical"]', {
+      rel: "canonical",
+      href: pageUrl,
     });
   }, []);
 
