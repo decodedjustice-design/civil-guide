@@ -220,6 +220,21 @@ export default function FindLegalHelp() {
             <Disclaimer variant="prominent" />
           </div>
 
+          <section className="mb-10">
+            <div className="rounded-2xl border border-gold/30 bg-secondary/35 p-6 md:p-8">
+              <h2 className="font-serif text-2xl text-foreground mb-2">Couldn’t Find an Attorney?</h2>
+              <p className="text-muted-foreground mb-5">
+                Access structured tools to organize your situation and understand next steps.
+              </p>
+              <Button asChild>
+                <Link to="/pro-se-toolkit">
+                  Open Pro Se Case Toolkit
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </section>
+
           {/* ── Attorney Directory Card ── */}
           <section className="mb-10">
             <div className="rounded-2xl bg-card border border-border overflow-hidden">
