@@ -5,6 +5,7 @@ import { Section } from "@/components/founder/Section";
 import { PullQuote } from "@/components/founder/PullQuote";
 import { Timeline } from "@/components/founder/Timeline";
 import { Closing } from "@/components/founder/Closing";
+import founderOgImage from "@/assets/decoded-justice-scales-logo.png";
 import styles from "@/components/founder/FoundersStory.module.css";
 
 const timelineItems = [
@@ -48,6 +49,8 @@ const setMetaTag = (selector: string, attributes: Record<string, string>) => {
 
 export default function FoundersStory() {
   useEffect(() => {
+    const absoluteOgImage = new URL(founderOgImage, window.location.origin).toString();
+
     document.title = "Founder's Story — Decoded Justice";
     setMetaTag('meta[name="description"]', {
       name: "description",
@@ -64,6 +67,10 @@ export default function FoundersStory() {
     setMetaTag('meta[property="og:type"]', {
       property: "og:type",
       content: "article",
+    });
+    setMetaTag('meta[property="og:image"]', {
+      property: "og:image",
+      content: absoluteOgImage,
     });
   }, []);
 
