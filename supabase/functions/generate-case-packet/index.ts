@@ -103,6 +103,15 @@ function calculateReadiness(
 
 // ── HTML template ──────────────────────────────────────
 
+function esc(str?: string | null): string {
+  return (str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function renderHtml(packet: CasePacketData): string {
   const css = `
     :root { --cream:#F7F1E8; --maroon:#6A1E2E; --gold:#C8A75D; --ink:#2a2a2a; }
