@@ -103,6 +103,15 @@ function calculateReadiness(
 
 // ── HTML template ──────────────────────────────────────
 
+function esc(str?: string | null): string {
+  return (str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function renderHtml(packet: CasePacketData): string {
   const css = `
     :root { --cream:#F7F1E8; --maroon:#6A1E2E; --gold:#C8A75D; --ink:#2a2a2a; }
@@ -125,9 +134,9 @@ function renderHtml(packet: CasePacketData): string {
     .map(
       (e) => `
       <div class="card">
-        <div class="meta">${e.event_date}</div>
-        <div class="label">${e.title}</div>
-        ${e.description ? `<div>${e.description}</div>` : ""}
+        <div class="meta">${esc(e.event_date)}</div>
+        <div class="label">${esc(e.title)}</div>
+        ${e.description ? `<div>${esc(e.description)}</div>` : ""}
       </div>`
     )
     .join("");
@@ -136,9 +145,9 @@ function renderHtml(packet: CasePacketData): string {
     .map(
       (item) => `
       <div class="card">
-        <div class="label">${item.label} · ${item.file_type ?? "document"}</div>
-        ${item.description ? `<div>${item.description}</div>` : ""}
-        ${item.source ? `<div class="meta">Source: ${item.source}</div>` : ""}
+        <div class="label">${esc(item.label)} · ${esc(item.file_type ?? "document")}</div>
+        ${item.description ? `<div>${esc(item.description)}</div>` : ""}
+        ${item.source ? `<div class="meta">Source: ${esc(item.source)}</div>` : ""}
       </div>`
     )
     .join("");
@@ -148,22 +157,22 @@ function renderHtml(packet: CasePacketData): string {
 <head><meta charset="utf-8"><style>${css}</style></head>
 <body>
   <section class="page">
-    <h1>${packet.title}</h1>
+    <h1>${esc(packet.title)}</h1>
     <p class="meta">Decoded Justice — Case Packet</p>
-    <p class="meta">Location: ${packet.location}</p>
-    <p class="meta">Incident date: ${packet.incidentDate}</p>
-    <p class="meta">Prepared: ${new Date(packet.createdAt).toLocaleDateString()}</p>
+    <p class="meta">Location: ${esc(packet.location)}</p>
+    <p class="meta">Incident date: ${esc(packet.incidentDate)}</p>
+    <p class="meta">Prepared: ${esc(new Date(packet.createdAt).toLocaleDateString())}</p>
 
     <div class="readiness">
       <span class="label">Readiness: ${packet.readiness.score}%</span>
       <div class="readiness-bar"><div class="readiness-fill" style="width:${packet.readiness.score}%"></div></div>
     </div>
-    ${packet.readiness.missing.length > 0 ? `<ul>${packet.readiness.missing.map((m) => `<li class="meta">${m}</li>`).join("")}</ul>` : ""}
+    ${packet.readiness.missing.length > 0 ? `<ul>${packet.readiness.missing.map((m) => `<li class="meta">${esc(m)}</li>`).join("")}</ul>` : ""}
   </section>
 
   <section class="page">
     <h2>Case Overview</h2>
-    <p>${packet.summary}</p>
+    <p>${esc(packet.summary)}</p>
   </section>
 
   <section class="page">

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Analyzer from "./pages/Analyzer";
 import LegalDecoder from "./pages/LegalDecoder";
@@ -56,10 +57,10 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/analyzer" element={<Analyzer />} />
-              <Route path="/justice-place" element={<JusticePlace />} />
-              <Route path="/clarion" element={<Clarion />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/analyzer" element={<ProtectedRoute><Analyzer /></ProtectedRoute>} />
+              <Route path="/justice-place" element={<ProtectedRoute><JusticePlace /></ProtectedRoute>} />
+              <Route path="/clarion" element={<ProtectedRoute><Clarion /></ProtectedRoute>} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/legal-decoder" element={<LegalDecoder />} />
               <Route path="/self-help" element={<SelfHelpTools />} />
@@ -71,52 +72,52 @@ const App = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/signin" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
-              <Route path="/notes" element={<Notes />} />
-              <Route path="/evidence-vault" element={<EvidenceVault />} />
-              <Route path="/timeline" element={<Timeline />} />
+              <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
+              <Route path="/evidence-vault" element={<ProtectedRoute><EvidenceVault /></ProtectedRoute>} />
+              <Route path="/timeline" element={<ProtectedRoute><Timeline /></ProtectedRoute>} />
               <Route path="/guide/:guideId" element={<FullGuide />} />
               <Route path="/library" element={<Library />} />
               <Route path="/education-library" element={<EducationLibrary />} />
-              <Route path="/transcription" element={<Transcription />} />
+              <Route path="/transcription" element={<ProtectedRoute><Transcription /></ProtectedRoute>} />
               <Route path="/public-request-rights" element={<PublicRequestRights />} />
               <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
-              <Route path="/saved-attorneys" element={<SavedAttorneys />} />
+              <Route path="/saved-attorneys" element={<ProtectedRoute><SavedAttorneys /></ProtectedRoute>} />
               <Route path="/legal-templates" element={<StarterLegalTemplates />} />
-              <Route path="/intake-packet" element={<IntakePacket />} />
-              <Route path="/attorney-contacts" element={<AttorneyContacts />} />
+              <Route path="/intake-packet" element={<ProtectedRoute><IntakePacket /></ProtectedRoute>} />
+              <Route path="/attorney-contacts" element={<ProtectedRoute><AttorneyContacts /></ProtectedRoute>} />
               <Route path="/founders-story" element={<FoundersStory />} />
-              <Route path="/case-builder" element={<CaseBuilder />} />
-              <Route path="/decoded-justice/dashboard" element={<DecodedJusticeDashboard />} />
-              <Route path="/decoded-justice/builder" element={<DecodedJusticeBuilder />} />
-              <Route path="/decoded-justice/packet" element={<DecodedJusticePacket />} />
-              <Route path="/cases" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/kanban" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/calendar" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/search" element={<DecodedJusticeEmbed />} />
+              <Route path="/case-builder" element={<ProtectedRoute><CaseBuilder /></ProtectedRoute>} />
+              <Route path="/decoded-justice/dashboard" element={<ProtectedRoute><DecodedJusticeDashboard /></ProtectedRoute>} />
+              <Route path="/decoded-justice/builder" element={<ProtectedRoute><DecodedJusticeBuilder /></ProtectedRoute>} />
+              <Route path="/decoded-justice/packet" element={<ProtectedRoute><DecodedJusticePacket /></ProtectedRoute>} />
+              <Route path="/cases" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/kanban" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/calendar" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/search" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
               <Route path="/wa-statutes" element={<DecodedJusticeEmbed />} />
               <Route path="/wa-rights" element={<DecodedJusticeEmbed />} />
               <Route path="/wa-rights/:section" element={<DecodedJusticeEmbed />} />
               <Route path="/wa-sol" element={<DecodedJusticeEmbed />} />
               <Route path="/wa-templates" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/evidence" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/timeline" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/people" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/claims" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/documents" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/communications" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/deadlines" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/financials" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/notes" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/activity" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/sharing" element={<DecodedJusticeEmbed />} />
-              <Route path="/cases/:id/ai" element={<DecodedJusticeEmbed />} />
+              <Route path="/cases/:id" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/evidence" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/timeline" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/people" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/claims" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/documents" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/communications" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/deadlines" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/financials" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/notes" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/activity" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/sharing" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
+              <Route path="/cases/:id/ai" element={<ProtectedRoute><DecodedJusticeEmbed /></ProtectedRoute>} />
               <Route path="/what-we-are" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/disclaimer" element={<DisclaimerPage />} />
               <Route path="/pro-se-toolkit" element={<ProSeToolkit />} />
-              <Route path="/pro-se-toolkit/dashboard" element={<ProSeDashboard />} />
+              <Route path="/pro-se-toolkit/dashboard" element={<ProtectedRoute><ProSeDashboard /></ProtectedRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
