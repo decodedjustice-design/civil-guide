@@ -102,11 +102,13 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      // Store redirect target before OAuth navigates away
+      // Store redirect target before OAuth navigates away, and carry it in the
+      // return URL so the user lands back on the page they came from.
       sessionStorage.setItem("auth_redirect", redirectTo);
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/auth?redirect=${encodeURIComponent(redirectTo)}`,
       });
+
       if (error) {
         toast({
           title: "Google sign in failed",
