@@ -45,6 +45,8 @@ import DecodedJusticeEmbed from "./pages/decoded-justice/DecodedJusticeEmbed";
 import ProSeToolkit from "./pages/pro-se/ProSeToolkit";
 import ProSeDashboard from "./pages/pro-se/ProSeDashboard";
 import HousingNavigator from "./pages/HousingNavigator";
+import OAuthConsent from "./pages/OAuthConsent";
+
 
 const queryClient = new QueryClient();
 
