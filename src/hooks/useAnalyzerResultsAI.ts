@@ -2,7 +2,29 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 
+export interface PotentialViolation {
+  id: string;
+  title: string;
+  status: "potential_violation";
+  severity: "high" | "medium" | "possible";
+  confidence: "low" | "medium" | "high";
+  legalFramework: string[];
+  whyFlagged: string;
+  whatWouldNeedToBeTrue: string[];
+  evidenceToLookFor: string[];
+  missingFacts: string[];
+  nextStep: string;
+}
+
 export interface AnalyzerResultsAI {
+  mode?: string;
+  summary?: {
+    totalGapsFound: number;
+    unresolvedGapCount: number;
+    resolvedByUserAnswers: string[];
+    potentialViolationCount: number;
+  };
+  potentialViolations?: PotentialViolation[];
   systemIdentification: string;
   powerDynamics: {
     whoHasControl: string[];
@@ -58,34 +80,23 @@ export function useAnalyzerResultsAI(): UseAnalyzerResultsAIReturn {
   const [generateError, setGenerateError] = useState<string | null>(null);
 
   const generateResults = useCallback(async (input: GenerateInput): Promise<boolean> => {
-    // Don't regenerate if we already have results for this system
-    if (generatedResults && !generateError) {
-      return true;
-    }
-
+    if (generatedResults && !generateError) return true;
     setIsGenerating(true);
     setGenerateError(null);
-
     try {
-      const { data, error } = await supabase.functions.invoke('generate-analyzer-results', {
-        body: input
-      });
-
+      const { data, error } = await supabase.functions.invoke('generate-analyzer-results', { body: input });
       if (error) {
         console.error("Edge function error:", error);
         setGenerateError("We're preparing your results. Please try again in a moment.");
         return false;
       }
-
       if (!data?.success || !data?.results) {
         console.error("Invalid response:", data);
         setGenerateError(data?.error || "Unable to generate results. Please try again.");
         return false;
       }
-
       setGeneratedResults(sanitizeSafetyLanguage(data.results));
       return true;
-
     } catch (err) {
       console.error("Generate results error:", err);
       setGenerateError("We're preparing your results. Please try again in a moment.");
@@ -101,11 +112,5 @@ export function useAnalyzerResultsAI(): UseAnalyzerResultsAIReturn {
     setIsGenerating(false);
   }, []);
 
-  return {
-    generatedResults,
-    isGenerating,
-    generateError,
-    generateResults,
-    resetResults
-  };
+  return { generatedResults, isGenerating, generateError, generateResults, resetResults };
 }
