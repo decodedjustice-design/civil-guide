@@ -46,6 +46,17 @@ import ProSeToolkit from "./pages/pro-se/ProSeToolkit";
 import ProSeDashboard from "./pages/pro-se/ProSeDashboard";
 import HousingNavigator from "./pages/HousingNavigator";
 import OAuthConsent from "./pages/OAuthConsent";
+import CasesList from "./pages/cases/CasesList";
+import CaseOverview from "./pages/cases/CaseOverview";
+import CaseEvidence from "./pages/cases/CaseEvidence";
+import CaseTimeline from "./pages/cases/CaseTimeline";
+import CasePeople from "./pages/cases/CasePeople";
+import CaseIssues from "./pages/cases/CaseIssues";
+import CaseCommunications from "./pages/cases/CaseCommunications";
+import CaseRequests from "./pages/cases/CaseRequests";
+import CaseSearch from "./pages/cases/CaseSearch";
+import CaseContentCheck from "./pages/cases/CaseContentCheck";
+import CasePackets from "./pages/cases/CasePackets";
 
 
 const queryClient = new QueryClient();
