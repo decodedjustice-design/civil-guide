@@ -35,7 +35,7 @@ export function useCaseSnapshot(caseId?: string) {
         ["issues", "case_issues", "created_at"],
         ["people", "case_people", "name"],
         ["organizations", "case_organizations", "name"],
-        ["communications", "case_communications", "occurred_at"],
+        ["communications", "case_communications", "occurred_on"],
         ["requests", "case_records_requests", "due_date"],
         ["notes", "notes", "created_at"],
       ];
