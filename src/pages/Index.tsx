@@ -1,11 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import {
-  FileText, Clock, Search,
-  BookOpen, PenLine, FolderOpen, ArrowRight,
-  Scale, Users, Shield, Wrench, Heart, Eye, Lock,
-} from "lucide-react";
+import { ArrowRight, Clock, FileText, FolderOpen, Search, Users, Scale, Shield, Wrench, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { libraryCategories } from "@/data/legalEducationLibrary";
 import { categoryImages } from "@/assets/index";
@@ -27,397 +23,258 @@ const Index = () => {
   }, [user, navigate]);
 
   const previewCategories = libraryCategories.slice(0, 6);
+  const startCaseUrl = user ? "/case-builder" : "/auth?redirect=/case-builder";
+
+  const issueAreas = [
+    { title: "Civil Rights", detail: "Discrimination · Government action · Accessibility" },
+    { title: "Child Welfare", detail: "DCYF · Dependency · Placement · Caregiver issues" },
+    { title: "Housing", detail: "Tenant issues · Discrimination · Accommodations" },
+    { title: "Disability", detail: "ADA · Section 504 · Accommodations · Accessibility" },
+    { title: "Law Enforcement", detail: "Encounters · Reports · Evidence · Communications" },
+    { title: "Public Records", detail: "Requests · Deadlines · Responses · Missing records" },
+    { title: "Education", detail: "School records · Accessibility · Discrimination" },
+    { title: "Benefits & Services", detail: "Agency decisions · Notices · Applications · Appeals" },
+  ];
+
+  const resources = [
+    { icon: Scale, title: "Find Legal Help", description: "Attorney search and legal aid resources.", href: "/find-help" },
+    { icon: Users, title: "Support Network", description: "Organizations, advocates, and community resources.", href: "/support-network" },
+    { icon: FileText, title: "Intake Packet", description: "Prepare a structured inquiry for attorney consultations.", href: "/intake-packet" },
+    { icon: Shield, title: "Public Records", description: "Understand and organize public records requests.", href: "/public-request-rights" },
+    { icon: Wrench, title: "Self-Help Tools", description: "Templates, guides, and preparation resources.", href: "/self-help" },
+    { icon: Heart, title: "Founder's Story", description: "Why this platform exists and who built it.", href: "/founders-story" },
+  ];
 
   return (
     <Layout>
-      {/* ── HERO ── */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img src={heroImage} alt="" className="w-full h-full object-cover" aria-hidden="true" />
-          <div className="cinematic-overlay absolute inset-0" />
-        </div>
-
-        <div className="relative z-10 container max-w-5xl text-center px-6 py-24 sm:py-28">
-          <div className="flex items-center justify-center gap-4 mb-12 animate-fade-in">
-            <div className="w-12 h-px bg-gold/40" />
-            <div className="w-1.5 h-1.5 rounded-full bg-gold/50" />
-            <div className="w-12 h-px bg-gold/40" />
+      <main className="bg-background">
+        <section className="relative min-h-[76vh] flex items-center overflow-hidden">
+          <div className="absolute inset-0">
+            <img src={heroImage} alt="" className="w-full h-full object-cover" aria-hidden="true" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,18,27,0.88)_0%,rgba(37,20,29,0.72)_48%,rgba(15,18,27,0.45)_100%)]" />
+            <div className="absolute inset-0 bg-black/15" />
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white/95 leading-[1.25] tracking-wide mb-8 animate-fade-up">
-            Understand Your Rights. Organize Your Story. Take Your Next Step.
-          </h1>
+          <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24">
+            <div className="max-w-4xl">
+              <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-gold/90 mb-6">Decoded Justice · Washington State</p>
+              <div className="w-16 h-px bg-gold/45 mb-7" />
+              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white leading-[1.05] tracking-tight max-w-3xl">
+                Clarity for complicated situations.
+              </h1>
+              <p className="mt-7 text-lg sm:text-xl text-white/72 font-light leading-relaxed max-w-2xl">
+                A Washington-focused platform for understanding what happened, organizing what matters, and identifying issues worth investigating.
+              </p>
 
-          <p className="text-lg sm:text-xl text-white/70 font-light tracking-wide mb-12 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>
-            A guided tool to help you make sense of what happened and what you can do next.
-          </p>
+              <div className="mt-9 flex flex-col sm:flex-row gap-3">
+                <Link
+                  to={startCaseUrl}
+                  className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg"
+                >
+                  Begin Your Case
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  to="/education-library"
+                  className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300"
+                >
+                  Explore the Washington Guide
+                </Link>
+              </div>
 
-          <div
-            className="mx-auto mb-12 grid max-w-3xl gap-3 rounded-xl border border-white/15 bg-black/25 p-4 sm:grid-cols-3 animate-fade-up"
-            style={{ animationDelay: "0.25s", animationFillMode: "both" }}
-          >
-            {["Share what happened", "Learn what rights may apply", "Get next-step guidance"].map((step, index) => (
-              <div key={step} className="rounded-lg border border-white/15 bg-white/5 px-3 py-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-gold/90 mb-2">Step {index + 1}</p>
-                <p className="text-sm sm:text-base text-white/90">{step}</p>
+              <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-[11px] uppercase tracking-[0.2em] text-white/45">
+                <span>Clarity</span>
+                <span className="hidden sm:block h-3 w-px bg-white/15" />
+                <span>Empathy</span>
+                <span className="hidden sm:block h-3 w-px bg-white/15" />
+                <span>Justice</span>
+              </div>
+
+              <div className="mt-8 max-w-md">
+                <LegalGate />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/60 bg-background">
+          <div className="container max-w-6xl px-6 py-7 grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/60">
+            {[
+              ["01", "UNDERSTAND", "Make complicated information easier to understand."],
+              ["02", "ORGANIZE", "Bring evidence, records, timelines, and communications together."],
+              ["03", "PREPARE", "Create organized materials you can use for self-advocacy or legal support."],
+            ].map(([number, title, description]) => (
+              <div key={number} className="py-4 md:py-1 md:px-8 first:pl-0 last:pr-0">
+                <div className="text-[10px] tracking-[0.22em] text-gold uppercase mb-2">{number}</div>
+                <h2 className="font-serif text-xl font-medium tracking-tight text-foreground mb-2">{title}</h2>
+                <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-sm">{description}</p>
               </div>
             ))}
           </div>
+        </section>
 
-          <div className="mb-10 flex justify-center animate-fade-up" style={{ animationDelay: "0.35s", animationFillMode: "both" }}>
-            <LegalGate />
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 animate-fade-up" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
-            <Link
-              to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
-              className="inline-flex items-center justify-center h-14 px-10 bg-primary hover:bg-maroon-light text-white font-medium text-base tracking-wide rounded transition-all duration-300 hover:shadow-lg"
-            >
-              Start Your Case
-            </Link>
-            <Link
-              to="/education-library"
-              className="inline-flex items-center justify-center h-14 px-10 border border-white/20 hover:border-white/35 text-white/70 hover:text-white font-medium text-base tracking-wide rounded transition-all duration-300"
-            >
-              Explore Your Rights
-            </Link>
-          </div>
-
-          <p className="text-xs text-white/35 tracking-[0.25em] uppercase animate-fade-in" style={{ animationDelay: "0.7s", animationFillMode: "both" }}>
-            Private · Secure · No legal promises
-          </p>
-        </div>
-      </section>
-
-      {/* ── WHAT DECODED JUSTICE DOES ── */}
-      <section className="bg-background py-20 sm:py-24">
-        <div className="container max-w-4xl px-6">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-3xl sm:text-4xl font-medium text-foreground tracking-tight mb-4">
-              What Decoded Justice Does
-            </h2>
-            <p className="text-muted-foreground font-light max-w-2xl mx-auto">
-              Built for people in Washington State who need a clear, step-by-step way to understand and organize what happened.
-            </p>
-          </div>
-
-          <ul className="max-w-2xl mx-auto space-y-4">
-            {[
-              "Document civil rights violations",
-              "Organize evidence",
-              "Understand Washington-specific rights",
-              "Prepare for conversations with legal support",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-3 text-foreground">
-                <span className="mt-2 block w-1.5 h-1.5 rounded-full bg-primary/80" />
-                <span className="text-base sm:text-lg leading-relaxed">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* ── CANONICAL FLOW ── */}
-      <section className="bg-cream py-24 sm:py-32">
-        <div className="container max-w-5xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground tracking-tight mb-4">
-              How it works
-            </h2>
-            <p className="text-muted-foreground font-light max-w-xl mx-auto">
-              A single guided system for Washington residents under stress.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-5 gap-6 max-w-5xl mx-auto">
-            {[
-              {
-                step: 1,
-                icon: PenLine,
-                title: "Write what happened",
-                description: "Tell your story in plain language.",
-              },
-              {
-                step: 2,
-                icon: Clock,
-                title: "Build timeline",
-                description: "Put events in order with dates and locations.",
-              },
-              {
-                step: 3,
-                icon: FolderOpen,
-                title: "Upload evidence",
-                description: "Add photos, files, records, and notes.",
-              },
-              {
-                step: 4,
-                icon: Search,
-                title: "Review key issues",
-                description: "Identify legal issue areas and missing details.",
-              },
-              {
-                step: 5,
-                icon: FileText,
-                title: "Generate case packet",
-                description: "Export a structured attorney-ready PDF.",
-              },
-            ].map((item, i) => (
-              <div key={item.step} className="text-center animate-fade-in" style={{ animationDelay: `${i * 150}ms`, animationFillMode: "both" }}>
-                <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-5">
-                  <item.icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
-                </div>
-                <div className="text-xs text-gold font-medium tracking-[0.2em] uppercase mb-3">Step {item.step}</div>
-                <h3 className="font-serif text-xl font-medium text-foreground mb-3">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed font-light">{item.description}</p>
+        <section className="bg-cream py-20 sm:py-24">
+          <div className="container max-w-6xl px-6">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Washington-specific areas</p>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">
+                  A structured place to work through the systems people encounter most.
+                </h2>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">
+                Start with the issue area closest to your experience. Decoded Justice helps you organize facts and identify questions without assuming a legal conclusion.
+              </p>
+            </div>
 
-      {/* Divider */}
-      <div className="bg-cream">
-        <div className="container max-w-5xl px-6">
-          <div className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-        </div>
-      </div>
-
-      {/* ── WHAT YOU'LL GET ── */}
-      <section className="bg-cream py-24 sm:py-28">
-        <div className="container max-w-4xl px-6">
-          <div className="text-center mb-14">
-            <div className="w-10 h-px bg-gold/40 mx-auto mb-8" />
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground tracking-tight mb-4">
-              What you'll get
-            </h2>
-            <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Every step builds toward one final deliverable.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {[
-              {
-                icon: Clock,
-                title: "Structured timeline",
-                description: "A chronological event record attorneys can scan quickly.",
-              },
-              {
-                icon: FolderOpen,
-                title: "Organized evidence",
-                description: "Files and records grouped in one place.",
-              },
-              {
-                icon: FileText,
-                title: "Professional case packet (PDF)",
-                description: "A neutral, structured summary for legal intake.",
-              },
-              {
-                icon: BookOpen,
-                title: "Something you can send to an attorney",
-                description: "Clear enough for first review without legal jargon.",
-              },
-            ].map((tool) => (
-              <div
-                key={tool.title}
-                className="group bg-background border border-border/60 rounded-lg p-8 hover:shadow-warm hover:border-gold/25 transition-all duration-300"
-              >
-                <div className="w-11 h-11 rounded-lg bg-secondary flex items-center justify-center mb-5 group-hover:bg-gold/10 transition-colors">
-                  <tool.icon className="w-5 h-5 text-gold opacity-70 group-hover:opacity-100 transition-opacity" strokeWidth={1.5} />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-border/60">
+              {issueAreas.map((area, index) => (
+                <div key={area.title} className="min-h-36 border-r border-b border-border/60 p-6 sm:p-7 bg-cream hover:bg-background/70 transition-colors duration-300">
+                  <div className="flex items-center justify-between mb-8">
+                    <span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span>
+                    <span className="h-px w-7 bg-gold/35" />
+                  </div>
+                  <h3 className="font-serif text-xl font-medium text-foreground mb-2">{area.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{area.detail}</p>
                 </div>
-                <h3 className="font-serif text-xl font-medium text-foreground mb-3 group-hover:text-primary transition-colors">
-                  {tool.title}
-                </h3>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6">
-                  {tool.description}
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-background py-20 sm:py-24">
+          <div className="container max-w-6xl px-6">
+            <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-16 items-start">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Your case, in one place</p>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground mb-5">
+                  Your story doesn't have to be organized before you begin.
+                </h2>
+                <p className="text-base text-muted-foreground font-light leading-relaxed max-w-lg">
+                  Start with what you know. Add what you discover. Build the record as you go.
                 </p>
               </div>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link
-              to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
-              className="inline-flex items-center text-sm font-medium text-primary gap-1.5 hover:gap-2.5 transition-all"
-            >
-              Start the guided case flow
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
 
-      {/* ── LEGAL EDUCATION PREVIEW ── */}
-      <section className="bg-background py-24 sm:py-32">
-        <div className="container max-w-5xl px-6">
-          <div className="text-center mb-14">
-            <div className="w-10 h-px bg-gold/40 mx-auto mb-8" />
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground tracking-tight mb-4">
-              Know your rights
-            </h2>
-            <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Plain-language Washington legal guides for the systems people encounter most. Learn how each process works and what rights apply in this state.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            {previewCategories.map((cat, i) => {
-              const Icon = cat.icon;
-              const img = categoryImages[cat.id];
-              return (
-                <Link
-                  key={cat.id}
-                  to={`/guide/${cat.guideId}`}
-                  className="group relative rounded-xl border border-border/60 overflow-hidden bg-card hover:shadow-warm hover:border-gold/25 hover:-translate-y-1 transition-all duration-300"
-                  style={{ animationDelay: `${i * 80}ms`, animationFillMode: "both" }}
-                >
-                  {img && (
-                    <div className="relative h-32 overflow-hidden">
-                      <img src={img} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
-                      <div className="absolute top-3 left-3 w-8 h-8 rounded-lg bg-card/80 backdrop-blur-sm flex items-center justify-center">
-                        <Icon className="w-4 h-4 text-primary" />
-                      </div>
-                    </div>
-                  )}
-                  <div className="p-4">
-                    <h3 className="font-medium text-foreground text-sm mb-1 group-hover:text-primary transition-colors">{cat.title}</h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{cat.subtitle}</p>
+              <div className="border border-border/70 bg-card shadow-warm-sm">
+                <div className="px-6 py-4 border-b border-border/60 flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">Case workspace</p>
+                    <h3 className="font-serif text-2xl font-medium mt-1">My Case</h3>
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link
-              to="/education-library"
-              className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-            >
-              View all 10 categories
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── RESOURCES & SUPPORT ── */}
-      <section className="bg-cream-warm py-24 sm:py-28">
-        <div className="container max-w-4xl px-6">
-          <div className="text-center mb-14">
-            <div className="w-10 h-px bg-gold/40 mx-auto mb-8" />
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground tracking-tight mb-4">
-              When you're ready to connect
-            </h2>
-            <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Resources for finding help, building support, and taking your next step with confidence.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              { icon: Scale, title: "Find Legal Help", description: "Attorney search and legal aid resources.", href: "/find-help" },
-              { icon: Users, title: "Support Network", description: "Organizations, advocates, and community resources.", href: "/support-network" },
-              { icon: FileText, title: "Intake Packet", description: "Prepare a structured inquiry for attorney consultations.", href: "/intake-packet" },
-              { icon: Shield, title: "Public Records", description: "Understand and organize your public records requests.", href: "/public-request-rights" },
-              { icon: Wrench, title: "Self-Help Tools", description: "Templates, guides, and preparation resources.", href: "/self-help" },
-              { icon: Heart, title: "Founder's Story", description: "Why this platform exists and who built it.", href: "/founders-story" },
-            ].map((resource) => (
-              <Link
-                key={resource.title}
-                to={resource.href}
-                className="group flex flex-col items-center text-center p-6 rounded-lg bg-background border border-border/50 hover:shadow-warm hover:border-gold/20 transition-all duration-300"
-              >
-                <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center mb-4 group-hover:bg-gold/10 transition-colors">
-                  <resource.icon className="w-5 h-5 text-gold opacity-60 group-hover:opacity-100 transition-opacity" strokeWidth={1.5} />
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-gold">Structured record</div>
                 </div>
-                <h3 className="font-medium text-foreground text-sm mb-1.5 group-hover:text-primary transition-colors">{resource.title}</h3>
-                <p className="text-xs text-muted-foreground font-light leading-relaxed">{resource.description}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── YOUR EXPERIENCE · YOUR RIGHTS · YOUR JUSTICE ── */}
-      <section className="bg-background py-24 sm:py-32">
-        <div className="container max-w-4xl px-6">
-          <div className="w-10 h-px bg-gold/40 mx-auto mb-16" />
-          <div className="grid md:grid-cols-3 gap-16 md:gap-12">
-            {[
-              {
-                icon: PenLine,
-                title: "Your Experience",
-                text: "Capture what happened in plain language, with dates, locations, and context so your account is complete and clear.",
-              },
-              {
-                icon: Scale,
-                title: "Your Rights",
-                text: "Understand Washington law, including RCW protections and federal civil rights, so you can make informed decisions.",
-              },
-              {
-                icon: Shield,
-                title: "Your Justice",
-                text: "Take informed action with organized records you can use for attorney outreach, agency complaints, or court preparation.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="text-center">
-                <div className="w-12 h-12 rounded-full border border-border/50 flex items-center justify-center mx-auto mb-6">
-                  <item.icon className="w-5 h-5 text-primary/60" strokeWidth={1.5} />
+                <div className="grid grid-cols-2 sm:grid-cols-3 divide-x divide-y divide-border/60">
+                  {[
+                    ["Timeline", "24 events", Clock],
+                    ["Evidence", "18 exhibits", FolderOpen],
+                    ["Issues", "7 identified", Search],
+                    ["Communications", "31 entries", Users],
+                    ["Records Requests", "4 active", FileText],
+                    ["Documents", "46 files", FileText],
+                  ].map(([label, value, Icon]) => (
+                    <div key={String(label)} className="p-5">
+                      <Icon className="w-4 h-4 text-gold/80 mb-4" strokeWidth={1.5} />
+                      <p className="text-sm font-medium text-foreground">{label}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{value}</p>
+                    </div>
+                  ))}
                 </div>
-                <h3 className="font-serif text-2xl font-medium text-foreground mb-4">{item.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed font-light">{item.text}</p>
+                <div className="px-6 py-5 bg-secondary/40 border-t border-border/60">
+                  <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <span>Story</span><span>→</span><span>Timeline</span><span>→</span><span>Record</span><span>→</span><span>Issues</span><span>→</span><span>Evidence</span><span>→</span><span>Case Packet</span>
+                  </div>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── TRUST STRIP ── */}
-      <section className="bg-espresso py-10">
-        <div className="container max-w-4xl px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 text-center">
-            <div className="flex items-center gap-3">
-              <Lock className="w-4 h-4 text-gold/50" strokeWidth={1.5} />
-              <span className="text-sm text-white/45 tracking-wide font-light">Your information remains private</span>
+        <section className="bg-cream-warm py-20 sm:py-24">
+          <div className="container max-w-6xl px-6">
+            <div className="max-w-3xl mx-auto text-center mb-12">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Know the landscape</p>
+              <h2 className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-foreground mb-4">Washington legal education</h2>
+              <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed">
+                Plain-language guides for the systems people encounter most. Learn how a process works, what questions to ask, and what information may matter.
+              </p>
             </div>
-            <div className="flex items-center gap-3">
-              <Eye className="w-4 h-4 text-gold/50" strokeWidth={1.5} />
-              <span className="text-sm text-white/45 tracking-wide font-light">You control what you create</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Shield className="w-4 h-4 text-gold/50" strokeWidth={1.5} />
-              <span className="text-sm text-white/45 tracking-wide font-light">Nothing shared without consent</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── FINAL CTA ── */}
-      <section className="bg-cream py-28 sm:py-36">
-        <div className="container max-w-3xl text-center px-6">
-          <div className="w-10 h-px bg-gold/40 mx-auto mb-12" />
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-8 tracking-tight leading-tight">
-            Ready to begin?
-          </h2>
-          <p className="text-lg text-muted-foreground font-light mb-12 max-w-xl mx-auto">
-            Your space is private. Your pace is yours. Start whenever you're ready.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to={user ? "/case-builder" : "/auth?redirect=/case-builder"}
-              className="inline-flex items-center justify-center h-14 px-12 bg-primary hover:bg-maroon-light text-white font-medium text-base tracking-wide rounded transition-all duration-300 hover:shadow-lg"
-            >
-              Start Your Case
-            </Link>
-            <Link
-              to="/education-library"
-              className="inline-flex items-center justify-center h-14 px-10 border border-border/60 hover:border-primary/30 text-foreground hover:text-primary font-medium text-base tracking-wide rounded transition-all duration-300"
-            >
-              Explore Your Rights
-            </Link>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              {previewCategories.map((cat) => {
+                const Icon = cat.icon;
+                const img = categoryImages[cat.id];
+                return (
+                  <Link key={cat.id} to={`/guide/${cat.guideId}`} className="group border border-border/60 bg-background/80 hover:bg-background hover:border-gold/30 transition-all duration-300 overflow-hidden">
+                    {img && (
+                      <div className="relative h-28 overflow-hidden">
+                        <img src={img} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/15 to-transparent" />
+                        <div className="absolute left-4 bottom-3 w-8 h-8 border border-white/25 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+                          <Icon className="w-4 h-4 text-primary" />
+                        </div>
+                      </div>
+                    )}
+                    <div className="p-5">
+                      <h3 className="font-serif text-lg font-medium text-foreground mb-1 group-hover:text-primary transition-colors">{cat.title}</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{cat.subtitle}</p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="text-center mt-8">
+              <Link to="/education-library" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                View all Washington guides <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section className="bg-background py-20 sm:py-24">
+          <div className="container max-w-6xl px-6">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-10">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">When you're ready to connect</p>
+                <h2 className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-foreground">Tools and support beyond the workspace.</h2>
+              </div>
+              <p className="text-sm text-muted-foreground font-light max-w-md">Organize first. Then decide what kind of help or next step makes sense for you.</p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-border/60">
+              {resources.map((resource) => {
+                const Icon = resource.icon;
+                return (
+                  <Link key={resource.title} to={resource.href} className="border-r border-b border-border/60 p-6 bg-background hover:bg-secondary/30 transition-colors duration-300 group">
+                    <div className="flex items-start justify-between gap-5">
+                      <div>
+                        <Icon className="w-5 h-5 text-gold/80 mb-6" strokeWidth={1.5} />
+                        <h3 className="font-serif text-xl font-medium text-foreground group-hover:text-primary transition-colors">{resource.title}</h3>
+                        <p className="text-sm text-muted-foreground font-light leading-relaxed mt-2">{resource.description}</p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-primary text-primary-foreground py-16 sm:py-20">
+          <div className="container max-w-4xl px-6 text-center">
+            <p className="text-[10px] uppercase tracking-[0.28em] text-gold/90 mb-5">Clarity · Empathy · Justice</p>
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">Start with what you know.</h2>
+            <p className="mt-5 text-white/70 font-light max-w-xl mx-auto leading-relaxed">You do not need the whole story perfectly organized before you begin building the record.</p>
+            <div className="mt-8">
+              <Link to={startCaseUrl} className="inline-flex items-center gap-2 h-12 px-7 bg-white text-primary hover:bg-white/90 font-medium rounded-sm transition-colors">
+                Begin Your Case <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <p className="mt-7 text-[11px] text-white/45">Washington-focused information and organizational tools. Not legal advice.</p>
+          </div>
+        </section>
+      </main>
     </Layout>
   );
 };
