@@ -46,6 +46,7 @@ interface RecordManagerProps {
   subtitleFields?: string[];
   badgeFields?: string[];
   orderBy?: { column: string; ascending?: boolean };
+  prefixLabel?: (item: any) => string | null;
   addLabel: string;
   emptyMessage: string;
 }
