@@ -37,12 +37,12 @@ export default function CaseContentCheck() {
     },
     {
       label: "Each issue notes what would still need to be true",
-      failing: snapshot.issues.filter((i) => !i.missing_facts).length,
+      failing: snapshot.issues.filter((i) => !i.missing_records).length,
       tab: "issues",
     },
     {
       label: "Each issue notes what weakens or complicates it",
-      failing: snapshot.issues.filter((i) => !i.contrary_facts).length,
+      failing: snapshot.issues.filter((i) => !i.contradicting_notes).length,
       tab: "issues",
     },
     {
@@ -52,7 +52,7 @@ export default function CaseContentCheck() {
     },
     {
       label: "Communications needing follow-up have a date",
-      failing: snapshot.communications.filter((c) => c.follow_up && !c.follow_up_date).length,
+      failing: snapshot.communications.filter((c) => c.follow_up_needed && !c.follow_up_date).length,
       tab: "communications",
     },
   ];

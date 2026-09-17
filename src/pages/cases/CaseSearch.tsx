@@ -11,9 +11,9 @@ import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 const sources = [
   { key: "evidence", label: "Exhibit", tab: "evidence", fields: ["title", "description", "source", "relevance_notes"] },
   { key: "timeline", label: "Timeline", tab: "timeline", fields: ["title", "description", "reason"] },
-  { key: "issues", label: "Issue", tab: "issues", fields: ["title", "summary", "supporting_facts", "contrary_facts"] },
-  { key: "communications", label: "Communication", tab: "communications", fields: ["subject", "summary", "with_name"] },
-  { key: "requests", label: "Request", tab: "requests", fields: ["title", "agency", "description", "response_summary"] },
+  { key: "issues", label: "Issue", tab: "issues", fields: ["title", "summary", "supporting_notes", "contradicting_notes"] },
+  { key: "communications", label: "Communication", tab: "communications", fields: ["subject", "summary", "person"] },
+  { key: "requests", label: "Request", tab: "requests", fields: ["request_title", "agency", "description", "outcome"] },
   { key: "people", label: "Person", tab: "people", fields: ["name", "role", "organization", "notes"] },
   { key: "organizations", label: "Organization", tab: "people", fields: ["name", "org_type", "notes"] },
   { key: "notes", label: "Note", tab: "", fields: ["title", "content"] },
@@ -34,7 +34,7 @@ export default function CaseSearch() {
           id: `${s.key}-${row.id}`,
           label: s.label,
           tab: s.tab,
-          title: row.title || row.subject || row.name || "Untitled",
+          title: row.title || row.subject || row.name || row.request_title || "Untitled",
           snippet: s.fields
             .map((f) => row[f])
             .filter(Boolean)

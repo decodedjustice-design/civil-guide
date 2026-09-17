@@ -57,7 +57,7 @@ export default function CasePackets() {
           `<div class="item"><h3>${esc(i.title)}</h3><p class="meta">${esc(
             CLASSIFICATION_LABELS[i.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown"
           )} · ${esc(i.status)}</p><p>${esc(i.summary)}</p>
-          <p><em>Still unknown:</em> ${esc(i.missing_facts)}</p></div>`
+          <p><em>Still unknown:</em> ${esc(i.missing_records)}</p></div>`
       )}</section>`);
     }
     if (selected.includes("timeline")) {
@@ -84,23 +84,23 @@ export default function CasePackets() {
     if (selected.includes("people")) {
       parts.push(`<section><h2>People &amp; organizations</h2>${rows(
         [...snapshot.people, ...snapshot.organizations],
-        (p) => `<div class="item"><h3>${esc(p.name)}</h3><p class="meta">${esc(p.role || p.org_type || "")}</p></div>`
+        (p) => `<div class="item"><h3>${esc(p.name)}</h3><p class="meta">${esc(p.role || p.org_type || p.organization || "")}</p></div>`
       )}</section>`);
     }
     if (selected.includes("communications")) {
       parts.push(`<section><h2>Communications log</h2>${rows(
         snapshot.communications,
         (c) =>
-          `<div class="item"><h3>${esc(c.occurred_at)} — ${esc(c.subject)}</h3><p class="meta">${esc(
+          `<div class="item"><h3>${esc(c.occurred_on)} — ${esc(c.subject)}</h3><p class="meta">${esc(
             c.method
-          )}${c.with_name ? ` · ${esc(c.with_name)}` : ""}</p><p>${esc(c.summary)}</p></div>`
+          )}${c.person ? ` · ${esc(c.person)}` : ""}</p><p>${esc(c.summary)}</p></div>`
       )}</section>`);
     }
     if (selected.includes("requests")) {
       parts.push(`<section><h2>Requests &amp; deadlines</h2>${rows(
         snapshot.requests,
         (r) =>
-          `<div class="item"><h3>${esc(r.title)}</h3><p class="meta">${esc(r.status)}${
+          `<div class="item"><h3>${esc(r.request_title)}</h3><p class="meta">${esc(r.status)}${
             r.due_date ? ` · watching ${esc(r.due_date)}` : ""
           }</p><p>${esc(r.description)}</p></div>`
       )}</section>`);
