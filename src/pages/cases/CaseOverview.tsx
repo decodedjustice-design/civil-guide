@@ -101,7 +101,7 @@ export default function CaseOverview() {
                 <ul className="space-y-2">
                   {snapshot.evidence.slice(-5).reverse().map((e) => (
                     <li key={e.id} className="flex items-center gap-2 text-sm">
-                      <span className="font-mono text-xs text-primary">
+                      <span className="font-mono text-xs text-primary whitespace-nowrap">
                         {exhibitLabel(e.exhibit_number)}
                       </span>
                       <span className="truncate text-foreground">{e.title}</span>
