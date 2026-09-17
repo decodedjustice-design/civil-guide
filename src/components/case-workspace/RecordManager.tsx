@@ -141,6 +141,11 @@ export function RecordManager({
                 <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground break-words">
+                      {prefixLabel?.(item) && (
+                        <span className="text-primary font-mono text-xs mr-2">
+                          {prefixLabel(item)}
+                        </span>
+                      )}
                       {item[titleField] || "Untitled"}
                     </p>
                     {subtitleFields.length > 0 && (
