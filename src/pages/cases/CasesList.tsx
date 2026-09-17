@@ -51,9 +51,8 @@ export default function CasesList() {
     <Layout>
       <DjPageHeader
         variant="espresso"
-        eyebrow="Case workspace"
         title="Your cases"
-        description="One place for your record: what happened, who was involved, what you have, and what you still need. You can pause anytime and come back."
+        subtitle="One place for your record: what happened, who was involved, what you have, and what you still need. You can pause anytime and come back."
       />
       <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
         <div className="flex justify-end">

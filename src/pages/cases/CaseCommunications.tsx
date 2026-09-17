@@ -35,7 +35,7 @@ export default function CaseCommunications() {
             label: "How should this be treated?",
             type: "select",
             options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })),
-            defaultValue: "user_reported" === "" ? "unknown" : "unknown",
+            defaultValue: "unknown",
           },
           { key: "follow_up", label: "Follow-up needed", type: "checkbox", placeholder: "Something still needs a reply" },
           { key: "follow_up_date", label: "Follow up by", type: "date" },
