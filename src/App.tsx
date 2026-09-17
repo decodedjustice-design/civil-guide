@@ -46,6 +46,7 @@ import ProSeToolkit from "./pages/pro-se/ProSeToolkit";
 import ProSeDashboard from "./pages/pro-se/ProSeDashboard";
 import HousingNavigator from "./pages/HousingNavigator";
 import OAuthConsent from "./pages/OAuthConsent";
+import LawModules from "./pages/LawModules";
 import CasesList from "./pages/cases/CasesList";
 import CaseOverview from "./pages/cases/CaseOverview";
 import CaseEvidence from "./pages/cases/CaseEvidence";
@@ -57,7 +58,6 @@ import CaseRequests from "./pages/cases/CaseRequests";
 import CaseSearch from "./pages/cases/CaseSearch";
 import CaseContentCheck from "./pages/cases/CaseContentCheck";
 import CasePackets from "./pages/cases/CasePackets";
-
 
 const queryClient = new QueryClient();
 
@@ -101,6 +101,7 @@ const App = () => {
               <Route path="/attorney-contacts" element={<ProtectedRoute><AttorneyContacts /></ProtectedRoute>} />
               <Route path="/founders-story" element={<FoundersStory />} />
               <Route path="/case-builder" element={<ProtectedRoute><CaseBuilder /></ProtectedRoute>} />
+              <Route path="/law-modules" element={<LawModules />} />
               <Route path="/decoded-justice/dashboard" element={<ProtectedRoute><DecodedJusticeDashboard /></ProtectedRoute>} />
               <Route path="/decoded-justice/builder" element={<ProtectedRoute><DecodedJusticeBuilder /></ProtectedRoute>} />
               <Route path="/decoded-justice/packet" element={<ProtectedRoute><DecodedJusticePacket /></ProtectedRoute>} />
@@ -132,8 +133,6 @@ const App = () => {
               <Route path="/pro-se-toolkit/dashboard" element={<ProtectedRoute><ProSeDashboard /></ProtectedRoute>} />
               <Route path="/housing-navigator" element={<HousingNavigator />} />
               <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
