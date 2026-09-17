@@ -99,7 +99,14 @@ export function RecordManager({
     }
     const payload = fields.reduce<Record<string, any>>((acc, f) => {
       const raw = values[f.key];
-      acc[f.key] = f.type === "checkbox" ? Boolean(raw) : raw === "" ? null : raw;
+      if (f.type === "checkbox") {
+        acc[f.key] = Boolean(raw);
+      } else if (raw === "" || raw === undefined || raw === null) {
+        // On create, let database defaults apply; on edit, clear the field.
+        if (editingId) acc[f.key] = null;
+      } else {
+        acc[f.key] = raw;
+      }
       return acc;
     }, {});
     try {
