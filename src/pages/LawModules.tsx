@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { LAW_MODULES, type LawModule } from "@/lib/law/issueLibrary";
+import { POLICE_LAW_MODULES } from "@/lib/law/policeIssueModules";
+
+const ALL_LAW_MODULES: LawModule[] = [...LAW_MODULES, ...POLICE_LAW_MODULES];
 
 function ModuleCard({ module }: { module: LawModule }) {
   return (
@@ -65,8 +68,8 @@ export default function LawModules() {
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return LAW_MODULES;
-    return LAW_MODULES.filter((module) => [module.category, module.title, module.definition, ...module.authorities.map((a) => `${a.citation} ${a.title}`)].join(" ").toLowerCase().includes(q));
+    if (!q) return ALL_LAW_MODULES;
+    return ALL_LAW_MODULES.filter((module) => [module.category, module.title, module.definition, ...module.authorities.map((a) => `${a.citation} ${a.title}`)].join(" ").toLowerCase().includes(q));
   }, [query]);
 
   return (
@@ -91,7 +94,7 @@ export default function LawModules() {
         <Card className="bg-muted/30 border-border">
           <CardContent className="p-6">
             <h2 className="font-serif text-xl mb-2">How to add a new module</h2>
-            <p className="text-sm text-muted-foreground leading-6">Add a typed entry to <code className="text-xs">src/lib/law/issueLibrary.ts</code> with a stable id, category, analyzer mappings, plain-language definition, elements, evidence examples, research questions, and at least one verified primary authority URL. Then the Law Modules page and analyzer library can consume it without duplicating legal text.</p>
+            <p className="text-sm text-muted-foreground leading-6">Add a typed entry to <code className="text-xs">src/lib/law/issueLibrary.ts</code> for general modules or a dedicated file such as <code className="text-xs">src/lib/law/policeIssueModules.ts</code> for a focused module family. Give it a stable id, category, analyzer mappings, plain-language definition, elements, evidence examples, research questions, and at least one verified primary authority URL. Then import the module family into the analyzer and Law Modules index. Do not use placeholder citations.</p>
           </CardContent>
         </Card>
       </div>
