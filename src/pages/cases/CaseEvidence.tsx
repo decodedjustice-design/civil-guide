@@ -8,13 +8,14 @@ export default function CaseEvidence() {
   return (
     <CaseWorkspaceLayout
       title="Evidence & exhibits"
-      description="Each item keeps its source, its date, and how it should be treated. Exhibit numbers stay stable once assigned."
+      description="Store the real records behind your case. Exhibit numbers stay stable once assigned, and each item keeps its source, date, classification, and review status."
     >
       <RecordManager
         table="evidence"
         caseId={id}
+        enableFileUpload
         addLabel="Add exhibit"
-        emptyMessage="No exhibits yet. Add what you already have — even partial records help."
+        emptyMessage="No exhibits yet. Upload a document or add a record you already have."
         titleField="title"
         subtitleFields={["source", "document_date", "description"]}
         badgeFields={["classification", "review_status", "system_involved"]}
@@ -22,6 +23,10 @@ export default function CaseEvidence() {
         prefixLabel={(item) => exhibitLabel(item.exhibit_number)}
         fields={[
           { key: "title", label: "Title", type: "text", required: true },
+          { key: "file_url", label: "File URL", type: "text", help: "Filled automatically when you upload a document." },
+          { key: "file_name", label: "File name", type: "text", help: "Filled automatically when you upload a document." },
+          { key: "file_type", label: "File type", type: "text" },
+          { key: "file_size", label: "File size (bytes)", type: "text" },
           { key: "description", label: "What it shows", type: "textarea" },
           { key: "source", label: "Where it came from", type: "text", placeholder: "Agency, person, portal" },
           { key: "document_date", label: "Date on the record", type: "date" },
