@@ -67,6 +67,7 @@ export function RecordManager({
   orderBy,
   addLabel,
   emptyMessage,
+  prefixLabel,
 }: RecordManagerProps) {
   const { items, isLoading, add, update, remove } = useCaseCollection<any>(table, caseId, orderBy);
   const [open, setOpen] = useState(false);
