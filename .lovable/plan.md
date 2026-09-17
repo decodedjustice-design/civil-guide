@@ -1,44 +1,76 @@
+# Merge Case Binder Pro into Decoded Justice
 
+Decoded Justice stays the product, the brand, and the public face. Case Binder Pro becomes the case-workspace layer inside it. Nothing existing is deleted.
 
-## Dashboard Phase-Aware Progress Tracking
+## What I found
 
-**What changes:** Enhance Dashboard with a 5-phase progress overview showing completion signals, plus a "Suggested Next Step" block.
+Decoded Justice today:
+- Real backend with per-user data: cases (Justice Place), evidence, timeline entries, notes, analyzer results, intake packets, attorney contacts.
+- Strong, working features: violation/issue detection engine, Legal Decoder, education library, guided Case Builder, public pages.
+- The `/cases/...` routes are currently just an iframe window pointing at Case Binder Pro — not a real feature. This is the seam to replace.
 
-**File affected:** `src/pages/Dashboard.tsx` (rewrite layout, same route)
+Case Binder Pro today:
+- Rich workspace screens: case list, case workspace, evidence/exhibits, timeline + timeline review, people, allegations, issues, communications, incidents, records requests, packet builder, export center, record search, content check.
+- Most of that data lives only in the browser's local storage, not in a database. Only evidence has partial database storage, plus an unused "case intelligence" schema with cases, people, organizations, events, claims, communications, records requests and citations.
+- Its classification vocabulary (Fact / Allegation / Disputed / Inference / Unknown, plus supported / contradicted / needs records) is the part most worth keeping.
 
----
+## The merge, in plain terms
 
-### New Dashboard Structure
+**Reused as-is (Decoded Justice):** brand, layout, colors, typography, disclaimers, trauma-aware wording, auth, analyzer/detection engine, Legal Decoder, education library, Case Builder intake, all public pages.
 
-1. **Welcome header** (keep existing)
-2. **Phase Progress Bar** — 5 horizontal phase indicators showing which phases have activity (based on DB counts: evidence, timeline, notes, analyzer results, intake packets, attorney contacts)
-3. **Suggested Next Step** — contextual CTA based on what's empty (no notes → "Start with Clarion", no evidence → "Upload your first document", etc.)
-4. **Quick Actions** — streamlined to 4 primary actions (keep existing)
-5. **Case Stats** — keep existing counters
-6. **Resource links** — keep existing 3-column guidance/legal prep/support
-7. **Privacy note** — keep existing
+**Adapted (from Case Binder Pro):** the workspace screens and their logic — exhibit numbering, timeline classification, allegation status, communications log, records-request deadlines, export/packet assembly, record search. Rewritten against Decoded Justice's components and saved to the real database instead of the browser.
 
-### Data Queries
+**Newly built:** one canonical case that everything hangs off, a case workspace shell with tabs, and the link layer joining evidence, issues, people, organizations, communications and timeline events.
 
-Expand the existing stats fetch to also count:
-- `analyzer_results` (Phase 2 signal)
-- `intake_packets` (Phase 4 signal)
-- `attorney_contacts` (Phase 5 signal)
-- `clarion_entries` (Phase 1 signal)
+**Retired:** only the iframe embed page. Its routes stay and start serving real screens.
 
-### Phase Completion Logic
+## One canonical case
 
-Each phase shows a simple visual indicator:
-- **Started** (has ≥1 item in any related table)
-- **Not started** (no items yet)
-- No numeric percentages — keeps it pressure-free per the command-center spec
+A single `cases` record per matter. Everything attaches to it:
 
----
+```text
+case
+ ├─ issues / potential violations   (from the analyzer, plus manual)
+ ├─ evidence & exhibits             (stable exhibit IDs, source metadata, status)
+ ├─ timeline events                 (classification, source links)
+ ├─ people & organizations
+ ├─ communications / call log
+ ├─ records requests & deadlines
+ ├─ notes
+ └─ packets & exports
+```
 
-### Technical Notes
+No duplicate records: existing evidence, timeline entries and notes stay in their current tables and simply gain a case link. The Justice Place case a user already has becomes their first canonical case. Nothing is moved or rewritten in place without that being additive.
 
-- Single file change
-- No new routes, no new components, no backend changes
-- All tables already exist in the schema
-- Maintains existing auth redirect pattern
+Classification is explicit everywhere it applies — Fact, Allegation, Inference, Disputed, Unknown — and evidence keeps its source, date received, and review status. Analyzer output arrives as Allegation or Unknown; it never silently becomes Fact.
 
+## Navigation
+
+One product, two modes, one sidebar:
+
+- **Your case** — Overview, Timeline, Evidence & Exhibits, Issues & Violations, People & Organizations, Communications, Requests & Deadlines, Notes, Packets & Exports.
+- **Understand & learn** — Analyzer, Legal Decoder, Education Library, Find Help, Support Network.
+
+A case switcher sits at the top. Mobile keeps the existing collapsible drawer pattern and single-column screens.
+
+## Build order
+
+1. **Data foundation** — canonical case tables and link tables, additive case links on existing tables, backfill each user's Justice Place case into a canonical case. No drops, no data loss; any destructive step would be raised first.
+2. **Workspace shell** — case list, case switcher, tabbed workspace, unified sidebar, replacing the iframe routes.
+3. **Core tabs** — evidence & exhibits (stable IDs, status, source), timeline (classification, source links), issues/violations fed by the existing detection engine.
+4. **Relationship tabs** — people & organizations, communications, requests & deadlines, plus the link editor that ties records together.
+5. **Search & output** — record search across the case, content check, packet builder and export center reusing the existing packet generator.
+6. **Polish** — mobile passes, empty states, disclaimers, cross-links from Analyzer and Case Builder into the workspace.
+
+## Technical notes
+
+- New tables: `cases` (or promotion of `justice_place_cases` to canonical), `case_people`, `case_organizations`, `case_issues`, `case_communications`, `records_requests`, `case_links`, `case_packets`. Each with per-user row-level security, grants for signed-in users and service role, and updated-at triggers.
+- Existing `evidence`, `timeline_entries`, `notes` get a nullable `case_id` plus the new classification/source/exhibit columns, backfilled — additive only.
+- Evidence files continue to use the existing private storage bucket with signed URLs.
+- Case Binder Pro's local-storage hooks are not carried over; screens are rebuilt on React Query against the backend, so data survives devices.
+- Case Binder Pro's Supabase project is not linked; nothing is read from it at runtime and no user data migrates between projects.
+- Shared types live in one module so the analyzer, workspace and export center agree on classification values.
+
+## Assumption to confirm
+
+Case Binder Pro holds no live user data worth importing (its records live in individual browsers). I plan a code-and-schema merge only, with no cross-project data transfer. Say the word if real user data there must come across.
