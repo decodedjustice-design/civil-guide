@@ -197,6 +197,15 @@
     );
   }
 
+  /* Restore the homepage photograph as a clearly visible background while keeping text legible. */
+  main > section:first-of-type > div.absolute.inset-0 > div:nth-child(2) {
+    background: linear-gradient(90deg, rgba(15,18,27,0.42) 0%, rgba(37,20,29,0.28) 48%, rgba(15,18,27,0.16) 100%) !important;
+  }
+
+  main > section:first-of-type > div.absolute.inset-0 > div:nth-child(3) {
+    background: transparent !important;
+  }
+
   /* Luxury hover effects */
   .hover-lift {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
