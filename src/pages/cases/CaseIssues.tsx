@@ -14,9 +14,9 @@ export default function CaseIssues() {
         table="case_issues"
         caseId={id}
         addLabel="Add issue"
-        emptyMessage="No issues tracked yet. The Analyzer can suggest areas to look at, and anything it adds arrives as an allegation or unknown."
+        emptyMessage="No issues tracked yet. Anything the Analyzer suggests arrives marked as an allegation or unknown — never as a settled fact."
         titleField="title"
-        subtitleFields={["summary"]}
+        subtitleFields={["summary", "who_made_allegation"]}
         badgeFields={["classification", "status", "origin"]}
         fields={[
           { key: "title", label: "Issue", type: "text", required: true },
@@ -29,10 +29,20 @@ export default function CaseIssues() {
             defaultValue: "unknown",
           },
           { key: "status", label: "Status", type: "select", options: ISSUE_STATUSES, defaultValue: "open" },
-          { key: "supporting_facts", label: "What supports it", type: "textarea" },
-          { key: "contrary_facts", label: "What weakens or complicates it", type: "textarea" },
-          { key: "missing_facts", label: "What's still unknown", type: "textarea" },
-          { key: "authority", label: "Authority (if known)", type: "text", help: "Leave blank rather than guessing. Unverified authority needs checking." },
+          { key: "category", label: "Category", type: "text" },
+          { key: "who_made_allegation", label: "Who raised it", type: "text" },
+          { key: "allegation_date", label: "When it first appeared", type: "date" },
+          { key: "supporting_notes", label: "What supports it", type: "textarea" },
+          { key: "contradicting_notes", label: "What weakens or complicates it", type: "textarea" },
+          { key: "missing_records", label: "What's still unknown or missing", type: "textarea" },
+          { key: "requested_remedy", label: "What you're asking for", type: "textarea" },
+          { key: "next_action", label: "Next step", type: "textarea" },
+          {
+            key: "source",
+            label: "Where this came from",
+            type: "text",
+            help: "Leave authority blank rather than guessing — unverified citations need checking.",
+          },
         ]}
       />
     </CaseWorkspaceLayout>

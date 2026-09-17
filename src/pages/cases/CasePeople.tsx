@@ -23,14 +23,13 @@ export default function CasePeople() {
             emptyMessage="No people added yet."
             titleField="name"
             subtitleFields={["role", "organization", "notes"]}
-            badgeFields={["relationship"]}
+            orderBy={{ column: "name", ascending: true }}
             fields={[
               { key: "name", label: "Name", type: "text", required: true },
               { key: "role", label: "Role or title", type: "text" },
               { key: "organization", label: "Organization", type: "text" },
-              { key: "relationship", label: "Relationship to you", type: "text" },
-              { key: "email", label: "Email", type: "text" },
-              { key: "phone", label: "Phone", type: "text" },
+              { key: "involvement", label: "How they're involved", type: "textarea" },
+              { key: "contact", label: "Contact details", type: "text", placeholder: "Phone or email" },
               { key: "notes", label: "Notes", type: "textarea" },
             ]}
           />
@@ -42,14 +41,17 @@ export default function CasePeople() {
             addLabel="Add organization"
             emptyMessage="No organizations added yet."
             titleField="name"
-            subtitleFields={["org_type", "notes"]}
+            subtitleFields={["org_type", "contact", "notes"]}
+            orderBy={{ column: "name", ascending: true }}
             fields={[
               { key: "name", label: "Name", type: "text", required: true },
-              { key: "org_type", label: "Type", type: "text", placeholder: "Agency, landlord, school, employer" },
-              { key: "contact_name", label: "Main contact", type: "text" },
-              { key: "email", label: "Email", type: "text" },
-              { key: "phone", label: "Phone", type: "text" },
-              { key: "address", label: "Address", type: "text" },
+              {
+                key: "org_type",
+                label: "Type",
+                type: "text",
+                placeholder: "Agency, landlord, school, employer",
+              },
+              { key: "contact", label: "Contact details", type: "text" },
               { key: "notes", label: "Notes", type: "textarea" },
             ]}
           />
