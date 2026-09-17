@@ -98,8 +98,8 @@ export function CaseWorkspaceLayout({ title, description, children }: Props) {
               )}
             </div>
 
-            <nav className="space-y-1">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 font-medium px-3 pb-1">
+            <nav className="flex lg:block gap-1 lg:space-y-1 overflow-x-auto -mx-4 px-4 pb-2 lg:mx-0 lg:px-0 lg:pb-0 lg:overflow-visible">
+              <p className="hidden lg:block text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 font-medium px-3 pb-1">
                 Case workspace
               </p>
               {caseTabs.map((tab) => (
@@ -109,7 +109,7 @@ export function CaseWorkspaceLayout({ title, description, children }: Props) {
                   end={tab.slug === ""}
                   className={({ isActive }) =>
                     cn(
-                      "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-colors",
+                      "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-colors shrink-0 whitespace-nowrap lg:whitespace-normal",
                       isActive
                         ? "bg-accent-soft text-primary font-medium"
                         : "text-foreground/70 hover:text-foreground hover:bg-secondary/60"
@@ -122,7 +122,7 @@ export function CaseWorkspaceLayout({ title, description, children }: Props) {
               ))}
             </nav>
 
-            <nav className="space-y-1">
+            <nav className="hidden lg:block space-y-1">
               <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 font-medium px-3 pb-1">
                 Understand &amp; learn
               </p>
