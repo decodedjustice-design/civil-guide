@@ -298,6 +298,36 @@ export default function FoundersStory() {
             </p>
           </Section>
 
+          <Section label="What Can Get Buried" title="Sometimes the Problem Is Not That the Record Does Not Exist. It Is That Nobody Can See It in the Pile." style={{ animationDelay: "0.52s" }}>
+            <p className={styles.bodyParagraph}>
+              As I learned to work through records, I began to see another problem: what happens when a system is overwhelmed?
+            </p>
+            <p className={styles.bodyParagraph}>
+              When people are carrying enormous caseloads, when documents are spread across systems, when one person is handling one matter after another, an error, omission, contradiction, or potentially serious problem can become buried under the sheer volume of work.
+            </p>
+            <p className={styles.bodyParagraph}>
+              I began confronting a question I could not ignore: what happens when misconduct or corruption, if it exists, is buried so deeply in paperwork, workload, fragmented records, and institutional complexity that an ordinary person cannot even see where to look?
+            </p>
+            <p className={styles.bodyParagraph}>
+              I am not saying that every discrepancy proves corruption. It does not. A mismatch can come from an error, a delay, a misunderstanding, incomplete documentation, or something else that still needs to be established.
+            </p>
+            <p className={styles.bodyParagraph}>
+              But I learned that a discrepancy should not simply disappear because the record is large, the system is busy, or the explanation is difficult to find.
+            </p>
+            <p className={styles.bodyParagraph}>
+              Sometimes there is one small thing that just will not match.
+            </p>
+            <p className={styles.italicBlock}>
+              For me, that thing was the flyer.
+            </p>
+            <p className={styles.bodyParagraph}>
+              It was a flyer they had posted themselves about a case I had been told did not exist. I did not know what that contradiction ultimately meant. I only knew that the two pieces of information could not both be true in the same way.
+            </p>
+            <p className={styles.bodyParagraph}>
+              That was when I understood something that became central to Decoded Justice: sometimes the most important question is not “Who is telling the truth?” It is “What records exist, where did they come from, when were they created, and what can they actually establish?”
+            </p>
+          </Section>
+
           <Section label="The Moment" title="I Stared at a Flyer About a Case I Had Been Told Did Not Exist." style={{ animationDelay: "0.54s" }}>
             <p className={styles.bodyParagraph}>
               There is one moment I will never forget.
