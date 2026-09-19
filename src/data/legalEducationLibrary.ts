@@ -65,6 +65,20 @@ export const libraryCategories: LibraryCategoryCard[] = [
     ],
   },
   {
+    id: "cps_dcyf",
+    title: "Child Welfare / DCYF / CPS",
+    subtitle: "CPS investigations, placement, dependency, caregiver rights, and family records.",
+    icon: Building2,
+    guideId: "cps-dcyf-full-guide",
+    color: "maroon",
+    quickFacts: [
+      "Intake, screening, investigation, and risk assessment are different stages",
+      "Placement and court actions can involve separate notice and hearing requirements",
+      "Keep notices, case records, visit records, assessments, and court documents",
+      "Verify agency policy against the current statute, rule, and court order",
+    ],
+  },
+  {
     id: "housing",
     title: "Housing Rights",
     subtitle: "Tenant protections, eviction process, and fair housing.",
@@ -122,8 +136,8 @@ export const libraryCategories: LibraryCategoryCard[] = [
   },
   {
     id: "government",
-    title: "Government Benefits",
-    subtitle: "Applying, appealing, and navigating agency decisions.",
+    title: "Government Agencies & Benefits",
+    subtitle: "Agency authority, decisions, benefits, notices, and appeals."
     icon: Building2,
     guideId: "government-full-guide",
     color: "gold",
