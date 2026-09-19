@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
@@ -153,6 +153,7 @@ function buildPacketHtml(
 
 export default function StarterLegalTemplates() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const { cases, isLoading: casesLoading } = useCases();
   const [selectedCaseId, setSelectedCaseId] = useState("");
   const [packetType, setPacketType] = useState<PacketType>("complaint-ifp");
@@ -161,8 +162,10 @@ export default function StarterLegalTemplates() {
   const [fields, setFields] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
-  const activeCase = cases.find((item) => item.id === selectedCaseId);
-  const { snapshot, isLoading: snapshotLoading } = useCaseSnapshot(selectedCaseId || undefined);
+  const queryCaseId = searchParams.get("case") || "";
+  const effectiveCaseId = selectedCaseId || queryCaseId;
+  const activeCase = cases.find((item) => item.id === effectiveCaseId);
+  const { snapshot, isLoading: snapshotLoading } = useCaseSnapshot(effectiveCaseId || undefined);
 
   const imported = useMemo(() => {
     if (!activeCase) return {};
