@@ -16,6 +16,7 @@ import {
   LifeBuoy,
   Compass,
   FileText,
+  Download,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,7 +43,8 @@ const caseTabs = [
   { slug: "requests", label: "Requests & Deadlines", icon: FileSearch },
   { slug: "search", label: "Record Search", icon: Search },
   { slug: "content-check", label: "Content Check", icon: ScanSearch },
-  { slug: "packets", label: "Packets & Exports", icon: PackageOpen },
+  { slug: "packets", label: "Packet Builder", icon: PackageOpen },
+  { slug: "exports", label: "Export Center", icon: Download },
   { slug: "templates", label: "Pro Se Templates", icon: FileText },
 ];
 
