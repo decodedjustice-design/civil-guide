@@ -35,7 +35,7 @@ const Index = () => {
     { title: "Benefits & Services", detail: "Agency decisions · Notices · Applications · Appeals" },
   ];
 
-  const workspace = [
+  const workspace: [string, string, React.ElementType][] = [
     ["Timeline", "Record what happened and when.", Clock],
     ["Evidence", "Organize documents and supporting records.", FolderOpen],
     ["Issues", "Track questions and potential issues to investigate.", Search],
