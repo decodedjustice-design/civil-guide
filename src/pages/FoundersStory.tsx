@@ -147,6 +147,21 @@ export default function FoundersStory() {
             </p>
           </Section>
 
+          <Section label="The Crisis Road" title="I Was Already on the Road." style={{ animationDelay: "0.18s" }}>
+            <p className={styles.bodyParagraph}>
+              You’re already on the road, in the middle of the crisis, and somehow you’re expected to build the roadmap while you’re still moving.
+            </p>
+            <p className={styles.bodyParagraph}>
+              That was my experience. I had to figure out where I was, how I got there, what mattered, what records existed, and where I was supposed to go next—all while the situation was still unfolding.
+            </p>
+            <p className={styles.italicBlock}>
+              I didn’t have a roadmap before the crisis. I had to build one while I was already on the road.
+            </p>
+            <p className={styles.bodyParagraph}>
+              That became one of the reasons I built Decoded Justice.
+            </p>
+          </Section>
+
           <PullQuote
             quote="I didn't build Decoded Justice because I thought I knew the law. I started building it because I needed a way to understand what was happening to me."
             cite="— Founder, Decoded Justice"
