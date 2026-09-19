@@ -137,7 +137,7 @@ export const libraryCategories: LibraryCategoryCard[] = [
   {
     id: "government",
     title: "Government Agencies & Benefits",
-    subtitle: "Agency authority, decisions, benefits, notices, and appeals."
+    subtitle: "Agency authority, decisions, benefits, notices, and appeals.",
     icon: Building2,
     guideId: "government-full-guide",
     color: "gold",
