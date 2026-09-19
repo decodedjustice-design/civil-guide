@@ -160,110 +160,114 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
 }) {
   const Icon = category.icon;
   const guide = additionalEducationalGuides.find((item) => item.id === category.guideId);
-  const sources = guide?.sources?.filter((source) => source.type === "official" || source.type === "agency").slice(0, 2) || [];
-  const authorities = authorityResources[guide?.systemId || category.id] || [];\n  const knowledge = practicalKnowledge[guide?.systemId || category.id];
+  const authorities = authorityResources[guide?.systemId || category.id] || [];
+  const knowledge = practicalKnowledge[guide?.systemId || category.id];
 
   return (
-    <div
-      style={{ animationDelay: `${index * 80}ms`, animationFillMode: "both" }}
-      className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 hover:shadow-warm-sm hover:border-primary/30 animate-fade-in"
+    <article
+      style={{ animationDelay: ${index * 60}ms, animationFillMode: "both" }}
+      className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden animate-fade-in transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm"
     >
-      {/* Save button overlay */}
       {onToggleSave && (
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleSave(); }}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-lg bg-card/90 backdrop-blur-sm border border-border/50 flex items-center justify-center hover:bg-primary/15 hover:border-primary/30 transition-all"
+          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all"
           title={isSaved ? "Remove from saved" : "Save guide"}
+          aria-label={isSaved ? `Remove ${category.title} from saved guides` : `Save ${category.title}`}
         >
-          {isSaved ? (
-            <BookmarkCheck className="w-4 h-4 text-primary" />
-          ) : (
-            <Bookmark className="w-4 h-4 text-muted-foreground" />
-          )}
+          {isSaved ? <BookmarkCheck className="w-4 h-4 text-primary" /> : <Bookmark className="w-4 h-4 text-muted-foreground" />}
         </button>
       )}
 
-      <Link to={`/guide/${category.guideId}`} className="flex flex-col flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-          {/* Content */}
-        <div className="flex flex-col flex-1 p-6">
-          <h3 className="font-semibold text-foreground text-lg leading-tight mb-1.5 group-hover:text-primary transition-colors duration-300">
-            {category.title}
-          </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-            {guide?.whatThisSystemIs.description || category.subtitle}
-          </p>
-          <div className="mb-4 rounded-lg bg-secondary/40 border border-border/60 p-3">
-            <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-2">Know the basics</p>
-            <div className="space-y-1.5">
-              {category.quickFacts.slice(0, 4).map((fact, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <span className="w-1 h-1 rounded-full bg-primary/60 shrink-0 mt-1.5" />
-                  <span>{fact}</span>
-                </div>
-              ))}
-            </div>
+      <div className="p-6 pb-5 border-b border-border/70">
+        <div className="flex items-start gap-4 pr-10">
+          <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0">
+            <Icon className="w-5 h-5 text-primary" />
           </div>
-          {sources.length > 0 && (
-            <div className="mb-4">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-1.5">Primary resources</p>
-              <div className="space-y-1">
-                {sources.map((source) => (
-                  <span key={source.url} className="block text-[11px] text-muted-foreground truncate">{source.label}</span>
-                ))}
-              </div>
-            </div>
-          )}
-          {authorities.length > 0 && (
-            <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-3">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-1.5">Authority & policy trail</p>
-              <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">Go from the guide to the underlying authority: agency policy or manual, Washington law or rule, and federal law.</p>
-              <div className="space-y-1.5">
-                {authorities.map((resource) => (
-                  <a key={resource.url} href={resource.url} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2 text-xs text-foreground hover:text-primary">
-                    <span className="truncate">{resource.label}</span>
-                    <span className="text-[9px] uppercase tracking-wide text-muted-foreground shrink-0">{resource.type}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-          {knowledge && (
-            <div className="mb-4 rounded-lg border border-border/60 bg-secondary/30 p-3">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-2">What people should know</p>
-              <div className="space-y-1.5">
-                {knowledge.mustKnow.map((item, i) => (
-                  <div key={i} className="flex items-start gap-2 text-[11px] text-muted-foreground leading-relaxed">
-                    <span className="w-1 h-1 rounded-full bg-primary/60 shrink-0 mt-1.5" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mt-3 mb-1.5">Records to preserve</p>
-              <div className="flex flex-wrap gap-1.5">
-                {knowledge.records.map((item) => (
-                  <span key={item} className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{item}</span>
-                ))}
-              </div>
-              {knowledge.programs.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-1.5">Programs people may not know about</p>
-                  {knowledge.programs.map((program) => (
-                    <a key={program.url} href={program.url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">{program.label}</a>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-          <div className="flex items-center gap-2 text-sm font-medium text-primary/80 group-hover:text-primary transition-colors duration-300">
-            <span>Open Guide</span>
-            <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          <div className="min-w-0">
+            <h3 className="font-semibold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">
+              {category.title}
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-1.5">
+              {guide?.whatThisSystemIs.description || category.subtitle}
+            </p>
           </div>
         </div>
-      </Link>
-    </div>
+      </div>
+
+      <div className="p-6 space-y-5 flex-1">
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-foreground">Start here</p>
+          </div>
+          <ul className="space-y-2.5">
+            {category.quickFacts.slice(0, 4).map((fact, i) => (
+              <li key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
+                <span className="text-primary mt-0.5">•</span>
+                <span>{fact}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {knowledge && (
+          <section className="rounded-xl bg-secondary/35 border border-border/60 p-4">
+            <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-foreground mb-3">What to preserve</p>
+            <div className="flex flex-wrap gap-1.5">
+              {knowledge.records.slice(0, 8).map((item) => (
+                <span key={item} className="rounded-md bg-card border border-border px-2 py-1 text-[10px] text-muted-foreground">
+                  {item}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {authorities.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-foreground">Where the rules come from</p>
+              <span className="text-[10px] text-muted-foreground">{authorities.length} sources</span>
+            </div>
+            <div className="space-y-1.5">
+              {authorities.slice(0, 4).map((resource) => (
+                <a
+                  key={resource.url}
+                  href={resource.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <span className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
+                  <span className="truncate">{resource.label}</span>
+                </a>
+              ))}
+              {authorities.length > 4 && (
+                <p className="text-[10px] text-muted-foreground pl-3">More sources inside the full guide.</p>
+              )}
+            </div>
+          </section>
+        )}
+      </div>
+
+      <div className="px-6 py-4 bg-secondary/25 border-t border-border/70 flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Full guide</p>
+          <p className="text-xs text-foreground mt-0.5">Law, process, records & next steps</p>
+        </div>
+        <Link
+          to={`/guide/${category.guideId}`}
+          className="inline-flex items-center gap-1.5 shrink-0 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+        >
+          Open guide
+          <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+    </article>
   );
 }
-
 /* ─── Empty state ─── */
 function EmptyState({ icon: Icon, title, description, actionLabel, actionHref }: {
   icon: React.ElementType;
@@ -440,7 +444,7 @@ export default function EducationLibrary() {
 
             {/* All Guides */}
             <TabsContent value="all">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {allFiltered.map((category, i) => (
                   <CategoryCard
                     key={category.id}
@@ -469,7 +473,7 @@ export default function EducationLibrary() {
                   actionHref="/auth?redirect=/education-library?tab=saved"
                 />
               ) : savedCategories.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {savedCategories.map((category, i) => (
                     <CategoryCard
                       key={category.id}
@@ -492,7 +496,7 @@ export default function EducationLibrary() {
             {/* Recently Viewed */}
             <TabsContent value="recent">
               {recentCategories.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {recentCategories.map((category, i) => (
                     <CategoryCard
                       key={category.id}
@@ -514,7 +518,7 @@ export default function EducationLibrary() {
 
             {/* Recommended */}
             <TabsContent value="recommended">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {recommendedCategories.map((category, i) => (
                   <CategoryCard
                     key={category.id}
