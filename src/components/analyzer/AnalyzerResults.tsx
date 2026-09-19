@@ -145,5 +145,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
 
 export function generateResultContent(systemId: string, patternStrength: 'none' | 'possible' | 'strong' | 'very_strong') {
   const systemLabels: Record<string, string> = { police: "Police Accountability & Prosecutorial Review", housing: "Tenant Rights & Housing Enforcement", cps_dcyf: "Child Welfare & Dependency Review", employer: "Workplace Rights & Employment Review", school: "Education Rights & School Review", healthcare: "Healthcare Rights & Records Review", courts: "Court Procedure & Access Review", jail: "Jail or Prison Conditions Review", government: "Government Agency Review", unsure: "General Rights & Procedure Review" };
-  return { label: systemLabels[systemId] || "Case review", patternStrength };
+  const guideIds: Record<string, string> = { police: "police-full-guide", housing: "housing-full-guide", cps_dcyf: "cps-dcyf-full-guide", employer: "employment-full-guide", school: "education-full-guide", healthcare: "healthcare-full-guide", courts: "courts-full-guide", jail: "incarceration-full-guide", government: "government-full-guide" };
+  const tools: ToolCardProps[] = [];
+  return { label: systemLabels[systemId] || "Case review", patternStrength, tools, primaryGuideId: guideIds[systemId] as string | undefined };
 }
