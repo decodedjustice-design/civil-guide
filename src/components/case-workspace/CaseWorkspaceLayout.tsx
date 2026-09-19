@@ -15,6 +15,7 @@ import {
   BookOpen,
   LifeBuoy,
   Compass,
+  FileText,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,6 +43,7 @@ const caseTabs = [
   { slug: "search", label: "Record Search", icon: Search },
   { slug: "content-check", label: "Content Check", icon: ScanSearch },
   { slug: "packets", label: "Packets & Exports", icon: PackageOpen },
+  { slug: "templates", label: "Pro Se Templates", icon: FileText },
 ];
 
 const learnLinks = [
@@ -105,7 +107,7 @@ export function CaseWorkspaceLayout({ title, description, children }: Props) {
               {caseTabs.map((tab) => (
                 <NavLink
                   key={tab.slug || "overview"}
-                  to={`/cases/${caseId}${tab.slug ? `/${tab.slug}` : ""}`}
+                  to={tab.slug === "templates" ? `/legal-templates?case=${caseId}` : `/cases/${caseId}${tab.slug ? `/${tab.slug}` : ""}`}
                   end={tab.slug === ""}
                   className={({ isActive }) =>
                     cn(
