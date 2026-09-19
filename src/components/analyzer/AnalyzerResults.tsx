@@ -139,7 +139,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     {patternAwareness?.hasPattern && <PatternAwarenessBlock blocks={patternAwareness.patternBlocks} />}
     {lawModules.length > 0 && <section className="mb-8"><div className="mb-4"><h2 className="text-xl font-semibold text-foreground">Potential rights / violations</h2><p className="text-sm text-muted-foreground mt-1">These cards are issue-library research leads generated from your completed triage. They identify rights or legal questions worth investigating; they are not findings that a violation occurred.</p></div><div className="space-y-4">{lawModules.map((module) => <LawIssueCard key={module.id} module={module} missingFacts={systemId === "police" ? policeMissingFacts : []} onAdd={(m) => startCaseWorkspace(m)} />)}</div></section>}
     <div className="space-y-6">{tools.filter(t => !t.isLocked).length > 0 && <section><h2 className="text-xl font-semibold text-foreground mb-4">Tools for your next step</h2><div className="space-y-4">{tools.filter(t => !t.isLocked).map(tool => <ToolCard key={tool.name} {...tool} />)}</div></section>}{tools.filter(t => t.isLocked).length > 0 && <section><h2 className="text-lg font-medium text-muted-foreground mb-4">Additional resources</h2><div className="space-y-4">{tools.filter(t => t.isLocked).map(tool => <ToolCard key={tool.name} {...tool} />)}</div></section>}</div>
-    <PrintShareModal isOpen={printShareOpen} onClose={() => setPrintShareOpen(false)} title="Analyzer results" content={<div />} />
+    <PrintShareModal open={printShareOpen} onOpenChange={setPrintShareOpen} title="Analyzer results" systemId={systemId} systemLabel={systemLabel} savedResultId={savedResult?.id} />
   </div></div>;
 }
 
