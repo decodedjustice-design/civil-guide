@@ -22,7 +22,6 @@ const Index = () => {
     }
   }, [user, navigate]);
 
-  const previewCategories = libraryCategories.slice(0, 6);
   const startCaseUrl = user ? "/case-builder" : "/auth?redirect=/case-builder";
 
   const issueAreas = [
@@ -45,6 +44,15 @@ const Index = () => {
     ["Records Requests", "Track requests, responses, deadlines, and missing records.", FileText],
   ];
 
+  const guides = [
+    { title: "Police Encounters", description: "Know your rights during stops, searches, and arrests.", guideId: "police-encounters" },
+    { title: "Traffic Stops", description: "What happens during a traffic stop and what you can do.", guideId: "traffic-stops" },
+    { title: "Courts & Judicial Process", description: "How courts work, what to expect, and how to prepare.", guideId: "courts-judicial-process" },
+    { title: "Housing Rights", description: "Tenant protections, eviction process, and fair housing.", guideId: "housing-rights" },
+    { title: "Disability Rights", description: "Accommodations, access, and protections under the law.", guideId: "disability-rights" },
+    { title: "Protest Rights", description: "First Amendment protections and how to exercise them safely.", guideId: "protest-rights" },
+  ];
+
   const resources = [
     { icon: Scale, title: "Find Legal Help", description: "Attorney search and legal aid resources.", href: "/find-help" },
     { icon: Users, title: "Support Network", description: "Organizations, advocates, and community resources.", href: "/support-network" },
@@ -63,33 +71,18 @@ const Index = () => {
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,18,27,0.88)_0%,rgba(37,20,29,0.72)_48%,rgba(15,18,27,0.45)_100%)]" />
             <div className="absolute inset-0 bg-black/15" />
           </div>
-
           <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24">
             <div className="max-w-4xl">
               <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-gold/90 mb-6">Decoded Justice · Washington State</p>
               <div className="w-16 h-px bg-gold/45 mb-7" />
-              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white leading-[1.05] tracking-tight max-w-3xl">
-                Clarity. Empathy. Justice.
-              </h1>
-              <p className="mt-5 text-2xl sm:text-3xl font-serif text-white/90 max-w-2xl">
-                Your story. Your voice. Your justice.
-              </p>
-              <p className="mt-6 text-lg sm:text-xl text-white/72 font-light leading-relaxed max-w-2xl">
-                A Washington-focused platform that helps you understand what happened, organize what matters, identify questions worth investigating, and build a clear record of your case.
-              </p>
-
+              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white leading-[1.05] tracking-tight max-w-3xl">Clarity. Empathy. Justice.</h1>
+              <p className="mt-5 text-2xl sm:text-3xl font-serif text-white/90 max-w-2xl">Your story. Your voice. Your justice.</p>
+              <p className="mt-6 text-lg sm:text-xl text-white/72 font-light leading-relaxed max-w-2xl">A Washington-focused platform that helps you understand what happened, organize what matters, identify questions worth investigating, and build a clear record of your case.</p>
               <div className="mt-9 flex flex-col sm:flex-row gap-3">
-                <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">
-                  Start Your Case <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link to="/education-library" className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">
-                  Explore the Washington Guide
-                </Link>
+                <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Start Your Case <ArrowRight className="w-4 h-4" /></Link>
+                <Link to="/education-library" className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">Explore the Washington Guide</Link>
               </div>
-
-              <div className="mt-8 max-w-md">
-                <LegalGate />
-              </div>
+              <div className="mt-8 max-w-md"><LegalGate /></div>
             </div>
           </div>
         </section>
@@ -115,15 +108,10 @@ const Index = () => {
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">How you use Decoded Justice</p>
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">
-                  Start with what happened. Build from there.
-                </h2>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">Start with what happened. Build from there.</h2>
               </div>
-              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">
-                You do not need to know the legal terminology or have everything organized before you begin.
-              </p>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">You do not need to know the legal terminology or have everything organized before you begin.</p>
             </div>
-
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-border/60">
               {[
                 ["01", "TELL YOUR STORY", "Describe what happened, who was involved, when it happened, and what you want to understand."],
@@ -146,14 +134,9 @@ const Index = () => {
             <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16 items-start">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Your case workspace</p>
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground mb-5">
-                  One place for the pieces of your story.
-                </h2>
-                <p className="text-base text-muted-foreground font-light leading-relaxed max-w-lg">
-                  Your case grows with you. Add information as you receive it, connect related records, and keep track of what is known, disputed, or still missing.
-                </p>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground mb-5">One place for the pieces of your story.</h2>
+                <p className="text-base text-muted-foreground font-light leading-relaxed max-w-lg">Your case grows with you. Add information as you receive it, connect related records, and keep track of what is known, disputed, or still missing.</p>
               </div>
-
               <div className="border border-border/70 bg-card shadow-warm-sm">
                 <div className="px-6 py-4 border-b border-border/60">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">Inside your case</p>
@@ -168,11 +151,7 @@ const Index = () => {
                     </div>
                   ))}
                 </div>
-                <div className="px-6 py-5 bg-secondary/40 border-t border-border/60">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                    Story → Timeline → Records → Issues → Evidence → Case Packet
-                  </p>
-                </div>
+                <div className="px-6 py-5 bg-secondary/40 border-t border-border/60"><p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Story → Timeline → Records → Issues → Evidence → Case Packet</p></div>
               </div>
             </div>
           </div>
@@ -183,22 +162,14 @@ const Index = () => {
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Where it can help</p>
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">
-                  Built for the systems you may have to navigate.
-                </h2>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">Built for the systems you may have to navigate.</h2>
               </div>
-              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">
-                Choose the area closest to your situation, then use the guide and case tools together.
-              </p>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">Choose the area closest to your situation, then use the guide and case tools together.</p>
             </div>
-
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-border/60">
               {issueAreas.map((area, index) => (
                 <div key={area.title} className="min-h-36 border-r border-b border-border/60 p-6 sm:p-7 bg-cream-warm hover:bg-background/70 transition-colors duration-300">
-                  <div className="flex items-center justify-between mb-8">
-                    <span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span>
-                    <span className="h-px w-7 bg-gold/35" />
-                  </div>
+                  <div className="flex items-center justify-between mb-8"><span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
                   <h3 className="font-serif text-xl font-medium text-foreground mb-2">{area.title}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">{area.detail}</p>
                 </div>
@@ -212,39 +183,24 @@ const Index = () => {
             <div className="max-w-3xl mb-10">
               <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Learn before you act</p>
               <h2 className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-foreground mb-4">Washington legal education</h2>
-              <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed">
-                Plain-language guides explain how common Washington systems work, what questions to ask, and what information may matter.
-              </p>
+              <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed">Plain-language guides explain how common Washington systems work, what questions to ask, and what information may matter.</p>
             </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl">
-              {previewCategories.map((cat) => {
-                const Icon = cat.icon;
-                const img = categoryImages[cat.id];
-                return (
-                  <Link key={cat.id} to={`/guide/${cat.guideId}`} className="group border border-border/60 bg-background/80 hover:bg-background hover:border-gold/30 transition-all duration-300 overflow-hidden">
-                    {img && (
-                      <div className="relative h-28 overflow-hidden">
-                        <img src={img} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/15 to-transparent" />
-                        <div className="absolute left-4 bottom-3 w-8 h-8 border border-white/25 bg-background/80 backdrop-blur-sm flex items-center justify-center">
-                          <Icon className="w-4 h-4 text-primary" />
-                        </div>
-                      </div>
-                    )}
-                    <div className="p-5">
-                      <h3 className="font-serif text-lg font-medium text-foreground mb-1 group-hover:text-primary transition-colors">{cat.title}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{cat.subtitle}</p>
+            <div className="grid sm:grid-cols-2 gap-0 border-t border-l border-border/60 max-w-5xl">
+              {guides.map((guide, index) => (
+                <Link key={guide.title} to={`/guide/${guide.guideId}`} className="group border-r border-b border-border/60 p-6 sm:p-7 bg-background hover:bg-secondary/30 transition-colors duration-300 min-h-32">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span>
+                      <h3 className="font-serif text-xl font-medium text-foreground mt-3 group-hover:text-primary transition-colors">{guide.title}</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed mt-2 max-w-md">{guide.description}</p>
                     </div>
-                  </Link>
-                );
-              })}
+                    <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0 mt-1" />
+                  </div>
+                </Link>
+              ))}
             </div>
-
             <div className="mt-8">
-              <Link to="/education-library" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors">
-                View all Washington guides <ArrowRight className="w-4 h-4" />
-              </Link>
+              <Link to="/education-library" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors">View all Washington guides <ArrowRight className="w-4 h-4" /></Link>
             </div>
           </div>
         </section>
@@ -256,11 +212,8 @@ const Index = () => {
                 <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">More ways to prepare</p>
                 <h2 className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-foreground">Tools and support when you need them.</h2>
               </div>
-              <p className="text-sm text-muted-foreground font-light max-w-md">
-                Organize first. Then decide what kind of help or next step makes sense for you.
-              </p>
+              <p className="text-sm text-muted-foreground font-light max-w-md">Organize first. Then decide what kind of help or next step makes sense for you.</p>
             </div>
-
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-border/60">
               {resources.map((resource) => {
                 const Icon = resource.icon;
@@ -285,14 +238,8 @@ const Index = () => {
           <div className="container max-w-4xl px-6 text-center">
             <p className="text-[10px] uppercase tracking-[0.28em] text-gold/90 mb-5">Clarity · Empathy · Justice</p>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">Your story. Your voice. Your justice.</h2>
-            <p className="mt-5 text-white/70 font-light max-w-xl mx-auto leading-relaxed">
-              Decoded Justice gives you the tools and structure to understand your situation, organize your information, and decide what comes next.
-            </p>
-            <div className="mt-8">
-              <Link to={startCaseUrl} className="inline-flex items-center gap-2 h-12 px-7 bg-white text-primary hover:bg-white/90 font-medium rounded-sm transition-colors">
-                Start Your Case <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+            <p className="mt-5 text-white/70 font-light max-w-xl mx-auto leading-relaxed">Decoded Justice gives you the tools and structure to understand your situation, organize your information, and decide what comes next.</p>
+            <div className="mt-8"><Link to={startCaseUrl} className="inline-flex items-center gap-2 h-12 px-7 bg-white text-primary hover:bg-white/90 font-medium rounded-sm transition-colors">Start Your Case <ArrowRight className="w-4 h-4" /></Link></div>
             <p className="mt-7 text-[11px] text-white/45">Washington-focused information and organizational tools. Not legal advice.</p>
           </div>
         </section>
