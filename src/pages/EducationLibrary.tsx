@@ -159,14 +159,11 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
   onToggleSave?: () => void;
 }) {
   const Icon = category.icon;
-  const guide = additionalEducationalGuides.find((item) => item.id === category.guideId);
-  const authorities = authorityResources[guide?.systemId || category.id] || [];
-  const knowledge = practicalKnowledge[guide?.systemId || category.id];
 
   return (
     <article
-      style={{ animationDelay: `${index * 60}ms`, animationFillMode: "both" }}
-      className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden animate-fade-in transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm"
+      style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
+      className="group relative rounded-2xl border border-border bg-card overflow-hidden animate-fade-in transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm"
     >
       {onToggleSave && (
         <button
@@ -179,92 +176,35 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
         </button>
       )}
 
-      <div className="p-6 pb-5 border-b border-border/70">
-        <div className="flex items-start gap-4 pr-10">
-          <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0">
-            <Icon className="w-5 h-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="font-semibold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">
-              {category.title}
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-1.5">
-              {guide?.whatThisSystemIs.description || category.subtitle}
-            </p>
-          </div>
+      <Link
+        to={`/guide/${category.guideId}`}
+        className="flex items-center gap-5 p-5 sm:p-6 pr-16 min-h-[150px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+      >
+        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+          <Icon className="w-6 h-6 text-primary" />
         </div>
-      </div>
 
-      <div className="p-6 space-y-5 flex-1">
-        <section>
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-foreground">Start here</p>
-          </div>
-          <ul className="space-y-2.5">
-            {category.quickFacts.slice(0, 4).map((fact, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed">
-                <span className="text-primary mt-0.5">•</span>
-                <span>{fact}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {knowledge && (
-          <section className="rounded-xl bg-secondary/35 border border-border/60 p-4">
-            <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-foreground mb-3">What to preserve</p>
-            <div className="flex flex-wrap gap-1.5">
-              {knowledge.records.slice(0, 8).map((item) => (
-                <span key={item} className="rounded-md bg-card border border-border px-2 py-1 text-[10px] text-muted-foreground">
-                  {item}
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">
+            {category.title}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+            {category.subtitle}
+          </p>
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {category.quickFacts.slice(0, 3).map((fact, i) => {
+              const shortFact = fact.length > 28 ? fact.slice(0, 27).replace(/[,.;:!?]?s+S*$/, "") + "…" : fact;
+              return (
+                <span key={i} className="rounded-full bg-secondary/70 border border-border px-2.5 py-1 text-[10px] text-muted-foreground">
+                  {shortFact}
                 </span>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {authorities.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between gap-3 mb-2">
-              <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-foreground">Where the rules come from</p>
-              <span className="text-[10px] text-muted-foreground">{authorities.length} sources</span>
-            </div>
-            <div className="space-y-1.5">
-              {authorities.slice(0, 4).map((resource) => (
-                <a
-                  key={resource.url}
-                  href={resource.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <span className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
-                  <span className="truncate">{resource.label}</span>
-                </a>
-              ))}
-              {authorities.length > 4 && (
-                <p className="text-[10px] text-muted-foreground pl-3">More sources inside the full guide.</p>
-              )}
-            </div>
-          </section>
-        )}
-      </div>
-
-      <div className="px-6 py-4 bg-secondary/25 border-t border-border/70 flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Full guide</p>
-          <p className="text-xs text-foreground mt-0.5">Law, process, records & next steps</p>
+              );
+            })}
+          </div>
         </div>
-        <Link
-          to={`/guide/${category.guideId}`}
-          className="inline-flex items-center gap-1.5 shrink-0 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-        >
-          Open guide
-          <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-        </Link>
-      </div>
+
+        <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+      </Link>
     </article>
   );
 }
@@ -383,19 +323,39 @@ export default function EducationLibrary() {
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
             Know Your Rights
           </h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            These guides contain substantive explanations of the systems you may have to navigate — who has authority, what rules commonly apply, what happens next, what to document, and where to verify the law. Start with the topic closest to your situation.
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Start with the system you're dealing with. Learn the basics, find the records that matter, and follow the rules to their source.
           </p>
         </div>
       </div>
 
       <div className="container pb-16">
-        {/* Wellbeing note */}
-        <div className="max-w-3xl mx-auto mb-8">
-          <div className="p-3 rounded-xl bg-secondary/50 border border-border">
-            <p className="text-xs text-muted-foreground text-center">
-              You can pause anytime. Bookmark what matters. Come back when you're ready. Understanding takes time — and that's okay.
-            </p>
+        {/* Orientation */}
+        <div className="max-w-4xl mx-auto mb-10">
+          <div className="grid grid-cols-3 rounded-2xl border border-border bg-card overflow-hidden">
+            {[
+              ["1", "Choose a topic"],
+              ["2", "Learn the basics"],
+              ["3", "Build your record"],
+            ].map(([number, label], i) => (
+              <div key={number} className={`px-3 py-4 sm:px-5 text-center ${i < 2 ? "border-r border-border" : ""}`}>
+                <span className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-semibold mb-2">{number}</span>
+                <p className="text-xs sm:text-sm font-medium text-foreground">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick path */}
+        <div className="max-w-6xl mx-auto mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 rounded-2xl border border-primary/15 bg-primary/5">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Not sure which guide fits?</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Start with what happened — the Analyzer can help you sort the situation.</p>
+            </div>
+            <Button variant="soft" size="sm" asChild className="shrink-0">
+              <Link to="/analyzer">Help me find a starting point <ArrowRight className="w-4 h-4" /></Link>
+            </Button>
           </div>
         </div>
 
@@ -444,7 +404,7 @@ export default function EducationLibrary() {
 
             {/* All Guides */}
             <TabsContent value="all">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {allFiltered.map((category, i) => (
                   <CategoryCard
                     key={category.id}
@@ -473,7 +433,7 @@ export default function EducationLibrary() {
                   actionHref="/auth?redirect=/education-library?tab=saved"
                 />
               ) : savedCategories.length > 0 ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {savedCategories.map((category, i) => (
                     <CategoryCard
                       key={category.id}
@@ -496,7 +456,7 @@ export default function EducationLibrary() {
             {/* Recently Viewed */}
             <TabsContent value="recent">
               {recentCategories.length > 0 ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {recentCategories.map((category, i) => (
                     <CategoryCard
                       key={category.id}
@@ -518,7 +478,7 @@ export default function EducationLibrary() {
 
             {/* Recommended */}
             <TabsContent value="recommended">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {recommendedCategories.map((category, i) => (
                   <CategoryCard
                     key={category.id}
