@@ -68,8 +68,6 @@ const Index = () => {
         <section className="relative min-h-[76vh] flex items-center overflow-hidden">
           <div className="absolute inset-0">
             <img src={heroImage} alt="" className="w-full h-full object-cover" aria-hidden="true" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,18,27,0.72)_0%,rgba(15,18,27,0.58)_42%,rgba(15,18,27,0.78)_100%)]" />
-            <div className="absolute inset-0 bg-black/15" />
           </div>
           <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24 text-center">
             <div className="max-w-4xl">
