@@ -112,7 +112,10 @@ export function useCaseCollection<T extends { id: string }>(
     },
   });
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey });
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey });
+    queryClient.invalidateQueries({ queryKey: ["case-snapshot", caseId] });
+  };
 
   const add = useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
