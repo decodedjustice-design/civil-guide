@@ -1,15 +1,19 @@
 import { useParams } from "react-router-dom";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { RecordManager } from "@/components/case-workspace/RecordManager";
+import { CaseWorkspaceSummary } from "@/components/case-workspace/CaseWorkspaceSummary";
+import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { REQUEST_STATUSES } from "@/lib/case/classification";
 
 export default function CaseRequests() {
   const { id } = useParams();
+  const { snapshot } = useCaseSnapshot(id);
   return (
     <CaseWorkspaceLayout
       title="Requests & deadlines"
       description="Records you've asked for and dates you're keeping an eye on. Dates here are yours to track — this tool doesn't calculate legal deadlines."
     >
+      <CaseWorkspaceSummary communications={snapshot.communications} requests={snapshot.requests} />
       <RecordManager
         table="case_records_requests"
         caseId={id}
