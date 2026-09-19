@@ -42,7 +42,9 @@ export const LAW_MODULES: LawModule[] = [
     evidenceExamples: ["Incident reports", "CAD/dispatch records", "Body-camera or video", "Witness statements", "Orders, notices, or correspondence"],
     questions: ["Who acted?", "What authority were they exercising?", "What specific right may be implicated?", "What record proves each material fact?"],
     authorities: [
-      { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1983+edition%3Aprelim%29", note: "Federal cause-of-action statute for certain deprivations committed under color of state law." }
+      { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1983+edition%3Aprelim%29", note: "Federal cause-of-action statute for certain deprivations committed under color of state law." },
+      { citation: "State v. Ladson, 138 Wn.2d 343, 979 P.2d 833 (1999)", title: "Pretextual traffic stops", type: "case", jurisdiction: "Washington", url: "https://law.justia.com/cases/washington/supreme-court/1999/65801-3-1.html", note: "Washington Supreme Court decision addressing pretextual traffic stops under article I, section 7." },
+      { citation: "State v. Acrey, 148 Wn.2d 738, 64 P.3d 594 (2003)", title: "Community caretaking and warrantless seizure", type: "case", jurisdiction: "Washington", url: "https://law.justia.com/cases/washington/supreme-court/2003/72259-5-1.html", note: "Washington Supreme Court decision addressing warrantless seizure and the community-caretaking exception." }
     ]
   },
   {
@@ -82,7 +84,13 @@ export const LAW_MODULES: LawModule[] = [
     authorities: [
       { citation: "RCW 13.34.030", title: "Definitions—Dependent child", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=13.34.030", note: "Defines key dependency terms and circumstances for a dependent child." },
       { citation: "RCW 13.34.062", title: "Shelter care—Notice of custody and rights", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=13.34.062", note: "Primary authority for specified shelter-care notice and rights questions." },
-      { citation: "RCW 13.34.096", title: "Right to be heard—Notice", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=13.34.096", note: "Provides statutory notice/hearing-related rights in dependency proceedings." }
+      { citation: "RCW 13.34.096", title: "Right to be heard—Notice", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=13.34.096", note: "Provides statutory notice/hearing-related rights in dependency proceedings." },
+      { citation: "RCW 74.13.300", title: "Notification of proposed placement changes", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=74.13.300", note: "Sets notice requirements for specified proposed foster-placement changes." },
+      { citation: "RCW 74.13.332", title: "Rights of foster parents", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=74.13.332", note: "Protects foster parents from specified coercion, discrimination, and reprisal and recognizes the right to voice grievances." },
+      { citation: "RCW 74.13.333", title: "Rights of foster parents—Complaints and retaliation", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=74.13.333", note: "Provides a complaint process for specified foster-parent retaliation or discrimination claims." },
+      { citation: "RCW 26.44.100", title: "Notification of investigation, report, and findings", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcw/default.aspx?cite=26.44.100", note: "Requires specified notification to parents, guardians, or legal custodians concerning allegations and investigative findings." },
+      { citation: "WAC 110-30-0130", title: "CPS notification responsibilities", type: "regulation", jurisdiction: "Washington", url: "https://lawfilesext.leg.wa.gov/Law/WACArchive/2025/htm/WAC%20110%20-%2030%20CHAPTER/WAC%20110%20-%2030%20-0130.htm", note: "CPS notification rule governing when and how parents, guardians, or legal custodians are notified in specified CPS cases." },
+      { citation: "WAC 110-30-0140", title: "Notification of allegations", type: "regulation", jurisdiction: "Washington", url: "https://lawfilesext.leg.wa.gov/Law/WACArchive/2025/htm/WAC%20110%20-%2030%20CHAPTER/WAC%20110%20-%2030%20-0140.htm", note: "Regulation addressing when the department must notify a parent, guardian, or legal custodian of allegations." }
     ]
   },
   {
@@ -100,7 +108,7 @@ export const LAW_MODULES: LawModule[] = [
     evidenceExamples: ["Employment policies", "Performance records", "Emails", "HR complaints", "Accommodation requests", "Disciplinary notices", "Comparator evidence"],
     questions: ["What protected characteristic or activity is involved?", "What action changed?", "Who made the decision?", "What explanation was given?"],
     authorities: [
-      { citation: "RCW 49.60.180", title: "Unfair practices of employers", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/rcW/default.aspx?cite=49.60.180", note: "Washington Law Against Discrimination employment provision." },
+      { citation: "RCW 49.60.180", title: "Unfair practices of employers", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60.180", note: "Washington Law Against Discrimination employment provision." },
       { citation: "RCW 49.60.210", title: "Unfair practices—Retaliation", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60.210", note: "Washington retaliation provision for specified protected opposition, participation, and whistleblower contexts." }
     ]
   },
@@ -120,7 +128,8 @@ export const LAW_MODULES: LawModule[] = [
     questions: ["What record or educational decision is at issue?", "Who requested or denied access?", "What policy or statute was cited?", "What dates matter?"],
     authorities: [
       { citation: "RCW 28A.225.010", title: "Attendance mandatory—Exceptions", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/?cite=28A.225.010", note: "Washington compulsory-attendance provision with specified exceptions." },
-      { citation: "20 U.S.C. § 1232g", title: "Family educational and privacy rights (FERPA)", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A20+section%3A1232g+edition%3Aprelim%29", note: "Federal statute governing specified education-record privacy and access requirements." }
+      { citation: "20 U.S.C. § 1232g", title: "Family educational and privacy rights (FERPA)", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A20+section%3A1232g+edition%3Aprelim%29", note: "Federal statute governing specified education-record privacy and access requirements." },
+      { citation: "34 C.F.R. § 99.10", title: "Right to inspect and review education records", type: "regulation", jurisdiction: "United States", url: "https://www.ecfr.gov/current/title-34/subtitle-A/part-99/subpart-B/section-99.10", note: "Federal FERPA regulation addressing a parent or eligible student's right to inspect and review education records, subject to the regulation's terms." }
     ]
   },
   {
@@ -138,7 +147,9 @@ export const LAW_MODULES: LawModule[] = [
     evidenceExamples: ["Medical-record requests", "Authorization forms", "Provider correspondence", "Privacy notices", "Disclosure logs", "Portal records"],
     questions: ["Who held the information?", "What information was involved?", "Was the issue access, disclosure, use, or security?", "What response or exception was given?"],
     authorities: [
-      { citation: "42 U.S.C. § 1320d–2", title: "Standards for information transactions and data elements", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1320d-2+edition%3Aprelim%29", note: "HIPAA statutory provision addressing standards and security safeguards; the privacy rules themselves are implemented through federal regulations." }
+      { citation: "42 U.S.C. § 1320d–2", title: "Standards for information transactions and data elements", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1320d-2+edition%3Aprelim%29", note: "HIPAA statutory provision addressing standards and security safeguards; the privacy rules themselves are implemented through federal regulations." },
+      { citation: "45 C.F.R. § 164.502", title: "Uses and disclosures of protected health information", type: "regulation", jurisdiction: "United States", url: "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-E/section-164.502", note: "Federal HIPAA Privacy Rule provision governing specified uses and disclosures of protected health information." },
+      { citation: "45 C.F.R. § 164.524", title: "Access of individuals to protected health information", type: "regulation", jurisdiction: "United States", url: "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-E/section-164.524", note: "Federal HIPAA Privacy Rule provision governing individual access to protected health information, subject to stated conditions and exceptions." }
     ]
   },
   {
@@ -156,7 +167,8 @@ export const LAW_MODULES: LawModule[] = [
     evidenceExamples: ["Docket entries", "Court orders", "Summons/notices", "Proofs of service", "Transcripts", "Hearing recordings"],
     questions: ["What proceeding was pending?", "What notice was required?", "What notice was actually received?", "What does the docket establish?"],
     authorities: [
-      { citation: "U.S. Const. amend. XIV", title: "Due Process Clause", type: "statute", jurisdiction: "United States", url: "https://constitution.congress.gov/constitution/amendment-14/", note: "Constitutional starting point for many state-government procedural due-process questions." },
+      { citation: "Goldberg v. Kelly, 397 U.S. 254 (1970)", title: "Due process and termination of public benefits", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/397/254/", note: "U.S. Supreme Court decision concerning procedural due process before termination of certain public benefits." },
+      { citation: "Mathews v. Eldridge, 424 U.S. 319 (1976)", title: "Procedural due process balancing", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/424/319/", note: "U.S. Supreme Court framework for evaluating what process is due." },
       { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1983+edition%3Aprelim%29", note: "Potential federal civil-rights vehicle when its requirements are satisfied; it is not itself proof that a constitutional violation occurred." }
     ]
   },
@@ -175,7 +187,9 @@ export const LAW_MODULES: LawModule[] = [
     evidenceExamples: ["Grievances", "Medical records", "Classification records", "Incident reports", "Photographs", "Witness statements"],
     questions: ["What was the condition?", "How long did it last?", "Who knew?", "What response occurred?", "What records document it?"],
     authorities: [
-      { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1983+edition%3Aprelim%29", note: "Potential federal civil-rights vehicle for qualifying state or local custody claims." }
+      { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1983+edition%3Aprelim%29", note: "Potential federal civil-rights vehicle for qualifying state or local custody claims." },
+      { citation: "Estelle v. Gamble, 429 U.S. 97 (1976)", title: "Serious medical needs in custody", type: "case", jurisdiction: "United States", url: "https://caselaw.findlaw.com/court/us-supreme-court/429/97.html", note: "U.S. Supreme Court decision addressing deliberate indifference to serious medical needs under the Eighth Amendment." },
+      { citation: "Farmer v. Brennan, 511 U.S. 825 (1994)", title: "Deliberate indifference to substantial risk", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/511/825/", note: "U.S. Supreme Court decision defining deliberate indifference to a substantial risk of serious harm in prison conditions cases." }
     ]
   },
   {
@@ -194,7 +208,9 @@ export const LAW_MODULES: LawModule[] = [
     questions: ["When was the request received?", "What response was provided?", "Was a reasonable estimate given?", "What exemption was cited for any withholding?"],
     authorities: [
       { citation: "RCW 42.56.520", title: "Prompt responses required", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/?cite=42.56.520", note: "Requires an agency to respond within five business days in one of the ways specified by the statute." },
-      { citation: "RCW 42.56.050", title: "Invasion of privacy, when", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=42.56.050", note: "One statutory provision governing privacy-related public-records analysis." }
+      { citation: "RCW 42.56.050", title: "Invasion of privacy, when", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=42.56.050", note: "One statutory provision governing privacy-related public-records analysis." },
+      { citation: "RCW 42.56.070", title: "Documents and indexes to be made public", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=42.56.070", note: "Public Records Act provision concerning agency disclosure and publication duties, subject to exemptions and other law." },
+      { citation: "RCW 42.56.550", title: "Judicial review of agency actions", type: "statute", jurisdiction: "Washington", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=42.56.550", note: "Provides judicial review mechanisms and remedies for Public Records Act disputes." }
     ]
   },
   {
@@ -212,7 +228,9 @@ export const LAW_MODULES: LawModule[] = [
     evidenceExamples: ["Accommodation request", "Medical/support documentation", "Agency response", "Policies", "Service records", "Communication logs"],
     questions: ["What service or program was involved?", "What accommodation or modification was requested?", "What response was given?", "What record documents the disability-related connection?"],
     authorities: [
-      { citation: "42 U.S.C. § 12132", title: "ADA Title II—Discrimination", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?edition=prelim&f=treesort&jumpTo=true&num=0&req=%28title%3A42+section%3A12132+edition%3Aprelim%29", note: "Primary federal statutory authority for discrimination by covered public entities on the basis of disability." }
+      { citation: "42 U.S.C. § 12132", title: "ADA Title II—Discrimination", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?edition=prelim&f=treesort&jumpTo=true&num=0&req=%28title%3A42+section%3A12132+edition%3Aprelim%29", note: "Primary federal statutory authority for discrimination by covered public entities on the basis of disability." },
+      { citation: "28 C.F.R. § 35.130", title: "ADA Title II—General prohibitions against discrimination", type: "regulation", jurisdiction: "United States", url: "https://www.ecfr.gov/current/title-28/chapter-I/part-35/subpart-B/section-35.130", note: "Federal ADA Title II regulation addressing discrimination and reasonable modifications in covered public services." },
+      { citation: "28 C.F.R. § 35.160", title: "Communications", type: "regulation", jurisdiction: "United States", url: "https://www.ecfr.gov/current/title-28/chapter-I/part-35/subpart-E/section-35.160", note: "Federal ADA Title II regulation addressing effective communication and auxiliary aids and services." }
     ]
   },
   {
@@ -230,7 +248,9 @@ export const LAW_MODULES: LawModule[] = [
     evidenceExamples: ["Application", "Eligibility notices", "Benefit statements", "Agency correspondence", "Verification documents", "Appeal requests"],
     questions: ["What program is involved?", "What rule did the agency cite?", "What notice was received?", "What appeal deadline applies?"],
     authorities: [
-      { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1983+edition%3Aprelim%29", note: "May be relevant to some government-action claims, but benefit programs often have their own administrative remedies and limits." }
+      { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=%28title%3A42+section%3A1983+edition%3Aprelim%29", note: "May be relevant to some government-action claims, but benefit programs often have their own administrative remedies and limits." },
+      { citation: "Goldberg v. Kelly, 397 U.S. 254 (1970)", title: "Procedural due process and public benefits", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/397/254/", note: "U.S. Supreme Court decision addressing procedural safeguards before termination of certain welfare benefits." },
+      { citation: "Mathews v. Eldridge, 424 U.S. 319 (1976)", title: "Procedural due process balancing", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/424/319/", note: "U.S. Supreme Court framework for determining what process is due in a particular governmental decision." }
     ]
   }
 ];
