@@ -39,7 +39,7 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
   return (
     <div
       style={{ animationDelay: `${index * 80}ms`, animationFillMode: "both" }}
-      className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 animate-fade-in"
+      className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 hover:shadow-warm-sm hover:border-primary/30 animate-fade-in"
     >
       {/* Save button overlay */}
       {onToggleSave && (
@@ -57,25 +57,8 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
       )}
 
       <Link to={`/guide/${category.guideId}`} className="flex flex-col flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-        {/* Hero Image */}
-        <div className="relative h-52 sm:h-56 overflow-hidden">
-          {categoryImage ? (
-            <img
-              src={categoryImage}
-              alt={category.title}
-              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-            />
-          ) : (
-            <div className="w-full h-full bg-secondary" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500" />
-          <div className="absolute top-4 left-4 w-10 h-10 rounded-xl bg-card/90 backdrop-blur-sm border border-border/50 flex items-center justify-center shadow-sm group-hover:bg-primary/15 group-hover:border-primary/30 transition-all duration-300">
-            <Icon className="w-5 h-5 text-primary transition-colors duration-300" />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex flex-col flex-1 p-5 pt-3">
+          {/* Content */}
+        <div className="flex flex-col flex-1 p-6">
           <h3 className="font-semibold text-foreground text-lg leading-tight mb-1.5 group-hover:text-primary transition-colors duration-300">
             {category.title}
           </h3>
