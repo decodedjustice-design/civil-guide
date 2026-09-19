@@ -73,6 +73,82 @@ const authorityResources: Record<string, { label: string; type: string; url: str
   ],
 };
 
+const practicalKnowledge: Record<string, { mustKnow: string[]; records: string[]; programs: { label: string; url: string }[] }> = {
+  police: {
+    mustKnow: [
+      "An encounter can involve consensual contact, detention, search, arrest, or questioning, and the rules differ.",
+      "Important facts include why the encounter began, how long it lasted, whether consent was requested or given, the basis for a search, force used, and what officers knew at the time.",
+      "Afterward, preserve CAD/dispatch, body-camera footage, reports, citations, photographs, medical records, and witness information."
+    ],
+    records: ["CAD/dispatch logs", "Body-worn camera/video", "Officer reports", "Use-of-force records", "911 recordings", "Witness information"],
+    programs: []
+  },
+  traffic: {
+    mustKnow: [
+      "Washington has a Blue Envelope Program for qualified people with disabilities or conditions that may affect traffic-stop interactions.",
+      "The Blue Envelope is available at no cost through Washington driver licensing offices and contains safety and communication information plus space for vehicle documents.",
+      "Keep the citation, CAD/dispatch, dash/body-camera video, officer report, photographs, and witness evidence."
+    ],
+    records: ["Citation/infraction", "CAD/dispatch", "Dash/body-camera video", "Officer report", "Vehicle records", "Witness/video evidence"],
+    programs: [{ label: "Blue Envelope Program — RCW 46.19.090", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=46.19.090" }]
+  },
+  housing: {
+    mustKnow: [
+      "Washington landlord-tenant rules can overlap with local protections and federal fair-housing law.",
+      "An eviction notice is not itself a court judgment; deadlines and local procedures matter.",
+      "Disability accommodation and discrimination issues can involve both Washington and federal law."
+    ],
+    records: ["Lease/addenda", "Notices", "Rent ledger", "Repair records", "Accommodation correspondence", "Inspection photographs", "Court filings"],
+    programs: []
+  },
+  disability: {
+    mustKnow: [
+      "Disability rights may arise under Washington law, the ADA, Section 504, and program-specific rules.",
+      "Document the disability-related barrier, requested accommodation, response, and any denial.",
+      "Keep relevant policies, requests, responses, supporting records, and appeals."
+    ],
+    records: ["Accommodation request", "Entity response", "Relevant policy", "Supporting documentation", "Denial/appeal", "Communications"],
+    programs: []
+  },
+  public_records: {
+    mustKnow: [
+      "A public-records request seeks existing agency records; it is different from asking an agency to create a new record or answer a legal question.",
+      "Keep the request, acknowledgement, estimated completion dates, productions, redactions, exemptions, and correspondence.",
+      "Describe records by category, date range, custodian, record type, and identifiers when possible."
+    ],
+    records: ["Original request", "Acknowledgement", "Production log", "Produced records", "Withholding/redaction explanation", "Extensions"],
+    programs: []
+  },
+  education: {
+    mustKnow: [
+      "School issues can involve Washington law, district policy, FERPA, IDEA, Section 504, and the ADA depending on the facts.",
+      "Distinguish education, discipline, special-education, and health records because different rules can apply.",
+      "Keep written requests, responses, meeting notices, evaluations, IEP/504 records, attendance, discipline, and complaints."
+    ],
+    records: ["Education records", "IEP/504", "Evaluations", "Attendance", "Discipline", "Meeting records", "District correspondence"],
+    programs: []
+  },
+  benefits: {
+    mustKnow: [
+      "Benefits decisions are usually governed by program-specific statutes, regulations, agency manuals, notices, and appeal procedures.",
+      "Keep applications, verification documents, notices, caseworker communications, payment history, and appeal deadlines.",
+      "When a decision matters, obtain the written decision and the rule or policy relied upon."
+    ],
+    records: ["Application", "Eligibility notices", "Case notes", "Verification", "Payment history", "Appeal request", "Hearing documents"],
+    programs: []
+  },
+  cps_dcyf: {
+    mustKnow: [
+      "DCYF policy does not replace statutes or court orders, but applicable agency policies govern employee procedures.",
+      "The current DCYF library covers intake, CPS, risk assessment, health and safety visits, case plans, reasonable efforts, documentation, placement moves, and dependency petitions.",
+      "Policy 6600 addresses documentation of case communications, events, and activities in FamLink.",
+      "For a disputed event, compare the timeline against the applicable policy, RCW/WAC, court order, and underlying records."
+    ],
+    records: ["Intake", "Safety/risk assessments", "FamLink documentation", "Health and safety visits", "Placement records", "Court filings/orders", "Service referrals", "Written notices"],
+    programs: []
+  }
+};
+
 const recommendedIds = ["housing-rights", "police-encounters", "cps-dcyf", "education-rights", "disability-rights", "traffic-stops"];
 
 /* ─── Category Card ─── */
@@ -85,7 +161,7 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
   const Icon = category.icon;
   const guide = additionalEducationalGuides.find((item) => item.id === category.guideId);
   const sources = guide?.sources?.filter((source) => source.type === "official" || source.type === "agency").slice(0, 2) || [];
-  const authorities = authorityResources[guide?.systemId || category.id] || [];
+  const authorities = authorityResources[guide?.systemId || category.id] || [];\n  const knowledge = practicalKnowledge[guide?.systemId || category.id];
 
   return (
     <div
@@ -149,6 +225,33 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
                   </a>
                 ))}
               </div>
+            </div>
+          )}
+          {knowledge && (
+            <div className="mb-4 rounded-lg border border-border/60 bg-secondary/30 p-3">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-2">What people should know</p>
+              <div className="space-y-1.5">
+                {knowledge.mustKnow.map((item, i) => (
+                  <div key={i} className="flex items-start gap-2 text-[11px] text-muted-foreground leading-relaxed">
+                    <span className="w-1 h-1 rounded-full bg-primary/60 shrink-0 mt-1.5" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mt-3 mb-1.5">Records to preserve</p>
+              <div className="flex flex-wrap gap-1.5">
+                {knowledge.records.map((item) => (
+                  <span key={item} className="rounded-full border border-border bg-card px-2 py-1 text-[10px] text-muted-foreground">{item}</span>
+                ))}
+              </div>
+              {knowledge.programs.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-1.5">Programs people may not know about</p>
+                  {knowledge.programs.map((program) => (
+                    <a key={program.url} href={program.url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">{program.label}</a>
+                  ))}
+                </div>
+              )}
             </div>
           )}
           <div className="flex items-center gap-2 text-sm font-medium text-primary/80 group-hover:text-primary transition-colors duration-300">
