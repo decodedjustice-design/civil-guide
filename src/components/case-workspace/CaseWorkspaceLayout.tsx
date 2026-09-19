@@ -100,6 +100,16 @@ export function CaseWorkspaceLayout({ title, description, children }: Props) {
               )}
             </div>
 
+            {caseId && (
+              <Link
+                to={`/analyzer?caseId=${caseId}`}
+                className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-primary/20 bg-primary/5 text-sm text-primary hover:bg-primary/10 transition-colors"
+              >
+                <Compass className="h-4 w-4" />
+                Analyze this case
+              </Link>
+            )}
+
             <nav className="flex lg:block gap-1 lg:space-y-1 overflow-x-auto -mx-4 px-4 pb-2 lg:mx-0 lg:px-0 lg:pb-0 lg:overflow-visible">
               <p className="hidden lg:block text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 font-medium px-3 pb-1">
                 Case workspace
