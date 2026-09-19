@@ -165,7 +165,7 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
 
   return (
     <article
-      style={{ animationDelay: ${index * 60}ms, animationFillMode: "both" }}
+      style={{ animationDelay: `${index * 60}ms`, animationFillMode: "both" }}
       className="group relative flex flex-col rounded-2xl border border-border bg-card overflow-hidden animate-fade-in transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm"
     >
       {onToggleSave && (
