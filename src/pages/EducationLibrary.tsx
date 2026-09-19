@@ -149,7 +149,7 @@ const practicalKnowledge: Record<string, { mustKnow: string[]; records: string[]
   }
 };
 
-const recommendedIds = ["housing-rights", "police-encounters", "cps-dcyf", "education-rights", "disability-rights", "traffic-stops"];
+const recommendedIds = ["housing-full-guide", "police-full-guide", "cps-dcyf-full-guide", "education-full-guide", "disability-full-guide", "traffic-stops-full-guide"];
 
 /* ─── Category Card ─── */
 function CategoryCard({ category, index, isSaved, onToggleSave }: {
@@ -404,6 +404,11 @@ export default function EducationLibrary() {
 
             {/* All Guides */}
             <TabsContent value="all">
+              <div className="mb-5 flex items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted-foreground">Knowledge map</span>
+                <span className="h-px flex-1 bg-border" />
+                <span className="text-[10px] text-muted-foreground">Choose the system closest to your situation</span>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {allFiltered.map((category, i) => (
                   <CategoryCard
@@ -414,6 +419,16 @@ export default function EducationLibrary() {
                     onToggleSave={user ? () => toggleSave(category.guideId, category.title) : undefined}
                   />
                 ))}
+              </div>
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="rounded-xl border border-border bg-secondary/30 px-4 py-3">
+                  <p className="text-xs font-semibold text-foreground">DCYF / CPS knowledge trail</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">Intake → investigation → safety/risk → placement → court → records & policy.</p>
+                </div>
+                <div className="rounded-xl border border-border bg-secondary/30 px-4 py-3">
+                  <p className="text-xs font-semibold text-foreground">Government agency knowledge trail</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">Authority → decision → notice → records → appeal/review → verification.</p>
+                </div>
               </div>
               {allFiltered.length === 0 && (
                 <div className="text-center py-12">
