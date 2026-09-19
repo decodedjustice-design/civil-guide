@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducationLibrary";
-import { categoryImages } from "@/assets/index";
+import { additionalEducationalGuides } from "@/data/educationFullGuides";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -34,7 +34,8 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
   onToggleSave?: () => void;
 }) {
   const Icon = category.icon;
-  const categoryImage = categoryImages[category.id];
+  const guide = additionalEducationalGuides.find((item) => item.id === category.guideId);
+  const sources = guide?.sources?.filter((source) => source.type === "official" || source.type === "agency").slice(0, 2) || [];
 
   return (
     <div
@@ -62,17 +63,30 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
           <h3 className="font-semibold text-foreground text-lg leading-tight mb-1.5 group-hover:text-primary transition-colors duration-300">
             {category.title}
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2">
-            {category.subtitle}
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            {guide?.whatThisSystemIs.description || category.subtitle}
           </p>
-          <div className="mt-auto space-y-1.5 mb-4">
-            {category.quickFacts.slice(0, 2).map((fact, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground/80">
-                <span className="w-1 h-1 rounded-full bg-primary/50 shrink-0 mt-1.5" />
-                <span className="line-clamp-1">{fact}</span>
-              </div>
-            ))}
+          <div className="mb-4 rounded-lg bg-secondary/40 border border-border/60 p-3">
+            <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-2">Know the basics</p>
+            <div className="space-y-1.5">
+              {category.quickFacts.slice(0, 4).map((fact, i) => (
+                <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <span className="w-1 h-1 rounded-full bg-primary/60 shrink-0 mt-1.5" />
+                  <span>{fact}</span>
+                </div>
+              ))}
+            </div>
           </div>
+          {sources.length > 0 && (
+            <div className="mb-4">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-1.5">Primary resources</p>
+              <div className="space-y-1">
+                {sources.map((source) => (
+                  <span key={source.url} className="block text-[11px] text-muted-foreground truncate">{source.label}</span>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-2 text-sm font-medium text-primary/80 group-hover:text-primary transition-colors duration-300">
             <span>Open Guide</span>
             <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -199,7 +213,7 @@ export default function EducationLibrary() {
             Know Your Rights
           </h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            Structured guides for core areas of civil rights. Each guide walks you through what the system is, how it works, and what you can do — at your own pace.
+            These guides contain substantive explanations of the systems you may have to navigate — who has authority, what rules commonly apply, what happens next, what to document, and where to verify the law. Start with the topic closest to your situation.
           </p>
         </div>
       </div>
