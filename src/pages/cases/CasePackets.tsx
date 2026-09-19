@@ -60,7 +60,8 @@ export default function CasePackets() {
     if (!id || !activeCase) return;
     setSaving(true);
     try {
-      const payload = { title: title || "Attorney Case Packet", packet_type: "attorney", sections: selected, options: { include_exhibits: true }, content: { generated_at: new Date().toISOString(), section_count: selected.length } };
+      const generatedHtml = buildHtml();
+      const payload = { title: title || "Attorney Case Packet", packet_type: "attorney", sections: selected, options: { include_exhibits: true }, content: { generated_at: new Date().toISOString(), section_count: selected.length, html: generatedHtml } };
       if (savedPacketId) {
         const { error } = await supabase.from("case_packets").update(payload).eq("id", savedPacketId);
         if (error) throw error;
