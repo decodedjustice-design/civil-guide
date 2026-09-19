@@ -7,7 +7,7 @@ import { useJusticePlace, CaseStatus } from "@/hooks/useJusticePlace";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Shield, LogIn, Heart } from "lucide-react";
+import { Shield, LogIn, Heart, FolderOpen } from "lucide-react";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 
 export default function JusticePlace() {
@@ -33,7 +33,7 @@ export default function JusticePlace() {
               <Shield className="w-12 h-12 mx-auto text-primary mb-4" />
               <h1 className="text-xl font-semibold mb-2">Welcome to Justice Place</h1>
               <p className="text-muted-foreground mb-6">
-                Sign in to access your personal, private workspace for organizing 
+                Sign in to access your personal, private workspace for organizing
                 your civil rights situation.
               </p>
               <Button asChild>
@@ -96,7 +96,7 @@ export default function JusticePlace() {
               This is your space
             </p>
             <p className="text-sm text-muted-foreground">
-              Take your time here. Everything is saved automatically, and you can return 
+              Take your time here. Everything is saved automatically, and you can return
               whenever you're ready. Nothing here is filed unless you choose.
             </p>
           </div>
@@ -109,6 +109,14 @@ export default function JusticePlace() {
             onUpdate={handleUpdateCase}
             isSaving={isSaving}
           />
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link to="/cases">
+                <FolderOpen className="w-4 h-4 mr-2" />
+                Open Case List
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {/* Main Sections */}
