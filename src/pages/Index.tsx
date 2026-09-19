@@ -68,21 +68,21 @@ const Index = () => {
         <section className="relative min-h-[76vh] flex items-center overflow-hidden">
           <div className="absolute inset-0">
             <img src={heroImage} alt="" className="w-full h-full object-cover" aria-hidden="true" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,18,27,0.88)_0%,rgba(37,20,29,0.72)_48%,rgba(15,18,27,0.45)_100%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,18,27,0.72)_0%,rgba(15,18,27,0.58)_42%,rgba(15,18,27,0.78)_100%)]" />
             <div className="absolute inset-0 bg-black/15" />
           </div>
-          <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24">
+          <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24 text-center">
             <div className="max-w-4xl">
               <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-gold/90 mb-6">Decoded Justice · Washington State</p>
-              <div className="w-16 h-px bg-gold/45 mb-7" />
-              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white leading-[1.05] tracking-tight max-w-3xl">Clarity. Empathy. Justice.</h1>
-              <p className="mt-5 text-2xl sm:text-3xl font-serif text-white/90 max-w-2xl">Your story. Your voice. Your justice.</p>
-              <p className="mt-6 text-lg sm:text-xl text-white/72 font-light leading-relaxed max-w-2xl">A Washington-focused platform that helps you understand what happened, organize what matters, identify questions worth investigating, and build a clear record of your case.</p>
-              <div className="mt-9 flex flex-col sm:flex-row gap-3">
+              <div className="w-16 h-px bg-gold/60 mb-7 mx-auto" />
+              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-white leading-[1.05] tracking-tight max-w-3xl mx-auto drop-shadow-lg">Clarity. Empathy. Justice.</h1>
+              <p className="mt-5 text-2xl sm:text-3xl font-serif text-white max-w-2xl mx-auto drop-shadow-md">Your story. Your voice. Your justice.</p>
+              <p className="mt-6 text-lg sm:text-xl text-white/95 font-light leading-relaxed max-w-2xl mx-auto drop-shadow-md">A Washington-focused platform that helps you understand what happened, organize what matters, identify questions worth investigating, and build a clear record of your case.</p>
+              <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Start Your Case <ArrowRight className="w-4 h-4" /></Link>
                 <Link to="/education-library" className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">Explore the Washington Guide</Link>
               </div>
-              <div className="mt-8 max-w-md"><LegalGate /></div>
+              <div className="mt-8 max-w-md mx-auto"><LegalGate /></div>
             </div>
           </div>
         </section>
@@ -117,8 +117,7 @@ const Index = () => {
                 ["01", "TELL YOUR STORY", "Describe what happened, who was involved, when it happened, and what you want to understand."],
                 ["02", "BUILD YOUR RECORD", "Add documents, evidence, communications, people, agencies, and events as you gather them."],
                 ["03", "EXPLORE QUESTIONS", "Use guided tools to identify important facts, missing information, and issues worth investigating."],
-                ["04", "PREPARE YOUR NEXT STEP", "Organize the record into a clearer case file and structured materials for advocacy or legal support."],
-              ].map(([number, title, description]) => (
+                ["04", "PREPARE YOUR NEXT STEP", "Organize the record into a clearer case file and structured materials for advocacy or legal support."],              ].map(([number, title, description]) => (
                 <div key={number} className="min-h-48 border-r border-b border-border/60 p-6 sm:p-7 bg-cream hover:bg-background/70 transition-colors duration-300">
                   <div className="text-[10px] tracking-[0.2em] text-muted-foreground/65 mb-7">{number}</div>
                   <h3 className="font-serif text-xl font-medium text-foreground mb-2">{title}</h3>
