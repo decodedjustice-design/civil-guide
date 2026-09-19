@@ -163,11 +163,11 @@ const Index = () => {
               </div>
               <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">Choose the area closest to your situation, then use the guide and case tools together.</p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-border/60">
+            <div className="grid sm:grid-cols-2 border-t border-l border-border/60">
               {issueAreas.map((area, index) => (
-                <div key={area.title} className="min-h-36 border-r border-b border-border/60 p-6 sm:p-7 bg-cream-warm hover:bg-background/70 transition-colors duration-300">
-                  <div className="flex items-center justify-between mb-8"><span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
-                  <h3 className="font-serif text-xl font-medium text-foreground mb-2">{area.title}</h3>
+                <div key={area.title} className="min-h-28 border-r border-b border-border/60 p-5 sm:p-6 bg-cream-warm hover:bg-background/70 transition-colors duration-300">
+                  <div className="flex items-center justify-between mb-4"><span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
+                  <h3 className="font-serif text-lg font-medium text-foreground mb-1">{area.title}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">{area.detail}</p>
                 </div>
               ))}
@@ -184,12 +184,12 @@ const Index = () => {
             </div>
             <div className="grid sm:grid-cols-2 gap-0 border-t border-l border-border/60 max-w-5xl">
               {guides.map((guide, index) => (
-                <Link key={guide.title} to={`/guide/${guide.guideId}`} className="group border-r border-b border-border/60 p-6 sm:p-7 bg-background hover:bg-secondary/30 transition-colors duration-300 min-h-32">
+                <Link key={guide.title} to={`/guide/${guide.guideId}`} className="group border-r border-b border-border/60 p-5 sm:p-6 bg-background hover:bg-secondary/30 transition-colors duration-300 min-h-28">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span>
-                      <h3 className="font-serif text-xl font-medium text-foreground mt-3 group-hover:text-primary transition-colors">{guide.title}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed mt-2 max-w-md">{guide.description}</p>
+                      <h3 className="font-serif text-lg font-medium text-foreground mt-2 group-hover:text-primary transition-colors">{guide.title}</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed mt-1 max-w-md">{guide.description}</p>
                     </div>
                     <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0 mt-1" />
                   </div>
