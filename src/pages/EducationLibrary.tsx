@@ -24,6 +24,55 @@ function getRecentlyViewed(): string[] {
 }
 
 /* ─── Recommended guides (static logic based on popular topics) ─── */
+const authorityResources: Record<string, { label: string; type: string; url: string }[]> = {
+  police: [
+    { label: "Washington Constitution, Article I §7", type: "State Constitution", url: "https://app.leg.wa.gov/const/default.aspx?cite=1%20-%207" },
+    { label: "U.S. Constitution — Fourth Amendment", type: "Federal law", url: "https://constitution.congress.gov/constitution/amendment-4/" },
+    { label: "42 U.S.C. § 1983", type: "Federal civil-rights law", url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title42-section1983" },
+    { label: "Washington CJTC", type: "State agency / training", url: "https://cjtc.wa.gov/" },
+  ],
+  traffic: [
+    { label: "RCW Title 46 — Motor Vehicles", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=46" },
+    { label: "Washington Constitution, Article I §7", type: "State Constitution", url: "https://app.leg.wa.gov/const/default.aspx?cite=1%20-%207" },
+    { label: "U.S. Constitution — Fourth Amendment", type: "Federal law", url: "https://constitution.congress.gov/constitution/amendment-4/" },
+    { label: "Washington State Patrol", type: "State agency", url: "https://wsp.wa.gov/" },
+  ],
+  housing: [
+    { label: "RCW 59.18 — Residential Landlord-Tenant Act", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=59.18" },
+    { label: "RCW 49.60 — Law Against Discrimination", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60" },
+    { label: "Fair Housing Act", type: "Federal law", url: "https://www.hud.gov/fair-housing" },
+    { label: "HUD laws & regulations", type: "Federal agency", url: "https://www.hud.gov/laws-and-regulations" },
+  ],
+  disability: [
+    { label: "RCW 49.60 — Law Against Discrimination", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60" },
+    { label: "Americans with Disabilities Act", type: "Federal law", url: "https://www.ada.gov/law-and-regs/" },
+    { label: "Section 504", type: "Federal law", url: "https://www.hhs.gov/civil-rights/for-individuals/disability/index.html" },
+  ],
+  public_records: [
+    { label: "RCW 42.56 — Public Records Act", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=42.56" },
+    { label: "Washington Attorney General — Public Records", type: "State guidance", url: "https://www.atg.wa.gov/public-records-act" },
+  ],
+  education: [
+    { label: "RCW Title 28A — Common Schools", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=28A" },
+    { label: "RCW 28A.225 — Attendance", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=28A.225" },
+    { label: "FERPA — 34 CFR Part 99", type: "Federal law", url: "https://www.ecfr.gov/current/title-34/subtitle-A/part-99" },
+    { label: "IDEA", type: "Federal law", url: "https://sites.ed.gov/idea/" },
+  ],
+  benefits: [
+    { label: "RCW Title 74 — Public Assistance", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=74" },
+    { label: "Social Security Act", type: "Federal law", url: "https://www.ssa.gov/OP_Home/ssact/ssact.htm" },
+  ],
+  cps_dcyf: [
+    { label: "DCYF Child Welfare Policies & Procedures", type: "Agency policy manual", url: "https://www.dcyf.wa.gov/practices-and-procedures" },
+    { label: "DCYF Policy, Laws & Rules", type: "Agency policy hub", url: "https://dcyf.wa.gov/practice/policy-laws-rules" },
+    { label: "Chapter 13.34 RCW — Dependency", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=13.34" },
+    { label: "Chapter 26.44 RCW — Abuse of Children", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=26.44" },
+    { label: "Chapter 74.13 RCW — Child Welfare Services", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=74.13" },
+    { label: "Chapter 110-30 WAC — CPS", type: "Washington administrative rule", url: "https://app.leg.wa.gov/WAC/default.aspx?cite=110-30" },
+    { label: "Federal child-welfare laws", type: "Federal law", url: "https://www.acf.hhs.gov/cb/laws-policies" },
+  ],
+};
+
 const recommendedIds = ["housing-rights", "police-encounters", "cps-dcyf", "education-rights", "disability-rights", "traffic-stops"];
 
 /* ─── Category Card ─── */
@@ -36,6 +85,7 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
   const Icon = category.icon;
   const guide = additionalEducationalGuides.find((item) => item.id === category.guideId);
   const sources = guide?.sources?.filter((source) => source.type === "official" || source.type === "agency").slice(0, 2) || [];
+  const authorities = authorityResources[guide?.systemId || category.id] || [];
 
   return (
     <div
@@ -83,6 +133,20 @@ function CategoryCard({ category, index, isSaved, onToggleSave }: {
               <div className="space-y-1">
                 {sources.map((source) => (
                   <span key={source.url} className="block text-[11px] text-muted-foreground truncate">{source.label}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {authorities.length > 0 && (
+            <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-3">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-gold mb-1.5">Authority & policy trail</p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">Go from the guide to the underlying authority: agency policy or manual, Washington law or rule, and federal law.</p>
+              <div className="space-y-1.5">
+                {authorities.map((resource) => (
+                  <a key={resource.url} href={resource.url} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-2 text-xs text-foreground hover:text-primary">
+                    <span className="truncate">{resource.label}</span>
+                    <span className="text-[9px] uppercase tracking-wide text-muted-foreground shrink-0">{resource.type}</span>
+                  </a>
                 ))}
               </div>
             </div>
