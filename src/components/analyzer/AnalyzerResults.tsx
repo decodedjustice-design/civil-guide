@@ -79,7 +79,10 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     if (!isLoggedIn) { navigate(`/auth?redirect=/analyzer`); return; }
     setCreatingCase(true);
     try {
-      const { data: created, error } = await supabase.from("cases").insert({ name: `${systemLabel} case`, case_type: systemId, state: "WA", description: `Started from Analyzer for ${systemLabel}.` }).select("id").single();
+      const { data: authUser } = await supabase.auth.getUser();
+      const ownerId = authUser.user?.id;
+      if (!ownerId) throw new Error("Your session expired. Please sign in again.");
+      const { data: created, error } = await supabase.from("cases").insert({ user_id: ownerId, name: `${systemLabel} case`, case_type: systemId, state: "WA", description: `Started from Analyzer for ${systemLabel}.` }).select("id").single();
       if (error) throw error;
       const caseId = created.id;
       const findings = Array.isArray((aiResults as any)?.findings) ? (aiResults as any).findings : [];
