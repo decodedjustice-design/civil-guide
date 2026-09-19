@@ -298,33 +298,48 @@ export default function FoundersStory() {
             </p>
           </Section>
 
-          <Section label="What Can Get Buried" title="Sometimes the Problem Is Not That the Record Does Not Exist. It Is That Nobody Can See It in the Pile." style={{ animationDelay: "0.52s" }}>
+          <Section label="What Can Get Buried" title="Corruption Exists. Sometimes It Is Buried." style={{ animationDelay: "0.52s" }}>
             <p className={styles.bodyParagraph}>
-              As I learned to work through records, I began to see another problem: what happens when a system is overwhelmed?
+              I don't believe corruption is everywhere.
             </p>
             <p className={styles.bodyParagraph}>
-              When people are carrying enormous caseloads, when documents are spread across systems, when one person is handling one matter after another, an error, omission, contradiction, or potentially serious problem can become buried under the sheer volume of work.
+              I don't walk into a system assuming everyone is lying or that every mistake has some hidden explanation. Sometimes people make mistakes. Sometimes records are incomplete. Sometimes communication breaks down. Sometimes there is an explanation you simply haven't found yet.
             </p>
             <p className={styles.bodyParagraph}>
-              I began confronting a question I could not ignore: what happens when misconduct or corruption, if it exists, is buried so deeply in paperwork, workload, fragmented records, and institutional complexity that an ordinary person cannot even see where to look?
+              But corruption exists, too.
             </p>
             <p className={styles.bodyParagraph}>
-              I am not saying that every discrepancy proves corruption. It does not. A mismatch can come from an error, a delay, a misunderstanding, incomplete documentation, or something else that still needs to be established.
+              That is a reality of human systems. And it is not always brought forward.
             </p>
             <p className={styles.bodyParagraph}>
-              But I learned that a discrepancy should not simply disappear because the record is large, the system is busy, or the explanation is difficult to find.
+              Sometimes something serious can sit underneath an enormous amount of paperwork and workload without anyone stopping long enough to notice it.
             </p>
             <p className={styles.bodyParagraph}>
-              Sometimes there is one small thing that just will not match.
+              Sometimes there is just one thing that doesn't make sense. Not something you went looking for. Not something you were trying to prove. Just something sitting there that you cannot, for the life of you, understand.
+            </p>
+            <p className={styles.bodyParagraph}>
+              For me, that was the flyer.
+            </p>
+            <p className={styles.bodyParagraph}>
+              They had posted it themselves. I had been told the case did not exist.
             </p>
             <p className={styles.italicBlock}>
-              For me, that thing was the flyer.
+              Yet there was the flyer.
             </p>
             <p className={styles.bodyParagraph}>
-              It was a flyer they had posted themselves about a case I had been told did not exist. I did not know what that contradiction ultimately meant. I only knew that the two pieces of information could not both be true in the same way.
+              I wasn't looking for corruption. I was trying to understand what was happening.
             </p>
             <p className={styles.bodyParagraph}>
-              That was when I understood something that became central to Decoded Justice: sometimes the most important question is not “Who is telling the truth?” It is “What records exist, where did they come from, when were they created, and what can they actually establish?”
+              But that one thing would not fit.
+            </p>
+            <p className={styles.bodyParagraph}>
+              And that taught me something I carry into everything I build with Decoded Justice: reality does not always arrive with an explanation attached to it.
+            </p>
+            <p className={styles.bodyParagraph}>
+              Sometimes you have an answer. Sometimes you have a mistake. Sometimes you have a misunderstanding. Sometimes you have incomplete information. And sometimes, unfortunately, you may have something more serious.
+            </p>
+            <p className={styles.bodyParagraph}>
+              The point is not to decide which one it is before you have the record. The point is to make it possible for a person to see what is actually there.
             </p>
           </Section>
 
