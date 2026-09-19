@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -27,6 +27,8 @@ import { usePatternEngine, CivilRightsSystem } from "@/hooks/usePatternEngine";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAutoSaveAnalyzerResult } from "@/hooks/useAutoSaveAnalyzerResult";
 import { useAnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
+import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
+import { useCases } from "@/hooks/useCases";
 import { getEntityQuestionsForSystem, EntityTags, createEmptyEntityTags } from "@/hooks/useEntityTags";
 import heroImage from "@/assets/hero-analysis.png";
 
@@ -1572,19 +1574,102 @@ const systemResults: Record<SystemId, EnhancedSystemResult> = {
   },
 };
 
+const CASE_SYSTEM_MAP: Record<string, SystemId> = {
+  police: "police",
+  employer: "employer",
+  housing: "housing",
+  school: "school",
+  schools: "school",
+  healthcare: "healthcare",
+  courts: "courts",
+  jail: "jail",
+  incarceration: "jail",
+  government: "government",
+  benefits: "government",
+  cps_dcyf: "cps_dcyf",
+};
+
+function seedAnswersFromCase(systemId: SystemId, snapshot: ReturnType<typeof useCaseSnapshot>["snapshot"]) {
+  const answers: Record<string, string> = {};
+  const issueText = snapshot.issues
+    .map((issue: any) => [issue.title, issue.summary, issue.supporting_notes].filter(Boolean).join(" "))
+    .join(" ")
+    .toLowerCase();
+
+  const choose = (questionId: string, candidates: string[]) => {
+    const question = followUpQuestions[systemId]?.find((q) => q.id === questionId);
+    if (!question) return;
+    const match = candidates.find((candidate) => question.options.some((option) => option.id === candidate));
+    if (match) answers[questionId] = match;
+  };
+
+  if (issueText) {
+    if (systemId === "police") {
+      if (/force|projectile|physical contact|use of force/.test(issueText)) choose("incident-type", ["force"]);
+      else if (/search|seizure/.test(issueText)) choose("incident-type", ["search"]);
+      else if (/arrest|detention|stop|question/.test(issueText)) choose("incident-type", ["arrest", "stop"]);
+      else if (/retaliat/.test(issueText)) choose("incident-type", ["retaliation"]);
+    } else if (systemId === "housing") {
+      if (/evict|pay.or.vacate/.test(issueText)) choose("issue-type", ["eviction"]);
+      else if (/discrimin/.test(issueText)) choose("issue-type", ["discrimination"]);
+      else if (/accommod/.test(issueText)) choose("issue-type", ["accommodation"]);
+      else if (/repair|habitability|condition/.test(issueText)) choose("issue-type", ["habitability"]);
+    } else if (systemId === "employer") {
+      if (/discrimin/.test(issueText)) choose("issue-type", ["discrimination"]);
+      else if (/retaliat/.test(issueText)) choose("issue-type", ["retaliation"]);
+      else if (/accommod/.test(issueText)) choose("issue-type", ["accommodation"]);
+    } else if (systemId === "school") {
+      if (/discrimin/.test(issueText)) choose("issue-type", ["discrimination"]);
+      else if (/disciplin|suspend|expel/.test(issueText)) choose("issue-type", ["discipline"]);
+      else if (/iep|504|accommod|special education/.test(issueText)) choose("issue-type", ["iep", "accommodation"]);
+    } else if (systemId === "healthcare") {
+      if (/discrimin/.test(issueText)) choose("issue-type", ["discrimination"]);
+      else if (/privacy|hipaa|record/.test(issueText)) choose("issue-type", ["privacy"]);
+    } else if (systemId === "cps_dcyf") {
+      if (/retaliat/.test(issueText)) choose("issue-type", ["retaliation"]);
+      else if (/remov|placement|investigation/.test(issueText)) choose("issue-type", ["removal", "investigation"]);
+    } else if (systemId === "courts") {
+      if (/due process|notice|hearing|procedur/.test(issueText)) choose("issue-type", ["due-process", "procedure"]);
+    } else if (systemId === "jail") {
+      if (/medical|health/.test(issueText)) choose("issue-type", ["medical"]);
+    } else if (systemId === "government") {
+      if (/record|public records|foia/.test(issueText)) choose("issue-type", ["records"]);
+      else if (/benefit|termination|denied/.test(issueText)) choose("issue-type", ["benefits-denied", "benefits-delayed"]);
+    }
+  }
+
+  if (snapshot.evidence.length > 0) {
+    const evidenceOptions = followUpQuestions[systemId]?.find((q) => q.id === "evidence")?.options ?? [];
+    const firstSubstantive = evidenceOptions.find((option) => !["none", "no"].includes(option.id));
+    if (firstSubstantive) answers.evidence = firstSubstantive.id;
+  }
+
+  if (snapshot.timeline.length > 0 && systemId === "cps_dcyf") {
+    choose("case-status", ["court"]);
+  }
+
+  return answers;
+}
+
 export default function Analyzer() {
+  const [searchParams] = useSearchParams();
+  const caseId = searchParams.get("caseId") || undefined;
   const [step, setStep] = useState(0);
   const [selectedSystem, setSelectedSystem] = useState<SystemId | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
   const [entityName, setEntityName] = useState("");
-  
+  const [caseLoaded, setCaseLoaded] = useState(false);
+
   // Entity-aware internal tags (NOT visible to users)
   const [entityTags, setEntityTags] = useState<EntityTags>(createEmptyEntityTags());
   const [showEntityQuestions, setShowEntityQuestions] = useState(false);
   
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { cases } = useCases();
+  const { snapshot: caseSnapshot, isLoading: isCaseLoading } = useCaseSnapshot(caseId);
+  const activeCase = cases.find((item) => item.id === caseId);
   const { 
     isAnalyzing, 
     analysis, 
@@ -1611,6 +1696,41 @@ export default function Analyzer() {
     resetResults: resetAIResults,
   } = useAnalyzerResultsAI();
 
+  const generateCaseResults = useCallback(async (
+    systemId: SystemId,
+    systemLabel: string,
+    seededAnswers: Record<string, string>,
+    caseFacts: ReturnType<typeof useCaseSnapshot>["snapshot"],
+    caseDescription?: string | null,
+  ) => {
+    await generateAIResults({
+      systemId,
+      systemLabel,
+      patternStrength: "none",
+      location: activeCase?.state === "WA" ? "Washington State" : (activeCase?.state || "Washington State"),
+      entityName: activeCase?.name,
+      clarionNarrative: [
+        caseDescription,
+        caseFacts.notes.map((note: any) => note.content).filter(Boolean).join("\n"),
+        caseFacts.issues.map((issue: any) => issue.title || issue.summary).filter(Boolean).join("\n"),
+      ].filter(Boolean).join("\n\n"),
+      timelineEntries: caseFacts.timeline.map((entry: any) => ({
+        id: entry.id,
+        title: entry.title,
+        description: entry.description,
+        date: entry.event_date,
+      })),
+      evidenceItems: caseFacts.evidence.map((item: any) => ({
+        id: item.id,
+        type: item.file_type,
+        title: item.title,
+        description: item.description || item.summary,
+        linkedDate: item.received_date,
+      })),
+      answeredQuestions: Object.entries(seededAnswers).map(([questionId, answer]) => ({ questionId, answer })),
+    });
+  }, [generateAIResults, activeCase]);
+
   const handleAnalyze = useCallback((entity: string) => {
     if (selectedSystem) {
       setEntityName(entity);
@@ -1625,6 +1745,27 @@ export default function Analyzer() {
   // Get entity questions for the selected system
   const entityQuestions = selectedSystem ? getEntityQuestionsForSystem(selectedSystem) : [];
   const hasEntityQuestions = entityQuestions.length > 0;
+
+  useEffect(() => {
+    if (!caseId || isCaseLoading || caseLoaded || !activeCase) return;
+
+    const systemId = CASE_SYSTEM_MAP[activeCase.case_type || ""] || "unsure";
+    const seededAnswers = seedAnswersFromCase(systemId, caseSnapshot);
+
+    setSelectedSystem(systemId);
+    setAnswers(seededAnswers);
+    setEntityName(activeCase.name || "");
+    setEntityTags(createEmptyEntityTags());
+    setShowEntityQuestions(false);
+    setShowResults(true);
+    setStep(Math.max(1, followUpQuestions[systemId]?.length || 1));
+    setCaseLoaded(true);
+
+    const systemInfo = systemCategories.find((item) => item.id === systemId);
+    if (systemInfo) {
+      generateCaseResults(systemId, systemInfo.label, seededAnswers, caseSnapshot, activeCase.description);
+    }
+  }, [caseId, isCaseLoading, caseLoaded, activeCase, caseSnapshot, generateCaseResults]);
 
   const handleSystemSelect = (systemId: SystemId) => {
     setSelectedSystem(systemId);
@@ -1959,6 +2100,12 @@ export default function Analyzer() {
             answers={answers}
             entityName={entityName}
             entityTags={entityTags}
+            caseId={caseId}
+            caseDataSource={caseId ? {
+              timelineCount: caseSnapshot.timeline.length,
+              evidenceCount: caseSnapshot.evidence.length,
+              issueCount: caseSnapshot.issues.length,
+            } : undefined}
             onRetryGeneration={() => {
               const systemInfo = systemCategories.find(s => s.id === selectedSystem);
               if (systemInfo) {
