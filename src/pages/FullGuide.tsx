@@ -29,6 +29,64 @@ import { allEducationalGuides, type EducationalGuide } from "@/data/educationalG
 import { libraryCategories } from "@/data/legalEducationLibrary";
 import { categoryImages } from "@/assets/index";
 
+const authorityTrail: Record<string, { label: string; type: string; url: string }[]> = {
+  police: [
+    { label: "Washington Constitution, Article I §7", type: "State Constitution", url: "https://app.leg.wa.gov/const/default.aspx?cite=1%20-%207" },
+    { label: "U.S. Constitution — Fourth Amendment", type: "Federal law", url: "https://constitution.congress.gov/constitution/amendment-4/" },
+    { label: "42 U.S.C. § 1983", type: "Federal civil-rights law", url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title42-section1983" }
+  ],
+  traffic: [
+    { label: "RCW 46.19.090 — Blue Envelope Program", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=46.19.090" },
+    { label: "RCW Title 46 — Motor Vehicles", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=46" },
+    { label: "Washington Constitution, Article I §7", type: "State Constitution", url: "https://app.leg.wa.gov/const/default.aspx?cite=1%20-%207" },
+    { label: "U.S. Constitution — Fourth Amendment", type: "Federal law", url: "https://constitution.congress.gov/constitution/amendment-4/" }
+  ],
+  housing: [
+    { label: "RCW 59.18 — Residential Landlord-Tenant Act", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=59.18" },
+    { label: "RCW 49.60 — Law Against Discrimination", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60" },
+    { label: "Fair Housing Act / HUD", type: "Federal law", url: "https://www.hud.gov/fair-housing" }
+  ],
+  disability: [
+    { label: "RCW 49.60 — Law Against Discrimination", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60" },
+    { label: "Americans with Disabilities Act", type: "Federal law", url: "https://www.ada.gov/law-and-regs/" },
+    { label: "Section 504", type: "Federal law", url: "https://www.hhs.gov/civil-rights/for-individuals/disability/index.html" }
+  ],
+  public_records: [
+    { label: "RCW 42.56 — Public Records Act", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=42.56" },
+    { label: "Washington Attorney General — Public Records Act", type: "State guidance", url: "https://www.atg.wa.gov/public-records-act" }
+  ],
+  education: [
+    { label: "RCW Title 28A — Common Schools", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=28A" },
+    { label: "FERPA — 34 CFR Part 99", type: "Federal regulation", url: "https://www.ecfr.gov/current/title-34/subtitle-A/part-99" },
+    { label: "IDEA", type: "Federal law", url: "https://sites.ed.gov/idea/" },
+    { label: "ADA", type: "Federal law", url: "https://www.ada.gov/law-and-regs/" }
+  ],
+  benefits: [
+    { label: "RCW Title 74 — Public Assistance", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=74" },
+    { label: "Social Security Act", type: "Federal law", url: "https://www.ssa.gov/OP_Home/ssact/ssact.htm" }
+  ],
+  cps_dcyf: [
+    { label: "DCYF Child Welfare Policies & Procedures", type: "Agency policy/manual", url: "https://www.dcyf.wa.gov/practices-and-procedures" },
+    { label: "DCYF Policy, Laws & Rules", type: "Agency policy hub", url: "https://dcyf.wa.gov/practice/policy-laws-rules" },
+    { label: "RCW 13.34 — Dependency", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=13.34" },
+    { label: "RCW 26.44 — Abuse of Children", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=26.44" },
+    { label: "RCW 74.13 — Child Welfare Services", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=74.13" },
+    { label: "WAC 110-30 — CPS", type: "Washington rule", url: "https://app.leg.wa.gov/WAC/default.aspx?cite=110-30" },
+    { label: "Federal child-welfare laws", type: "Federal law", url: "https://www.acf.hhs.gov/cb/laws-policies" }
+  ]
+};
+
+const recordsToPreserve: Record<string, string[]> = {
+  police: ["CAD/dispatch", "Body-camera/video", "Officer reports", "Use-of-force records", "911 recordings", "Witness information"],
+  traffic: ["Citation/infraction", "CAD/dispatch", "Dash/body-camera video", "Officer report", "Photographs", "Witness/video evidence"],
+  housing: ["Lease/addenda", "Notices", "Rent ledger", "Repair records", "Accommodation correspondence", "Court filings"],
+  disability: ["Accommodation request", "Entity response", "Relevant policy", "Supporting documentation", "Denial/appeal", "Communications"],
+  public_records: ["Original request", "Acknowledgement", "Production log", "Produced records", "Withholding/redaction explanation", "Extensions"],
+  education: ["Education records", "IEP/504", "Evaluations", "Attendance", "Discipline", "Meeting records", "District correspondence"],
+  benefits: ["Application", "Eligibility notices", "Case notes", "Verification", "Payment history", "Appeal request", "Hearing documents"],
+  cps_dcyf: ["Intake", "Safety/risk assessments", "FamLink documentation", "Health and safety visits", "Placement records", "Court filings/orders", "Service referrals", "Written notices"]
+};
+
 function getGuideCategory(guide: EducationalGuide) {
   return libraryCategories.find((c) => c.guideId === guide.id);
 }
@@ -324,6 +382,41 @@ function FullLegalGuideTab({ guide }: { guide: EducationalGuide }) {
           <Button variant="soft" size="sm" asChild>
             <Link to="/self-help"><Wrench className="w-4 h-4 mr-2" />Access All Self-Help Tools</Link>
           </Button>
+        </div>
+      </GuideAccordionSection>
+
+      <GuideAccordionSection title="Authority, Policies & Records" icon={<Scale className="w-4 h-4" />}>
+        <p className="text-sm text-muted-foreground mb-4">
+          Follow the trail from the plain-language guide to the underlying authority and the records that can help you verify what happened.
+        </p>
+        <div className="grid md:grid-cols-2 gap-4 mb-5">
+          <div className="p-4 rounded-xl bg-secondary/30 border border-border">
+            <h4 className="font-semibold text-foreground mb-3">Authority to verify</h4>
+            <div className="space-y-2">
+              {(authorityTrail[guide.systemId] || []).map((source) => (
+                <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-sm text-primary hover:underline">
+                  <ExternalLink className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                  <span><strong>{source.label}</strong><span className="block text-xs text-muted-foreground no-underline">{source.type}</span></span>
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className="p-4 rounded-xl bg-secondary/30 border border-border">
+            <h4 className="font-semibold text-foreground mb-3">Records to preserve</h4>
+            <ul className="space-y-2">
+              {(recordsToPreserve[guide.systemId] || []).map((record) => (
+                <li key={record} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <FileText className="w-3.5 h-3.5 mt-0.5 shrink-0 text-primary" />{record}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="p-4 rounded-xl bg-primary/5 border border-primary/15">
+          <p className="text-sm font-medium text-foreground">Verification rule</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Treat the guide as a starting point. For an important dispute, verify the current statute, rule, agency policy/manual, court order, and underlying record that applies to the specific facts.
+          </p>
         </div>
       </GuideAccordionSection>
 
