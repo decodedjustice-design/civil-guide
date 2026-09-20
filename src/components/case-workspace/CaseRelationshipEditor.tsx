@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link2, Trash2, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -30,6 +30,7 @@ interface Props { caseId?: string; snapshot: ReturnType<typeof useEmptySnapshot>
 
 export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [fromType, setFromType] = useState<RecordType>("timeline");
   const [fromId, setFromId] = useState("");
   const [toType, setToType] = useState<RecordType>("evidence");
@@ -55,13 +56,14 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
     setSaving(false);
     if (error) { toast.error("Could not save relationship"); return; }
     toast.success("Relationship added");
+    await queryClient.invalidateQueries({ queryKey: ["case-snapshot", caseId] });
     setFromId(""); setToId("");
   };
 
   const removeLink = async (id: string) => {
     const { error } = await supabase.from("case_links").delete().eq("id", id).eq("case_id", caseId);
     if (error) toast.error("Could not remove relationship");
-    else toast.success("Relationship removed");
+    else { toast.success("Relationship removed"); await queryClient.invalidateQueries({ queryKey: ["case-snapshot", caseId] }); }
   };
 
   const labelFor = (type: string, id: string) => {
