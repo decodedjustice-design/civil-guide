@@ -10,6 +10,7 @@ export interface CaseSnapshot {
   communications: any[];
   requests: any[];
   notes: any[];
+  links: any[];
 }
 
 const empty: CaseSnapshot = {
@@ -21,6 +22,7 @@ const empty: CaseSnapshot = {
   communications: [],
   requests: [],
   notes: [],
+  links: [],
 };
 
 /** Loads every collection for one case — used by Overview, Search, Content Check and Packets. */
@@ -38,6 +40,7 @@ export function useCaseSnapshot(caseId?: string) {
         ["communications", "case_communications", "occurred_on"],
         ["requests", "case_records_requests", "due_date"],
         ["notes", "notes", "created_at"],
+        ["links", "case_links", "created_at"],
       ];
       const results = await Promise.all(
         tables.map(async ([, table, order]) => {
