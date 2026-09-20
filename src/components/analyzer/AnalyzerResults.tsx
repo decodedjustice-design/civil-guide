@@ -11,6 +11,7 @@ import { SafetyBanner } from "@/components/SafetyBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { getLawModulesForAnalyzer, type LawModule } from "@/lib/law/issueLibrary";
 import { getPoliceLawModules } from "@/lib/law/policeIssueModules";
+import { detectPotentialViolations, type PotentialViolation } from "@/lib/analyzer/violationEngine";
 import type { EntityTags } from "@/hooks/useEntityTags";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
 import type { AnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
@@ -25,6 +26,14 @@ interface AnalyzerResultsProps {
   aiResults: AnalyzerResultsAI | null; isGeneratingAI: boolean; aiError: string | null; onRetryGeneration?: () => void; answers?: Record<string, string>; entityName?: string; entityTags?: EntityTags;
 }
 const ToolCard = ({ name, purpose, relevance, link, icon: Icon, isLocked, lockReason }: ToolCardProps) => isLocked ? <div className="p-6 rounded-2xl bg-muted/60 border border-border/50 opacity-60"><div className="flex items-start gap-4"><div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center shrink-0"><Icon className="w-6 h-6 text-muted-foreground" /></div><div className="flex-1"><h4 className="text-lg font-medium text-muted-foreground mb-1">{name}</h4><p className="text-sm text-muted-foreground mb-3">{purpose}</p><p className="text-xs text-muted-foreground italic">{lockReason}</p></div></div></div> : <Link to={link} className="block p-6 rounded-2xl bg-card border border-border hover:border-accent/50 hover:shadow-lg transition-all duration-300 group"><div className="flex items-start gap-4"><div className="w-12 h-12 rounded-xl bg-accent/10 group-hover:bg-accent/20 flex items-center justify-center shrink-0 transition-colors"><Icon className="w-6 h-6 text-accent" /></div><div className="flex-1"><div className="flex items-center justify-between mb-1"><h4 className="text-lg font-medium text-foreground group-hover:text-accent transition-colors">{name}</h4><ArrowRight className="w-4 h-4 text-accent opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" /></div><p className="text-sm text-muted-foreground mb-3">{purpose}</p><div className="pt-3 border-t border-border"><p className="text-xs text-accent font-medium">Shown because: {relevance}</p></div></div></div></Link>;
+
+function mergeAnalyzerFindings(systemId: string, answers: Record<string, string>, aiResults: AnalyzerResultsAI | null, location?: string): PotentialViolation[] {
+  const deterministic = detectPotentialViolations(systemId, answers, location);
+  const ai = aiResults?.potentialViolations ?? [];
+  const byId = new Map<string, PotentialViolation>();
+  [...deterministic, ...ai].forEach((finding) => byId.set(finding.id, finding));
+  return [...byId.values()];
+}
 
 function getPoliceMissingFacts(answers: Record<string, string>): string[] {
   const text = Object.entries(answers).map(([k, v]) => `${k}: ${v}`).join(" ").toLowerCase();
@@ -76,6 +85,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     const police = systemId === "police" ? getPoliceLawModules(mergedTriageAnswers) : [];
     return [...base, ...police];
   }, [systemId, mergedTriageAnswers]);
+  const analyzerFindings = useMemo(() => mergeAnalyzerFindings(systemId, mergedTriageAnswers, aiResults, location), [systemId, mergedTriageAnswers, aiResults, location]);
 
   const startCaseWorkspace = async (selectedModule?: LawModule) => {
     if (!isLoggedIn) { navigate(`/auth?redirect=/analyzer`); return; }
@@ -87,20 +97,20 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const { data: created, error } = await supabase.from("cases").insert({ user_id: ownerId, name: `${systemLabel} case`, case_type: systemId, state: "WA", description: `Started from Analyzer for ${systemLabel}.` }).select("id").single();
       if (error) throw error;
       const caseId = created.id;
-      const findings = Array.isArray((aiResults as any)?.findings) ? (aiResults as any).findings : [];
+      const findings = analyzerFindings;
       const selected = selectedModule ? [selectedModule] : [];
-      const issueRows = findings.length ? findings.map((f: any) => ({
+      const issueRows = findings.length ? findings.map((f) => ({
         case_id: caseId,
-        title: f.definition?.title ?? f.title ?? "Analyzer finding",
-        category: f.definition?.category ?? systemLabel,
-        summary: f.definition?.description ?? f.summary ?? null,
+        title: f.title,
+        category: systemLabel,
+        summary: f.whyFlagged,
         classification: "unknown",
         status: "open",
         origin: "analyzer",
         source: "Decoded Justice Analyzer",
-        supporting_notes: Array.isArray(f.triggers) ? f.triggers.join("; ") : null,
-        missing_records: Array.isArray(f.missingFacts) ? f.missingFacts.join("; ") : null,
-        next_action: f.definition?.nextAction ?? null,
+        supporting_notes: f.whatWouldNeedToBeTrue.join("; "),
+        missing_records: [...f.evidenceToLookFor, ...f.missingFacts].join("; "),
+        next_action: f.nextStep,
       })) : [{ case_id: caseId, title: `${systemLabel} review`, category: systemId, summary: "Analyzer result saved for further review.", classification: "unknown", status: "open", origin: "analyzer", source: "Decoded Justice Analyzer" }];
       if (selected.length) issueRows.push(...selected.map((module) => ({ case_id: caseId, title: module.title, category: module.category, summary: module.definition, classification: "unknown", status: "open", origin: "issue-library", source: "Decoded Justice Law Modules", supporting_notes: module.elements.join("; "), missing_records: module.evidenceExamples.join("; "), next_action: module.questions.join("; ") })));
       const { error: issueError } = await supabase.from("case_issues").insert(issueRows);
