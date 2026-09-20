@@ -8,6 +8,6 @@
 - [x] Phase 6 — unified sidebar, mobile pass, build + route testing
 
 ## Open follow-ups
-- Wire src/lib/analyzer detection engine into AnalyzerResults + push findings into case_issues as allegation/unknown
-- Explicit link editor UI on top of case_links (relationships are stored but not yet editable in the UI)
-- File uploads inside the case Evidence tab (Evidence Vault still handles uploads)
+- [x] Wire analyzer detection engine output into AnalyzerResults + push findings into case_issues as unknown research leads
+- [x] Explicit link editor UI on top of case_links
+- [x] File uploads inside the case Evidence tab (via shared Evidence RecordManager)
