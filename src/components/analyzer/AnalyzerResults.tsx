@@ -11,7 +11,7 @@ import { SafetyBanner } from "@/components/SafetyBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { getLawModulesForAnalyzer, type LawModule } from "@/lib/law/issueLibrary";
 import { getPoliceLawModules } from "@/lib/law/policeIssueModules";
-import { detectPotentialViolations, type PotentialViolation } from "@/lib/analyzer/violationEngine";
+
 import type { EntityTags } from "@/hooks/useEntityTags";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
 import type { AnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
@@ -27,12 +27,8 @@ interface AnalyzerResultsProps {
 }
 const ToolCard = ({ name, purpose, relevance, link, icon: Icon, isLocked, lockReason }: ToolCardProps) => isLocked ? <div className="p-6 rounded-2xl bg-muted/60 border border-border/50 opacity-60"><div className="flex items-start gap-4"><div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center shrink-0"><Icon className="w-6 h-6 text-muted-foreground" /></div><div className="flex-1"><h4 className="text-lg font-medium text-muted-foreground mb-1">{name}</h4><p className="text-sm text-muted-foreground mb-3">{purpose}</p><p className="text-xs text-muted-foreground italic">{lockReason}</p></div></div></div> : <Link to={link} className="block p-6 rounded-2xl bg-card border border-border hover:border-accent/50 hover:shadow-lg transition-all duration-300 group"><div className="flex items-start gap-4"><div className="w-12 h-12 rounded-xl bg-accent/10 group-hover:bg-accent/20 flex items-center justify-center shrink-0 transition-colors"><Icon className="w-6 h-6 text-accent" /></div><div className="flex-1"><div className="flex items-center justify-between mb-1"><h4 className="text-lg font-medium text-foreground group-hover:text-accent transition-colors">{name}</h4><ArrowRight className="w-4 h-4 text-accent opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" /></div><p className="text-sm text-muted-foreground mb-3">{purpose}</p><div className="pt-3 border-t border-border"><p className="text-xs text-accent font-medium">Shown because: {relevance}</p></div></div></div></Link>;
 
-function mergeAnalyzerFindings(systemId: string, answers: Record<string, string>, aiResults: AnalyzerResultsAI | null, location?: string): PotentialViolation[] {
-  const deterministic = detectPotentialViolations(systemId, answers, location);
-  const ai = aiResults?.potentialViolations ?? [];
-  const byId = new Map<string, PotentialViolation>();
-  [...deterministic, ...ai].forEach((finding) => byId.set(finding.id, finding));
-  return [...byId.values()];
+function mergeAnalyzerFindings(aiResults: AnalyzerResultsAI | null): PotentialViolation[] {
+  return aiResults?.potentialViolations ?? [];
 }
 
 function getPoliceMissingFacts(answers: Record<string, string>): string[] {
@@ -85,7 +81,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     const police = systemId === "police" ? getPoliceLawModules(mergedTriageAnswers) : [];
     return [...base, ...police];
   }, [systemId, mergedTriageAnswers]);
-  const analyzerFindings = useMemo(() => mergeAnalyzerFindings(systemId, mergedTriageAnswers, aiResults, location), [systemId, mergedTriageAnswers, aiResults, location]);
+  const analyzerFindings = useMemo(() => mergeAnalyzerFindings(aiResults), [aiResults]);
 
   const startCaseWorkspace = async (selectedModule?: LawModule) => {
     if (!isLoggedIn) { navigate(`/auth?redirect=/analyzer`); return; }
