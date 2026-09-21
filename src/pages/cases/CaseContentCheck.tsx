@@ -55,6 +55,11 @@ export default function CaseContentCheck() {
       failing: snapshot.communications.filter((c) => c.follow_up_needed && !c.follow_up_date).length,
       tab: "communications",
     },
+    {
+      label: "Key records have at least one explicit relationship",
+      failing: [...snapshot.evidence, ...snapshot.issues, ...snapshot.timeline].filter((row) => !snapshot.links.some((l) => l.from_id === row.id || l.to_id === row.id)).length,
+      tab: "",
+    },
   ];
 
   return (
