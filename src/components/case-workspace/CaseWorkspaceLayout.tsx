@@ -17,6 +17,7 @@ import {
   Compass,
   FileText,
   Download,
+  Link2,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,6 +46,7 @@ const caseTabs = [
   { slug: "content-check", label: "Content Check", icon: ScanSearch },
   { slug: "packets", label: "Packet Builder", icon: PackageOpen },
   { slug: "exports", label: "Export Center", icon: Download },
+  { slug: "relationships", label: "Record Relationships", icon: Link2 },
   { slug: "templates", label: "Pro Se Templates", icon: FileText },
 ];
 
