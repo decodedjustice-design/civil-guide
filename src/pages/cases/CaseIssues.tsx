@@ -14,7 +14,7 @@ export default function CaseIssues() {
         table="case_issues"
         caseId={id}
         addLabel="Add issue"
-        emptyMessage="No issues tracked yet. Anything the Analyzer suggests arrives marked as an allegation or unknown — never as a settled fact."
+        emptyMessage="No issues tracked yet. Analyzer research leads arrive marked unknown — never as a settled fact."
         titleField="title"
         subtitleFields={["summary", "who_made_allegation"]}
         badgeFields={["classification", "status", "origin"]}
