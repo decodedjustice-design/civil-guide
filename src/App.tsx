@@ -59,6 +59,7 @@ import CaseSearch from "./pages/cases/CaseSearch";
 import CaseContentCheck from "./pages/cases/CaseContentCheck";
 import CasePackets from "./pages/cases/CasePackets";
 import CaseExportCenter from "./pages/cases/CaseExportCenter";
+import CaseRelationships from "./pages/cases/CaseRelationships";
 
 const queryClient = new QueryClient();
 
@@ -126,6 +127,7 @@ const App = () => {
               <Route path="/cases/:id/content-check" element={<ProtectedRoute><CaseContentCheck /></ProtectedRoute>} />
               <Route path="/cases/:id/packets" element={<ProtectedRoute><CasePackets /></ProtectedRoute>} />
               <Route path="/cases/:id/exports" element={<ProtectedRoute><CaseExportCenter /></ProtectedRoute>} />
+              <Route path="/cases/:id/relationships" element={<ProtectedRoute><CaseRelationships /></ProtectedRoute>} />
               <Route path="/cases/:id/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
               <Route path="/what-we-are" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
