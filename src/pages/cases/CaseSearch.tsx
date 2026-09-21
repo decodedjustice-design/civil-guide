@@ -17,6 +17,7 @@ const sources = [
   { key: "people", label: "Person", tab: "people", fields: ["name", "role", "organization", "notes"] },
   { key: "organizations", label: "Organization", tab: "people", fields: ["name", "org_type", "notes"] },
   { key: "notes", label: "Note", tab: "", fields: ["title", "content"] },
+  { key: "links", label: "Relationship", tab: "", fields: ["relation", "from_type", "to_type", "from_id", "to_id"] },
 ] as const;
 
 export default function CaseSearch() {
