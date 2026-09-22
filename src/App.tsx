@@ -60,6 +60,7 @@ import CaseContentCheck from "./pages/cases/CaseContentCheck";
 import CasePackets from "./pages/cases/CasePackets";
 import CaseExportCenter from "./pages/cases/CaseExportCenter";
 import CaseRelationships from "./pages/cases/CaseRelationships";
+import AttorneySearch from "./pages/AttorneySearch";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = () => {
               <Route path="/self-help" element={<SelfHelpTools />} />
               <Route path="/rights-insight" element={<RightsInsight />} />
               <Route path="/find-help" element={<FindLegalHelp />} />
+              <Route path="/attorney-search" element={<ProtectedRoute><AttorneySearch /></ProtectedRoute>} />
               <Route path="/legal-help" element={<LegalHelp />} />
               <Route path="/support-network" element={<SupportNetwork />} />
               <Route path="/about" element={<About />} />
@@ -128,6 +130,7 @@ const App = () => {
               <Route path="/cases/:id/packets" element={<ProtectedRoute><CasePackets /></ProtectedRoute>} />
               <Route path="/cases/:id/exports" element={<ProtectedRoute><CaseExportCenter /></ProtectedRoute>} />
               <Route path="/cases/:id/relationships" element={<ProtectedRoute><CaseRelationships /></ProtectedRoute>} />
+              <Route path="/cases/:id/attorneys" element={<ProtectedRoute><AttorneySearch /></ProtectedRoute>} />
               <Route path="/cases/:id/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
               <Route path="/what-we-are" element={<About />} />
               <Route path="/privacy" element={<Privacy />} />
