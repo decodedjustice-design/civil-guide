@@ -7,15 +7,6 @@ import {
   BookOpen,
   Feather,
   FileText,
-  Shield,
-  Car,
-  Home,
-  Heart,
-  Megaphone,
-  GraduationCap,
-  Building2,
-  Lock,
-  Stethoscope,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -31,20 +22,13 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
+import { libraryCategories } from "@/data/legalEducationLibrary";
 
-const educationLinks = [
-  { title: "Police Encounters", url: "/guide/police-full-guide", icon: Shield },
-  { title: "Traffic Stops", url: "/guide/traffic-stops-full-guide", icon: Car },
-  { title: "Courts & Judicial Process", url: "/guide/courts-full-guide", icon: Scale },
-  { title: "Child Welfare / DCYF / CPS", url: "/guide/cps-dcyf-full-guide", icon: Building2 },
-  { title: "Housing Rights", url: "/guide/housing-full-guide", icon: Home },
-  { title: "Disability Rights", url: "/guide/disability-full-guide", icon: Heart },
-  { title: "Protest Rights", url: "/guide/protest-full-guide", icon: Megaphone },
-  { title: "Schools & Student Rights", url: "/guide/education-full-guide", icon: GraduationCap },
-  { title: "Government Agencies & Benefits", url: "/guide/government-full-guide", icon: Building2 },
-  { title: "Jail & Detention", url: "/guide/incarceration-full-guide", icon: Lock },
-  { title: "Medical Care", url: "/guide/healthcare-full-guide", icon: Stethoscope },
-];
+const educationLinks = libraryCategories.map((category) => ({
+  title: category.title,
+  url: `/guide/${category.guideId}`,
+  icon: category.icon,
+}));
 
 const sidebarGroups = [
   {
@@ -70,7 +54,6 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
-  const educationActive = educationLinks.some((item) => location.pathname === item.url);
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border/50">
