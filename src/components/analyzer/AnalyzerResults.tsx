@@ -14,7 +14,7 @@ import { getPoliceLawModules } from "@/lib/law/policeIssueModules";
 
 import type { EntityTags } from "@/hooks/useEntityTags";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
-import type { AnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
+import type { AnalyzerResultsAI, PotentialViolation } from "@/hooks/useAnalyzerResultsAI";
 
 interface ToolCardProps { name: string; purpose: string; relevance: string; link: string; icon: React.ElementType; isLocked?: boolean; lockReason?: string; }
 interface SavedResult { id: string; savedAt: Date; }
@@ -100,6 +100,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const selected = selectedModule ? [selectedModule] : [];
       const issueRows = findings.length ? findings.map((f) => ({
         case_id: targetCaseId,
+        user_id: ownerId,
         title: f.title,
         category: systemLabel,
         summary: f.whyFlagged,
@@ -110,8 +111,8 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         supporting_notes: f.whatWouldNeedToBeTrue.join("; "),
         missing_records: [...f.evidenceToLookFor, ...f.missingFacts].join("; "),
         next_action: f.nextStep,
-      })) : [{ case_id: targetCaseId, title: `${systemLabel} review`, category: systemId, summary: "Analyzer result saved for further review.", classification: "unknown", status: "open", origin: "analyzer", source: "Decoded Justice Analyzer" }];
-      if (selected.length) issueRows.push(...selected.map((module) => ({ case_id: targetCaseId, title: module.title, category: module.category, summary: module.definition, classification: "unknown", status: "open", origin: "issue-library", source: "Decoded Justice Law Modules", supporting_notes: module.elements.join("; "), missing_records: module.evidenceExamples.join("; "), next_action: module.questions.join("; ") })));
+      })) : [{ case_id: targetCaseId, user_id: ownerId, title: `${systemLabel} review`, category: systemId, summary: "Analyzer result saved for further review.", classification: "unknown", status: "open", origin: "analyzer", source: "Decoded Justice Analyzer", supporting_notes: "", missing_records: "", next_action: "" }];
+      if (selected.length) issueRows.push(...selected.map((module) => ({ case_id: targetCaseId, user_id: ownerId, title: module.title, category: module.category, summary: module.definition, classification: "unknown", status: "open", origin: "issue-library", source: "Decoded Justice Law Modules", supporting_notes: module.elements.join("; "), missing_records: module.evidenceExamples.join("; "), next_action: module.questions.join("; ") })));
       const { error: issueError } = await supabase.from("case_issues").insert(issueRows);
       if (issueError) throw issueError;
 

@@ -18,7 +18,6 @@ import {
   FileText,
   Download,
   Link2,
-  Scale,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
