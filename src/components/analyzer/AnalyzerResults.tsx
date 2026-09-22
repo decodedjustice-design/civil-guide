@@ -100,6 +100,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const selected = selectedModule ? [selectedModule] : [];
       const issueRows = findings.length ? findings.map((f) => ({
         case_id: targetCaseId,
+        user_id: ownerId,
         title: f.title,
         category: systemLabel,
         summary: f.whyFlagged,
