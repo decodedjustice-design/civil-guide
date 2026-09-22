@@ -16,6 +16,7 @@ import {
   HelpCircle,
   Wrench,
   FileText,
+  FileSearch,
   ArrowRight
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
@@ -179,6 +180,7 @@ export default function Library() {
               { label: "Analyzer", href: "/analyzer", icon: Scale },
               { label: "Documentation Tools", href: "/tools", icon: Wrench },
               { label: "Public Records", href: "/public-request-rights", icon: FileText },
+              { label: "Justice Research", href: "/justice-research", icon: FileSearch },
             ].map((nav) => (
               <Link
                 key={nav.href}
