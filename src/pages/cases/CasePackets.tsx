@@ -57,7 +57,17 @@ export default function CasePackets() {
         relationships: snapshot.links.map((r) => r.id),
       };
       const labels: Record<string, string> = Object.fromEntries(sectionOptions.map((s) => [s.key, s.label]));
-      return { key: key, label: labels[key] ?? key, record_type: key, record_ids: sourceIds[key] ?? [], record_count: (sourceIds[key] ?? []).length };
+      const sourceRows: Record<string, { id: string; label: string }[]> = {
+        overview: id ? [{ id, label: activeCase?.name ?? "Case" }] : [],
+        issues: snapshot.issues.map((r) => ({ id: r.id, label: r.title || "Untitled issue" })),
+        timeline: snapshot.timeline.map((r) => ({ id: r.id, label: r.title || "Untitled timeline entry" })),
+        evidence: exportEvidence.map((r) => ({ id: r.id, label: `${exhibitLabel(r.exhibit_number)} — ${r.title || "Untitled exhibit"}` })),
+        people: [...snapshot.people, ...snapshot.organizations].map((r) => ({ id: r.id, label: r.name || "Unnamed person or organization" })),
+        communications: snapshot.communications.map((r) => ({ id: r.id, label: r.subject || "Untitled communication" })),
+        requests: snapshot.requests.map((r) => ({ id: r.id, label: r.request_title || "Untitled request" })),
+        relationships: snapshot.links.map((r) => ({ id: r.id, label: `${r.from_type} → ${r.relation} → ${r.to_type}` })),
+      };
+      return { key: key, label: labels[key] ?? key, record_type: key, record_ids: sourceIds[key] ?? [], source_records: sourceRows[key] ?? [], record_count: (sourceIds[key] ?? []).length };
     }),
     totals: {
       issues: snapshot.issues.length,
@@ -71,7 +81,7 @@ export default function CasePackets() {
     },
   });
 
-  const provenanceRows = () => provenance().sections.map((s: any) => `<div class="item"><h3>${esc(s.label)}</h3><p class="meta">${s.record_count} source record${s.record_count === 1 ? "" : "s"}</p><p class="source-list">${s.record_ids.length ? s.record_ids.map((rid: string) => esc(rid)).join(" · ") : "No source records in this section."}</p></div>`).join("");
+  const provenanceRows = () => provenance().sections.map((s: any) => `<div class="item"><h3>${esc(s.label)}</h3><p class="meta">${s.record_count} source record${s.record_count === 1 ? "" : "s"}</p>${s.source_records.length ? `<ul class="source-list">${s.source_records.map((r: any) => `<li><strong>${esc(r.label)}</strong> <span>(${esc(r.id)})</span></li>`).join("")}</ul>` : "<p class='source-list'>No source records in this section.</p>"}</div>`).join("");
 
   useEffect(() => {
     setSavedPacketId(null);
