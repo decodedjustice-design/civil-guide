@@ -151,7 +151,6 @@ export default function CasePackets() {
           <Button variant="outline" onClick={print} disabled={selected.length === 0}><Printer className="h-4 w-4 mr-2" />Print / save as PDF</Button>
         </div>
       </CardContent></Card>
-      <Card><CardContent c
       <Card><CardContent className="p-5"><div className="flex items-center gap-2 mb-2"><Eye className="h-4 w-4 text-primary" /><h2 className="font-serif text-lg">Source tracing</h2></div><p className="text-xs text-muted-foreground mb-4">Review the exact case-record IDs represented in each selected section before saving or exporting.</p><div className="space-y-2">{provenance().sections.map((s: any) => <div key={s.key} className="rounded-lg border p-3"><div className="flex justify-between gap-3"><span className="font-medium text-sm">{s.label}</span><span className="text-xs text-muted-foreground">{s.record_count} source record{s.record_count === 1 ? "" : "s"}</span></div><p className="mt-1 text-[11px] font-mono break-all text-muted-foreground">{s.record_ids.length ? s.record_ids.join(" · ") : "No source records"}</p></div>)}</div></CardContent></Card>
     </div>}
   </CaseWorkspaceLayout>;
