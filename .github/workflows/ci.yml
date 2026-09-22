@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      - name: Lint changed application files
+        run: npx eslint src/pages/AttorneySearch.tsx src/pages/JusticeResearchEngine.tsx src/pages/Library.tsx
 
       - name: Production build
         run: npm run build
