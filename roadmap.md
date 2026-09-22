@@ -11,3 +11,10 @@
 - [x] Wire analyzer detection engine output into AnalyzerResults + push findings into case_issues as unknown research leads
 - [x] Explicit link editor UI on top of case_links
 - [x] File uploads inside the case Evidence tab (via shared Evidence RecordManager)
+
+### Case intelligence / provenance layer
+- [x] Record inspector showing stored provenance fields and current packet inclusion state
+- [x] Show explicit record-to-record relationships from the case graph on each record
+- [x] Add timeline source exhibit/source-type fields
+- [x] Include record relationships in packet output
+- [x] Include relationships in unified record search and content checks
