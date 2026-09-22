@@ -39,6 +39,8 @@ export default function CaseTimeline() {
           { key: "importance", label: "Importance", type: "select", options: IMPORTANCE_LEVELS },
           { key: "reviewed", label: "Reviewed", type: "checkbox", placeholder: "I've checked this against a record" },
           { key: "disputed", label: "Disputed", type: "checkbox", placeholder: "Accounts conflict on this" },
+          { key: "source_evidence_id", label: "Source exhibit ID", type: "text", placeholder: "e.g. EX-03", help: "Optional pointer to the exhibit that documents this event." },
+          { key: "source_type", label: "Source type", type: "text", placeholder: "Report, email, order, recording, firsthand account" },
           { key: "reason", label: "Why this matters", type: "textarea" },
         ]}
       />
