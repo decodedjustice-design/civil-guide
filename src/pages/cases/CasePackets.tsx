@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Download, Printer, FileText, RefreshCw, Save } from "lucide-react";
+import { Download, Printer, FileText, RefreshCw, Save, Eye } from "lucide-react";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,41 @@ export default function CasePackets() {
   const [saving, setSaving] = useState(false);
   const [building, setBuilding] = useState(false);
 
+  const exportEvidence = snapshot.evidence.filter((e) => e.include_in_export !== false);
+
+  const provenance = () => ({
+    schema_version: 1,
+    generated_at: new Date().toISOString(),
+    case_id: id,
+    case_name: activeCase?.name ?? null,
+    sections: selected.map((key) => {
+      const sourceIds: Record<string, string[]> = {
+        overview: id ? [id] : [],
+        issues: snapshot.issues.map((r) => r.id),
+        timeline: snapshot.timeline.map((r) => r.id),
+        evidence: exportEvidence.map((r) => r.id),
+        people: [...snapshot.people, ...snapshot.organizations].map((r) => r.id),
+        communications: snapshot.communications.map((r) => r.id),
+        requests: snapshot.requests.map((r) => r.id),
+        relationships: snapshot.links.map((r) => r.id),
+      };
+      const labels: Record<string, string> = Object.fromEntries(sectionOptions.map((s) => [s.key, s.label]));
+      return { key: key, label: labels[key] ?? key, record_type: key, record_ids: sourceIds[key] ?? [], record_count: (sourceIds[key] ?? []).length };
+    }),
+    totals: {
+      issues: snapshot.issues.length,
+      timeline: snapshot.timeline.length,
+      exhibits: exportEvidence.length,
+      people: snapshot.people.length,
+      organizations: snapshot.organizations.length,
+      communications: snapshot.communications.length,
+      requests: snapshot.requests.length,
+      relationships: snapshot.links.length,
+    },
+  });
+
+  const provenanceRows = () => provenance().sections.map((s: any) => `<div class="item"><h3>${esc(s.label)}</h3><p class="meta">${s.record_count} source record${s.record_count === 1 ? "" : "s"}</p><p class="source-list">${s.record_ids.length ? s.record_ids.map((rid: string) => esc(rid)).join(" · ") : "No source records in this section."}</p></div>`).join("");
+
   useEffect(() => {
     setSavedPacketId(null);
   }, [id]);
@@ -55,7 +90,8 @@ export default function CasePackets() {
     if (selected.includes("communications")) parts.push(`<section><h2>Communications log</h2>${rows(snapshot.communications, (c) => `<div class="item"><h3>${esc(c.occurred_on)} — ${esc(c.subject)}</h3><p class="meta">${esc(c.method)}${c.person ? ` · ${esc(c.person)}` : ""}</p><p>${esc(c.summary)}</p></div>`)}</section>`);
     if (selected.includes("requests")) parts.push(`<section><h2>Requests &amp; deadlines</h2>${rows(snapshot.requests, (r) => `<div class="item"><h3>${esc(r.request_title)}</h3><p class="meta">${esc(r.status)}${r.due_date ? ` · due ${esc(r.due_date)}` : ""}</p><p>${esc(r.description)}</p></div>`)}</section>`);
     if (selected.includes("relationships")) parts.push(`<section><h2>Record relationships</h2>${rows(snapshot.links, (l) => `<div class="item"><h3>${esc(l.from_type)} → ${esc(l.relation)} → ${esc(l.to_type)}</h3><p class="meta">${esc(l.from_id)} · ${esc(l.to_id)}</p></div>`)}</section>`);
-    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(title || activeCase?.name || "Case packet")}</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 24px;color:#241c17;line-height:1.55}h1{font-size:28px;margin-bottom:4px}h2{font-size:19px;border-bottom:1px solid #d9cfc4;padding-bottom:6px;margin-top:36px}h3{font-size:15px;margin:0 0 2px}.meta{font-size:12px;color:#7a6a5d;margin:0 0 6px}.item{margin:0 0 18px}.empty{color:#7a6a5d;font-style:italic}.notice{background:#f6f1ea;padding:14px;border-radius:8px;font-size:12px;color:#5b4b40}</style></head><body><h1>${esc(title || activeCase?.name || "Case packet")}</h1><p class="meta">Case: ${esc(activeCase?.name)} · Prepared ${esc(new Date().toLocaleDateString())}</p><p class="notice">Educational record only. Items retain the classification entered in the workspace. This packet does not make a legal finding or provide legal advice.</p>${parts.join("")}</body></html>`;
+    parts.push(`<section><h2>Packet provenance</h2><p class="notice">This audit trail records which case records were included when this packet was generated. It does not establish the truth of any record or legal conclusion.</p>${provenanceRows()}</section>`);
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(title || activeCase?.name || "Case packet")}</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 24px;color:#241c17;line-height:1.55}h1{font-size:28px;margin-bottom:4px}h2{font-size:19px;border-bottom:1px solid #d9cfc4;padding-bottom:6px;margin-top:36px}h3{font-size:15px;margin:0 0 2px}.meta{font-size:12px;color:#7a6a5d;margin:0 0 6px}.item{margin:0 0 18px}.empty{color:#7a6a5d;font-style:italic}.source-list{font-family:monospace;font-size:10px;word-break:break-all}.notice{background:#f6f1ea;padding:14px;border-radius:8px;font-size:12px;color:#5b4b40}</style></head><body><h1>${esc(title || activeCase?.name || "Case packet")}</h1><p class="meta">Case: ${esc(activeCase?.name)} · Prepared ${esc(new Date().toLocaleDateString())}</p><p class="notice">Educational record only. Items retain the classification entered in the workspace. This packet does not make a legal finding or provide legal advice.</p>${parts.join("")}</body></html>`;
   };
 
   const savePacket = async () => {
@@ -63,7 +99,8 @@ export default function CasePackets() {
     setSaving(true);
     try {
       const generatedHtml = buildHtml();
-      const payload = { title: title || "Attorney Case Packet", packet_type: "attorney", sections: selected, options: { include_exhibits: true }, content: { generated_at: new Date().toISOString(), section_count: selected.length, html: generatedHtml } };
+      const manifest = provenance();
+      const payload = { title: title || "Attorney Case Packet", packet_type: "attorney", sections: selected, options: { include_exhibits: true }, content: { generated_at: manifest.generated_at, section_count: selected.length, html: generatedHtml, provenance: manifest } };
       if (savedPacketId) {
         const { error } = await supabase.from("case_packets").update(payload).eq("id", savedPacketId);
         if (error) throw error;
@@ -112,7 +149,7 @@ export default function CasePackets() {
           <Button variant="outline" onClick={print} disabled={selected.length === 0}><Printer className="h-4 w-4 mr-2" />Print / save as PDF</Button>
         </div>
       </CardContent></Card>
-      <Card><CardContent className="p-5"><div className="flex items-center justify-between mb-3"><div><h2 className="font-serif text-lg">Packet contents</h2><p className="text-xs text-muted-foreground">{selected.length} sections selected · {snapshot.evidence.filter((e) => e.include_in_export !== false).length} exhibits · {snapshot.links.length} relationships</p></div><Button variant="ghost" size="sm" onClick={() => setSelected(sectionOptions.map((s) => s.key))}><RefreshCw className="h-4 w-4 mr-2" />Select all</Button></div><ol className="space-y-2 text-sm">{snapshot.evidence.filter((e) => e.include_in_export !== false).map((e) => <li key={e.id} className="flex items-center gap-2"><span className="font-mono text-xs text-primary">{exhibitLabel(e.exhibit_number)}</span><span>{e.title}</span><span className="ml-auto text-xs text-muted-foreground">{e.review_status ?? "needs review"}</span></li>)}</ol></CardContent></Card>
+      <Card><CardContent className="p-5"><div className="flex items-center justify-between mb-3"><div><h2 className="font-serif text-lg">Packet contents</h2><p className="text-xs text-muted-foreground">{selected.length} sections selected · {exportEvidence.length} exhibits · {snapshot.links.length} relationships</p></div><Button variant="ghost" size="sm" onClick={() => setSelected(sectionOptions.map((s) => s.key))}><RefreshCw className="h-4 w-4 mr-2" />Select all</Button></div><ol className="space-y-2 text-sm">{snapshot.evidence.filter((e) => e.include_in_export !== false).map((e) => <li key={e.id} className="flex items-center gap-2"><span className="font-mono text-xs text-primary">{exhibitLabel(e.exhibit_number)}</span><span>{e.title}</span><span className="ml-auto text-xs text-muted-foreground">{e.review_status ?? "needs review"}</span></li>)}</ol></CardContent></Card>
     </div>}
   </CaseWorkspaceLayout>;
 }
