@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { Search, Filter, UserPlus, Phone, ExternalLink, BriefcaseBusiness, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Search, Filter, UserPlus, Phone, ExternalLink, BriefcaseBusiness, Tag, AlertTriangle } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,8 +32,9 @@ function fitLabels(attorney: Attorney, caseAreas: string[]) {
 }
 
 export default function AttorneySearch() {
+  const { id: pathCaseId } = useParams();
   const [params] = useSearchParams();
-  const caseId = params.get("caseId");
+  const caseId = params.get("caseId") ?? pathCaseId;
   const { user } = useAuth();
   const { toast } = useToast();
   const { snapshot } = useCaseSnapshot(caseId ?? undefined);
@@ -54,10 +55,7 @@ export default function AttorneySearch() {
         && (county === "all" || a.counties.includes(county))
         && (fee === "all" || a.feeTypes.includes(fee));
     })
-    .sort((a, b) => {
-      if (!caseAreas.length) return a.firm.localeCompare(b.firm);
-      return fitLabels(b, caseAreas).length - fitLabels(a, caseAreas).length || a.firm.localeCompare(b.firm);
-    }), [query, practice, county, fee, caseAreas]);
+    .sort((a, b) => a.firm.localeCompare(b.firm) || a.name.localeCompare(b.name)), [query, practice, county, fee]);
 
   const trackContact = async (attorney: Attorney) => {
     if (!user) {
@@ -118,7 +116,7 @@ export default function AttorneySearch() {
             <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
             <div className="text-sm space-y-1">
               <p className="font-medium">Directory verification is required</p>
-              <p className="text-muted-foreground">The current attorney records are legacy seeded directory data. Decoded Justice has not independently verified each attorney's current license status, availability, fees, or contact information. Verify those details directly before relying on them.</p>
+              <p className="text-muted-foreground">Directory records were refreshed from public sources on September 22, 2026. Decoded Justice does not guarantee current license status, availability, fees, contact information, or case acceptance. Verify those details directly before relying on them.</p>
             </div>
           </CardContent>
         </Card>
@@ -160,7 +158,7 @@ export default function AttorneySearch() {
                     <div className="min-w-0 flex-1 space-y-3">
                       <div><h2 className="text-lg font-medium">{attorney.name}</h2><p className="text-sm text-muted-foreground">{attorney.firm} · {attorney.city}, WA</p></div>
                       <div className="flex flex-wrap gap-1.5">{attorney.practiceAreas.map((v) => <Badge key={v} variant="secondary">{v}</Badge>)}</div>
-                      {overlap.length > 0 && <div className="flex items-center gap-2 text-xs text-primary"><ShieldCheck className="h-3.5 w-3.5" /> Descriptive overlap with this case: {overlap.join(", ")}</div>}
+                      {overlap.length > 0 && <div className="flex items-center gap-2 text-xs text-primary"><Tag className="h-3.5 w-3.5" /> Practice-area overlap with this case: {overlap.join(", ")}</div>}
                       <p className="text-sm text-muted-foreground">{attorney.description ?? "No directory description supplied."}</p>
                       <div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1"><BriefcaseBusiness className="h-3.5 w-3.5" /> {attorney.counties.join(", ")} counties</span><span>Fees listed: {attorney.feeTypes.join(", ")}</span></div>
                     </div>
