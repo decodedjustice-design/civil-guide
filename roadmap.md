@@ -18,3 +18,8 @@
 - [x] Add timeline source exhibit/source-type fields
 - [x] Include record relationships in packet output
 - [x] Include relationships in unified record search and content checks
+
+- [x] Save a packet provenance manifest with case ID, selected sections, source record IDs, counts, and generation timestamp
+- [x] Add source record IDs to exported packet items for item-level traceability
+- [x] Add pre-export source tracing in Packet Builder
+- [x] Add saved-packet source audit in Export Center
