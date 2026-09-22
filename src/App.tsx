@@ -62,6 +62,7 @@ import CasePackets from "./pages/cases/CasePackets";
 import CaseExportCenter from "./pages/cases/CaseExportCenter";
 import CaseRelationships from "./pages/cases/CaseRelationships";
 import AttorneySearch from "./pages/AttorneySearch";
+import JusticeResearchEngine from "./pages/JusticeResearchEngine";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +86,7 @@ const App = () => {
               <Route path="/rights-insight" element={<RightsInsight />} />
               <Route path="/find-help" element={<FindLegalHelp />} />
               <Route path="/attorney-search" element={<ProtectedRoute><AttorneySearch /></ProtectedRoute>} />
+              <Route path="/justice-research" element={<JusticeResearchEngine />} />
               <Route path="/legal-help" element={<LegalHelp />} />
               <Route path="/support-network" element={<SupportNetwork />} />
               <Route path="/about" element={<About />} />
