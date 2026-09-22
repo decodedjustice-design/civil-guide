@@ -1,13 +1,16 @@
 import { Link, useParams } from "react-router-dom";
-import { Download, FileText, PackageOpen, ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { Download, FileText, PackageOpen, ArrowLeft, Eye } from "lucide-react";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCaseCollection } from "@/hooks/useCases";
 
 export default function CaseExportCenter() {
   const { id } = useParams();
+  const [inspectPacket, setInspectPacket] = useState<any | null>(null);
   const { items, isLoading } = useCaseCollection<any>(
     "case_packets",
     id,
