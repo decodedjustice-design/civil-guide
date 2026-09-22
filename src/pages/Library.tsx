@@ -109,6 +109,41 @@ export default function Library() {
           </div>
         </div>
 
+        {/* Quick-start compass */}
+        <div className="max-w-3xl mx-auto mb-12">
+          <div className="rounded-2xl border border-primary/15 bg-gradient-to-br from-card via-card to-secondary/30 p-5 sm:p-6 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Route className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-serif text-lg text-foreground">Where do you want to go?</h2>
+                <p className="text-xs text-muted-foreground">Pick a starting point. You can change direction anytime.</p>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              {[
+                { label: "Understand my rights", detail: "Start with plain-language guides.", href: "/rights-insight" },
+                { label: "Make sense of what happened", detail: "Turn your story into structured questions.", href: "/analyzer" },
+                { label: "Find the actual authority", detail: "Research statutes, rules, and sources.", href: "/justice-research" },
+                { label: "Build my record", detail: "Organize evidence, dates, and documents.", href: "/tools" },
+              ].map((path) => (
+                <Link
+                  key={path.href}
+                  to={path.href}
+                  className="group rounded-xl border border-border/70 bg-background/40 p-4 hover:border-primary/30 hover:bg-primary/5 hover:-translate-y-0.5 transition-all"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{path.label}</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{path.detail}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Section Card Grid */}
         <div className="max-w-3xl mx-auto space-y-3">
           {libraryContent.map((section) => {
