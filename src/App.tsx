@@ -20,6 +20,7 @@ import Notes from "./pages/Notes";
 import EvidenceVault from "./pages/EvidenceVault";
 import Timeline from "./pages/Timeline";
 import FullGuide from "./pages/FullGuide";
+import GovernmentBenefitsGuide from "./pages/GovernmentBenefitsGuide";
 import Library from "./pages/Library";
 import Transcription from "./pages/Transcription";
 import Tools from "./pages/Tools";
@@ -93,6 +94,7 @@ const App = () => {
               <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
               <Route path="/evidence-vault" element={<ProtectedRoute><EvidenceVault /></ProtectedRoute>} />
               <Route path="/timeline" element={<ProtectedRoute><Timeline /></ProtectedRoute>} />
+              <Route path="/guide/government-full-guide" element={<GovernmentBenefitsGuide />} />
               <Route path="/guide/:guideId" element={<FullGuide />} />
               <Route path="/library" element={<Library />} />
               <Route path="/education-library" element={<EducationLibrary />} />
