@@ -64,21 +64,51 @@ export default function CaseExportCenter() {
                   <p className="font-medium text-foreground truncate">{packet.title || "Case packet"}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {packet.packet_type || "packet"} · {packet.sections?.length ?? 0} sections ·{" "}
+                    {packet.content?.provenance?.totals?.exhibits ?? "—"} exhibits ·{" "}
                     {packet.created_at ? new Date(packet.created_at).toLocaleString() : "Saved"}
                   </p>
                 </div>
-                {packet.content?.html ? (
-                  <Button size="sm" onClick={() => downloadPacket(packet)}>
-                    <Download className="h-4 w-4 mr-2" /> Export
-                  </Button>
-                ) : (
-                  <span className="text-xs text-muted-foreground">Metadata-only save</span>
-                )}
+                <div className="flex gap-2">
+                  {packet.content?.provenance ? (
+                    <Button variant="outline" size="sm" onClick={() => setInspectPacket(packet)}>
+                      <Eye className="h-4 w-4 mr-2" /> Source audit
+                    </Button>
+                  ) : null}
+                  {packet.content?.html ? (
+                    <Button size="sm" onClick={() => downloadPacket(packet)}>
+                      <Download className="h-4 w-4 mr-2" /> Export
+                    </Button>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Metadata-only save</span>
+                  )}
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+      <Dialog open={!!inspectPacket} onOpenChange={(open) => !open && setInspectPacket(null)}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Packet source audit</DialogTitle></DialogHeader>
+          {inspectPacket?.content?.provenance ? (
+            <div className="space-y-4 text-sm">
+              <div className="rounded-lg border p-3">
+                <p><strong>Case:</strong> {inspectPacket.content.provenance.case_name || "Case"}</p>
+                <p><strong>Case ID:</strong> <span className="font-mono text-xs">{inspectPacket.content.provenance.case_id}</span></p>
+                <p><strong>Generated:</strong> {new Date(inspectPacket.content.provenance.generated_at).toLocaleString()}</p>
+              </div>
+              <div className="space-y-3">
+                {inspectPacket.content.provenance.sections.map((section: any) => (
+                  <div key={section.key} className="rounded-lg border p-3">
+                    <div className="flex justify-between gap-3"><span className="font-medium">{section.label}</span><span className="text-xs text-muted-foreground">{section.record_count} source record{section.record_count === 1 ? "" : "s"}</span></div>
+                    <p className="mt-2 text-[11px] font-mono break-all text-muted-foreground">{section.record_ids.length ? section.record_ids.join(" · ") : "No source records"}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </CaseWorkspaceLayout>
   );
 }
