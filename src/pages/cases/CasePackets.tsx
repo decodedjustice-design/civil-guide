@@ -80,7 +80,9 @@ export default function CasePackets() {
   const toggle = (key: string) => setSelected((prev) => prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]);
 
   const buildHtml = () => {
-    const rows = (items: any[], render: (i: any) => string) => items.length ? items.map(render).join("") : "<p class='empty'>Nothing recorded.</p>";
+    const rows = (items: any[], render: (i: any) => string) => items.length
+      ? items.map((i) => render(i).replace('<div class="item"', `<div class="item" data-record-id="${esc(i.id)}"`)).join("")
+      : "<p class='empty'>Nothing recorded.</p>";
     const parts: string[] = [];
     if (selected.includes("overview")) parts.push(`<section><h2>Case overview</h2><p><strong>${esc(activeCase?.name)}</strong></p><p>${esc(activeCase?.description)}</p><p>${esc([activeCase?.county, activeCase?.state].filter(Boolean).join(", "))}</p></section>`);
     if (selected.includes("issues")) parts.push(`<section><h2>Claims &amp; issues</h2>${rows(snapshot.issues, (i) => `<div class="item"><h3>${esc(i.title)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[i.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")} · ${esc(i.status)}</p><p>${esc(i.summary)}</p><p><strong>Supporting:</strong> ${esc(i.supporting_notes)}</p><p><strong>Still unknown:</strong> ${esc(i.missing_records)}</p></div>`)}</section>`);
