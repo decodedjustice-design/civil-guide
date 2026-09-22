@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Plus, Pencil, Trash2, Upload, FileText, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, FileText, Download, Eye, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCaseCollection } from "@/hooks/useCases";
+import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { classificationBadgeClass } from "@/lib/case/classification";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,6 +63,8 @@ export function RecordManager({
   enableFileUpload = false,
 }: RecordManagerProps) {
   const { items, isLoading, add, update, remove } = useCaseCollection<any>(table, caseId, orderBy);
+  const { snapshot } = useCaseSnapshot(caseId);
+  const [viewingItem, setViewingItem] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [values, setValues] = useState<Record<string, any>>(emptyValues(fields));
@@ -196,6 +199,7 @@ export function RecordManager({
                     )}
                   </div>
                   <div className="flex gap-2 shrink-0">
+                    <Button variant="ghost" size="sm" onClick={() => setViewingItem(item)}><Eye className="w-4 h-4" /><span className="sr-only">View record</span></Button>
                     <Button variant="ghost" size="sm" onClick={() => openEdit(item)}><Pencil className="w-4 h-4" /><span className="sr-only">Edit</span></Button>
                     <Button variant="ghost" size="sm" onClick={() => remove.mutate(item.id)} aria-label="Remove"><Trash2 className="w-4 h-4 text-muted-foreground" /></Button>
                   </div>
@@ -205,6 +209,50 @@ export function RecordManager({
           ))}
         </div>
       )}
+
+      <Dialog open={Boolean(viewingItem)} onOpenChange={(next) => !next && setViewingItem(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{viewingItem?.[titleField] || "Record"}</DialogTitle>
+            <DialogDescription>Record detail, provenance fields, and connections stored in this case.</DialogDescription>
+          </DialogHeader>
+          {viewingItem && (
+            <div className="space-y-5">
+              <div className="grid sm:grid-cols-2 gap-3">
+                {fields.filter((f) => viewingItem[f.key] !== null && viewingItem[f.key] !== undefined && viewingItem[f.key] !== "").map((f) => (
+                  <div key={f.key} className="rounded-lg border p-3">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{f.label}</p>
+                    <p className="text-sm text-foreground mt-1 whitespace-pre-wrap break-words">{f.type === "checkbox" ? (viewingItem[f.key] ? "Yes" : "No") : String(f.options?.find((o) => o.value === viewingItem[f.key])?.label ?? viewingItem[f.key])}</p>
+                  </div>
+                ))}
+              </div>
+              {table === "evidence" && (
+                <div className="rounded-lg border p-4">
+                  <p className="text-sm font-medium flex items-center gap-2"><FileText className="h-4 w-4" />Packet status</p>
+                  <p className="text-xs text-muted-foreground mt-1">{viewingItem.include_in_export === false ? "Excluded from packet exports by current setting." : "Included in packet exports when the Exhibit Index section is selected."}</p>
+                </div>
+              )}
+              {(() => {
+                const links = snapshot.links.filter((l: any) => l.from_id === viewingItem.id || l.to_id === viewingItem.id);
+                const labelFor = (type: string, id: string) => {
+                  const source: Record<string, any[]> = { timeline: snapshot.timeline, evidence: snapshot.evidence, issue: snapshot.issues, person: snapshot.people, organization: snapshot.organizations, communication: snapshot.communications, request: snapshot.requests, note: snapshot.notes };
+                  const row = source[type]?.find((r: any) => r.id === id);
+                  return row?.title || row?.name || row?.subject || row?.request_title || "Linked record";
+                };
+                return <div className="space-y-2">
+                  <p className="text-sm font-medium flex items-center gap-2"><Link2 className="h-4 w-4" />Connected records</p>
+                  {links.length === 0 ? <p className="text-xs text-muted-foreground">No explicit relationships recorded yet.</p> : links.map((link: any) => {
+                    const outgoing = link.from_id === viewingItem.id;
+                    const otherType = outgoing ? link.to_type : link.from_type;
+                    const otherId = outgoing ? link.to_id : link.from_id;
+                    return <div key={link.id} className="rounded-lg border p-3 text-sm flex items-center gap-2"><span className="text-muted-foreground">{outgoing ? "This record" : labelFor(otherType, otherId)}</span><span className="text-primary text-xs">{link.relation}</span><span>{outgoing ? labelFor(otherType, otherId) : "This record"}</span></div>;
+                  })}
+                </div>;
+              })()}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
