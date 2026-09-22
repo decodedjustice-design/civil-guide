@@ -101,7 +101,18 @@ export default function CaseExportCenter() {
                 {inspectPacket.content.provenance.sections.map((section: any) => (
                   <div key={section.key} className="rounded-lg border p-3">
                     <div className="flex justify-between gap-3"><span className="font-medium">{section.label}</span><span className="text-xs text-muted-foreground">{section.record_count} source record{section.record_count === 1 ? "" : "s"}</span></div>
-                    <p className="mt-2 text-[11px] font-mono break-all text-muted-foreground">{section.record_ids.length ? section.record_ids.join(" · ") : "No source records"}</p>
+                    {section.source_records?.length ? (
+                      <ul className="mt-2 space-y-1 text-xs">
+                        {section.source_records.map((record: any) => (
+                          <li key={record.id} className="break-words">
+                            <span className="font-medium text-foreground">{record.label}</span>{" "}
+                            <span className="font-mono text-[10px] text-muted-foreground">({record.id})</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-2 text-[11px] text-muted-foreground">No source records</p>
+                    )}
                   </div>
                 ))}
               </div>
