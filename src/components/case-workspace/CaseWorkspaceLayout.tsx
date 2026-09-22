@@ -18,6 +18,7 @@ import {
   FileText,
   Download,
   Link2,
+  Scale,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,6 +48,7 @@ const caseTabs = [
   { slug: "packets", label: "Packet Builder", icon: PackageOpen },
   { slug: "exports", label: "Export Center", icon: Download },
   { slug: "relationships", label: "Record Relationships", icon: Link2 },
+  { slug: "attorneys", label: "Attorney Search", icon: Scale },
   { slug: "templates", label: "Pro Se Templates", icon: FileText },
 ];
 
@@ -121,7 +123,7 @@ export function CaseWorkspaceLayout({ title, description, children }: Props) {
               {caseTabs.map((tab) => (
                 <NavLink
                   key={tab.slug || "overview"}
-                  to={tab.slug === "templates" ? `/legal-templates?case=${caseId}` : `/cases/${caseId}${tab.slug ? `/${tab.slug}` : ""}`}
+                  to={tab.slug === "attorneys" ? `/cases/${caseId}/attorneys` : tab.slug === "templates" ? `/legal-templates?case=${caseId}` : `/cases/${caseId}${tab.slug ? `/${tab.slug}` : ""}`}
                   end={tab.slug === ""}
                   className={({ isActive }) =>
                     cn(
