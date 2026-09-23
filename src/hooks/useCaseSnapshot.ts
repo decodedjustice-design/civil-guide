@@ -15,48 +15,42 @@ export interface CaseSnapshot {
 }
 
 const empty: CaseSnapshot = {
-  evidence: [],
-  timeline: [],
-  issues: [],
-  people: [],
-  organizations: [],
-  communications: [],
-  requests: [],
-  record_gaps: [],
-  notes: [],
-  links: [],
+  evidence: [], timeline: [], issues: [], people: [], organizations: [],
+  communications: [], requests: [], record_gaps: [], notes: [], links: [],
 };
 
-/** Loads every collection for one case — used by Overview, Search, Content Check and Packets. */
+/** Canonical Milestone 1B case snapshot used across workspace screens. */
 export function useCaseSnapshot(caseId?: string) {
   const query = useQuery({
     queryKey: ["case-snapshot", caseId],
     enabled: !!caseId,
     queryFn: async (): Promise<CaseSnapshot> => {
-      const tables: [keyof CaseSnapshot, string, string][] = [
-        ["evidence", "evidence", "exhibit_number"],
-        ["timeline", "timeline_entries", "event_date"],
-        ["issues", "case_issues", "created_at"],
-        ["people", "case_people", "name"],
-        ["organizations", "case_organizations", "name"],
-        ["communications", "case_communications", "occurred_on"],
-        ["requests", "case_records_requests", "due_date"],
-        ["record_gaps", "case_record_gaps", "due_date"],
-        ["notes", "notes", "created_at"],
-        ["links", "case_links", "created_at"],
-      ];
-      const results = await Promise.all(
-        tables.map(async ([, table, order]) => {
-          const { data, error } = await (supabase as any)
-            .from(table)
-            .select("*")
-            .eq("case_id", caseId)
-            .order(order, { ascending: true, nullsFirst: false });
-          if (error) throw error;
-          return data ?? [];
-        })
-      );
-      return tables.reduce((acc, [key], i) => ({ ...acc, [key]: results[i] }), { ...empty });
+      if (!caseId) return empty;
+      const load = async (table: string, order: string, extra?: (q: any) => any) => {
+        let q = (supabase as any).from(table).select("*").eq("case_id", caseId);
+        if (extra) q = extra(q);
+        const { data, error } = await q.order(order, { ascending: true, nullsFirst: false });
+        if (error) throw error;
+        return data ?? [];
+      };
+
+      const [evidence, timeline, issues, people, organizations, communications, requests, record_gaps, links] =
+        await Promise.all([
+          load("documents", "exhibit_number"),
+          load("events", "occurred_at"),
+          load("issues", "created_at"),
+          load("people", "display_name"),
+          load("organizations", "name"),
+          load("communications", "occurred_at"),
+          load("record_requests", "due_at"),
+          load("tasks", "due_at", (q) => q.eq("task_type", "record_gap")),
+          load("case_relationships", "created_at"),
+        ]);
+
+      return {
+        evidence, timeline, issues, people, organizations,
+        communications, requests, record_gaps, notes: [], links,
+      };
     },
   });
 
