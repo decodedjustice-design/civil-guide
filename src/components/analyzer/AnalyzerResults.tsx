@@ -100,7 +100,6 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const selected = selectedModule ? [selectedModule] : [];
       const issueRows = findings.length ? findings.map((f) => ({
         case_id: targetCaseId,
-        user_id: ownerId,
         title: f.title,
         category: systemLabel,
         description: f.whyFlagged,
@@ -122,13 +121,11 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       if (!userId) throw new Error("Your session expired. Please sign in again.");
 
       const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
-      const { error: noteError } = await supabase.from("notes").insert({ user_id: userId, case_id: targetCaseId, title: `Triage notes — ${systemLabel}`, content: noteContent });
-      if (noteError) throw noteError;
-      const { error: timelineError } = await supabase.from("timeline_entries").insert({ user_id: userId, case_id: targetCaseId, title: "Triage completed", description: `Analyzer triage completed for ${systemLabel}. The answers were preserved as case notes and potential issues were added for review.`, event_date: new Date().toISOString().split("T")[0], classification: "unknown" });
+      const { error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event." });
       if (timelineError) throw timelineError;
       const { error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "analyzer_intake", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true });
       if (evidenceError) throw evidenceError;
-      const packetContent = { generated_at: new Date().toISOString(), source: "analyzer", system: systemLabel, answers: mergedTriageAnswers, selected_issue_modules: selected.map((m) => m.id), sections: ["overview", "issues", "timeline", "notes", "evidence"], note: "Draft organizational packet. It does not establish that a legal violation occurred." };
+      const packetContent = { generated_at: new Date().toISOString(), source: "analyzer", system: systemLabel, answers: mergedTriageAnswers, selected_issue_modules: selected.map((m) => m.id), sections: ["overview", "issues", "timeline", "evidence"], note: "Draft organizational packet. It does not establish that a legal violation occurred." };
       const { error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, title: `${systemLabel} triage packet`, packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: packetContent });
       if (packetError) throw packetError;
 
