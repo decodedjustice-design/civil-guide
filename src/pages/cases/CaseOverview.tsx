@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { classificationBadgeClass, exhibitLabel } from "@/lib/case/classification";
 import { CaseRelationshipEditor } from "@/components/case-workspace/CaseRelationshipEditor";
+import { CaseRecordMap } from "@/components/case-workspace/CaseRecordMap";
 
 export default function CaseOverview() {
   const { id } = useParams();
@@ -103,6 +104,8 @@ export default function CaseOverview() {
               </CardContent>
             </Card>
           )}
+
+          <CaseRecordMap caseId={id} snapshot={snapshot} />
 
           <CaseRelationshipEditor caseId={id} snapshot={snapshot} />
 
