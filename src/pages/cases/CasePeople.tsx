@@ -25,7 +25,7 @@ export default function CasePeople() {
             subtitleFields={["role_label", "organization", "notes"]}
             orderBy={{ column: "display_name", ascending: true }}
             fields={[
-              { key: "display_name", label: "Name", type: "text", required: true },
+              { key: "name", label: "Name", type: "text", required: true },
               { key: "role_label", label: "Role or title", type: "text" },
               { key: "organization", label: "Organization", type: "text" },
               { key: "involvement", label: "How they're involved", type: "textarea" },
