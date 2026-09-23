@@ -14,183 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
-      analyzer_results: {
+      ai_extractions: {
         Row: {
-          answers: Json
-          common_stuck_points: string | null
-          created_at: string
-          decision_makers: string | null
-          entity_name: string | null
-          id: string
-          linked_guide_id: string | null
-          pattern_strength: string
-          system: string
-          system_controls: string | null
-          system_does_not_control: string | null
-          system_label: string
-          updated_at: string
-          user_id: string
-          what_people_misinterpret: string[] | null
-          what_usually_happens: string[] | null
-        }
-        Insert: {
-          answers?: Json
-          common_stuck_points?: string | null
-          created_at?: string
-          decision_makers?: string | null
-          entity_name?: string | null
-          id?: string
-          linked_guide_id?: string | null
-          pattern_strength?: string
-          system: string
-          system_controls?: string | null
-          system_does_not_control?: string | null
-          system_label: string
-          updated_at?: string
-          user_id: string
-          what_people_misinterpret?: string[] | null
-          what_usually_happens?: string[] | null
-        }
-        Update: {
-          answers?: Json
-          common_stuck_points?: string | null
-          created_at?: string
-          decision_makers?: string | null
-          entity_name?: string | null
-          id?: string
-          linked_guide_id?: string | null
-          pattern_strength?: string
-          system?: string
-          system_controls?: string | null
-          system_does_not_control?: string | null
-          system_label?: string
-          updated_at?: string
-          user_id?: string
-          what_people_misinterpret?: string[] | null
-          what_usually_happens?: string[] | null
-        }
-        Relationships: []
-      }
-      attorney_contacts: {
-        Row: {
-          attorney_firm: string | null
-          attorney_id: string
-          attorney_name: string
-          contact_date: string
-          contact_method: string | null
+          ai_run_id: string
+          case_id: string
           created_at: string
           id: string
-          intake_packet_id: string | null
-          notes: string | null
-          status: string | null
-          updated_at: string
-          user_id: string
+          payload: Json
+          validation_status: string
         }
         Insert: {
-          attorney_firm?: string | null
-          attorney_id: string
-          attorney_name: string
-          contact_date?: string
-          contact_method?: string | null
+          ai_run_id: string
+          case_id: string
           created_at?: string
           id?: string
-          intake_packet_id?: string | null
-          notes?: string | null
-          status?: string | null
-          updated_at?: string
-          user_id: string
+          payload: Json
+          validation_status: string
         }
         Update: {
-          attorney_firm?: string | null
-          attorney_id?: string
-          attorney_name?: string
-          contact_date?: string
-          contact_method?: string | null
+          ai_run_id?: string
+          case_id?: string
           created_at?: string
           id?: string
-          intake_packet_id?: string | null
-          notes?: string | null
-          status?: string | null
-          updated_at?: string
-          user_id?: string
+          payload?: Json
+          validation_status?: string
         }
         Relationships: [
           {
-            foreignKeyName: "attorney_contacts_intake_packet_id_fkey"
-            columns: ["intake_packet_id"]
+            foreignKeyName: "ai_extractions_ai_run_id_fkey"
+            columns: ["ai_run_id"]
             isOneToOne: false
-            referencedRelation: "intake_packets"
+            referencedRelation: "ai_runs"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      case_communications: {
-        Row: {
-          agency: string | null
-          case_id: string | null
-          classification: string
-          created_at: string
-          follow_up_date: string | null
-          follow_up_needed: boolean
-          id: string
-          method: string
-          notes: string | null
-          occurred_on: string | null
-          occurred_time: string | null
-          person: string | null
-          promises_made: string | null
-          requested: string | null
-          response: string | null
-          subject: string | null
-          summary: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          agency?: string | null
-          case_id?: string | null
-          classification?: string
-          created_at?: string
-          follow_up_date?: string | null
-          follow_up_needed?: boolean
-          id?: string
-          method?: string
-          notes?: string | null
-          occurred_on?: string | null
-          occurred_time?: string | null
-          person?: string | null
-          promises_made?: string | null
-          requested?: string | null
-          response?: string | null
-          subject?: string | null
-          summary?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          agency?: string | null
-          case_id?: string | null
-          classification?: string
-          created_at?: string
-          follow_up_date?: string | null
-          follow_up_needed?: boolean
-          id?: string
-          method?: string
-          notes?: string | null
-          occurred_on?: string | null
-          occurred_time?: string | null
-          person?: string | null
-          promises_made?: string | null
-          requested?: string | null
-          response?: string | null
-          subject?: string | null
-          summary?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
           {
-            foreignKeyName: "case_communications_case_id_fkey"
+            foreignKeyName: "ai_extractions_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
@@ -198,88 +56,112 @@ export type Database = {
           },
         ]
       }
-      case_issues: {
+      ai_runs: {
         Row: {
-          allegation_date: string | null
-          case_id: string | null
-          category: string | null
-          classification: string
-          contradicting_notes: string | null
+          case_id: string
+          completed_at: string | null
+          consented_at: string | null
           created_at: string
+          created_by: string
+          document_version_id: string | null
+          failure_code: string | null
           id: string
-          missing_records: string | null
-          notice_provided: boolean | null
-          opportunity_to_respond: boolean | null
-          response_notes: string | null
-          source_evidence_id: string | null
-          source_type: string | null
-          next_action: string | null
-          origin: string
-          requested_remedy: string | null
-          source: string | null
-          status: string
-          summary: string | null
-          supporting_notes: string | null
-          title: string
-          updated_at: string
-          user_id: string
-          who_made_allegation: string | null
+          input_fingerprint: string | null
+          model: string | null
+          operation: string
+          prompt_version: string | null
+          provider: string | null
+          schema_version: string | null
+          status: Database["public"]["Enums"]["ai_run_status"]
         }
         Insert: {
-          allegation_date?: string | null
-          case_id?: string | null
-          category?: string | null
-          classification?: string
-          contradicting_notes?: string | null
+          case_id: string
+          completed_at?: string | null
+          consented_at?: string | null
           created_at?: string
+          created_by: string
+          document_version_id?: string | null
+          failure_code?: string | null
           id?: string
-          missing_records?: string | null
-          notice_provided?: boolean | null
-          opportunity_to_respond?: boolean | null
-          response_notes?: string | null
-          source_evidence_id?: string | null
-          source_type?: string | null
-          next_action?: string | null
-          origin?: string
-          requested_remedy?: string | null
-          source?: string | null
-          status?: string
-          summary?: string | null
-          supporting_notes?: string | null
-          title: string
-          updated_at?: string
-          user_id: string
-          who_made_allegation?: string | null
+          input_fingerprint?: string | null
+          model?: string | null
+          operation: string
+          prompt_version?: string | null
+          provider?: string | null
+          schema_version?: string | null
+          status?: Database["public"]["Enums"]["ai_run_status"]
         }
         Update: {
-          allegation_date?: string | null
-          case_id?: string | null
-          category?: string | null
-          classification?: string
-          contradicting_notes?: string | null
+          case_id?: string
+          completed_at?: string | null
+          consented_at?: string | null
           created_at?: string
+          created_by?: string
+          document_version_id?: string | null
+          failure_code?: string | null
           id?: string
-          missing_records?: string | null
-          notice_provided?: boolean | null
-          opportunity_to_respond?: boolean | null
-          response_notes?: string | null
-          source_evidence_id?: string | null
-          source_type?: string | null
-          next_action?: string | null
-          origin?: string
-          requested_remedy?: string | null
-          source?: string | null
-          status?: string
-          summary?: string | null
-          supporting_notes?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string
-          who_made_allegation?: string | null
+          input_fingerprint?: string | null
+          model?: string | null
+          operation?: string
+          prompt_version?: string | null
+          provider?: string | null
+          schema_version?: string | null
+          status?: Database["public"]["Enums"]["ai_run_status"]
         }
         Relationships: [
           {
-            foreignKeyName: "case_issues_case_id_fkey"
+            foreignKeyName: "ai_runs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_runs_document_version_id_fkey"
+            columns: ["document_version_id"]
+            isOneToOne: false
+            referencedRelation: "document_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          case_id: string | null
+          id: string
+          metadata: Json
+          occurred_at: string
+          request_id: string | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          case_id?: string | null
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          request_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          case_id?: string | null
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          request_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
@@ -287,126 +169,40 @@ export type Database = {
           },
         ]
       }
-      case_record_gaps: {
+      case_memberships: {
         Row: {
-          case_id: string | null
+          active: boolean
+          case_id: string
           created_at: string
-          date_identified: string
-          date_requested: string | null
-          due_date: string | null
+          granted_by: string
           id: string
-          notes: string | null
-          reason: string | null
-          received_date: string | null
-          record_holder: string | null
-          related_issue_id: string | null
-          related_request_id: string | null
-          status: string
-          title: string
-          updated_at: string
+          revoked_at: string | null
+          role: Database["public"]["Enums"]["membership_role"]
           user_id: string
         }
         Insert: {
-          case_id?: string | null
+          active?: boolean
+          case_id: string
           created_at?: string
-          date_identified?: string
-          date_requested?: string | null
-          due_date?: string | null
+          granted_by: string
           id?: string
-          notes?: string | null
-          reason?: string | null
-          received_date?: string | null
-          record_holder?: string | null
-          related_issue_id?: string | null
-          related_request_id?: string | null
-          status?: string
-          title: string
-          updated_at?: string
+          revoked_at?: string | null
+          role?: Database["public"]["Enums"]["membership_role"]
           user_id: string
         }
         Update: {
-          case_id?: string | null
+          active?: boolean
+          case_id?: string
           created_at?: string
-          date_identified?: string
-          date_requested?: string | null
-          due_date?: string | null
+          granted_by?: string
           id?: string
-          notes?: string | null
-          reason?: string | null
-          received_date?: string | null
-          record_holder?: string | null
-          related_issue_id?: string | null
-          related_request_id?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
+          revoked_at?: string | null
+          role?: Database["public"]["Enums"]["membership_role"]
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "case_record_gaps_case_id_fkey"
-            columns: ["case_id"]
-            isOneToOne: false
-            referencedRelation: "cases"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "case_record_gaps_related_issue_id_fkey"
-            columns: ["related_issue_id"]
-            isOneToOne: false
-            referencedRelation: "case_issues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "case_record_gaps_related_request_id_fkey"
-            columns: ["related_request_id"]
-            isOneToOne: false
-            referencedRelation: "case_records_requests"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-
-      case_links: {
-        Row: {
-          case_id: string | null
-          created_at: string
-          from_id: string
-          from_type: string
-          id: string
-          note: string | null
-          relation: string
-          to_id: string
-          to_type: string
-          user_id: string
-        }
-        Insert: {
-          case_id?: string | null
-          created_at?: string
-          from_id: string
-          from_type: string
-          id?: string
-          note?: string | null
-          relation?: string
-          to_id: string
-          to_type: string
-          user_id: string
-        }
-        Update: {
-          case_id?: string | null
-          created_at?: string
-          from_id?: string
-          from_type?: string
-          id?: string
-          note?: string | null
-          relation?: string
-          to_id?: string
-          to_type?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "case_links_case_id_fkey"
+            foreignKeyName: "case_memberships_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
@@ -414,274 +210,31 @@ export type Database = {
           },
         ]
       }
-      case_organizations: {
+      case_numbers: {
         Row: {
-          case_id: string | null
-          contact: string | null
+          case_id: string
           created_at: string
           id: string
-          name: string
-          notes: string | null
-          org_type: string | null
-          updated_at: string
-          user_id: string
+          label: string | null
+          number: string
         }
         Insert: {
-          case_id?: string | null
-          contact?: string | null
+          case_id: string
           created_at?: string
           id?: string
-          name: string
-          notes?: string | null
-          org_type?: string | null
-          updated_at?: string
-          user_id: string
+          label?: string | null
+          number: string
         }
         Update: {
-          case_id?: string | null
-          contact?: string | null
+          case_id?: string
           created_at?: string
           id?: string
-          name?: string
-          notes?: string | null
-          org_type?: string | null
-          updated_at?: string
-          user_id?: string
+          label?: string | null
+          number?: string
         }
         Relationships: [
           {
-            foreignKeyName: "case_organizations_case_id_fkey"
-            columns: ["case_id"]
-            isOneToOne: false
-            referencedRelation: "cases"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      case_packets: {
-        Row: {
-          case_id: string | null
-          content: Json | null
-          created_at: string
-          id: string
-          options: Json
-          packet_type: string
-          sections: Json
-          status: string
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          case_id?: string | null
-          content?: Json | null
-          created_at?: string
-          id?: string
-          options?: Json
-          packet_type?: string
-          sections?: Json
-          status?: string
-          title?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          case_id?: string | null
-          content?: Json | null
-          created_at?: string
-          id?: string
-          options?: Json
-          packet_type?: string
-          sections?: Json
-          status?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "case_packets_case_id_fkey"
-            columns: ["case_id"]
-            isOneToOne: false
-            referencedRelation: "cases"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      case_people: {
-        Row: {
-          case_id: string | null
-          contact: string | null
-          created_at: string
-          id: string
-          involvement: string | null
-          name: string
-          notes: string | null
-          organization: string | null
-          role: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          case_id?: string | null
-          contact?: string | null
-          created_at?: string
-          id?: string
-          involvement?: string | null
-          name: string
-          notes?: string | null
-          organization?: string | null
-          role?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          case_id?: string | null
-          contact?: string | null
-          created_at?: string
-          id?: string
-          involvement?: string | null
-          name?: string
-          notes?: string | null
-          organization?: string | null
-          role?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "case_people_case_id_fkey"
-            columns: ["case_id"]
-            isOneToOne: false
-            referencedRelation: "cases"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      case_profiles: {
-        Row: {
-          claim_tags: string[]
-          created_at: string
-          date_end: string | null
-          date_start: string | null
-          description: string | null
-          entity: string
-          entity_type: string | null
-          id: string
-          is_seed_data: boolean | null
-          location_city: string | null
-          location_county: string | null
-          location_state: string | null
-          pattern_notes: string | null
-          pattern_strength:
-            | Database["public"]["Enums"]["pattern_strength"]
-            | null
-          system: Database["public"]["Enums"]["civil_rights_system"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          claim_tags?: string[]
-          created_at?: string
-          date_end?: string | null
-          date_start?: string | null
-          description?: string | null
-          entity: string
-          entity_type?: string | null
-          id?: string
-          is_seed_data?: boolean | null
-          location_city?: string | null
-          location_county?: string | null
-          location_state?: string | null
-          pattern_notes?: string | null
-          pattern_strength?:
-            | Database["public"]["Enums"]["pattern_strength"]
-            | null
-          system: Database["public"]["Enums"]["civil_rights_system"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          claim_tags?: string[]
-          created_at?: string
-          date_end?: string | null
-          date_start?: string | null
-          description?: string | null
-          entity?: string
-          entity_type?: string | null
-          id?: string
-          is_seed_data?: boolean | null
-          location_city?: string | null
-          location_county?: string | null
-          location_state?: string | null
-          pattern_notes?: string | null
-          pattern_strength?:
-            | Database["public"]["Enums"]["pattern_strength"]
-            | null
-          system?: Database["public"]["Enums"]["civil_rights_system"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      case_records_requests: {
-        Row: {
-          acknowledgement_date: string | null
-          agency: string
-          case_id: string | null
-          created_at: string
-          date_sent: string | null
-          description: string | null
-          due_date: string | null
-          id: string
-          notes: string | null
-          outcome: string | null
-          request_method: string | null
-          request_title: string | null
-          status: string
-          tracking_number: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          acknowledgement_date?: string | null
-          agency: string
-          case_id?: string | null
-          created_at?: string
-          date_sent?: string | null
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          notes?: string | null
-          outcome?: string | null
-          request_method?: string | null
-          request_title?: string | null
-          status?: string
-          tracking_number?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          acknowledgement_date?: string | null
-          agency?: string
-          case_id?: string | null
-          created_at?: string
-          date_sent?: string | null
-          description?: string | null
-          due_date?: string | null
-          id?: string
-          notes?: string | null
-          outcome?: string | null
-          request_method?: string | null
-          request_title?: string | null
-          status?: string
-          tracking_number?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "case_records_requests_case_id_fkey"
+            foreignKeyName: "case_numbers_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
@@ -691,155 +244,68 @@ export type Database = {
       }
       cases: {
         Row: {
-          case_type: string | null
-          county: string | null
-          created_at: string
-          description: string | null
-          id: string
-          legacy_justice_place_case_id: string | null
-          name: string
-          state: string | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          case_type?: string | null
-          county?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          legacy_justice_place_case_id?: string | null
-          name?: string
-          state?: string | null
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          case_type?: string | null
-          county?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          legacy_justice_place_case_id?: string | null
-          name?: string
-          state?: string | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      clarion_entries: {
-        Row: {
-          content: string
           created_at: string
           id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      evidence: {
-        Row: {
-          case_id: string | null
-          classification: string
-          created_at: string
-          description: string | null
-          document_date: string | null
-          exhibit_number: number | null
-          file_type: string | null
-          file_url: string | null
-          id: string
-          include_in_export: boolean
-          metadata_preserved: boolean | null
-          original_preserved: boolean | null
-          chain_of_custody: string | null
-          preservation_notes: string | null
-          people_involved: string | null
-          received_date: string | null
-          relevance_notes: string | null
-          review_status: string
-          sensitive: boolean
-          source: string | null
-          system_involved: string | null
-          tags: string[]
+          jurisdiction: string
+          matter_type: string
+          owner_user_id: string
+          status: Database["public"]["Enums"]["case_status"]
           title: string
           updated_at: string
-          user_id: string
         }
         Insert: {
-          case_id?: string | null
-          classification?: string
           created_at?: string
-          description?: string | null
-          document_date?: string | null
-          exhibit_number?: number | null
-          file_type?: string | null
-          file_url?: string | null
           id?: string
-          include_in_export?: boolean
-          metadata_preserved?: boolean | null
-          original_preserved?: boolean | null
-          chain_of_custody?: string | null
-          preservation_notes?: string | null
-          people_involved?: string | null
-          received_date?: string | null
-          relevance_notes?: string | null
-          review_status?: string
-          sensitive?: boolean
-          source?: string | null
-          system_involved?: string | null
-          tags?: string[]
+          jurisdiction?: string
+          matter_type?: string
+          owner_user_id: string
+          status?: Database["public"]["Enums"]["case_status"]
           title: string
           updated_at?: string
-          user_id: string
         }
         Update: {
-          case_id?: string | null
-          classification?: string
           created_at?: string
-          description?: string | null
-          document_date?: string | null
-          exhibit_number?: number | null
-          file_type?: string | null
-          file_url?: string | null
           id?: string
-          include_in_export?: boolean
-          metadata_preserved?: boolean | null
-          original_preserved?: boolean | null
-          chain_of_custody?: string | null
-          preservation_notes?: string | null
-          people_involved?: string | null
-          received_date?: string | null
-          relevance_notes?: string | null
-          review_status?: string
-          sensitive?: boolean
-          source?: string | null
-          system_involved?: string | null
-          tags?: string[]
+          jurisdiction?: string
+          matter_type?: string
+          owner_user_id?: string
+          status?: Database["public"]["Enums"]["case_status"]
           title?: string
           updated_at?: string
-          user_id?: string
+        }
+        Relationships: []
+      }
+      claims: {
+        Row: {
+          case_id: string
+          classification: string
+          confidence: number | null
+          created_at: string
+          id: string
+          statement: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          classification?: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          statement: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          classification?: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          statement?: string
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "evidence_case_id_fkey"
+            foreignKeyName: "claims_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
@@ -847,238 +313,462 @@ export type Database = {
           },
         ]
       }
-      intake_packets: {
+      document_derivatives: {
         Row: {
-          attorney_firm: string | null
-          attorney_id: string | null
-          attorney_name: string | null
-          case_name: string
-          case_status: string
-          contact_email: string | null
-          contact_name: string
-          contact_phone: string | null
-          contact_preferred_method: string | null
-          county: string
+          case_id: string
           created_at: string
-          evidence_snapshot: Json | null
+          derivative_type: string
+          document_version_id: string
           id: string
-          incident_date: string | null
-          incident_month_year: string
-          issue_type: string
-          issues_checklist: string[] | null
-          narrative: string
-          opposing_party: string
-          statute_of_limitations_info: string | null
-          updated_at: string
-          user_id: string
+          producer: string
+          producer_version: string
+          sha256: string | null
+          storage_bucket: string | null
+          storage_object_key: string | null
         }
         Insert: {
-          attorney_firm?: string | null
-          attorney_id?: string | null
-          attorney_name?: string | null
-          case_name: string
-          case_status: string
-          contact_email?: string | null
-          contact_name: string
-          contact_phone?: string | null
-          contact_preferred_method?: string | null
-          county: string
+          case_id: string
           created_at?: string
-          evidence_snapshot?: Json | null
+          derivative_type: string
+          document_version_id: string
           id?: string
-          incident_date?: string | null
-          incident_month_year: string
-          issue_type: string
-          issues_checklist?: string[] | null
-          narrative: string
-          opposing_party: string
-          statute_of_limitations_info?: string | null
-          updated_at?: string
-          user_id: string
+          producer: string
+          producer_version: string
+          sha256?: string | null
+          storage_bucket?: string | null
+          storage_object_key?: string | null
         }
         Update: {
-          attorney_firm?: string | null
-          attorney_id?: string | null
-          attorney_name?: string | null
-          case_name?: string
-          case_status?: string
-          contact_email?: string | null
-          contact_name?: string
-          contact_phone?: string | null
-          contact_preferred_method?: string | null
-          county?: string
+          case_id?: string
           created_at?: string
-          evidence_snapshot?: Json | null
+          derivative_type?: string
+          document_version_id?: string
           id?: string
-          incident_date?: string | null
-          incident_month_year?: string
-          issue_type?: string
-          issues_checklist?: string[] | null
-          narrative?: string
-          opposing_party?: string
-          statute_of_limitations_info?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      justice_place_bookmarks: {
-        Row: {
-          created_at: string
-          id: string
-          notes: string | null
-          resource_id: string
-          resource_title: string
-          resource_type: string
-          resource_url: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          notes?: string | null
-          resource_id: string
-          resource_title: string
-          resource_type: string
-          resource_url?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          notes?: string | null
-          resource_id?: string
-          resource_title?: string
-          resource_type?: string
-          resource_url?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      justice_place_cases: {
-        Row: {
-          case_name: string
-          case_status: Database["public"]["Enums"]["case_status"]
-          county: string
-          created_at: string
-          id: string
-          incident_month_year: string | null
-          issue_type: string
-          state: string
-          unlock_flags: Json | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          case_name?: string
-          case_status?: Database["public"]["Enums"]["case_status"]
-          county: string
-          created_at?: string
-          id?: string
-          incident_month_year?: string | null
-          issue_type: string
-          state?: string
-          unlock_flags?: Json | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          case_name?: string
-          case_status?: Database["public"]["Enums"]["case_status"]
-          county?: string
-          created_at?: string
-          id?: string
-          incident_month_year?: string | null
-          issue_type?: string
-          state?: string
-          unlock_flags?: Json | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      known_patterns: {
-        Row: {
-          case_count: number | null
-          claim_tags: string[]
-          created_at: string
-          description: string | null
-          entity: string
-          entity_type: string | null
-          id: string
-          is_verified: boolean | null
-          pattern_type: string
-          source: string | null
-          source_url: string | null
-          system: Database["public"]["Enums"]["civil_rights_system"]
-          updated_at: string
-        }
-        Insert: {
-          case_count?: number | null
-          claim_tags?: string[]
-          created_at?: string
-          description?: string | null
-          entity: string
-          entity_type?: string | null
-          id?: string
-          is_verified?: boolean | null
-          pattern_type: string
-          source?: string | null
-          source_url?: string | null
-          system: Database["public"]["Enums"]["civil_rights_system"]
-          updated_at?: string
-        }
-        Update: {
-          case_count?: number | null
-          claim_tags?: string[]
-          created_at?: string
-          description?: string | null
-          entity?: string
-          entity_type?: string | null
-          id?: string
-          is_verified?: boolean | null
-          pattern_type?: string
-          source?: string | null
-          source_url?: string | null
-          system?: Database["public"]["Enums"]["civil_rights_system"]
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      notes: {
-        Row: {
-          case_id: string | null
-          content: string | null
-          created_at: string
-          id: string
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          case_id?: string | null
-          content?: string | null
-          created_at?: string
-          id?: string
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          case_id?: string | null
-          content?: string | null
-          created_at?: string
-          id?: string
-          title?: string
-          updated_at?: string
-          user_id?: string
+          producer?: string
+          producer_version?: string
+          sha256?: string | null
+          storage_bucket?: string | null
+          storage_object_key?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "notes_case_id_fkey"
+            foreignKeyName: "document_derivatives_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_derivatives_document_version_id_fkey"
+            columns: ["document_version_id"]
+            isOneToOne: false
+            referencedRelation: "document_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          byte_size: number
+          captured_at: string
+          case_id: string
+          created_at: string
+          document_id: string
+          id: string
+          ingest_status: Database["public"]["Enums"]["ingest_status"]
+          mime_type: string
+          original_filename: string
+          sha256: string
+          storage_bucket: string
+          storage_object_key: string
+          uploader: string
+          version_no: number
+        }
+        Insert: {
+          byte_size: number
+          captured_at?: string
+          case_id: string
+          created_at?: string
+          document_id: string
+          id?: string
+          ingest_status?: Database["public"]["Enums"]["ingest_status"]
+          mime_type: string
+          original_filename: string
+          sha256: string
+          storage_bucket?: string
+          storage_object_key: string
+          uploader: string
+          version_no: number
+        }
+        Update: {
+          byte_size?: number
+          captured_at?: string
+          case_id?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          ingest_status?: Database["public"]["Enums"]["ingest_status"]
+          mime_type?: string
+          original_filename?: string
+          sha256?: string
+          storage_bucket?: string
+          storage_object_key?: string
+          uploader?: string
+          version_no?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          case_id: string
+          created_at: string
+          created_by: string
+          display_filename: string
+          document_type: string
+          id: string
+          status: Database["public"]["Enums"]["document_status"]
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          created_by: string
+          display_filename: string
+          document_type: string
+          id?: string
+          status?: Database["public"]["Enums"]["document_status"]
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          created_by?: string
+          display_filename?: string
+          document_type?: string
+          id?: string
+          status?: Database["public"]["Enums"]["document_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          case_id: string
+          classification: string
+          created_at: string
+          description: string | null
+          id: string
+          occurred_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          classification?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          occurred_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          classification?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          occurred_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_locators: {
+        Row: {
+          case_id: string
+          created_at: string
+          document_version_id: string
+          extracted_text_id: string | null
+          id: string
+          locator_hash: string
+          page_number: number | null
+          quoted_text: string | null
+          text_end: number | null
+          text_start: number | null
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          document_version_id: string
+          extracted_text_id?: string | null
+          id?: string
+          locator_hash: string
+          page_number?: number | null
+          quoted_text?: string | null
+          text_end?: number | null
+          text_start?: number | null
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          document_version_id?: string
+          extracted_text_id?: string | null
+          id?: string
+          locator_hash?: string
+          page_number?: number | null
+          quoted_text?: string | null
+          text_end?: number | null
+          text_start?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_locators_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_locators_document_version_id_fkey"
+            columns: ["document_version_id"]
+            isOneToOne: false
+            referencedRelation: "document_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_locators_extracted_text_id_fkey"
+            columns: ["extracted_text_id"]
+            isOneToOne: false
+            referencedRelation: "extracted_text"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      extracted_text: {
+        Row: {
+          case_id: string
+          created_at: string
+          derivative_id: string | null
+          document_version_id: string
+          extraction_method: string
+          extraction_status: Database["public"]["Enums"]["processing_status"]
+          extractor_version: string
+          id: string
+          language_code: string | null
+          normalized_text: string
+          page_mapping: Json | null
+          text_sha256: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          derivative_id?: string | null
+          document_version_id: string
+          extraction_method: string
+          extraction_status?: Database["public"]["Enums"]["processing_status"]
+          extractor_version: string
+          id?: string
+          language_code?: string | null
+          normalized_text: string
+          page_mapping?: Json | null
+          text_sha256: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          derivative_id?: string | null
+          document_version_id?: string
+          extraction_method?: string
+          extraction_status?: Database["public"]["Enums"]["processing_status"]
+          extractor_version?: string
+          id?: string
+          language_code?: string | null
+          normalized_text?: string
+          page_mapping?: Json | null
+          text_sha256?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracted_text_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extracted_text_derivative_id_fkey"
+            columns: ["derivative_id"]
+            isOneToOne: false
+            referencedRelation: "document_derivatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extracted_text_document_version_id_fkey"
+            columns: ["document_version_id"]
+            isOneToOne: false
+            referencedRelation: "document_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issues: {
+        Row: {
+          case_id: string
+          created_at: string
+          description: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issues_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      people: {
+        Row: {
+          case_id: string
+          created_at: string
+          display_name: string
+          id: string
+          role_label: string | null
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          display_name: string
+          id?: string
+          role_label?: string | null
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          role_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "people_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      processing_runs: {
+        Row: {
+          case_id: string
+          created_at: string
+          created_by: string
+          document_version_id: string
+          extractor_version: string | null
+          failure_code: string | null
+          finished_at: string | null
+          id: string
+          input_fingerprint: string
+          operation: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["processing_status"]
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          created_by: string
+          document_version_id: string
+          extractor_version?: string | null
+          failure_code?: string | null
+          finished_at?: string | null
+          id?: string
+          input_fingerprint: string
+          operation: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["processing_status"]
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          created_by?: string
+          document_version_id?: string
+          extractor_version?: string | null
+          failure_code?: string | null
+          finished_at?: string | null
+          id?: string
+          input_fingerprint?: string
+          operation?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["processing_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processing_runs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "processing_runs_document_version_id_fkey"
+            columns: ["document_version_id"]
+            isOneToOne: false
+            referencedRelation: "document_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -1088,93 +778,163 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          timezone: string | null
           updated_at: string
-          user_id: string
         }
         Insert: {
           created_at?: string
           display_name?: string | null
-          id?: string
+          id: string
+          timezone?: string | null
           updated_at?: string
-          user_id: string
         }
         Update: {
           created_at?: string
           display_name?: string | null
           id?: string
+          timezone?: string | null
           updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
-      timeline_entries: {
+      record_versions: {
         Row: {
-          case_id: string | null
-          category: string | null
-          classification: string
+          case_id: string
+          change_reason: string | null
+          changed_by: string
           created_at: string
-          description: string | null
-          disputed: boolean
-          event_date: string
           id: string
-          importance: string
-          reason: string | null
-          reviewed: boolean
-          source_evidence_id: string | null
-          source_type: string | null
-          title: string
-          updated_at: string
-          user_id: string
+          snapshot: Json
+          subject_id: string
+          subject_type: string
+          version_no: number
         }
         Insert: {
-          case_id?: string | null
-          category?: string | null
-          classification?: string
+          case_id: string
+          change_reason?: string | null
+          changed_by: string
           created_at?: string
-          description?: string | null
-          disputed?: boolean
-          event_date: string
           id?: string
-          importance?: string
-          reason?: string | null
-          reviewed?: boolean
-          source_evidence_id?: string | null
-          source_type?: string | null
-          title: string
-          updated_at?: string
-          user_id: string
+          snapshot: Json
+          subject_id: string
+          subject_type: string
+          version_no: number
         }
         Update: {
-          case_id?: string | null
-          category?: string | null
-          classification?: string
+          case_id?: string
+          change_reason?: string | null
+          changed_by?: string
           created_at?: string
-          description?: string | null
-          disputed?: boolean
-          event_date?: string
           id?: string
-          importance?: string
-          reason?: string | null
-          reviewed?: boolean
-          source_evidence_id?: string | null
-          source_type?: string | null
-          title?: string
-          updated_at?: string
-          user_id?: string
+          snapshot?: Json
+          subject_id?: string
+          subject_type?: string
+          version_no?: number
         }
         Relationships: [
           {
-            foreignKeyName: "timeline_entries_case_id_fkey"
+            foreignKeyName: "record_versions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_decisions: {
+        Row: {
+          case_id: string
+          decided_at: string
+          decided_by: string
+          decision: Database["public"]["Enums"]["review_decision_type"]
+          id: string
+          new_value: Json | null
+          previous_value: Json | null
+          rationale: string | null
+          source_locator_id: string | null
+          subject_id: string
+          subject_type: string
+        }
+        Insert: {
+          case_id: string
+          decided_at?: string
+          decided_by: string
+          decision: Database["public"]["Enums"]["review_decision_type"]
+          id?: string
+          new_value?: Json | null
+          previous_value?: Json | null
+          rationale?: string | null
+          source_locator_id?: string | null
+          subject_id: string
+          subject_type: string
+        }
+        Update: {
+          case_id?: string
+          decided_at?: string
+          decided_by?: string
+          decision?: Database["public"]["Enums"]["review_decision_type"]
+          id?: string
+          new_value?: Json | null
+          previous_value?: Json | null
+          rationale?: string | null
+          source_locator_id?: string | null
+          subject_id?: string
+          subject_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_decisions_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "timeline_entries_source_evidence_id_fkey"
-            columns: ["source_evidence_id"]
+            foreignKeyName: "review_decisions_source_locator_id_fkey"
+            columns: ["source_locator_id"]
             isOneToOne: false
-            referencedRelation: "evidence"
+            referencedRelation: "evidence_locators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          case_id: string
+          created_at: string
+          description: string | null
+          due_at: string | null
+          id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
             referencedColumns: ["id"]
           },
         ]
@@ -1187,24 +947,40 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      case_status:
-        | "getting_oriented"
-        | "gathering_information"
-        | "preparing_outreach"
-        | "awaiting_responses"
-        | "reviewing_options"
-        | "taking_next_steps"
-        | "on_hold"
-      civil_rights_system:
-        | "police"
-        | "housing"
-        | "cps_dcyf"
-        | "schools"
-        | "healthcare"
-        | "benefits"
-        | "courts"
-        | "other"
-      pattern_strength: "none" | "possible" | "strong" | "very_strong"
+      ai_run_status:
+        | "not_requested"
+        | "requested"
+        | "completed"
+        | "unavailable"
+        | "failed"
+      case_status: "active" | "archived"
+      document_status:
+        | "uploaded"
+        | "extracted"
+        | "ai_analyzed"
+        | "user_reviewed"
+        | "failed"
+        | "unsupported"
+      ingest_status:
+        | "pending"
+        | "uploaded"
+        | "extracting"
+        | "extracted"
+        | "failed"
+        | "unsupported"
+      membership_role: "owner"
+      processing_status:
+        | "requested"
+        | "running"
+        | "completed"
+        | "failed"
+        | "unsupported"
+      review_decision_type:
+        | "accept"
+        | "correct"
+        | "reject"
+        | "defer"
+        | "mark_disputed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1332,26 +1108,45 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      case_status: [
-        "getting_oriented",
-        "gathering_information",
-        "preparing_outreach",
-        "awaiting_responses",
-        "reviewing_options",
-        "taking_next_steps",
-        "on_hold",
+      ai_run_status: [
+        "not_requested",
+        "requested",
+        "completed",
+        "unavailable",
+        "failed",
       ],
-      civil_rights_system: [
-        "police",
-        "housing",
-        "cps_dcyf",
-        "schools",
-        "healthcare",
-        "benefits",
-        "courts",
-        "other",
+      case_status: ["active", "archived"],
+      document_status: [
+        "uploaded",
+        "extracted",
+        "ai_analyzed",
+        "user_reviewed",
+        "failed",
+        "unsupported",
       ],
-      pattern_strength: ["none", "possible", "strong", "very_strong"],
+      ingest_status: [
+        "pending",
+        "uploaded",
+        "extracting",
+        "extracted",
+        "failed",
+        "unsupported",
+      ],
+      membership_role: ["owner"],
+      processing_status: [
+        "requested",
+        "running",
+        "completed",
+        "failed",
+        "unsupported",
+      ],
+      review_decision_type: [
+        "accept",
+        "correct",
+        "reject",
+        "defer",
+        "mark_disputed",
+      ],
     },
   },
 } as const
