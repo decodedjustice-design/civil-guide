@@ -208,6 +208,11 @@ export type Database = {
           created_at: string
           id: string
           missing_records: string | null
+          notice_provided: boolean | null
+          opportunity_to_respond: boolean | null
+          response_notes: string | null
+          source_evidence_id: string | null
+          source_type: string | null
           next_action: string | null
           origin: string
           requested_remedy: string | null
@@ -229,6 +234,11 @@ export type Database = {
           created_at?: string
           id?: string
           missing_records?: string | null
+          notice_provided?: boolean | null
+          opportunity_to_respond?: boolean | null
+          response_notes?: string | null
+          source_evidence_id?: string | null
+          source_type?: string | null
           next_action?: string | null
           origin?: string
           requested_remedy?: string | null
@@ -250,6 +260,11 @@ export type Database = {
           created_at?: string
           id?: string
           missing_records?: string | null
+          notice_provided?: boolean | null
+          opportunity_to_respond?: boolean | null
+          response_notes?: string | null
+          source_evidence_id?: string | null
+          source_type?: string | null
           next_action?: string | null
           origin?: string
           requested_remedy?: string | null
@@ -272,6 +287,88 @@ export type Database = {
           },
         ]
       }
+      case_record_gaps: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          date_identified: string
+          date_requested: string | null
+          due_date: string | null
+          id: string
+          notes: string | null
+          reason: string | null
+          received_date: string | null
+          record_holder: string | null
+          related_issue_id: string | null
+          related_request_id: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          date_identified?: string
+          date_requested?: string | null
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          received_date?: string | null
+          record_holder?: string | null
+          related_issue_id?: string | null
+          related_request_id?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          date_identified?: string
+          date_requested?: string | null
+          date_received?: string | null
+          date_requested?: string | null
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          received_date?: string | null
+          record_holder?: string | null
+          related_issue_id?: string | null
+          related_request_id?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_record_gaps_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_record_gaps_related_issue_id_fkey"
+            columns: ["related_issue_id"]
+            isOneToOne: false
+            referencedRelation: "case_issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_record_gaps_related_request_id_fkey"
+            columns: ["related_request_id"]
+            isOneToOne: false
+            referencedRelation: "case_records_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+
       case_links: {
         Row: {
           case_id: string | null
@@ -672,6 +769,10 @@ export type Database = {
           file_url: string | null
           id: string
           include_in_export: boolean
+          metadata_preserved: boolean | null
+          original_preserved: boolean | null
+          chain_of_custody: string | null
+          preservation_notes: string | null
           people_involved: string | null
           received_date: string | null
           relevance_notes: string | null
@@ -695,6 +796,10 @@ export type Database = {
           file_url?: string | null
           id?: string
           include_in_export?: boolean
+          metadata_preserved?: boolean | null
+          original_preserved?: boolean | null
+          chain_of_custody?: string | null
+          preservation_notes?: string | null
           people_involved?: string | null
           received_date?: string | null
           relevance_notes?: string | null
@@ -718,6 +823,10 @@ export type Database = {
           file_url?: string | null
           id?: string
           include_in_export?: boolean
+          metadata_preserved?: boolean | null
+          original_preserved?: boolean | null
+          chain_of_custody?: string | null
+          preservation_notes?: string | null
           people_involved?: string | null
           received_date?: string | null
           relevance_notes?: string | null
