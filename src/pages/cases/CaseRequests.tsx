@@ -27,14 +27,12 @@ export default function CaseRequests() {
           { key: "title", label: "What you asked for", type: "text", required: true },
           { key: "record_holder", label: "Agency or organization", type: "text" },
           { key: "notes", label: "Details / notes", type: "textarea" },
-          { key: "status", label: "Status", type: "select", options: REQUEST_STATUSES, defaultValue: "draft" },
-          { key: "request_method", label: "How you sent it", type: "text", placeholder: "Email, portal, mail" },
-          { key: "date_sent", label: "Date sent", type: "date" },
-          { key: "acknowledgement_date", label: "Date they acknowledged", type: "date" },
-          { key: "due_date", label: "Date you're watching", type: "date" },
-          { key: "tracking_number", label: "Reference or tracking number", type: "text" },
-          { key: "outcome", label: "What came back", type: "textarea" },
-          { key: "notes", label: "Notes", type: "textarea" },
+          { key: "status", label: "Status", type: "select", options: REQUEST_STATUSES, defaultValue: "open" },
+          { key: "requested_at", label: "Date sent", type: "date" },
+          { key: "due_at", label: "Date you're watching", type: "date" },
+          { key: "received_at", label: "Date received", type: "date" },
+          { key: "request_number", label: "Reference or tracking number", type: "text" },
+          { key: "related_issue_id", label: "Related issue ID", type: "text", placeholder: "Optional issue UUID" },
         ]}
       />
     </CaseWorkspaceLayout>
