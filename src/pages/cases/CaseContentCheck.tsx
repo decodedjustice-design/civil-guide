@@ -26,6 +26,21 @@ export default function CaseContentCheck() {
       tab: "evidence",
     },
     {
+      label: "Evidence preservation status is recorded",
+      failing: snapshot.evidence.filter((e) => e.original_preserved === null || e.original_preserved === undefined || e.metadata_preserved === null || e.metadata_preserved === undefined).length,
+      tab: "evidence",
+    },
+    {
+      label: "Issues identify their source or explicitly remain unsourced",
+      failing: snapshot.issues.filter((i) => !i.source && !i.source_evidence_id).length,
+      tab: "issues",
+    },
+    {
+      label: "Identified record gaps have a status",
+      failing: snapshot.record_gaps.filter((g) => !g.status).length,
+      tab: "record-gaps",
+    },
+    {
       label: "Every timeline event has a date",
       failing: snapshot.timeline.filter((t) => !t.event_date).length,
       tab: "timeline",
