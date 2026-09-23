@@ -9,6 +9,7 @@ export interface CaseSnapshot {
   organizations: any[];
   communications: any[];
   requests: any[];
+  record_gaps: any[];
   notes: any[];
   links: any[];
 }
@@ -21,6 +22,7 @@ const empty: CaseSnapshot = {
   organizations: [],
   communications: [],
   requests: [],
+  record_gaps: [],
   notes: [],
   links: [],
 };
@@ -39,6 +41,7 @@ export function useCaseSnapshot(caseId?: string) {
         ["organizations", "case_organizations", "name"],
         ["communications", "case_communications", "occurred_on"],
         ["requests", "case_records_requests", "due_date"],
+        ["record_gaps", "case_record_gaps", "due_date"],
         ["notes", "notes", "created_at"],
         ["links", "case_links", "created_at"],
       ];
