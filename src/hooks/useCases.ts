@@ -5,13 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export interface CaseRow {
   id: string;
-  user_id: string;
-  name: string;
-  description: string | null;
-  case_type: string | null;
+  owner_user_id: string;
+  title: string;
+  matter_type: string;
   status: string;
-  county: string | null;
-  state: string | null;
+  jurisdiction: string;
   created_at: string;
   updated_at: string;
 }
@@ -26,9 +24,11 @@ export function useCases() {
     queryKey: ["cases", user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) return [];
       const { data, error } = await supabase
         .from("cases")
-        .select("id,user_id,name,description,case_type,status,county,state,created_at,updated_at")
+        .select("id,owner_user_id,title,matter_type,status,jurisdiction,created_at,updated_at")
+        .eq("owner_user_id", user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
       return (data ?? []) as CaseRow[];
@@ -41,12 +41,10 @@ export function useCases() {
       const { data, error } = await supabase
         .from("cases")
         .insert({
-          user_id: user.id,
-          name: payload.name?.trim() || "Untitled case",
-          description: payload.description ?? null,
-          case_type: payload.case_type ?? null,
-          county: payload.county ?? null,
-          state: payload.state ?? "WA",
+          owner_user_id: user.id,
+          title: payload.title?.trim() || "Untitled case",
+          matter_type: payload.matter_type ?? "general",
+          jurisdiction: payload.jurisdiction ?? "Washington",
         })
         .select("*")
         .single();
@@ -58,7 +56,7 @@ export function useCases() {
 
   const updateCase = useMutation({
     mutationFn: async ({ id, ...patch }: Partial<CaseRow> & { id: string }) => {
-      const { error } = await supabase.from("cases").update(patch).eq("id", id);
+      const { error } = await supabase.from("cases").update(patch).eq("id", id).eq("owner_user_id", user?.id ?? "");
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cases"] }),
@@ -67,7 +65,6 @@ export function useCases() {
   return { cases, isLoading, createCase, updateCase, user };
 }
 
-/** Remembers the last case the person was working in. */
 export function useActiveCaseId(caseIdFromRoute?: string) {
   const [activeId, setActiveId] = useState<string | null>(
     () => caseIdFromRoute ?? localStorage.getItem(ACTIVE_CASE_KEY)
@@ -88,7 +85,6 @@ export function useActiveCaseId(caseIdFromRoute?: string) {
   return { activeId, select };
 }
 
-/** Generic per-case collection helper used by the workspace tabs. */
 export function useCaseCollection<T extends { id: string }>(
   table: string,
   caseId: string | undefined,
@@ -122,7 +118,7 @@ export function useCaseCollection<T extends { id: string }>(
       if (!user || !caseId) throw new Error("No active case");
       const { error } = await (supabase as any)
         .from(table)
-        .insert({ ...values, case_id: caseId, user_id: user.id });
+        .insert({ ...values, case_id: caseId });
       if (error) throw error;
     },
     onSuccess: invalidate,
@@ -130,7 +126,7 @@ export function useCaseCollection<T extends { id: string }>(
 
   const update = useMutation({
     mutationFn: async ({ id, values }: { id: string; values: Record<string, unknown> }) => {
-      const { error } = await (supabase as any).from(table).update(values).eq("id", id);
+      const { error } = await (supabase as any).from(table).update(values).eq("id", id).eq("case_id", caseId);
       if (error) throw error;
     },
     onSuccess: invalidate,
@@ -138,7 +134,7 @@ export function useCaseCollection<T extends { id: string }>(
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from(table).delete().eq("id", id);
+      const { error } = await (supabase as any).from(table).delete().eq("id", id).eq("case_id", caseId);
       if (error) throw error;
     },
     onSuccess: invalidate,
