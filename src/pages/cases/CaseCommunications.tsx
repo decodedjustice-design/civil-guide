@@ -3,7 +3,7 @@ import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLa
 import { RecordManager } from "@/components/case-workspace/RecordManager";
 import { CaseWorkspaceSummary } from "@/components/case-workspace/CaseWorkspaceSummary";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
-import { CLASSIFICATIONS, COMMUNICATION_METHODS } from "@/lib/case/classification";
+import { COMMUNICATION_METHODS } from "@/lib/case/classification";
 
 export default function CaseCommunications() {
   const { id } = useParams();
@@ -32,15 +32,7 @@ export default function CaseCommunications() {
           { key: "summary", label: "What was said", type: "textarea" },
           
           {
-            key: "classification",
-            label: "How should this be treated?",
-            type: "select",
-            options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })),
-            defaultValue: "unknown",
-            help: "Nothing becomes a fact unless you mark it as one.",
-          },
-          {
-            key: "follow_up_needed",
+            key: "follow_up_required",
             label: "Follow-up needed",
             type: "checkbox",
             placeholder: "Something still needs a reply",
