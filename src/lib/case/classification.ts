@@ -58,6 +58,17 @@ export const REQUEST_STATUSES = [
   { value: "overdue", label: "Past due" },
 ];
 
+export const RECORD_GAP_STATUSES = [
+  { value: "identified", label: "Identified" },
+  { value: "needed", label: "Needed" },
+  { value: "requested", label: "Requested" },
+  { value: "partial", label: "Partially received" },
+  { value: "received", label: "Received" },
+  { value: "not_available", label: "Not available" },
+  { value: "resolved", label: "Resolved" },
+];
+
+
 export const COMMUNICATION_METHODS = [
   "Email",
   "Phone",
