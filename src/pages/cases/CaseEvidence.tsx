@@ -30,6 +30,11 @@ export default function CaseEvidence() {
           { key: "description", label: "What it shows", type: "textarea" },
           { key: "source", label: "Where it came from", type: "text", placeholder: "Agency, person, portal" },
           { key: "document_date", label: "Date on the record", type: "date" },
+          { key: "received_date", label: "Date received", type: "date" },
+          { key: "original_preserved", label: "Original preserved", type: "checkbox", placeholder: "I have retained the original file" },
+          { key: "metadata_preserved", label: "Metadata preserved", type: "checkbox", placeholder: "I have preserved available file metadata" },
+          { key: "chain_of_custody", label: "Chain-of-custody notes", type: "textarea", help: "Record how this item was obtained, transferred, or stored. Do not infer a chain you cannot document." },
+          { key: "preservation_notes", label: "Preservation notes", type: "textarea" },
           {
             key: "classification",
             label: "How should this be treated?",
