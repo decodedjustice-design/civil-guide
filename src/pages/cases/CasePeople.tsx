@@ -17,16 +17,16 @@ export default function CasePeople() {
         </TabsList>
         <TabsContent value="people">
           <RecordManager
-            table="case_people"
+            table="people"
             caseId={id}
             addLabel="Add person"
             emptyMessage="No people added yet."
-            titleField="name"
-            subtitleFields={["role", "organization", "notes"]}
-            orderBy={{ column: "name", ascending: true }}
+            titleField="display_name"
+            subtitleFields={["role_label", "organization", "notes"]}
+            orderBy={{ column: "display_name", ascending: true }}
             fields={[
-              { key: "name", label: "Name", type: "text", required: true },
-              { key: "role", label: "Role or title", type: "text" },
+              { key: "display_name", label: "Name", type: "text", required: true },
+              { key: "role_label", label: "Role or title", type: "text" },
               { key: "organization", label: "Organization", type: "text" },
               { key: "involvement", label: "How they're involved", type: "textarea" },
               { key: "contact", label: "Contact details", type: "text", placeholder: "Phone or email" },
@@ -36,7 +36,7 @@ export default function CasePeople() {
         </TabsContent>
         <TabsContent value="orgs">
           <RecordManager
-            table="case_organizations"
+            table="organizations"
             caseId={id}
             addLabel="Add organization"
             emptyMessage="No organizations added yet."
@@ -44,7 +44,7 @@ export default function CasePeople() {
             subtitleFields={["org_type", "contact", "notes"]}
             orderBy={{ column: "name", ascending: true }}
             fields={[
-              { key: "name", label: "Name", type: "text", required: true },
+              { key: "display_name", label: "Name", type: "text", required: true },
               {
                 key: "org_type",
                 label: "Type",
