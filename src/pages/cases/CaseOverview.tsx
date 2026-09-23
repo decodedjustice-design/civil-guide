@@ -6,6 +6,7 @@ import {
   Users,
   MessageSquare,
   FileSearch,
+  ClipboardList,
   ArrowRight,
 } from "lucide-react";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
@@ -32,6 +33,7 @@ export default function CaseOverview() {
     },
     { label: "Communications", count: snapshot.communications.length, to: "communications", icon: MessageSquare },
     { label: "Requests", count: snapshot.requests.length, to: "requests", icon: FileSearch },
+    { label: "Record gaps", count: snapshot.record_gaps.filter((g) => !["received", "resolved"].includes(g.status)).length, to: "record-gaps", icon: ClipboardList },
   ];
 
   const needsReview = snapshot.evidence.filter((e) => e.review_status !== "reviewed").length;
@@ -61,6 +63,21 @@ export default function CaseOverview() {
               </Link>
             ))}
           </div>
+
+
+          {snapshot.record_gaps.filter((g) => !["received", "resolved"].includes(g.status)).length > 0 && (
+            <Card>
+              <CardContent className="p-5 space-y-3">
+                <h2 className="font-serif text-lg">Records still needed</h2>
+                <p className="text-sm text-muted-foreground">
+                  {snapshot.record_gaps.filter((g) => !["received", "resolved"].includes(g.status)).length} record gap{snapshot.record_gaps.filter((g) => !["received", "resolved"].includes(g.status)).length === 1 ? "" : "s"} are still open.
+                </p>
+                <Link to={`/cases/${id}/record-gaps`} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+                  Review record gaps <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </CardContent>
+            </Card>
+          )}
 
           {(needsReview > 0 || unclassified > 0) && (
             <Card>
