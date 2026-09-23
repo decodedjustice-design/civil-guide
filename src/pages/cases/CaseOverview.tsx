@@ -127,7 +127,7 @@ export default function CaseOverview() {
                       <span className="font-mono text-xs text-primary whitespace-nowrap">
                         {exhibitLabel(e.exhibit_number)}
                       </span>
-                      <span className="truncate text-foreground">{e.title}</span>
+                      <span className="truncate text-foreground">{e.display_filename}</span>
                       <Badge
                         variant="outline"
                         className={`ml-auto shrink-0 ${classificationBadgeClass(e.classification)}`}
