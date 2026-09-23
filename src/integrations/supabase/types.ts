@@ -329,8 +329,6 @@ export type Database = {
           created_at?: string
           date_identified?: string
           date_requested?: string | null
-          date_received?: string | null
-          date_requested?: string | null
           due_date?: string | null
           id?: string
           notes?: string | null
