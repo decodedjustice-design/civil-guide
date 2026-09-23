@@ -226,7 +226,7 @@ export function RecordManager({
                   </div>
                 ))}
               </div>
-              {table === "evidence" && (
+              {table === "documents" && (
                 <div className="rounded-lg border p-4">
                   <p className="text-sm font-medium flex items-center gap-2"><FileText className="h-4 w-4" />Packet status</p>
                   <p className="text-xs text-muted-foreground mt-1">{viewingItem.include_in_export === false ? "Excluded from packet exports by current setting." : "Included in packet exports when the Exhibit Index section is selected."}</p>
@@ -235,7 +235,7 @@ export function RecordManager({
               {(() => {
                 const links = snapshot.links.filter((l: any) => l.from_id === viewingItem.id || l.to_id === viewingItem.id);
                 const labelFor = (type: string, id: string) => {
-                  const source: Record<string, any[]> = { timeline: snapshot.timeline, evidence: snapshot.evidence, issue: snapshot.issues, person: snapshot.people, organization: snapshot.organizations, communication: snapshot.communications, request: snapshot.requests, note: snapshot.notes };
+                  const source: Record<string, any[]> = { event: snapshot.timeline, timeline: snapshot.timeline, document: snapshot.evidence, evidence: snapshot.evidence, issue: snapshot.issues, person: snapshot.people, organization: snapshot.organizations, communication: snapshot.communications, request: snapshot.requests, task: snapshot.record_gaps, note: snapshot.notes };
                   const row = source[type]?.find((r: any) => r.id === id);
                   return row?.title || row?.name || row?.subject || row?.request_title || "Linked record";
                 };
