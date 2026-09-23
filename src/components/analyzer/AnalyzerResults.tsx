@@ -92,7 +92,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       if (!ownerId) throw new Error("Your session expired. Please sign in again.");
       let targetCaseId = caseId;
       if (!targetCaseId) {
-        const { data: created, error } = await supabase.from("cases").insert({ user_id: ownerId, name: `${systemLabel} case`, case_type: systemId, state: "WA", description: `Started from Analyzer for ${systemLabel}.` }).select("id").single();
+        const { data: created, error } = await supabase.from("cases").insert({ owner_user_id: ownerId, title: `${systemLabel} case`, matter_type: systemId, jurisdiction: "Washington" }).select("id").single();
         if (error) throw error;
         targetCaseId = created.id;
       }
@@ -103,7 +103,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         user_id: ownerId,
         title: f.title,
         category: systemLabel,
-        summary: f.whyFlagged,
+        description: f.whyFlagged,
         classification: "unknown",
         status: "open",
         origin: "analyzer",
@@ -111,9 +111,9 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         supporting_notes: f.whatWouldNeedToBeTrue.join("; "),
         missing_records: [...f.evidenceToLookFor, ...f.missingFacts].join("; "),
         next_action: f.nextStep,
-      })) : [{ case_id: targetCaseId, user_id: ownerId, title: `${systemLabel} review`, category: systemId, summary: "Analyzer result saved for further review.", classification: "unknown", status: "open", origin: "analyzer", source: "Decoded Justice Analyzer", supporting_notes: "", missing_records: "", next_action: "" }];
-      if (selected.length) issueRows.push(...selected.map((module) => ({ case_id: targetCaseId, user_id: ownerId, title: module.title, category: module.category, summary: module.definition, classification: "unknown", status: "open", origin: "issue-library", source: "Decoded Justice Law Modules", supporting_notes: module.elements.join("; "), missing_records: module.evidenceExamples.join("; "), next_action: module.questions.join("; ") })));
-      const { error: issueError } = await supabase.from("case_issues").insert(issueRows);
+      })) : [{ case_id: targetCaseId, user_id: ownerId, title: `${systemLabel} review`, category: systemId, description: "Analyzer result saved for further review.", classification: "unknown", status: "open", origin: "analyzer", source: "Decoded Justice Analyzer", supporting_notes: "", missing_records: "", next_action: "" }];
+      if (selected.length) issueRows.push(...selected.map((module) => ({ case_id: targetCaseId, user_id: ownerId, title: module.title, category: module.category, description: module.definition, classification: "unknown", status: "open", origin: "issue-library", source: "Decoded Justice Law Modules", supporting_notes: module.elements.join("; "), missing_records: module.evidenceExamples.join("; "), next_action: module.questions.join("; ") })));
+      const { error: issueError } = await supabase.from("issues").insert(issueRows);
       if (issueError) throw issueError;
 
       const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");
@@ -126,10 +126,10 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       if (noteError) throw noteError;
       const { error: timelineError } = await supabase.from("timeline_entries").insert({ user_id: userId, case_id: targetCaseId, title: "Triage completed", description: `Analyzer triage completed for ${systemLabel}. The answers were preserved as case notes and potential issues were added for review.`, event_date: new Date().toISOString().split("T")[0], classification: "unknown" });
       if (timelineError) throw timelineError;
-      const { error: evidenceError } = await supabase.from("evidence").insert({ user_id: userId, case_id: targetCaseId, title: "Triage response record", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "not_reviewed", classification: "unknown", export_include: true });
+      const { error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "analyzer_intake", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true });
       if (evidenceError) throw evidenceError;
       const packetContent = { generated_at: new Date().toISOString(), source: "analyzer", system: systemLabel, answers: mergedTriageAnswers, selected_issue_modules: selected.map((m) => m.id), sections: ["overview", "issues", "timeline", "notes", "evidence"], note: "Draft organizational packet. It does not establish that a legal violation occurred." };
-      const { error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, user_id: userId, title: `${systemLabel} triage packet`, packet_type: "triage", sections: ["overview", "issues", "timeline", "notes", "evidence"], options: { include_exhibits: true }, content: packetContent });
+      const { error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, title: `${systemLabel} triage packet`, packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: packetContent });
       if (packetError) throw packetError;
 
       onStartOrganizing?.();
