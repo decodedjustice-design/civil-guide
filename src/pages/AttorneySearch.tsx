@@ -76,16 +76,13 @@ export default function AttorneySearch() {
       if (error) throw error;
 
       if (caseId) {
-        const { error: communicationError } = await supabase.from("case_communications").insert({
-          user_id: user.id,
+        const { error: communicationError } = await supabase.from("communications").insert({
           case_id: caseId,
-          occurred_on: new Date().toISOString().slice(0, 10),
+          occurred_at: new Date().toISOString(),
           method: "Attorney outreach",
-          person: attorney.name,
-          agency: attorney.firm,
           subject: "Attorney search / outreach",
-          summary: "Attorney identified through the Decoded Justice directory. Contact information has not been independently verified by Decoded Justice.",
-          classification: "unknown",
+          summary: `Attorney identified through the Decoded Justice directory: ${attorney.name}, ${attorney.firm}. Contact information has not been independently verified by Decoded Justice.`,
+          follow_up_required: true,
         });
         if (communicationError) throw communicationError;
       }
