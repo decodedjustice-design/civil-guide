@@ -56,6 +56,7 @@ import CasePeople from "./pages/cases/CasePeople";
 import CaseIssues from "./pages/cases/CaseIssues";
 import CaseCommunications from "./pages/cases/CaseCommunications";
 import CaseRequests from "./pages/cases/CaseRequests";
+import CaseRecordGaps from "./pages/cases/CaseRecordGaps";
 import CaseSearch from "./pages/cases/CaseSearch";
 import CaseContentCheck from "./pages/cases/CaseContentCheck";
 import CasePackets from "./pages/cases/CasePackets";
@@ -128,6 +129,7 @@ const App = () => {
               <Route path="/cases/:id/claims" element={<ProtectedRoute><CaseIssues /></ProtectedRoute>} />
               <Route path="/cases/:id/communications" element={<ProtectedRoute><CaseCommunications /></ProtectedRoute>} />
               <Route path="/cases/:id/requests" element={<ProtectedRoute><CaseRequests /></ProtectedRoute>} />
+              <Route path="/cases/:id/record-gaps" element={<ProtectedRoute><CaseRecordGaps /></ProtectedRoute>} />
               <Route path="/cases/:id/deadlines" element={<ProtectedRoute><CaseRequests /></ProtectedRoute>} />
               <Route path="/cases/:id/search" element={<ProtectedRoute><CaseSearch /></ProtectedRoute>} />
               <Route path="/cases/:id/content-check" element={<ProtectedRoute><CaseContentCheck /></ProtectedRoute>} />
