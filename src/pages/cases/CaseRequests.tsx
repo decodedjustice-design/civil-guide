@@ -15,18 +15,18 @@ export default function CaseRequests() {
     >
       <CaseWorkspaceSummary communications={snapshot.communications} requests={snapshot.requests} />
       <RecordManager
-        table="case_records_requests"
+        table="record_requests"
         caseId={id}
         addLabel="Add a request"
         emptyMessage="No requests tracked yet."
-        titleField="request_title"
-        subtitleFields={["agency", "date_sent", "due_date", "description"]}
-        badgeFields={["status", "request_method"]}
-        orderBy={{ column: "due_date", ascending: true }}
+        titleField="title"
+        subtitleFields={["record_holder", "requested_at", "due_at", "notes"]}
+        badgeFields={["status", "record_holder"]}
+        orderBy={{ column: "due_at", ascending: true }}
         fields={[
-          { key: "request_title", label: "What you asked for", type: "text", required: true },
-          { key: "agency", label: "Agency or organization", type: "text", required: true },
-          { key: "description", label: "Details", type: "textarea" },
+          { key: "title", label: "What you asked for", type: "text", required: true },
+          { key: "record_holder", label: "Agency or organization", type: "text" },
+          { key: "notes", label: "Details / notes", type: "textarea" },
           { key: "status", label: "Status", type: "select", options: REQUEST_STATUSES, defaultValue: "draft" },
           { key: "request_method", label: "How you sent it", type: "text", placeholder: "Email, portal, mail" },
           { key: "date_sent", label: "Date sent", type: "date" },
