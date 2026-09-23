@@ -9,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 
-type RecordType = "timeline" | "evidence" | "issue" | "person" | "organization" | "communication" | "request" | "note";
+type RecordType = "event" | "document" | "issue" | "person" | "organization" | "communication" | "request" | "note";
 const TYPE_LABELS: Record<RecordType, string> = {
-  timeline: "Timeline event",
-  evidence: "Exhibit",
+  event: "Timeline event",
+  document: "Exhibit",
   issue: "Issue",
   person: "Person",
   organization: "Organization",
@@ -21,7 +21,7 @@ const TYPE_LABELS: Record<RecordType, string> = {
   note: "Note",
 };
 const COLLECTIONS: Record<RecordType, keyof ReturnType<typeof useEmptySnapshot>> = {
-  timeline: "timeline", evidence: "evidence", issue: "issues", person: "people",
+  event: "timeline", document: "evidence", issue: "issues", person: "people",
   organization: "organizations", communication: "communications", request: "requests", note: "notes",
 };
 function useEmptySnapshot() { return { timeline: [], evidence: [], issues: [], people: [], organizations: [], communications: [], requests: [], notes: [], links: [] }; }
@@ -49,8 +49,8 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   const addLink = async () => {
     if (!caseId || !user?.id || !fromId || !toId || !relation.trim()) return;
     setSaving(true);
-    const { error } = await supabase.from("case_links").insert({
-      case_id: caseId, user_id: user.id, from_id: fromId, from_type: fromType,
+    const { error } = await supabase.from("case_relationships").insert({
+      case_id: caseId, from_id: fromId, from_type: fromType,
       to_id: toId, to_type: toType, relation: relation.trim(),
     });
     setSaving(false);
@@ -61,7 +61,7 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   };
 
   const removeLink = async (id: string) => {
-    const { error } = await supabase.from("case_links").delete().eq("id", id).eq("case_id", caseId);
+    const { error } = await supabase.from("case_relationships").delete().eq("id", id).eq("case_id", caseId);
     if (error) toast.error("Could not remove relationship");
     else { toast.success("Relationship removed"); await queryClient.invalidateQueries({ queryKey: ["case-snapshot", caseId] }); }
   };
