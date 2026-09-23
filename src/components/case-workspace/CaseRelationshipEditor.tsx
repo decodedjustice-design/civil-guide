@@ -31,9 +31,9 @@ interface Props { caseId?: string; snapshot: ReturnType<typeof useEmptySnapshot>
 export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [fromType, setFromType] = useState<RecordType>("timeline");
+  const [fromType, setFromType] = useState<RecordType>("event");
   const [fromId, setFromId] = useState("");
-  const [toType, setToType] = useState<RecordType>("evidence");
+  const [toType, setToType] = useState<RecordType>("document");
   const [toId, setToId] = useState("");
   const [relation, setRelation] = useState("supports");
   const [saving, setSaving] = useState(false);
