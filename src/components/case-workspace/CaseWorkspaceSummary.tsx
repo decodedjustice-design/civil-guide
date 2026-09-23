@@ -8,7 +8,7 @@ interface Props {
 
 export function CaseWorkspaceSummary({ communications = [], requests = [] }: Props) {
   const followUps = communications.filter((c) => c.follow_up_required);
-  const undatedFollowUps = followUps.filter((c) => !c.occurred_at);
+
   const pendingRequests = requests.filter((r) => !["complete", "denied"].includes(r.status));
   const overdueRequests = requests.filter((r) => r.status === "overdue");
 
@@ -26,9 +26,9 @@ export function CaseWorkspaceSummary({ communications = [], requests = [] }: Pro
       icon: FileSearch,
     },
     {
-      label: "Follow-ups without dates",
-      value: undatedFollowUps.length,
-      detail: undatedFollowUps.length ? "Add a date so the item is not easy to lose" : "Nothing missing",
+      label: "Follow-ups flagged",
+      value: followUps.length,
+      detail: followUps.length ? "Follow-up is flagged on these contacts" : "Nothing flagged",
       icon: CalendarClock,
     },
     {
