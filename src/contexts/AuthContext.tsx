@@ -49,8 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const recoverOAuthCallback = async () => {
       try {
         const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-        const accessToken = hashParams.get("access_token");
-        const refreshToken = hashParams.get("refresh_token");
+        const queryParams = new URLSearchParams(window.location.search);
+        const accessToken = hashParams.get("access_token") ?? queryParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token") ?? queryParams.get("refresh_token");
 
         if (accessToken && refreshToken) {
           const { error } = await supabase.auth.setSession({
