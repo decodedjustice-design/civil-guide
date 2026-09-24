@@ -24,6 +24,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+
+        // Lovable Cloud Auth returns to the app origin after OAuth. If a
+        // protected route requested authentication, complete that navigation
+        // only after Supabase reports a real signed-in session.
+        if (event === "SIGNED_IN" && session?.user) {
+          const storedRedirect = sessionStorage.getItem("auth_redirect");
+          if (storedRedirect?.startsWith("/") && !storedRedirect.startsWith("//")) {
+            sessionStorage.removeItem("auth_redirect");
+            window.location.replace(storedRedirect);
+            return;
+          }
+        }
+
         setLoading(false);
       }
     );
