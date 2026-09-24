@@ -41,12 +41,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // THEN recover an OAuth callback before checking the existing session.
+    // Lovable's OAuth broker can return Supabase-compatible tokens in the URL
+    // fragment after the browser returns to the app. Without consuming those
+    // tokens here, the app lands back on /auth with no Supabase session and
+    // appears to loop forever.
+    const recoverOAuthCallback = async () => {
+      try {
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+        const accessToken = hashParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token");
+
+        if (accessToken && refreshToken) {
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+
+          if (!error) {
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname + window.location.search
+            );
+          }
+        } else {
+          const code = new URLSearchParams(window.location.search).get("code");
+          if (code) {
+            const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+            if (!error) {
+              const params = new URLSearchParams(window.location.search);
+              params.delete("code");
+              params.delete("state");
+              const query = params.toString();
+              window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname + (query ? `?${query}` : "")
+              );
+            }
+          }
+        }
+      } catch (error) {
+        console.error("OAuth callback recovery failed:", error);
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-    });
+    };
+
+    void recoverOAuthCallback();
 
     return () => subscription.unsubscribe();
   }, []);
