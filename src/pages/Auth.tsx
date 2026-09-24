@@ -30,7 +30,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const { user, signUp, signIn } = useAuth();
+  const { user, signUp, signIn, loading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
@@ -39,7 +39,7 @@ export default function Auth() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       // Check for a stored redirect (from OAuth flow)
       const storedRedirect = sessionStorage.getItem("auth_redirect");
       if (storedRedirect) {
@@ -49,7 +49,7 @@ export default function Auth() {
         navigate(redirectTo, { replace: true });
       }
     }
-  }, [user, navigate, redirectTo]);
+  }, [user, loading, navigate, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,7 +106,7 @@ export default function Auth() {
       // return URL so the user lands back on the page they came from.
       sessionStorage.setItem("auth_redirect", redirectTo);
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth?redirect=${encodeURIComponent(redirectTo)}`,
+        redirect_uri: window.location.origin,
       });
 
       if (error) {
