@@ -15,6 +15,7 @@ import SupportNetwork from "./pages/SupportNetwork";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import Notes from "./pages/Notes";
 import EvidenceVault from "./pages/EvidenceVault";
@@ -92,6 +93,7 @@ const App = () => {
               <Route path="/support-network" element={<SupportNetwork />} />
               <Route path="/about" element={<About />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/signin" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
               <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
