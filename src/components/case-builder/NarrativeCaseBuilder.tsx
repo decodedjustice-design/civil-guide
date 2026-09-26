@@ -51,7 +51,7 @@ function deriveTitle(story: string) {
   return firstSentence.length > 72 ? `${firstSentence.slice(0, 69)}…` : firstSentence;
 }
 
-function safeDate(value?: string) {
+function safeDate(value?: string | null) {
   return value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
 }
 
