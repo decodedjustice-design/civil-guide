@@ -57,6 +57,7 @@ function safeDate(value?: string) {
 
 export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps) {
   const { user } = useAuth();
+  const { cases, createCase, updateCase } = useCases();
   const [caseId, setCaseId] = useState<string | null>(null);
   const [story, setStory] = useState("");
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -65,7 +66,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [signals, setSignals] = useState<CaseSignals | null>(null);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [editingItem, setEditingItem] = useState<string | null>(null);
-  const [showReview, setShowReview] = useState(false);\n  const [caseCounts, setCaseCounts] = useState({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, recordGaps: 0 });
+  const [showReview, setShowReview] = useState(false);
+  const [caseCounts, setCaseCounts] = useState({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, recordGaps: 0 });
   const [error, setError] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const extractionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
