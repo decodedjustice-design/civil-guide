@@ -370,7 +370,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     setIsSavingAnswer(true);
     setError(null);
     try {
-      const clarification = `\\n\\nClarification added while building this case:\\n${questionAnswer.trim()}`;
+      const clarification = `\n\nClarification added while building this case:\n${questionAnswer.trim()}`;
       const nextStory = `${story.trimEnd()}${clarification}`.trim();
       setStory(nextStory);
       await persistStory(nextStory);
