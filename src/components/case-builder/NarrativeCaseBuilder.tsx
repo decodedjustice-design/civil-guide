@@ -39,6 +39,7 @@ interface ExtractedItem {
   key: string;
   label: string;
   detail?: string;
+  href?: string;
 }
 
 const STORY_NOTE_TITLE = "Your Story";
@@ -540,6 +541,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         key: `actor-${index}-${actor.name}`,
         label: actor.name,
         detail: actor.role.replace("_", " "),
+        href: caseId ? `/cases/${caseId}/people` : undefined,
       });
     });
 
@@ -548,6 +550,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         key: `event-${index}-${event.title}`,
         label: event.title,
         detail: event.approximate_date,
+        href: caseId ? `/cases/${caseId}/timeline` : undefined,
       });
     });
 
@@ -556,6 +559,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         key: `issue-${index}-${issue.id}`,
         label: issue.label,
         detail: "Possible issue area",
+        href: caseId ? `/cases/${caseId}/issues` : undefined,
       });
     });
 
@@ -564,6 +568,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         key: `evidence-${index}-${mention.id}`,
         label: mention.type,
         detail: mention.approximate_date || "Evidence mentioned",
+        href: caseId ? `/cases/${caseId}/evidence` : undefined,
       });
     });
 
@@ -572,6 +577,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         key: `gap-${index}-${gap.id}`,
         label: gap.title,
         detail: "Record gap",
+        href: caseId ? `/cases/${caseId}/record-gaps` : undefined,
       });
     });
 
@@ -644,7 +650,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
                     Here’s what I picked up
                   </CardTitle>
                   <p className="text-xs text-muted-foreground mt-1">
-                    These are organized from your story. Review, edit, or dismiss anything that is not right.
+                    These are organized from your story. Review them in the linked section, or hide an item from this review without deleting it from your case.
                   </p>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setShowReview(false)} aria-label="Close review">
@@ -660,15 +666,23 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
                     <p className="text-sm text-foreground truncate">{item.label}</p>
                     <p className="text-xs text-muted-foreground capitalize">{item.detail}</p>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => setEditingItem(item.key)} aria-label={`Edit ${item.label}`}>
-                    <Pencil className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={() => dismissItem(item.key)} aria-label={`Dismiss ${item.label}`}>
+                  {item.href ? (
+                    <Button asChild variant="ghost" size="sm" className="shrink-0">
+                      <Link to={item.href}>
+                        <Pencil className="w-3.5 h-3.5 mr-1.5" />
+                        Review
+                      </Link>
+                    </Button>
+                  ) : null}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => dismissItem(item.key)}
+                    aria-label={`Hide ${item.label} from review`}
+                    title="Hide from this review"
+                  >
                     <X className="w-3.5 h-3.5" />
                   </Button>
-                  {editingItem === item.key && (
-                    <Badge variant="outline" className="text-[10px]">Edit in the linked section</Badge>
-                  )}
                 </div>
               ))}
             </CardContent>
