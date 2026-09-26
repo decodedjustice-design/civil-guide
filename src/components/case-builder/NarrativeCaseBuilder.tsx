@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";\nimport { useCases } from "@/hooks/useCases";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,32 +79,14 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const loadOrCreateCase = useCallback(async () => {
     if (!user) return;
 
-    const { data: existing, error: existingError } = await supabase
-      .from("cases")
-      .select("id,name,description")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle();
-
-    if (existingError) throw existingError;
-
-    let activeCaseId = existing?.id ?? null;
+    let activeCaseId = cases[0]?.id ?? null;
 
     if (!activeCaseId) {
-      const { data: created, error: createError } = await supabase
-        .from("cases")
-        .insert({
-          user_id: user.id,
-          name: "Untitled case",
-          description: null,
-          state: "WA",
-          status: "active",
-        })
-        .select("id")
-        .single();
-
-      if (createError) throw createError;
+      const created = await createCase.mutateAsync({
+        title: "Untitled case",
+        matter_type: "general",
+        jurisdiction: "Washington",
+      });
       activeCaseId = created.id;
     }
 
@@ -122,7 +104,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     if (noteError) throw noteError;
     setStory(storyNote?.content ?? "");
-  }, [onCaseReady, user]);
+  }, [cases, createCase, onCaseReady, user]);
 
   useEffect(() => {
     loadOrCreateCase().catch((err) => {
@@ -168,20 +150,14 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       }
 
       const title = deriveTitle(nextStory);
-      const { error: caseError } = await supabase
-        .from("cases")
-        .update({ name: title, description: nextStory || null })
-        .eq("id", caseId)
-        .eq("user_id", user.id);
-
-      if (caseError) throw caseError;
+      await updateCase.mutateAsync({ id: caseId, title });
 
       setSaveState("saved");
     } catch (err) {
       console.error("Story save error:", err);
       setSaveState("error");
     }
-  }, [caseId, user]);
+  }, [caseId, updateCase, user]);
 
   const scheduleSave = useCallback((nextStory: string) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
