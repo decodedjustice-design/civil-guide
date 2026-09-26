@@ -6,6 +6,14 @@ import { useActiveCaseId, useCases } from "@/hooks/useCases";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 import {
@@ -19,9 +27,11 @@ import {
   MessageSquareText,
   Network,
   Pencil,
+  Plus,
   Send,
   Sparkles,
   UserRound,
+  FolderOpen,
   Users,
   X,
 } from "lucide-react";
@@ -77,6 +87,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [isSavingAnswer, setIsSavingAnswer] = useState(false);
   const [caseCounts, setCaseCounts] = useState({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, evidenceMentions: 0, recordGaps: 0 });
   const [error, setError] = useState<string | null>(null);
+  const [casePickerOpen, setCasePickerOpen] = useState(false);
+  const [isCreatingCase, setIsCreatingCase] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const extractionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -115,6 +127,66 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       setError("We couldn't open your case. Please refresh and try again.");
     });
   }, [loadOrCreateCase]);
+
+  const resetBuilderState = useCallback(() => {
+    setStory("");
+    setSignals(null);
+    setDismissed(new Set());
+    setShowReview(false);
+    setActiveQuestionId(null);
+    setQuestionAnswer("");
+    setAnsweredQuestions(new Set());
+    setSkippedQuestions(new Set());
+    setLastAnalyzedLength(0);
+    setCaseCounts({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, evidenceMentions: 0, recordGaps: 0 });
+    setError(null);
+    setSaveState("idle");
+  }, []);
+
+  const openExistingCase = useCallback(async (nextCaseId: string) => {
+    if (!user || !cases.some((item) => item.id === nextCaseId)) return;
+    setCasePickerOpen(false);
+    resetBuilderState();
+    setCaseId(nextCaseId);
+    selectActiveCase(nextCaseId);
+    onCaseReady?.(nextCaseId);
+
+    const { data: narrative, error: narrativeError } = await supabase
+      .from("case_narratives")
+      .select("narrative")
+      .eq("case_id", nextCaseId)
+      .limit(1)
+      .maybeSingle();
+    if (narrativeError) {
+      setError("We couldn't load that case's story. Please try again.");
+      return;
+    }
+    setStory(narrative?.narrative ?? "");
+    await refreshCaseCounts();
+  }, [cases, onCaseReady, refreshCaseCounts, resetBuilderState, selectActiveCase, user]);
+
+  const createNewCase = useCallback(async () => {
+    if (!user || isCreatingCase) return;
+    setIsCreatingCase(true);
+    setError(null);
+    try {
+      const created = await createCase.mutateAsync({
+        title: "Untitled case",
+        matter_type: "general",
+        jurisdiction: "Washington",
+      });
+      resetBuilderState();
+      setCaseId(created.id);
+      selectActiveCase(created.id);
+      onCaseReady?.(created.id);
+      setCasePickerOpen(false);
+    } catch (err) {
+      console.error("New case creation error:", err);
+      setError("We couldn't start a new case. Please try again.");
+    } finally {
+      setIsCreatingCase(false);
+    }
+  }, [createCase, isCreatingCase, onCaseReady, resetBuilderState, selectActiveCase, user]);
 
   const persistStory = useCallback(async (nextStory: string) => {
     if (!user || !caseId) return;
@@ -603,10 +675,19 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
                   Your story saves automatically while we help organize it.
                 </p>
               </div>
-              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-                {saveState === "saving" && <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>}
-                {saveState === "saved" && <><Check className="w-3.5 h-3.5" /> Saved</>}
-                {saveState === "error" && <><X className="w-3.5 h-3.5 text-destructive" /> Save issue</>}
+              <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground mr-1">
+                  {saveState === "saving" && <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>}
+                  {saveState === "saved" && <><Check className="w-3.5 h-3.5" /> Saved</>}
+                  {saveState === "error" && <><X className="w-3.5 h-3.5 text-destructive" /> Save issue</>}
+                </div>
+                <Button variant="outline" size="sm" onClick={() => setCasePickerOpen(true)}>
+                  <FolderOpen className="w-3.5 h-3.5 mr-1.5" /> Switch case
+                </Button>
+                <Button size="sm" onClick={() => void createNewCase()} disabled={isCreatingCase}>
+                  {isCreatingCase ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Plus className="w-3.5 h-3.5 mr-1.5" />}
+                  New case
+                </Button>
               </div>
             </div>
           </CardHeader>
@@ -754,6 +835,39 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           </CardContent>
         </Card>
       </aside>
+
+      <Dialog open={casePickerOpen} onOpenChange={setCasePickerOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Switch case</DialogTitle>
+            <DialogDescription>
+              Choose an existing case. Your current story is saved separately, and switching will not merge case information.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[50vh] space-y-2 overflow-y-auto py-1">
+            {cases.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => void openExistingCase(item.id)}
+                className={`w-full rounded-xl border p-3 text-left transition hover:border-primary/40 hover:bg-muted/40 ${item.id === caseId ? "border-primary/40 bg-primary/5" : "border-border/60"}`}
+              >
+                <p className="font-medium text-sm text-foreground">{item.title || "Untitled case"}</p>
+                <p className="mt-1 text-xs text-muted-foreground capitalize">
+                  {[item.matter_type, item.jurisdiction, item.status?.replace(/_/g, " ")].filter(Boolean).join(" · ")}
+                </p>
+              </button>
+            ))}
+          </div>
+          <DialogFooter className="sm:justify-between">
+            <p className="text-xs text-muted-foreground">Starting a new case never deletes your existing cases.</p>
+            <Button onClick={() => void createNewCase()} disabled={isCreatingCase}>
+              {isCreatingCase ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+              Start new case
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {clarifyingQuestions.length > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-40 px-3 pb-3 sm:px-6">
