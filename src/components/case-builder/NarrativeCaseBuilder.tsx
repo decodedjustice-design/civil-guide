@@ -95,7 +95,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const loadOrCreateCase = useCallback(async () => {
     if (!user || casesLoading) return;
 
-    let activeCaseId = activeId && cases.some((item) => item.id === activeId) ? activeId : null;
+    let activeCaseId = activeId && (cases.some((item) => item.id === activeId) || caseId === activeId) ? activeId : null;
 
     if (!activeCaseId) {
       const created = await createCase.mutateAsync({
@@ -119,7 +119,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     if (noteError) throw noteError;
     setStory(storyNote?.narrative ?? "");
-  }, [activeId, cases, casesLoading, createCase, onCaseReady, selectActiveCase, user]);
+  }, [activeId, caseId, cases, casesLoading, createCase, onCaseReady, selectActiveCase, user]);
 
   useEffect(() => {
     loadOrCreateCase().catch((err) => {
@@ -162,8 +162,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       return;
     }
     setStory(narrative?.narrative ?? "");
-    await refreshCaseCounts();
-  }, [cases, onCaseReady, refreshCaseCounts, resetBuilderState, selectActiveCase, user]);
+  }, [cases, onCaseReady, resetBuilderState, selectActiveCase, user]);
 
   const createNewCase = useCallback(async () => {
     if (!user || isCreatingCase) return;
