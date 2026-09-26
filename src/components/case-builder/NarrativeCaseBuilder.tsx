@@ -99,8 +99,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     onCaseReady?.(activeCaseId);
 
     const { data: storyNote, error: noteError } = await supabase
-      .from("notes")
-      .select("id,content")
+      .from("case_narratives")
+      .select("id,narrative")
       .eq("user_id", user.id)
       .eq("case_id", activeCaseId)
       .eq("title", STORY_NOTE_TITLE)
@@ -108,7 +108,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       .maybeSingle();
 
     if (noteError) throw noteError;
-    setStory(storyNote?.content ?? "");
+    setStory(storyNote?.narrative ?? "");
   }, [activeId, cases, casesLoading, createCase, onCaseReady, selectActiveCase, user]);
 
   useEffect(() => {
@@ -124,31 +124,27 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     setSaveState("saving");
 
     try {
-      const { data: existingNote, error: findError } = await supabase
-        .from("notes")
+      const { data: existingNarrative, error: findError } = await supabase
+        .from("case_narratives")
         .select("id")
-        .eq("user_id", user.id)
         .eq("case_id", caseId)
-        .eq("title", STORY_NOTE_TITLE)
         .limit(1)
         .maybeSingle();
 
       if (findError) throw findError;
 
-      if (existingNote) {
+      if (existingNarrative) {
         const { error: updateError } = await supabase
-          .from("notes")
-          .update({ content: nextStory })
-          .eq("id", existingNote.id)
-          .eq("user_id", user.id);
+          .from("case_narratives")
+          .update({ narrative: nextStory })
+          .eq("id", existingNarrative.id)
+          .eq("case_id", caseId);
 
         if (updateError) throw updateError;
       } else {
-        const { error: insertError } = await supabase.from("notes").insert({
-          user_id: user.id,
+        const { error: insertError } = await supabase.from("case_narratives").insert({
           case_id: caseId,
-          title: STORY_NOTE_TITLE,
-          content: nextStory,
+          narrative: nextStory,
         });
 
         if (insertError) throw insertError;
