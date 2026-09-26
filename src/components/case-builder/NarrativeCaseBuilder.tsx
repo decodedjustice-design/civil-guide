@@ -15,9 +15,11 @@ import {
   Clock3,
   FileSearch,
   Loader2,
+  MessageCircleQuestion,
   MessageSquareText,
   Network,
   Pencil,
+  Send,
   Sparkles,
   UserRound,
   Users,
@@ -67,6 +69,11 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
+  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
+  const [questionAnswer, setQuestionAnswer] = useState("");
+  const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
+  const [skippedQuestions, setSkippedQuestions] = useState<Set<string>>(new Set());
+  const [isSavingAnswer, setIsSavingAnswer] = useState(false);
   const [caseCounts, setCaseCounts] = useState({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, recordGaps: 0 });
   const [error, setError] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -336,6 +343,49 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     setDismissed((current) => new Set([...current, key]));
   };
 
+  const clarifyingQuestions = useMemo(() => {
+    if (!signals?.clarifying_questions) return [];
+    return signals.clarifying_questions.filter(
+      (question) => !answeredQuestions.has(question.id) && !skippedQuestions.has(question.id)
+    );
+  }, [answeredQuestions, signals, skippedQuestions]);
+
+  const activeQuestion = clarifyingQuestions.find((question) => question.id === activeQuestionId) ?? null;
+
+  const openQuestion = (questionId: string) => {
+    setActiveQuestionId(questionId);
+    setQuestionAnswer("");
+  };
+
+  const skipQuestion = (questionId: string) => {
+    setSkippedQuestions((current) => new Set([...current, questionId]));
+    setActiveQuestionId(null);
+    setQuestionAnswer("");
+  };
+
+  const answerQuestion = async () => {
+    if (!activeQuestion || !questionAnswer.trim() || isSavingAnswer) return;
+
+    setIsSavingAnswer(true);
+    setError(null);
+    try {
+      const clarification = `\\n\\nClarification added while building this case:\\n${questionAnswer.trim()}`;
+      const nextStory = `${story.trimEnd()}${clarification}`.trim();
+      setStory(nextStory);
+      await persistStory(nextStory);
+      setAnsweredQuestions((current) => new Set([...current, activeQuestion.id]));
+      setActiveQuestionId(null);
+      setQuestionAnswer("");
+      setLastAnalyzedLength(0);
+      await extractStory(true);
+    } catch (err) {
+      console.error("Question answer save error:", err);
+      setError("We couldn't save that clarification yet. Your answer is still in this window; please try again.");
+    } finally {
+      setIsSavingAnswer(false);
+    }
+  };
+
   const extractedItems = useMemo<ExtractedItem[]>(() => {
     if (!signals) return [];
 
@@ -376,7 +426,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   ];
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start pb-36">
       <div className="space-y-5">
         <Card className="overflow-hidden border-border/70 shadow-sm">
           <CardHeader className="pb-3">
@@ -535,6 +585,65 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           </CardContent>
         </Card>
       </aside>
+
+      {clarifyingQuestions.length > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-40 px-3 pb-3 sm:px-6">
+          <div className="mx-auto max-w-5xl rounded-2xl border border-primary/20 bg-background/95 p-3 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-background/85">
+            {activeQuestion && (
+              <div className="mb-3 rounded-xl border border-primary/20 bg-primary/5 p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 rounded-full bg-primary/10 p-2 text-primary">
+                    <MessageCircleQuestion className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground">{activeQuestion.question}</p>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{activeQuestion.why}</p>
+                    <Textarea
+                      autoFocus
+                      value={questionAnswer}
+                      onChange={(event) => setQuestionAnswer(event.target.value)}
+                      placeholder="Add what you know. It’s okay to be approximate or say you don’t know."
+                      className="mt-3 min-h-[92px] resize-none bg-background text-sm"
+                      aria-label={activeQuestion.question}
+                    />
+                    <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => skipQuestion(activeQuestion.id)} disabled={isSavingAnswer}>
+                        Skip for now
+                      </Button>
+                      <Button size="sm" onClick={() => void answerQuestion()} disabled={!questionAnswer.trim() || isSavingAnswer}>
+                        {isSavingAnswer ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                        Add clarification
+                      </Button>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" className="shrink-0" onClick={() => setActiveQuestionId(null)} aria-label="Close question">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-0.5">
+              <div className="mr-1 hidden shrink-0 items-center gap-2 text-xs font-medium text-muted-foreground sm:flex">
+                <MessageCircleQuestion className="h-4 w-4 text-primary" />
+                A few details could help
+              </div>
+              {clarifyingQuestions.map((question) => (
+                <button
+                  key={question.id}
+                  type="button"
+                  onClick={() => openQuestion(question.id)}
+                  className="group flex min-w-max items-center gap-2 rounded-full border border-primary/25 bg-primary/5 px-4 py-2 text-left text-xs font-medium text-foreground transition hover:border-primary/50 hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                >
+                  <MessageCircleQuestion className="h-3.5 w-3.5 text-primary" />
+                  <span>{question.question}</span>
+                  <span className="rounded-full bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">clarify</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
