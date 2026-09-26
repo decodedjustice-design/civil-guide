@@ -136,7 +136,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         if (updateError) throw updateError;
       } else {
         const { error: insertError } = await supabase.from("notes").insert({
-          user_id: user.id,
           case_id: caseId,
           title: STORY_NOTE_TITLE,
           content: nextStory,
