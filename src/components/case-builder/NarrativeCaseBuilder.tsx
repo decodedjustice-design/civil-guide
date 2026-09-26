@@ -286,9 +286,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     }
   }, [caseId, user]);
 
-  const extractStory = useCallback(async (force = false) => {
-    if (!user || !caseId || story.trim().length < 40 || isExtracting) return;
-    if (!force && story.trim().length - lastAnalyzedLength < 60) return;
+  const extractStory = useCallback(async (force = false, narrativeOverride?: string) => {
+    const narrativeToAnalyze = narrativeOverride ?? story;
+    if (!user || !caseId || narrativeToAnalyze.trim().length < 40 || isExtracting) return;
+    if (!force && narrativeToAnalyze.trim().length - lastAnalyzedLength < 60) return;
 
     setIsExtracting(true);
     setError(null);
@@ -296,7 +297,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     try {
       const { data, error: invokeError } = await supabase.functions.invoke("case-signal-engine", {
         body: {
-          narrative: story,
+          narrative: narrativeToAnalyze,
           issueType: "unknown",
           opposingParty: "",
         },
@@ -307,7 +308,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
       const nextSignals = sanitizeSafetyLanguage(data as CaseSignals);
       setSignals(nextSignals);
-      setLastAnalyzedLength(story.trim().length);
+      setLastAnalyzedLength(narrativeToAnalyze.trim().length);
       await applySignals(nextSignals);
       await refreshCaseCounts();
       setShowReview(true);
@@ -377,7 +378,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       setActiveQuestionId(null);
       setQuestionAnswer("");
       setLastAnalyzedLength(0);
-      await extractStory(true);
+      await extractStory(true, nextStory);
     } catch (err) {
       console.error("Question answer save error:", err);
       setError("We couldn't save that clarification yet. Your answer is still in this window; please try again.");
