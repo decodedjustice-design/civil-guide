@@ -218,7 +218,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       (supabase as any).from("people").select("id,display_name,role_label").eq("case_id", caseId),
       (supabase as any).from("organizations").select("id,name").eq("case_id", caseId),
       (supabase as any).from("issues").select("id,title").eq("case_id", caseId),
-      (supabase as any).from("events").select("id,title,occurred_at").eq("case_id", caseId),
+      (supabase as any).from("events").select("id,title,description,occurred_at,source_type,reviewed,reason").eq("case_id", caseId),
     ]);
 
     let people = existingPeople ?? [];
@@ -272,24 +272,51 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     for (const event of nextSignals.timeline_suggestions) {
       const eventDate = safeDate(event.iso_date);
-      if (!event.title.trim()) continue;
-      const exists = events.some(
-        (e) => normalize(e.title) === normalize(event.title) && (eventDate ? e.occurred_at === eventDate : !e.occurred_at)
+      const title = event.title.trim();
+      if (!title) continue;
+
+      // Reconcile an existing narrative-derived event by title instead of
+      // inserting another row when the user edits its date or description.
+      // Only unreviewed narrative-derived rows are eligible for automatic updates.
+      const existingNarrativeEvent = events.find(
+        (e) =>
+          normalize(e.title) === normalize(title) &&
+          e.source_type === "user_narrative" &&
+          e.reviewed === false
       );
-      if (!exists) {
-        await (supabase as any).from("events").insert({
-          case_id: caseId,
-          title: event.title.trim(),
-          description: event.description,
-          occurred_at: eventDate,
-          classification: "unknown",
-          category: "narrative",
-          importance: "Medium",
-          source_type: "user_narrative",
-          reviewed: false,
-          disputed: false,
-          reason: event.approximate_date,
-        });
+
+      if (existingNarrativeEvent) {
+        await (supabase as any)
+          .from("events")
+          .update({
+            description: event.description,
+            occurred_at: eventDate,
+            reason: event.approximate_date,
+          })
+          .eq("id", existingNarrativeEvent.id)
+          .eq("case_id", caseId);
+      } else {
+        const duplicate = events.some(
+          (e) =>
+            normalize(e.title) === normalize(title) &&
+            (eventDate ? e.occurred_at === eventDate : !e.occurred_at)
+        );
+
+        if (!duplicate) {
+          await (supabase as any).from("events").insert({
+            case_id: caseId,
+            title,
+            description: event.description,
+            occurred_at: eventDate,
+            classification: "unknown",
+            category: "narrative",
+            importance: "Medium",
+            source_type: "user_narrative",
+            reviewed: false,
+            disputed: false,
+            reason: event.approximate_date,
+          });
+        }
       }
     }
 
