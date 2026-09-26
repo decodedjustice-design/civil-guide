@@ -74,7 +74,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
   const [skippedQuestions, setSkippedQuestions] = useState<Set<string>>(new Set());
   const [isSavingAnswer, setIsSavingAnswer] = useState(false);
-  const [caseCounts, setCaseCounts] = useState({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, recordGaps: 0 });
+  const [caseCounts, setCaseCounts] = useState({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, evidenceMentions: 0, recordGaps: 0 });
   const [error, setError] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const extractionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -179,6 +179,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       ["issues", "issues"],
       ["communications", "communications"],
       ["documents", "evidence"],
+      ["evidence_mentions", "evidenceMentions"],
       ["tasks", "recordGaps"],
     ] as const;
 
@@ -191,7 +192,14 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       })
     );
 
-    setCaseCounts((current) => ({ ...current, ...Object.fromEntries(results) }));
+    setCaseCounts((current) => {
+      const next = Object.fromEntries(results) as Partial<typeof current>;
+      return {
+        ...current,
+        ...next,
+        evidence: (next.evidence ?? current.evidence) + (next.evidenceMentions ?? current.evidenceMentions),
+      };
+    });
   }, [caseId]);
 
   useEffect(() => {
@@ -207,7 +215,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       { data: existingIssues },
       { data: existingEvents },
     ] = await Promise.all([
-      (supabase as any).from("people").select("id,name,role_label").eq("case_id", caseId),
+      (supabase as any).from("people").select("id,display_name,role_label").eq("case_id", caseId),
       (supabase as any).from("organizations").select("id,name").eq("case_id", caseId),
       (supabase as any).from("issues").select("id,title").eq("case_id", caseId),
       (supabase as any).from("events").select("id,title,occurred_at").eq("case_id", caseId),
@@ -220,11 +228,11 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     for (const actor of nextSignals.actors) {
       if (!actor.name.trim()) continue;
-      const exists = people.some((p) => normalize(p.name) === normalize(actor.name) && normalize(p.role_label) === normalize(actor.role));
+      const exists = people.some((p) => normalize(p.display_name) === normalize(actor.name) && normalize(p.role_label) === normalize(actor.role));
       if (!exists) {
         await (supabase as any).from("people").insert({
           case_id: caseId,
-          name: actor.name.trim(),
+          display_name: actor.name.trim(),
           role_label: actor.role,
           notes: "Extracted from the user's narrative. Review before relying on this entry.",
         });
@@ -264,9 +272,9 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     for (const event of nextSignals.timeline_suggestions) {
       const eventDate = safeDate(event.iso_date);
-      if (!event.title.trim() || !eventDate) continue;
+      if (!event.title.trim()) continue;
       const exists = events.some(
-        (e) => normalize(e.title) === normalize(event.title) && e.occurred_at === eventDate
+        (e) => normalize(e.title) === normalize(event.title) && (eventDate ? e.occurred_at === eventDate : !e.occurred_at)
       );
       if (!exists) {
         await (supabase as any).from("events").insert({
@@ -281,6 +289,98 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           reviewed: false,
           disputed: false,
           reason: event.approximate_date,
+        });
+      }
+    }
+
+    const issueBySignalId = new Map<string, string>();
+    for (const issue of nextSignals.issues) {
+      const match = issues.find((i) => normalize(i.title) === normalize(issue.label));
+      if (match) issueBySignalId.set(issue.id, match.id);
+    }
+
+    for (const gap of nextSignals.record_gaps ?? []) {
+      if (!gap.title.trim()) continue;
+      const { data: existingGap } = await (supabase as any)
+        .from("tasks")
+        .select("id")
+        .eq("case_id", caseId)
+        .eq("task_type", "record_gap")
+        .eq("title", gap.title.trim())
+        .limit(1)
+        .maybeSingle();
+
+      if (!existingGap) {
+        await (supabase as any).from("tasks").insert({
+          case_id: caseId,
+          title: gap.title.trim(),
+          description: gap.description,
+          task_type: "record_gap",
+          record_holder: gap.record_holder?.trim() || null,
+          related_issue_id: issueBySignalId.get(gap.related_issue || "") ?? null,
+          identified_at: new Date().toISOString().slice(0, 10),
+          notes: "Identified from the user narrative. Confirm the gap before requesting the record.",
+        });
+      }
+    }
+
+    for (const communication of nextSignals.communications ?? []) {
+      if (!communication.summary.trim()) continue;
+      let personId: string | null = null;
+      if (communication.person_name?.trim()) {
+        const match = people.find((p) => normalize(p.display_name) === normalize(communication.person_name));
+        personId = match?.id ?? null;
+      }
+      let organizationId: string | null = null;
+      if (communication.organization_name?.trim()) {
+        const match = organizations.find((o) => normalize(o.name) === normalize(communication.organization_name));
+        organizationId = match?.id ?? null;
+      }
+      const occurredAt = safeDate(communication.iso_date);
+      const subject = communication.subject?.trim() || "Communication";
+      const duplicate = await (supabase as any)
+        .from("communications")
+        .select("id")
+        .eq("case_id", caseId)
+        .eq("method", communication.method.trim())
+        .eq("subject", subject)
+        .eq("summary", communication.summary.trim())
+        .limit(1)
+        .maybeSingle();
+      if (!duplicate.data) {
+        await (supabase as any).from("communications").insert({
+          case_id: caseId,
+          occurred_at: occurredAt ? occurredAt + "T00:00:00.000Z" : null,
+          person_id: personId,
+          organization_id: organizationId,
+          method: communication.method.trim(),
+          subject,
+          summary: communication.summary.trim(),
+          follow_up_required: communication.follow_up_required,
+        });
+      }
+    }
+
+    for (const mention of nextSignals.evidence_mentions ?? []) {
+      if (!mention.type.trim() || !mention.description.trim()) continue;
+      const duplicate = await (supabase as any)
+        .from("evidence_mentions")
+        .select("id")
+        .eq("case_id", caseId)
+        .eq("evidence_type", mention.type.trim())
+        .eq("description", mention.description.trim())
+        .limit(1)
+        .maybeSingle();
+      if (!duplicate.data) {
+        await (supabase as any).from("evidence_mentions").insert({
+          case_id: caseId,
+          evidence_type: mention.type.trim(),
+          description: mention.description.trim(),
+          approximate_date: mention.approximate_date?.trim() || "unknown",
+          related_issue_id: issueBySignalId.get(mention.related_issue || "") ?? null,
+          priority: mention.priority,
+          status: "mentioned",
+          source_type: "user_narrative",
         });
       }
     }
@@ -413,6 +513,22 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         key: `issue-${index}-${issue.id}`,
         label: issue.label,
         detail: "Possible issue area",
+      });
+    });
+
+    (signals.evidence_mentions ?? []).forEach((mention, index) => {
+      items.push({
+        key: `evidence-${index}-${mention.id}`,
+        label: mention.type,
+        detail: mention.approximate_date || "Evidence mentioned",
+      });
+    });
+
+    (signals.record_gaps ?? []).forEach((gap, index) => {
+      items.push({
+        key: `gap-${index}-${gap.id}`,
+        label: gap.title,
+        detail: "Record gap",
       });
     });
 
