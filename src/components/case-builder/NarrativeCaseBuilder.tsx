@@ -136,6 +136,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         if (updateError) throw updateError;
       } else {
         const { error: insertError } = await supabase.from("notes").insert({
+          user_id: user.id,
           case_id: caseId,
           title: STORY_NOTE_TITLE,
           content: nextStory,
@@ -215,7 +216,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       const exists = people.some((p) => normalize(p.name) === normalize(actor.name) && normalize(p.role_label) === normalize(actor.role));
       if (!exists) {
         await (supabase as any).from("people").insert({
-          user_id: user.id,
           case_id: caseId,
           name: actor.name.trim(),
           role_label: actor.role,
@@ -229,7 +229,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       const exists = organizations.some((o) => normalize(o.name) === normalize(actor.name));
       if (!exists) {
         await (supabase as any).from("organizations").insert({
-          user_id: user.id,
           case_id: caseId,
           name: actor.name.trim(),
           org_type: actor.role === "authority" ? "Authority / agency" : "Opposing organization",
@@ -243,7 +242,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       const exists = issues.some((i) => normalize(i.title) === normalize(issue.label));
       if (!exists) {
         await (supabase as any).from("issues").insert({
-          user_id: user.id,
           case_id: caseId,
           title: issue.label.trim(),
           category: issue.id,
@@ -265,7 +263,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       );
       if (!exists) {
         await (supabase as any).from("events").insert({
-          user_id: user.id,
           case_id: caseId,
           title: event.title.trim(),
           description: event.description,
