@@ -468,7 +468,15 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           </Card>
         )}
 
-        {error && (\n          <Card className="border-destructive/30 bg-destructive/5">\n            <CardContent className="p-4">\n              <p className="text-xs text-destructive">{error}</p>\n            </CardContent>\n          </Card>\n        )}\n\n        {isExtracting && (
+        {error && (
+          <Card className="border-destructive/30 bg-destructive/5">
+            <CardContent className="p-4">
+              <p className="text-xs text-destructive">{error}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {isExtracting && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground px-1">
             <Loader2 className="w-4 h-4 animate-spin" />
             Organizing the latest part of your story…
