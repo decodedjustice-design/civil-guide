@@ -50,10 +50,42 @@ export interface SignalClarifyingQuestion {
   target: "date" | "person" | "organization" | "event" | "evidence" | "sequence" | "relationship" | "other";
 }
 
+export interface SignalRecordGap {
+  id: string;
+  title: string;
+  description: string;
+  record_holder?: string;
+  related_issue?: string;
+}
+
+export interface SignalCommunication {
+  id: string;
+  approximate_date: string;
+  iso_date?: string | null;
+  method: string;
+  subject: string;
+  summary: string;
+  person_name?: string;
+  organization_name?: string;
+  follow_up_required: boolean;
+}
+
+export interface SignalEvidenceMention {
+  id: string;
+  type: string;
+  description: string;
+  approximate_date: string;
+  related_issue?: string;
+  priority: "high" | "medium" | "low";
+}
+
 export interface CaseSignals {
   actors: SignalActor[];
   issues: SignalIssue[];
   evidence_suggestions: SignalEvidence[];
+  evidence_mentions: SignalEvidenceMention[];
+  communications: SignalCommunication[];
+  record_gaps: SignalRecordGap[];
   timeline_suggestions: SignalTimeline[];
   clarifying_questions: SignalClarifyingQuestion[];
 }
