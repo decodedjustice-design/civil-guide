@@ -538,7 +538,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     signals.actors.forEach((actor, index) => {
       items.push({
-        key: `actor-${index}-${actor.name}`,
+        key: `actor-${normalize(actor.name)}-${actor.role}`,
         label: actor.name,
         detail: actor.role.replace("_", " "),
         href: caseId ? `/cases/${caseId}/people` : undefined,
@@ -547,7 +547,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     signals.timeline_suggestions.forEach((event, index) => {
       items.push({
-        key: `event-${index}-${event.title}`,
+        key: `event-${normalize(event.title)}-${normalize(event.iso_date ?? event.approximate_date)}`,
         label: event.title,
         detail: event.approximate_date,
         href: caseId ? `/cases/${caseId}/timeline` : undefined,
@@ -556,7 +556,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     signals.issues.forEach((issue, index) => {
       items.push({
-        key: `issue-${index}-${issue.id}`,
+        key: `issue-${issue.id}`,
         label: issue.label,
         detail: "Possible issue area",
         href: caseId ? `/cases/${caseId}/issues` : undefined,
@@ -565,7 +565,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     (signals.evidence_mentions ?? []).forEach((mention, index) => {
       items.push({
-        key: `evidence-${index}-${mention.id}`,
+        key: `evidence-${mention.id}`,
         label: mention.type,
         detail: mention.approximate_date || "Evidence mentioned",
         href: caseId ? `/cases/${caseId}/evidence` : undefined,
@@ -574,7 +574,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     (signals.record_gaps ?? []).forEach((gap, index) => {
       items.push({
-        key: `gap-${index}-${gap.id}`,
+        key: `gap-${gap.id}`,
         label: gap.title,
         detail: "Record gap",
         href: caseId ? `/cases/${caseId}/record-gaps` : undefined,
