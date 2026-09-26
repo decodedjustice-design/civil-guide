@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useCases } from "@/hooks/useCases";
+import { useActiveCaseId, useCases } from "@/hooks/useCases";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,6 +61,7 @@ function safeDate(value?: string | null) {
 export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps) {
   const { user } = useAuth();
   const { cases, createCase, updateCase } = useCases();
+  const { activeId, select: selectActiveCase } = useActiveCaseId();
   const [caseId, setCaseId] = useState<string | null>(null);
   const [story, setStory] = useState("");
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -83,7 +84,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const loadOrCreateCase = useCallback(async () => {
     if (!user) return;
 
-    let activeCaseId = cases[0]?.id ?? null;
+    let activeCaseId = activeId && cases.some((item) => item.id === activeId) ? activeId : null;
 
     if (!activeCaseId) {
       const created = await createCase.mutateAsync({
@@ -95,6 +96,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     }
 
     setCaseId(activeCaseId);
+    selectActiveCase(activeCaseId);
     onCaseReady?.(activeCaseId);
 
     const { data: storyNote, error: noteError } = await supabase
@@ -108,7 +110,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     if (noteError) throw noteError;
     setStory(storyNote?.content ?? "");
-  }, [cases, createCase, onCaseReady, user]);
+  }, [activeId, cases, createCase, onCaseReady, selectActiveCase, user]);
 
   useEffect(() => {
     loadOrCreateCase().catch((err) => {
