@@ -149,7 +149,7 @@ Return structured results using the provided tool.`;
                         title: { type: "string", description: "Short event title" },
                         description: { type: "string", description: "Brief description of the event" },
                         approximate_date: { type: "string", description: "The date or time reference mentioned in the narrative (e.g., 'March 2024', 'last Tuesday', 'unknown')" },
-                        iso_date: { type: "string", description: "Best-effort ISO 8601 date (YYYY-MM-DD) parsed from the approximate_date relative to today's date. For 'last Tuesday' calculate the actual date. For 'March 2024' use '2024-03-01'. For vague references like 'a few months ago' estimate. If truly unknown, return today's date." },
+                        iso_date: { type: "string", description: "Best-effort ISO 8601 date (YYYY-MM-DD) parsed from the approximate_date relative to today's date. For 'last Tuesday' calculate the actual date. For 'March 2024' use '2024-03-01'. For vague references like 'a few months ago', preserve the vagueness. If the date cannot be established from the narrative, return null." },
                       },
                       required: ["title", "description", "approximate_date", "iso_date"],
                       additionalProperties: false,
