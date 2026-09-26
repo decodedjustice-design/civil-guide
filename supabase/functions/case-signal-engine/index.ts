@@ -147,7 +147,60 @@ Return structured results using the provided tool.`;
                       additionalProperties: false,
                     },
                   },
-                    clarifying_questions: {
+                    evidence_mentions: {
+                    type: "array",
+                    description: "Evidence the user says they have, received, saw, saved, or can identify in the narrative. Do not invent documents.",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string", description: "Stable kebab-case identifier" },
+                        type: { type: "string", description: "Evidence type such as text message, email, notice, recording, photo, medical record" },
+                        description: { type: "string", description: "What the user says exists or was observed" },
+                        approximate_date: { type: "string", description: "Date or time reference if stated, otherwise unknown" },
+                        related_issue: { type: "string", description: "Issue id if clearly related, otherwise empty string" },
+                        priority: { type: "string", enum: ["high", "medium", "low"] }
+                      },
+                      required: ["id", "type", "description", "approximate_date", "related_issue", "priority"],
+                      additionalProperties: false
+                    }
+                  },
+                  communications: {
+                    type: "array",
+                    description: "Concrete communications described in the narrative, such as calls, texts, emails, meetings, or notices.",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string", description: "Stable kebab-case identifier" },
+                        approximate_date: { type: "string" },
+                        iso_date: { type: ["string", "null"], description: "YYYY-MM-DD only when supported by the narrative" },
+                        method: { type: "string", description: "Call, text, email, meeting, letter, notice, portal message, or other" },
+                        subject: { type: "string" },
+                        summary: { type: "string", description: "Short factual summary" },
+                        person_name: { type: "string" },
+                        organization_name: { type: "string" },
+                        follow_up_required: { type: "boolean" }
+                      },
+                      required: ["id", "approximate_date", "iso_date", "method", "subject", "summary", "person_name", "organization_name", "follow_up_required"],
+                      additionalProperties: false
+                    }
+                  },
+                  record_gaps: {
+                    type: "array",
+                    description: "Records the user says are missing, unavailable, not provided, or should be obtained to complete the factual record.",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string", description: "Stable kebab-case identifier" },
+                        title: { type: "string" },
+                        description: { type: "string" },
+                        record_holder: { type: "string" },
+                        related_issue: { type: "string" }
+                      },
+                      required: ["id", "title", "description", "record_holder", "related_issue"],
+                      additionalProperties: false
+                    }
+                  },
+                  clarifying_questions: {
                     type: "array",
                     description: "At most 4 concise questions that resolve important factual gaps or ambiguities in the narrative.",
                     items: {
