@@ -64,6 +64,13 @@ Rules:
 - Focus on observable facts mentioned in the narrative
 - Use plain language
 - Use cautious phrasing such as "may" and "possible" instead of definitive legal conclusions
+- Identify only the few missing facts that would materially improve the organization of the case.
+- Ask clarifying questions only when the narrative leaves a meaningful gap, ambiguity, or uncertainty.
+- Do not ask for information that is already stated or reasonably clear.
+- Do not ask legal-strategy questions, predict outcomes, or pressure the user toward a conclusion.
+- Prefer concrete questions about dates, sequence, people, organizations, events, communications, or records.
+- Return at most 4 clarifying questions, ordered by usefulness.
+- Questions should be easy to answer in the user's own words; "I don't know" is an acceptable answer.
 
 The user's situation involves: ${issueType || "unknown system"}
 ${opposingParty ? `Opposing party: ${opposingParty}` : ""}
@@ -140,7 +147,22 @@ Return structured results using the provided tool.`;
                       additionalProperties: false,
                     },
                   },
-                    timeline_suggestions: {
+                    clarifying_questions: {
+                    type: "array",
+                    description: "At most 4 concise questions that resolve important factual gaps or ambiguities in the narrative.",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string", description: "Stable kebab-case identifier for this question" },
+                        question: { type: "string", description: "A plain-language question the user can answer" },
+                        why: { type: "string", description: "Brief explanation of what this clarification helps organize" },
+                        target: { type: "string", enum: ["date", "person", "organization", "event", "evidence", "sequence", "relationship", "other"] },
+                      },
+                      required: ["id", "question", "why", "target"],
+                      additionalProperties: false,
+                    },
+                  },
+                  timeline_suggestions: {
                     type: "array",
                     description: "Possible timeline events extracted from the narrative, in chronological order.",
                     items: {
@@ -149,14 +171,14 @@ Return structured results using the provided tool.`;
                         title: { type: "string", description: "Short event title" },
                         description: { type: "string", description: "Brief description of the event" },
                         approximate_date: { type: "string", description: "The date or time reference mentioned in the narrative (e.g., 'March 2024', 'last Tuesday', 'unknown')" },
-                        iso_date: { type: "string", description: "Best-effort ISO 8601 date (YYYY-MM-DD) parsed from the approximate_date relative to today's date. For 'last Tuesday' calculate the actual date. For 'March 2024' use '2024-03-01'. For vague references like 'a few months ago', preserve the vagueness. If the date cannot be established from the narrative, return null." },
+                        iso_date: { type: ["string", "null"], description: "ISO 8601 date (YYYY-MM-DD) only when the narrative supports it. Resolve relative dates when the reference is clear. For month-only references use the first day of that month. If the date cannot be established, return null. Never invent today's date." },
                       },
                       required: ["title", "description", "approximate_date", "iso_date"],
                       additionalProperties: false,
                     },
                   },
                 },
-                required: ["actors", "issues", "evidence_suggestions", "timeline_suggestions"],
+                required: ["actors", "issues", "evidence_suggestions", "clarifying_questions", "timeline_suggestions"],
                 additionalProperties: false,
               },
             },
