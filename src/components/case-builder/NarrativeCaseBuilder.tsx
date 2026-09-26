@@ -101,9 +101,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     const { data: storyNote, error: noteError } = await supabase
       .from("case_narratives")
       .select("id,narrative")
-      .eq("user_id", user.id)
       .eq("case_id", activeCaseId)
-      .eq("title", STORY_NOTE_TITLE)
       .limit(1)
       .maybeSingle();
 
