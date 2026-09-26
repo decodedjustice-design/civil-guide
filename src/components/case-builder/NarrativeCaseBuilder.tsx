@@ -306,6 +306,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       setSignals(nextSignals);
       setLastAnalyzedLength(story.trim().length);
       await applySignals(nextSignals);
+      await refreshCaseCounts();
       setShowReview(true);
     } catch (err) {
       console.error("Narrative extraction error:", err);
