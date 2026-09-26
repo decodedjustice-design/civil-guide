@@ -194,12 +194,12 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const refreshCaseCounts = useCallback(async () => {
     if (!caseId) return;
     const tables = [
-      ["timeline_entries", "timeline"],
-      ["case_people", "people"],
-      ["case_organizations", "organizations"],
-      ["case_issues", "issues"],
-      ["case_communications", "communications"],
-      ["evidence", "evidence"],
+      ["events", "timeline"],
+      ["people", "people"],
+      ["organizations", "organizations"],
+      ["issues", "issues"],
+      ["communications", "communications"],
+      ["documents", "evidence"],
       ["tasks", "recordGaps"],
     ] as const;
 
@@ -241,7 +241,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     for (const actor of nextSignals.actors) {
       if (!actor.name.trim()) continue;
-      const exists = people.some((p) => normalize(p.name) === normalize(actor.name) && normalize(p.role) === normalize(actor.role));
+      const exists = people.some((p) => normalize(p.name) === normalize(actor.name) && normalize(p.role_label) === normalize(actor.role));
       if (!exists) {
         await (supabase as any).from("people").insert({
           user_id: user.id,
