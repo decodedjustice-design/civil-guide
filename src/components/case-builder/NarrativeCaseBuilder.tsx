@@ -19,7 +19,6 @@ import {
   MessageSquareText,
   Network,
   Pencil,
-  Save,
   Sparkles,
   UserRound,
   Users,
@@ -379,18 +378,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     { label: "Evidence ideas", value: signals?.evidence_suggestions.length ?? 0, icon: FileSearch, href: "/cases" },
   ];
 
-  if (error) {
-    return (
-      <div className="space-y-4">
-        <Card className="border-destructive/30">
-          <CardContent className="p-6">
-            <p className="text-sm text-destructive">{error}</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
       <div className="space-y-5">
@@ -481,7 +468,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           </Card>
         )}
 
-        {isExtracting && (
+        {error && (\n          <Card className="border-destructive/30 bg-destructive/5">\n            <CardContent className="p-4">\n              <p className="text-xs text-destructive">{error}</p>\n            </CardContent>\n          </Card>\n        )}\n\n        {isExtracting && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground px-1">
             <Loader2 className="w-4 h-4 animate-spin" />
             Organizing the latest part of your story…
