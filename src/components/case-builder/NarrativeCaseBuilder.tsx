@@ -71,7 +71,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [signals, setSignals] = useState<CaseSignals | null>(null);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
   const [editingItem, setEditingItem] = useState<string | null>(null);
-  const [showReview, setShowReview] = useState(false);
+  const [showReview, setShowReview] = useState(false);\n  const [caseCounts, setCaseCounts] = useState({ timeline: 0, people: 0, organizations: 0, issues: 0, communications: 0, evidence: 0, recordGaps: 0 });
   const [error, setError] = useState<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const extractionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -190,6 +190,34 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       void persistStory(nextStory);
     }, 800);
   }, [persistStory]);
+
+  const refreshCaseCounts = useCallback(async () => {
+    if (!caseId) return;
+    const tables = [
+      ["timeline_entries", "timeline"],
+      ["case_people", "people"],
+      ["case_organizations", "organizations"],
+      ["case_issues", "issues"],
+      ["case_communications", "communications"],
+      ["evidence", "evidence"],
+      ["tasks", "recordGaps"],
+    ] as const;
+
+    const results = await Promise.all(
+      tables.map(async ([table, key]) => {
+        const query = (supabase as any).from(table).select("id", { count: "exact", head: true }).eq("case_id", caseId);
+        if (table === "tasks") query.eq("task_type", "record_gap");
+        const { count } = await query;
+        return [key, count ?? 0] as const;
+      })
+    );
+
+    setCaseCounts((current) => ({ ...current, ...Object.fromEntries(results) }));
+  }, [caseId]);
+
+  useEffect(() => {
+    void refreshCaseCounts();
+  }, [refreshCaseCounts]);
 
   const applySignals = useCallback(async (nextSignals: CaseSignals) => {
     if (!user || !caseId) return;
@@ -313,7 +341,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     } finally {
       setIsExtracting(false);
     }
-  }, [applySignals, caseId, isExtracting, lastAnalyzedLength, story, user]);
+  }, [applySignals, caseId, isExtracting, lastAnalyzedLength, refreshCaseCounts, story, user]);
 
   const scheduleExtraction = useCallback(() => {
     if (extractionTimer.current) clearTimeout(extractionTimer.current);
@@ -508,10 +536,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           </CardHeader>
           <CardContent className="space-y-2">
             <Button asChild variant="outline" className="w-full justify-start">
-              <Link to="/timeline"><Clock3 className="w-4 h-4 mr-2" /> Timeline <ArrowRight className="w-3 h-3 ml-auto" /></Link>
+              <Link to={caseId ? `/cases/${caseId}/timeline` : "/cases"}><Clock3 className="w-4 h-4 mr-2" /> Timeline <ArrowRight className="w-3 h-3 ml-auto" /></Link>
             </Button>
             <Button asChild variant="outline" className="w-full justify-start">
-              <Link to="/cases"><Users className="w-4 h-4 mr-2" /> Case Workspace <ArrowRight className="w-3 h-3 ml-auto" /></Link>
+              <Link to={caseId ? `/cases/${caseId}` : "/cases"}><Users className="w-4 h-4 mr-2" /> Case Workspace <ArrowRight className="w-3 h-3 ml-auto" /></Link>
             </Button>
             <Button asChild variant="outline" className="w-full justify-start">
               <Link to="/analyzer"><Network className="w-4 h-4 mr-2" /> Analyzer <ArrowRight className="w-3 h-3 ml-auto" /></Link>
