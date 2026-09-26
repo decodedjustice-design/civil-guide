@@ -221,9 +221,9 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       (supabase as any).from("events").select("id,title,occurred_at").eq("case_id", caseId),
     ]);
 
-    const people = existingPeople ?? [];
-    const organizations = existingOrganizations ?? [];
-    const issues = existingIssues ?? [];
+    let people = existingPeople ?? [];
+    let organizations = existingOrganizations ?? [];
+    let issues = existingIssues ?? [];
     const events = existingEvents ?? [];
 
     for (const actor of nextSignals.actors) {
@@ -292,6 +292,22 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         });
       }
     }
+
+    // Refresh canonical actors and issues after inserts so newly extracted records
+    // can be linked to communications, record gaps, and evidence mentions in this pass.
+    const [
+      { data: refreshedPeople },
+      { data: refreshedOrganizations },
+      { data: refreshedIssues },
+    ] = await Promise.all([
+      (supabase as any).from("people").select("id,display_name,role_label").eq("case_id", caseId),
+      (supabase as any).from("organizations").select("id,name").eq("case_id", caseId),
+      (supabase as any).from("issues").select("id,title").eq("case_id", caseId),
+    ]);
+
+    people = refreshedPeople ?? people;
+    organizations = refreshedOrganizations ?? organizations;
+    issues = refreshedIssues ?? issues;
 
     const issueBySignalId = new Map<string, string>();
     for (const issue of nextSignals.issues) {
