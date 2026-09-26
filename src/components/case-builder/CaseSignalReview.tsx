@@ -43,11 +43,19 @@ export interface SignalTimeline {
   iso_date?: string | null;
 }
 
+export interface SignalClarifyingQuestion {
+  id: string;
+  question: string;
+  why: string;
+  target: "date" | "person" | "organization" | "event" | "evidence" | "sequence" | "relationship" | "other";
+}
+
 export interface CaseSignals {
   actors: SignalActor[];
   issues: SignalIssue[];
   evidence_suggestions: SignalEvidence[];
   timeline_suggestions: SignalTimeline[];
+  clarifying_questions: SignalClarifyingQuestion[];
 }
 
 interface CaseSignalReviewProps {
