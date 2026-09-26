@@ -60,7 +60,7 @@ function safeDate(value?: string | null) {
 
 export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps) {
   const { user } = useAuth();
-  const { cases, createCase, updateCase } = useCases();
+  const { cases, isLoading: casesLoading, createCase, updateCase } = useCases();
   const { activeId, select: selectActiveCase } = useActiveCaseId();
   const [caseId, setCaseId] = useState<string | null>(null);
   const [story, setStory] = useState("");
@@ -69,7 +69,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [lastAnalyzedLength, setLastAnalyzedLength] = useState(0);
   const [signals, setSignals] = useState<CaseSignals | null>(null);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
-  const [editingItem, setEditingItem] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(null);
   const [questionAnswer, setQuestionAnswer] = useState("");
@@ -82,7 +81,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const extractionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadOrCreateCase = useCallback(async () => {
-    if (!user) return;
+    if (!user || casesLoading) return;
 
     let activeCaseId = activeId && cases.some((item) => item.id === activeId) ? activeId : null;
 
@@ -110,7 +109,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     if (noteError) throw noteError;
     setStory(storyNote?.content ?? "");
-  }, [activeId, cases, createCase, onCaseReady, selectActiveCase, user]);
+  }, [activeId, cases, casesLoading, createCase, onCaseReady, selectActiveCase, user]);
 
   useEffect(() => {
     loadOrCreateCase().catch((err) => {
