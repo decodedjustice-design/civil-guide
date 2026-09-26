@@ -228,10 +228,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       { data: existingIssues },
       { data: existingEvents },
     ] = await Promise.all([
-      supabase.from("case_people").select("id,name,role").eq("case_id", caseId),
-      supabase.from("case_organizations").select("id,name").eq("case_id", caseId),
-      supabase.from("case_issues").select("id,title").eq("case_id", caseId),
-      supabase.from("timeline_entries").select("id,title,event_date").eq("case_id", caseId),
+      (supabase as any).from("people").select("id,name,role_label").eq("case_id", caseId),
+      (supabase as any).from("organizations").select("id,name").eq("case_id", caseId),
+      (supabase as any).from("issues").select("id,title").eq("case_id", caseId),
+      (supabase as any).from("events").select("id,title,occurred_at").eq("case_id", caseId),
     ]);
 
     const people = existingPeople ?? [];
@@ -243,11 +243,11 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (!actor.name.trim()) continue;
       const exists = people.some((p) => normalize(p.name) === normalize(actor.name) && normalize(p.role) === normalize(actor.role));
       if (!exists) {
-        await supabase.from("case_people").insert({
+        await (supabase as any).from("people").insert({
           user_id: user.id,
           case_id: caseId,
           name: actor.name.trim(),
-          role: actor.role,
+          role_label: actor.role,
           notes: "Extracted from the user's narrative. Review before relying on this entry.",
         });
       }
@@ -257,7 +257,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (!actor.name.trim() || !["authority", "opposing_party"].includes(actor.role)) continue;
       const exists = organizations.some((o) => normalize(o.name) === normalize(actor.name));
       if (!exists) {
-        await supabase.from("case_organizations").insert({
+        await (supabase as any).from("organizations").insert({
           user_id: user.id,
           case_id: caseId,
           name: actor.name.trim(),
@@ -271,12 +271,12 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (!issue.label.trim()) continue;
       const exists = issues.some((i) => normalize(i.title) === normalize(issue.label));
       if (!exists) {
-        await supabase.from("case_issues").insert({
+        await (supabase as any).from("issues").insert({
           user_id: user.id,
           case_id: caseId,
           title: issue.label.trim(),
           category: issue.id,
-          summary: issue.reason,
+          description: issue.reason,
           classification: "unknown",
           status: "open",
           source: "Case Signal Engine",
@@ -290,15 +290,15 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       const eventDate = safeDate(event.iso_date);
       if (!event.title.trim() || !eventDate) continue;
       const exists = events.some(
-        (e) => normalize(e.title) === normalize(event.title) && e.event_date === eventDate
+        (e) => normalize(e.title) === normalize(event.title) && e.occurred_at === eventDate
       );
       if (!exists) {
-        await supabase.from("timeline_entries").insert({
+        await (supabase as any).from("events").insert({
           user_id: user.id,
           case_id: caseId,
           title: event.title.trim(),
           description: event.description,
-          event_date: eventDate,
+          occurred_at: eventDate,
           classification: "unknown",
           category: "narrative",
           importance: "Medium",
