@@ -400,10 +400,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   }, [dismissed, signals]);
 
   const stats = [
-    { label: "Timeline", value: signals?.timeline_suggestions.length ?? 0, icon: Clock3, href: "/timeline" },
-    { label: "People", value: signals?.actors.length ?? 0, icon: Users, href: "/cases" },
-    { label: "Issues to review", value: signals?.issues.length ?? 0, icon: Network, href: "/cases" },
-    { label: "Evidence ideas", value: signals?.evidence_suggestions.length ?? 0, icon: FileSearch, href: "/cases" },
+    { label: "Timeline", value: caseCounts.timeline, icon: Clock3, href: caseId ? `/cases/${caseId}/timeline` : "/cases" },
+    { label: "People", value: caseCounts.people + caseCounts.organizations, icon: Users, href: caseId ? `/cases/${caseId}/people` : "/cases" },
+    { label: "Issues to review", value: caseCounts.issues, icon: Network, href: caseId ? `/cases/${caseId}/issues` : "/cases" },
+    { label: "Evidence", value: caseCounts.evidence, icon: FileSearch, href: caseId ? `/cases/${caseId}/evidence` : "/cases" },
   ];
 
   return (
