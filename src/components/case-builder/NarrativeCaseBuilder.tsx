@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";\nimport { useCases } from "@/hooks/useCases";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCases } from "@/hooks/useCases";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
 import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 import {
   ArrowRight,
@@ -26,10 +25,6 @@ import {
 } from "lucide-react";
 import type {
   CaseSignals,
-  SignalActor,
-  SignalEvidence,
-  SignalIssue,
-  SignalTimeline,
 } from "./CaseSignalReview";
 
 interface NarrativeCaseBuilderProps {
@@ -62,7 +57,6 @@ function safeDate(value?: string) {
 
 export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [caseId, setCaseId] = useState<string | null>(null);
   const [story, setStory] = useState("");
   const [saveState, setSaveState] = useState<SaveState>("idle");
