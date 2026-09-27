@@ -391,6 +391,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
             importance: "Medium",
             source_type: "user_narrative",
             reviewed: false,
+            review_status: "unreviewed",
             disputed: false,
             reason: event.approximate_date,
           });
