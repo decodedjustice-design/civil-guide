@@ -132,7 +132,7 @@ const Index = () => {
               </div>
               <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">Start with the area closest to your situation, then use the workspace, guides, and tools that fit what you need.</p>
             </div>
-            <div className="grid sm:grid-cols-2 border-t border-l border-border/60">
+            <div className="grid sm:grid-cols-2 border-t border-l border-primary-foreground/15">
               {issueAreas.map((area, index) => (
                 <div key={area.title} className="min-h-28 border-r border-b border-border/60 p-5 sm:p-6 bg-cream-warm hover:bg-background/70 transition-colors duration-300">
                   <div className="flex items-center justify-between mb-4"><span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
