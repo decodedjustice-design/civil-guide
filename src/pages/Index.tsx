@@ -174,27 +174,6 @@ const Index = () => {
 
         <section className="bg-cream-warm py-20 sm:py-24">
           <div className="container max-w-6xl px-6">
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Where it can help</p>
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">Built for the systems you may have to navigate.</h2>
-              </div>
-              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">Choose the area closest to your situation, then use the guide and case tools together.</p>
-            </div>
-            <div className="grid sm:grid-cols-2 border-t border-l border-border/60">
-              {issueAreas.map((area, index) => (
-                <div key={area.title} className="min-h-28 border-r border-b border-border/60 p-5 sm:p-6 bg-cream-warm hover:bg-background/70 transition-colors duration-300">
-                  <div className="flex items-center justify-between mb-4"><span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
-                  <h3 className="font-serif text-lg font-medium text-foreground mb-1">{area.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{area.detail}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-cream-warm py-20 sm:py-24">
-          <div className="container max-w-6xl px-6">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-10">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">More ways to prepare</p>
