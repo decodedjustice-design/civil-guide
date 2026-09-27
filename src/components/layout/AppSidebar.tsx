@@ -46,6 +46,7 @@ const sidebarGroups = [
       { title: "Upload Evidence", url: "/evidence-vault", icon: Upload },
       { title: "Review Key Issues", url: "/analyzer", icon: Search },
       { title: "Generate Case Packet", url: "/intake-packet", icon: FileText },
+      { title: "Templates", url: "/templates", icon: FileText },
     ],
   },
 ];
