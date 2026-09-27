@@ -60,10 +60,10 @@ const Index = () => {
           </div>
           <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24 text-center">
             <div className="max-w-4xl">
-              <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-gold/90 mb-6">Decoded Justice · Washington State</p>
+              <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-cream mb-6">Decoded Justice · Washington State</p>
               <div className="w-16 h-px bg-gold/60 mb-7 mx-auto" />
               <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-cream leading-[1.05] tracking-tight max-w-3xl mx-auto drop-shadow-lg">Clarity. Empathy. Justice.</h1>
-              <p className="mt-5 text-2xl sm:text-3xl font-serif text-gold max-w-2xl mx-auto drop-shadow-md">Your story. Your voice. Your justice.</p>
+              <p className="mt-5 text-2xl sm:text-3xl font-serif text-cream-warm max-w-2xl mx-auto drop-shadow-md">Your story. Your voice. Your justice.</p>
               <p className="mt-6 text-lg sm:text-xl text-cream-warm font-light leading-relaxed max-w-2xl mx-auto drop-shadow-md">A Washington-focused self-help and case-organization workspace. Put what happened into a structured record, understand the questions it raises, and prepare for whatever comes next.</p>
               <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Tell Your Story <ArrowRight className="w-4 h-4" /></Link>
