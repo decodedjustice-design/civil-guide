@@ -204,33 +204,6 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="bg-background py-20 sm:py-24">
-          <div className="container max-w-6xl px-6">
-            <div className="max-w-3xl mb-10">
-              <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Learn before you act</p>
-              <h2 className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-foreground mb-4">Washington legal education</h2>
-              <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed">Plain-language guides explain how common Washington systems work, what questions to ask, and what information may matter.</p>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-0 border-t border-l border-border/60 max-w-5xl">
-              {guides.map((guide, index) => (
-                <Link key={guide.title} to={`/guide/${guide.guideId}`} className="group border-r border-b border-border/60 p-5 sm:p-6 bg-background hover:bg-secondary/30 transition-colors duration-300 min-h-28">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span>
-                      <h3 className="font-serif text-lg font-medium text-foreground mt-2 group-hover:text-primary transition-colors">{guide.title}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed mt-1 max-w-md">{guide.description}</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0 mt-1" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-8">
-              <Link to="/education-library" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors">View all Washington guides <ArrowRight className="w-4 h-4" /></Link>
-            </div>
-          </div>
-        </section>
-
         <section className="bg-cream-warm py-20 sm:py-24">
           <div className="container max-w-6xl px-6">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-10">
