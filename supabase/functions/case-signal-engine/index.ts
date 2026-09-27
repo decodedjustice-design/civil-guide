@@ -178,9 +178,10 @@ Return structured results using the provided tool.`;
                         summary: { type: "string", description: "Short factual summary" },
                         person_name: { type: "string" },
                         organization_name: { type: "string" },
+                        related_issue: { type: "string", description: "Issue id if clearly related, otherwise empty string" },
                         follow_up_required: { type: "boolean" }
                       },
-                      required: ["id", "approximate_date", "iso_date", "method", "subject", "summary", "person_name", "organization_name", "follow_up_required"],
+                      required: ["id", "approximate_date", "iso_date", "method", "subject", "summary", "person_name", "organization_name", "related_issue", "follow_up_required"],
                       additionalProperties: false
                     }
                   },
