@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Clock, FileText, FolderOpen, Search, Users, Scale, Shield, Wrench, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { libraryCategories } from "@/data/legalEducationLibrary";
-import { categoryImages } from "@/assets/index";
 import heroImage from "@/assets/hero-private-studio.jpg";
 import { LegalGate } from "@/components/LegalGate";
 
@@ -42,15 +40,6 @@ const Index = () => {
     ["People & Organizations", "Keep everyone and every agency connected to the case.", Users],
     ["Communications", "Keep calls, emails, messages, and notices together.", FileText],
     ["Records Requests", "Track requests, responses, deadlines, and missing records.", FileText],
-  ];
-
-  const guides = [
-    { title: "Police Encounters", description: "Know your rights during stops, searches, and arrests.", guideId: "police-encounters" },
-    { title: "Traffic Stops", description: "What happens during a traffic stop and what you can do.", guideId: "traffic-stops" },
-    { title: "Courts & Judicial Process", description: "How courts work, what to expect, and how to prepare.", guideId: "courts-judicial-process" },
-    { title: "Housing Rights", description: "Tenant protections, eviction process, and fair housing.", guideId: "housing-rights" },
-    { title: "Disability Rights", description: "Accommodations, access, and protections under the law.", guideId: "disability-rights" },
-    { title: "Protest Rights", description: "First Amendment protections and how to exercise them safely.", guideId: "protest-rights" },
   ];
 
   const resources = [
