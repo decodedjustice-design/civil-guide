@@ -67,6 +67,7 @@ export interface SignalCommunication {
   summary: string;
   person_name?: string;
   organization_name?: string;
+  related_issue?: string;
   follow_up_required: boolean;
 }
 
