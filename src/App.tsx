@@ -29,6 +29,7 @@ import PublicRequestRights from "./pages/PublicRequestRights";
 import CourtsFilingInfo from "./pages/CourtsFilingInfo";
 import SavedAttorneys from "./pages/SavedAttorneys";
 import StarterLegalTemplates from "./pages/StarterLegalTemplates";
+import Templates from "./pages/Templates";
 import IntakePacket from "./pages/IntakePacket";
 import AttorneyContacts from "./pages/AttorneyContacts";
 import JusticePlace from "./pages/JusticePlace";
@@ -107,6 +108,7 @@ const App = () => {
               <Route path="/public-request-rights" element={<PublicRequestRights />} />
               <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
               <Route path="/saved-attorneys" element={<ProtectedRoute><SavedAttorneys /></ProtectedRoute>} />
+              <Route path="/templates" element={<Templates />} />
               <Route path="/legal-templates" element={<StarterLegalTemplates />} />
               <Route path="/intake-packet" element={<ProtectedRoute><IntakePacket /></ProtectedRoute>} />
               <Route path="/attorney-contacts" element={<ProtectedRoute><AttorneyContacts /></ProtectedRoute>} />
