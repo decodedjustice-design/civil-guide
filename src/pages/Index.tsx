@@ -76,7 +76,6 @@ const Index = () => {
               <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-cream leading-[1.05] tracking-tight max-w-3xl mx-auto drop-shadow-lg">Clarity. Empathy. Justice.</h1>
               <p className="mt-5 text-2xl sm:text-3xl font-serif text-gold max-w-2xl mx-auto drop-shadow-md">Your story. Your voice. Your justice.</p>
               <p className="mt-6 text-lg sm:text-xl text-cream-warm font-light leading-relaxed max-w-2xl mx-auto drop-shadow-md">A Washington-focused self-help and case-organization workspace. Put what happened into a structured record, understand the questions it raises, and prepare for whatever comes next.</p>
-              <p className="mt-4 text-sm sm:text-base text-cream-warm/80 font-light leading-relaxed max-w-xl mx-auto">This is your private case workspace—not a social-media feed. You can start with your story even if you do not know the legal terms yet.</p>
               <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center">
                 <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Tell Your Story <ArrowRight className="w-4 h-4" /></Link>
                 <Link to="/education-library" className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">Understand Your Options</Link>
@@ -108,31 +107,6 @@ const Index = () => {
         </section>
 
         <section className="bg-cream py-20 sm:py-24">
-          <div className="container max-w-6xl px-6">
-            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">How you use Decoded Justice</p>
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">Start with what happened. Build from there.</h2>
-              </div>
-              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">You do not need to know the legal terminology or have everything organized before you begin.</p>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-border/60">
-              {[
-                ["01", "TELL YOUR STORY", "Describe what happened, who was involved, when it happened, and what you want to understand."],
-                ["02", "BUILD YOUR RECORD", "Add documents, evidence, communications, people, agencies, and events as you gather them."],
-                ["03", "EXPLORE QUESTIONS", "Use guided tools to identify important facts, missing information, and issues worth investigating."],
-                ["04", "PREPARE YOUR NEXT STEP", "Organize the record into a clearer case file and structured materials for advocacy or legal support."],              ].map(([number, title, description]) => (
-                <div key={number} className="min-h-48 border-r border-b border-border/60 p-6 sm:p-7 bg-cream hover:bg-background/70 transition-colors duration-300">
-                  <div className="text-[10px] tracking-[0.2em] text-muted-foreground/65 mb-7">{number}</div>
-                  <h3 className="font-serif text-xl font-medium text-foreground mb-2">{title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-background py-20 sm:py-24">
           <div className="container max-w-6xl px-6">
             <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16 items-start">
               <div>
