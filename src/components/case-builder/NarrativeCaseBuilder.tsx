@@ -472,6 +472,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           subject,
           summary: communication.summary.trim(),
           follow_up_required: communication.follow_up_required,
+          related_issue_id: issueBySignalId.get(communication.related_issue || "") ?? null,
         });
       }
     }
