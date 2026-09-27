@@ -75,10 +75,11 @@ const Index = () => {
               <div className="w-16 h-px bg-gold/60 mb-7 mx-auto" />
               <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-cream leading-[1.05] tracking-tight max-w-3xl mx-auto drop-shadow-lg">Clarity. Empathy. Justice.</h1>
               <p className="mt-5 text-2xl sm:text-3xl font-serif text-gold max-w-2xl mx-auto drop-shadow-md">Your story. Your voice. Your justice.</p>
-              <p className="mt-6 text-lg sm:text-xl text-cream-warm font-light leading-relaxed max-w-2xl mx-auto drop-shadow-md">A Washington-focused platform that helps you understand what happened, organize what matters, identify questions worth investigating, and build a clear record of your case.</p>
+              <p className="mt-6 text-lg sm:text-xl text-cream-warm font-light leading-relaxed max-w-2xl mx-auto drop-shadow-md">A Washington-focused self-help and case-organization workspace. Put what happened into a structured record, understand the questions it raises, and prepare for whatever comes next.</p>
+              <p className="mt-4 text-sm sm:text-base text-cream-warm/80 font-light leading-relaxed max-w-xl mx-auto">This is your private case workspace—not a social-media feed. You can start with your story even if you do not know the legal terms yet.</p>
               <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Start Your Case <ArrowRight className="w-4 h-4" /></Link>
-                <Link to="/education-library" className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">Explore the Washington Guide</Link>
+                <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Tell Your Story <ArrowRight className="w-4 h-4" /></Link>
+                <Link to="/education-library" className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">Understand Your Options</Link>
               </div>
               <div className="mt-8 max-w-md mx-auto"><LegalGate /></div>
             </div>
@@ -86,6 +87,26 @@ const Index = () => {
         </section>
 
         <section className="border-b border-border/60 bg-background">
+          <div className="container max-w-6xl px-6 py-8">
+            <div className="grid md:grid-cols-3 border border-border/60 bg-card shadow-warm-sm">
+              {[
+                ["01", "TELL YOUR STORY", "Start with what happened. You do not need to know the legal terminology first.", startCaseUrl],
+                ["02", "BUILD YOUR CASE", "Organize your timeline, evidence, people, communications, records, and issues in one workspace.", "/cases"],
+                ["03", "UNDERSTAND YOUR OPTIONS", "Explore plain-language guides, questions to investigate, and preparation tools.", "/education-library"],
+              ].map(([number, title, description, href]) => (
+                <Link key={number} to={href} className="group p-6 sm:p-7 border-b md:border-b-0 md:border-r last:border-0 border-border/60 hover:bg-secondary/30 transition-colors duration-300">
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="text-[10px] tracking-[0.2em] text-gold">{number}</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+                  </div>
+                  <h2 className="font-serif text-xl font-medium text-foreground group-hover:text-primary transition-colors">{title}</h2>
+                  <p className="text-sm text-muted-foreground font-light leading-relaxed mt-2 max-w-sm">{description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
           <div className="container max-w-6xl px-6 py-7 grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/60">
             {[
               ["01", "UNDERSTAND", "Make complicated laws, notices, records, and processes easier to understand."],
