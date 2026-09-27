@@ -107,6 +107,7 @@ const Index = () => {
           </div>
         </section>
 
+        <section className="border-b border-border/60 bg-background">
           <div className="container max-w-6xl px-6 py-7 grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/60">
             {[
               ["01", "UNDERSTAND", "Make complicated laws, notices, records, and processes easier to understand."],
