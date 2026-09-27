@@ -21,6 +21,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { EducationalUseBanner } from "@/components/pro-se/EducationalUseBanner";
+import { ProSeToolkitFlow } from "@/components/pro-se/ProSeToolkitFlow";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Draft = { id: string; title: string; notes: string; updatedAt: string };
 type Submission = {
@@ -76,6 +79,7 @@ function load<T>(key: string, fallback: T): T {
 }
 
 export default function Templates() {
+  const { user } = useAuth();
   const [drafts, setDrafts] = useState<Draft[]>(() => load("decoded-justice-template-drafts", []));
   const [submissions, setSubmissions] = useState<Submission[]>(() => load("decoded-justice-submission-records", []));
   const [draftTitle, setDraftTitle] = useState("");
@@ -125,6 +129,7 @@ export default function Templates() {
         <Tabs defaultValue="library" className="space-y-6">
           <TabsList className="w-full h-auto justify-start flex-wrap gap-1 bg-secondary/40 p-1">
             <TabsTrigger value="library">Document Library</TabsTrigger>
+            <TabsTrigger value="toolkit">Case Toolkit</TabsTrigger>
             <TabsTrigger value="builder">Guided Builder</TabsTrigger>
             <TabsTrigger value="drafts">Draft Workspace</TabsTrigger>
             <TabsTrigger value="knowledge">Legal Knowledge</TabsTrigger>
@@ -133,6 +138,35 @@ export default function Templates() {
             <TabsTrigger value="signature">E-Signature</TabsTrigger>
             <TabsTrigger value="records">Submission Record</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="toolkit">
+            <div className="space-y-5">
+              <EducationalUseBanner />
+              {user ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-serif">Pro Se Case Toolkit</CardTitle>
+                    <p className="text-sm text-muted-foreground">Complete the existing Decoded Justice intake, outreach, legal-aid, and risk-acknowledgment workflow without leaving the Templates workspace.</p>
+                  </CardHeader>
+                  <CardContent><ProSeToolkitFlow /></CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardContent className="p-7 space-y-4">
+                    <h2 className="font-serif text-2xl">Sign in to use the Case Toolkit</h2>
+                    <p className="text-sm text-muted-foreground">The toolkit stores case-related workflow information in your account. The document library and public educational resources remain available without signing in.</p>
+                    <Button asChild><Link to="/auth?redirect=/templates">Sign In to Continue</Link></Button>
+                  </CardContent>
+                </Card>
+              )}
+              <Card>
+                <CardContent className="p-6 flex flex-wrap items-center justify-between gap-4">
+                  <div><p className="font-medium">Full Case Workspace</p><p className="text-sm text-muted-foreground">Open the integrated case record for evidence, timeline, issues, communications, requests, relationships, packets, and exports.</p></div>
+                  <Button asChild variant="outline"><Link to="/cases">Open Case Workspace</Link></Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
           <TabsContent value="library" className="space-y-5">
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
