@@ -90,6 +90,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [casePickerOpen, setCasePickerOpen] = useState(false);
   const [isCreatingCase, setIsCreatingCase] = useState(false);
   const activeCase = useMemo(() => cases.find((item) => item.id === caseId) ?? null, [cases, caseId]);
+  const activeCaseIdRef = useRef<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const extractionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -148,6 +149,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     if (!user || !cases.some((item) => item.id === nextCaseId)) return;
     setCasePickerOpen(false);
     resetBuilderState();
+    activeCaseIdRef.current = nextCaseId;
     setCaseId(nextCaseId);
     selectActiveCase(nextCaseId);
     onCaseReady?.(nextCaseId);
@@ -176,6 +178,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         jurisdiction: "Washington",
       });
       resetBuilderState();
+      activeCaseIdRef.current = created.id;
       setCaseId(created.id);
       selectActiveCase(created.id);
       onCaseReady?.(created.id);
@@ -505,6 +508,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     setIsExtracting(true);
     setError(null);
 
+    const targetCaseId = caseId;
     try {
       const { data, error: invokeError } = await supabase.functions.invoke("case-signal-engine", {
         body: {
@@ -518,10 +522,20 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (data?.error) throw new Error(data.error);
 
       const nextSignals = sanitizeSafetyLanguage(data as CaseSignals);
+
+      // A user can switch cases while the AI request is in flight. Never let
+      // the old request paint its results into the newly selected case.
+      if (activeCaseIdRef.current !== targetCaseId) return;
+
+      await applySignals(nextSignals);
+
+      if (activeCaseIdRef.current !== targetCaseId) return;
+
       setSignals(nextSignals);
       setLastAnalyzedLength(narrativeToAnalyze.trim().length);
-      await applySignals(nextSignals);
       await refreshCaseCounts();
+
+      if (activeCaseIdRef.current !== targetCaseId) return;
       setShowReview(true);
     } catch (err) {
       console.error("Narrative extraction error:", err);
@@ -529,7 +543,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     } finally {
       setIsExtracting(false);
     }
-  }, [applySignals, caseId, isExtracting, lastAnalyzedLength, refreshCaseCounts, story, user]);
+  }, [activeCaseIdRef, applySignals, caseId, isExtracting, lastAnalyzedLength, refreshCaseCounts, story, user]);
 
   const scheduleExtraction = useCallback(() => {
     if (extractionTimer.current) clearTimeout(extractionTimer.current);
