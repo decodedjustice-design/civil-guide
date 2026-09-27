@@ -287,10 +287,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       { data: existingIssues },
       { data: existingEvents },
     ] = await Promise.all([
-      (supabase as any).from("people").select("id,display_name,role_label").eq("case_id", caseId),
-      (supabase as any).from("organizations").select("id,name").eq("case_id", caseId),
-      (supabase as any).from("issues").select("id,title").eq("case_id", caseId),
-      (supabase as any).from("events").select("id,title,description,occurred_at,source_type,reviewed,reason").eq("case_id", caseId),
+      (supabase as any).from("people").select("id,display_name,role_label,source_type,review_status").eq("case_id", caseId),
+      (supabase as any).from("organizations").select("id,name,source_type,review_status").eq("case_id", caseId),
+      (supabase as any).from("issues").select("id,title,origin,source,review_status").eq("case_id", caseId),
+      (supabase as any).from("events").select("id,title,description,occurred_at,source_type,reviewed,review_status,reason").eq("case_id", caseId),
     ]);
 
     let people = existingPeople ?? [];
@@ -307,6 +307,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           display_name: actor.name.trim(),
           role_label: actor.role,
           notes: "Extracted from the user's narrative. Review before relying on this entry.",
+          source_type: "user_narrative",
+          review_status: "unreviewed",
         });
       }
     }
@@ -320,6 +322,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           name: actor.name.trim(),
           org_type: actor.role === "authority" ? "Authority / agency" : "Opposing organization",
           notes: "Mentioned in the user's narrative. Confirm the organization's identity and role.",
+          source_type: "user_narrative",
+          review_status: "unreviewed",
         });
       }
     }
@@ -338,6 +342,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           source: "Case Signal Engine",
           origin: "narrative",
           supporting_notes: "AI-organized possibility from the user's narrative. Review and edit before treating it as a case fact.",
+          review_status: "unreviewed",
         });
       }
     }
@@ -354,7 +359,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         (e) =>
           normalize(e.title) === normalize(title) &&
           e.source_type === "user_narrative" &&
-          e.reviewed === false
+          e.reviewed === false &&
+          e.review_status !== "needs_review"
       );
 
       if (existingNarrativeEvent) {
@@ -399,9 +405,9 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       { data: refreshedOrganizations },
       { data: refreshedIssues },
     ] = await Promise.all([
-      (supabase as any).from("people").select("id,display_name,role_label").eq("case_id", caseId),
-      (supabase as any).from("organizations").select("id,name").eq("case_id", caseId),
-      (supabase as any).from("issues").select("id,title").eq("case_id", caseId),
+      (supabase as any).from("people").select("id,display_name,role_label,source_type,review_status").eq("case_id", caseId),
+      (supabase as any).from("organizations").select("id,name,source_type,review_status").eq("case_id", caseId),
+      (supabase as any).from("issues").select("id,title,origin,source,review_status").eq("case_id", caseId),
     ]);
 
     people = refreshedPeople ?? people;
@@ -412,6 +418,126 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     for (const issue of nextSignals.issues) {
       const match = issues.find((i) => normalize(i.title) === normalize(issue.label));
       if (match) issueBySignalId.set(issue.id, match.id);
+    }
+
+    // Non-destructive reconciliation: AI-generated, unreviewed records that
+    // disappear from the latest narrative are flagged for review rather than deleted.
+    // Manually reviewed records are never changed automatically.
+    const currentActorKeys = new Set(
+      nextSignals.actors.map((actor) => normalize(actor.name) + "|" + normalize(actor.role))
+    );
+    const currentOrganizationNames = new Set(
+      nextSignals.actors
+        .filter((actor) => ["authority", "opposing_party"].includes(actor.role))
+        .map((actor) => normalize(actor.name))
+    );
+    const currentIssueLabels = new Set(nextSignals.issues.map((issue) => normalize(issue.label)));
+    const currentEventKeys = new Set(
+      nextSignals.timeline_suggestions.map((event) =>
+        normalize(event.title) + "|" + normalize(safeDate(event.iso_date) ?? event.approximate_date)
+      )
+    );
+    const currentCommunicationKeys = new Set(
+      (nextSignals.communications ?? []).map((communication) =>
+        normalize(communication.method) + "|" + normalize(communication.subject || "Communication") + "|" + normalize(communication.summary)
+      )
+    );
+    const currentEvidenceKeys = new Set(
+      (nextSignals.evidence_mentions ?? []).map((mention) =>
+        normalize(mention.type) + "|" + normalize(mention.description)
+      )
+    );
+    const currentGapTitles = new Set(
+      (nextSignals.record_gaps ?? []).map((gap) => normalize(gap.title))
+    );
+
+    for (const person of people) {
+      if (
+        person.source_type === "user_narrative" &&
+        person.review_status === "unreviewed" &&
+        !currentActorKeys.has(normalize(person.display_name) + "|" + normalize(person.role_label))
+      ) {
+        await (supabase as any).from("people").update({ review_status: "needs_review" }).eq("id", person.id).eq("case_id", caseId);
+      }
+    }
+
+    for (const organization of organizations) {
+      if (
+        organization.source_type === "user_narrative" &&
+        organization.review_status === "unreviewed" &&
+        !currentOrganizationNames.has(normalize(organization.name))
+      ) {
+        await (supabase as any).from("organizations").update({ review_status: "needs_review" }).eq("id", organization.id).eq("case_id", caseId);
+      }
+    }
+
+    for (const issue of issues) {
+      if (
+        issue.origin === "narrative" &&
+        issue.source === "Case Signal Engine" &&
+        issue.review_status === "unreviewed" &&
+        !currentIssueLabels.has(normalize(issue.title))
+      ) {
+        await (supabase as any).from("issues").update({ review_status: "needs_review" }).eq("id", issue.id).eq("case_id", caseId);
+      }
+    }
+
+    for (const event of events) {
+      if (
+        event.source_type === "user_narrative" &&
+        event.review_status === "unreviewed" &&
+        !currentEventKeys.has(normalize(event.title) + "|" + normalize(event.occurred_at ?? event.reason))
+      ) {
+        await (supabase as any).from("events").update({ review_status: "needs_review" }).eq("id", event.id).eq("case_id", caseId);
+      }
+    }
+
+    const { data: existingCommunications } = await (supabase as any)
+      .from("communications")
+      .select("id,method,subject,summary,source_type,review_status")
+      .eq("case_id", caseId);
+
+    for (const communication of existingCommunications ?? []) {
+      const key = normalize(communication.method) + "|" + normalize(communication.subject || "Communication") + "|" + normalize(communication.summary);
+      if (
+        communication.source_type === "user_narrative" &&
+        communication.review_status === "unreviewed" &&
+        !currentCommunicationKeys.has(key)
+      ) {
+        await (supabase as any).from("communications").update({ review_status: "needs_review" }).eq("id", communication.id).eq("case_id", caseId);
+      }
+    }
+
+    const { data: existingEvidenceMentions } = await (supabase as any)
+      .from("evidence_mentions")
+      .select("id,evidence_type,description,source_type,review_status")
+      .eq("case_id", caseId);
+
+    for (const mention of existingEvidenceMentions ?? []) {
+      const key = normalize(mention.evidence_type) + "|" + normalize(mention.description);
+      if (
+        mention.source_type === "user_narrative" &&
+        mention.review_status === "unreviewed" &&
+        !currentEvidenceKeys.has(key)
+      ) {
+        await (supabase as any).from("evidence_mentions").update({ review_status: "needs_review" }).eq("id", mention.id).eq("case_id", caseId);
+      }
+    }
+
+    const { data: existingRecordGaps } = await (supabase as any)
+      .from("tasks")
+      .select("id,title,source_type,review_status")
+      .eq("case_id", caseId)
+      .eq("task_type", "record_gap");
+
+    for (const gap of existingRecordGaps ?? []) {
+      if (
+        gap.source_type === "user_narrative" &&
+        gap.review_status === "unreviewed" &&
+        !currentGapTitles.has(normalize(gap.title))
+      ) {
+        await (supabase as any).from("tasks").update({ review_status: "needs_review" }).eq("id", gap.id).eq("case_id", caseId);
+      }
     }
 
     for (const gap of nextSignals.record_gaps ?? []) {
@@ -435,6 +561,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           related_issue_id: issueBySignalId.get(gap.related_issue || "") ?? null,
           identified_at: new Date().toISOString().slice(0, 10),
           notes: "Identified from the user narrative. Confirm the gap before requesting the record.",
+          source_type: "user_narrative",
+          review_status: "unreviewed",
         });
       }
     }
@@ -472,6 +600,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           subject,
           summary: communication.summary.trim(),
           follow_up_required: communication.follow_up_required,
+          source_type: "user_narrative",
+          review_status: "unreviewed",
           related_issue_id: issueBySignalId.get(communication.related_issue || "") ?? null,
         });
       }
@@ -497,6 +627,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           priority: mention.priority,
           status: "mentioned",
           source_type: "user_narrative",
+          review_status: "unreviewed",
         });
       }
     }
