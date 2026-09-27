@@ -92,7 +92,7 @@ const Index = () => {
               {[
                 ["01", "TELL YOUR STORY", "Start with what happened. You do not need to know the legal terminology first.", startCaseUrl],
                 ["02", "BUILD YOUR CASE", "Organize your timeline, evidence, people, communications, records, and issues in one workspace.", "/cases"],
-                ["03", "UNDERSTAND YOUR OPTIONS", "Explore plain-language guides, questions to investigate, and preparation tools.", "/education-library"],
+                ["03", "UNDERSTAND & PREPARE", "Explore questions, learn how the system works, identify what is missing, and prepare your next step.", "/education-library"],
               ].map(([number, title, description, href]) => (
                 <Link key={number} to={href} className="group p-6 sm:p-7 border-b md:border-b-0 md:border-r last:border-0 border-border/60 hover:bg-secondary/30 transition-colors duration-300">
                   <div className="flex items-center justify-between mb-5">
@@ -104,22 +104,6 @@ const Index = () => {
                 </Link>
               ))}
             </div>
-          </div>
-        </section>
-
-        <section className="border-b border-border/60 bg-background">
-          <div className="container max-w-6xl px-6 py-7 grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/60">
-            {[
-              ["01", "UNDERSTAND", "Make complicated laws, notices, records, and processes easier to understand."],
-              ["02", "ORGANIZE", "Bring your story, timeline, evidence, communications, and records into one case workspace."],
-              ["03", "PREPARE", "Turn what you know into an organized case record and materials for your next step."],
-            ].map(([number, title, description]) => (
-              <div key={number} className="py-4 md:py-1 md:px-8 first:pl-0 last:pr-0">
-                <div className="text-[10px] tracking-[0.22em] text-gold uppercase mb-2">{number}</div>
-                <h2 className="font-serif text-xl font-medium tracking-tight text-foreground mb-2">{title}</h2>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-sm">{description}</p>
-              </div>
-            ))}
           </div>
         </section>
 
