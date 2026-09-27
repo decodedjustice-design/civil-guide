@@ -89,6 +89,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const [error, setError] = useState<string | null>(null);
   const [casePickerOpen, setCasePickerOpen] = useState(false);
   const [isCreatingCase, setIsCreatingCase] = useState(false);
+  const activeCase = useMemo(() => cases.find((item) => item.id === caseId) ?? null, [cases, caseId]);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const extractionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -675,6 +676,12 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                <div className="hidden sm:flex max-w-[220px] items-center gap-2 rounded-full border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground">
+                  <FolderOpen className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate" title={activeCase?.title || "Untitled case"}>
+                    {activeCase?.title || "Untitled case"}
+                  </span>
+                </div>
                 <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground mr-1">
                   {saveState === "saving" && <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>}
                   {saveState === "saved" && <><Check className="w-3.5 h-3.5" /> Saved</>}
