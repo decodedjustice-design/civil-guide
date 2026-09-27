@@ -108,6 +108,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       activeCaseId = created.id;
     }
 
+    activeCaseIdRef.current = activeCaseId;
     setCaseId(activeCaseId);
     selectActiveCase(activeCaseId);
     onCaseReady?.(activeCaseId);
