@@ -14,6 +14,7 @@ const navItems = [
   { name: "Home", href: "/" },
   { name: "Dashboard", href: "/dashboard" },
   { name: "Case Builder", href: "/case-builder" },
+  { name: "Templates", href: "/templates" },
   { name: "Learn Your Rights", href: "/education-library" },
   { name: "Find Help", href: "/find-help" },
   { name: "About", href: "/about" },
