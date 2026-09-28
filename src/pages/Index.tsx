@@ -54,27 +54,29 @@ const Index = () => {
   return (
     <Layout>
       <main className="bg-background">
-        <section className="relative min-h-[76vh] flex items-center overflow-hidden">
+        <section className="relative min-h-[82vh] flex items-end overflow-hidden bg-[#171514]">
           <div className="absolute inset-0">
-            <img src={heroImage} alt="" className="w-full h-full object-cover" aria-hidden="true" />
+            <img src={heroImage} alt="" className="w-full h-full object-cover object-center" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#171514]/95 via-[#171514]/65 to-[#171514]/15" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#171514]/85 via-transparent to-[#171514]/20" />
           </div>
-          <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24 text-center">
-            <div className="max-w-4xl">
-              <p className="text-[11px] sm:text-xs uppercase tracking-[0.28em] text-cream mb-6">Decoded Justice · Washington State</p>
-              <div className="w-16 h-px bg-gold/60 mb-7 mx-auto" />
-              <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium text-cream leading-[1.05] tracking-tight max-w-3xl mx-auto drop-shadow-lg">Clarity. Empathy. Justice.</h1>
-              <p className="mt-5 text-2xl sm:text-3xl font-serif text-cream-warm max-w-2xl mx-auto drop-shadow-md">Your story. Your voice. Your justice.</p>
-              <p className="mt-6 text-lg sm:text-xl text-cream-warm font-light leading-relaxed max-w-2xl mx-auto drop-shadow-md">A Washington-focused self-help and case-organization workspace. Put what happened into a structured record, understand the questions it raises, and prepare for whatever comes next.</p>
-              <div className="mt-9 flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-13 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Tell Your Story <ArrowRight className="w-4 h-4" /></Link>
-                <Link to="/education-library" className="inline-flex items-center justify-center h-13 px-7 border border-white/25 hover:border-white/45 text-white/80 hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">Understand Your Options</Link>
+          <div className="relative z-10 container max-w-6xl px-6 py-20 sm:py-24 lg:py-28">
+            <div className="max-w-2xl text-left">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold mb-6">Decoded Justice · Washington State</p>
+              <div className="w-14 h-px bg-gold/70 mb-7" />
+              <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.25rem] font-medium text-cream leading-[0.98] tracking-tight drop-shadow-lg">Your story can create change.</h1>
+              <p className="mt-5 text-xl sm:text-2xl font-serif text-cream-warm">Clarity. Empathy. Justice.</p>
+              <p className="mt-6 text-base sm:text-lg text-cream-warm/90 font-light leading-relaxed max-w-xl">A Washington-focused place to understand what happened, organize what you know, and prepare for what comes next.</p>
+              <div className="mt-9 flex flex-col sm:flex-row gap-3">
+                <Link to={startCaseUrl} className="inline-flex items-center justify-center gap-2 h-12 px-7 bg-primary hover:bg-maroon-light text-white font-medium tracking-wide rounded-sm transition-all duration-300 hover:shadow-lg">Start Your Journey <ArrowRight className="w-4 h-4" /></Link>
+                <Link to="/education-library" className="inline-flex items-center justify-center h-12 px-7 border border-cream/40 hover:border-cream/70 text-cream hover:text-white font-medium tracking-wide rounded-sm transition-all duration-300">Explore the Guide</Link>
               </div>
-              <div className="mt-8 max-w-md mx-auto"><LegalGate /></div>
             </div>
           </div>
         </section>
 
-        <section className="border-b border-border/60 bg-background">
+        <section className="border-b border-border/60 bg-[#171514] text-cream">
+ border-border/60 bg-background">
           <div className="container max-w-6xl px-6 py-8">
             <div className="grid md:grid-cols-3 border border-border/60 bg-card shadow-warm-sm">
               {[
