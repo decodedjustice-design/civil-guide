@@ -75,22 +75,21 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="border-b border-border/60 bg-[#171514] text-cream">
- border-border/60 bg-background">
+        <section className="relative -mt-px border-b border-white/10 bg-[#171514] text-cream">
           <div className="container max-w-6xl px-6 py-8">
-            <div className="grid md:grid-cols-3 border border-border/60 bg-card shadow-warm-sm">
+            <div className="grid md:grid-cols-3 border border-white/10 bg-black/25 backdrop-blur-sm shadow-2xl">
               {[
                 ["01", "TELL YOUR STORY", "Start with what happened. You do not need to know the legal terminology first.", startCaseUrl],
                 ["02", "BUILD YOUR CASE", "Organize your timeline, evidence, people, communications, records, and issues in one workspace.", "/cases"],
                 ["03", "UNDERSTAND & PREPARE", "Explore questions, learn how the system works, identify what is missing, and prepare your next step.", "/education-library"],
               ].map(([number, title, description, href]) => (
-                <Link key={number} to={href} className="group p-6 sm:p-7 border-b md:border-b-0 md:border-r last:border-0 border-border/60 hover:bg-secondary/30 transition-colors duration-300">
+                <Link key={number} to={href} className="group p-6 sm:p-7 border-b md:border-b-0 md:border-r last:border-0 border-white/10 hover:bg-white/5 transition-colors duration-300">
                   <div className="flex items-center justify-between mb-5">
                     <span className="text-[10px] tracking-[0.2em] text-gold">{number}</span>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+                    <ArrowRight className="w-4 h-4 text-cream-warm/50 group-hover:text-gold transition-colors" />
                   </div>
-                  <h2 className="font-serif text-xl font-medium text-foreground group-hover:text-primary transition-colors">{title}</h2>
-                  <p className="text-sm text-muted-foreground font-light leading-relaxed mt-2 max-w-sm">{description}</p>
+                  <h2 className="font-serif text-xl font-medium text-cream group-hover:text-white transition-colors">{title}</h2>
+                  <p className="text-sm text-cream-warm/70 font-light leading-relaxed mt-2 max-w-sm">{description}</p>
                 </Link>
               ))}
             </div>
@@ -125,21 +124,21 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="bg-cream-warm py-20 sm:py-24">
+        <section className="bg-[#211C1A] text-cream py-20 sm:py-24">
           <div className="container max-w-6xl px-6">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Where it can help</p>
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">Built for the systems you may have to navigate.</h2>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-cream max-w-xl">Built for the systems you may have to navigate.</h2>
               </div>
-              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">Start with the area closest to your situation, then use the workspace, guides, and tools that fit what you need.</p>
+              <p className="text-sm text-cream-warm/65 font-light leading-relaxed max-w-md lg:text-right">Start with the area closest to your situation, then use the workspace, guides, and tools that fit what you need.</p>
             </div>
-            <div className="grid sm:grid-cols-2 border-t border-l border-primary-foreground/15">
+            <div className="grid sm:grid-cols-2 border-t border-l border-white/10">
               {issueAreas.map((area, index) => (
-                <div key={area.title} className="min-h-28 border-r border-b border-border/60 p-5 sm:p-6 bg-cream-warm hover:bg-background/70 transition-colors duration-300">
-                  <div className="flex items-center justify-between mb-4"><span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
-                  <h3 className="font-serif text-lg font-medium text-foreground mb-1">{area.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{area.detail}</p>
+                <div key={area.title} className="min-h-28 border-r border-b border-white/10 p-5 sm:p-6 bg-white/[0.02] hover:bg-white/[0.06] transition-colors duration-300">
+                  <div className="flex items-center justify-between mb-4"><span className="text-[10px] tracking-[0.2em] text-cream-warm/45">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
+                  <h3 className="font-serif text-lg font-medium text-cream mb-1">{area.title}</h3>
+                  <p className="text-xs text-cream-warm/60 leading-relaxed">{area.detail}</p>
                 </div>
               ))}
             </div>
