@@ -19,6 +19,7 @@ import {
   Wrench
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { bannerLibrary } from "@/assets/index";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { SystemCard } from "@/components/shared/SystemCard";
@@ -91,21 +92,27 @@ export default function RightsInsight() {
         </div>
       )}
 
-      {/* Header — short orientation only */}
-      <div className="container pt-12 lg:pt-16 pb-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
-            <BookOpen className="w-4 h-4" />
-            <span>Library</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Library
-          </h1>
-          <p className="text-muted-foreground">
-            Clear guidance. Step-by-step. At your pace.
-          </p>
+      {/* Cinematic knowledge hero */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={bannerLibrary} alt="" className="w-full h-full object-cover opacity-45" />
+          <div className="absolute inset-0 bg-gradient-to-r from-espresso/95 via-espresso/75 to-espresso/35" />
         </div>
-      </div>
+        <div className="container relative py-14 lg:py-20">
+          <div className="max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-white/80 text-xs font-medium mb-5">
+              <BookOpen className="w-4 h-4" />
+              <span>Rights Insight</span>
+            </div>
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium text-white leading-tight max-w-3xl">
+              Understand the system before you decide what to do next.
+            </h1>
+            <p className="text-white/70 text-base sm:text-lg max-w-2xl mt-5 leading-relaxed">
+              Plain-language explanations of the systems people encounter — with paths back to the underlying rules, records, and research tools.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <div className="container pb-16">
         {/* Wellbeing note */}
@@ -118,7 +125,17 @@ export default function RightsInsight() {
         </div>
 
         {/* Search */}
-        <div className="max-w-md mx-auto mb-10">
+        <div className="max-w-3xl mx-auto mb-10">
+          <div className="grid sm:grid-cols-[1fr_auto] gap-3 items-center mb-4">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Explore by system</p>
+              <p className="text-sm text-muted-foreground mt-1">Choose a category, then open the guide closest to your situation.</p>
+            </div>
+            <Link to="/education-library" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
+              Open full education library <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+          <div className="max-w-md">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -128,6 +145,7 @@ export default function RightsInsight() {
               placeholder="Search topics..."
               className="w-full h-11 pl-11 pr-4 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
             />
+          </div>
           </div>
         </div>
 
