@@ -11,7 +11,7 @@ export function Masthead() {
       </h1>
       <div className={styles.mastheadRule} />
       <p className={styles.mastheadSub}>
-        How one mother's experience navigating five intersecting government systems — simultaneously, alone, and in crisis — became a platform built for everyone left doing the same.
+        How one mother's experience navigating housing, public agencies, law enforcement, family systems, records, and legal processes became a platform built to help people organize what happened, understand what is documented, and see what comes next.
       </p>
     </header>
   );
