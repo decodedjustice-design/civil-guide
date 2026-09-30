@@ -151,6 +151,8 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       findings={analyzerFindings}
       lawModules={lawModules}
       policeMissingFacts={policeMissingFacts}
+      systemLabel={systemLabel}
+      location={location}
       onAddToCase={() => startCaseWorkspace()}
     />
     <div className="space-y-6">{tools.filter(t => !t.isLocked).length > 0 && <section><h2 className="text-xl font-semibold text-foreground mb-4">Tools for your next step</h2><div className="space-y-4">{tools.filter(t => !t.isLocked).map(tool => <ToolCard key={tool.name} {...tool} />)}</div></section>}{tools.filter(t => t.isLocked).length > 0 && <section><h2 className="text-lg font-medium text-muted-foreground mb-4">Additional resources</h2><div className="space-y-4">{tools.filter(t => t.isLocked).map(tool => <ToolCard key={tool.name} {...tool} />)}</div></section>}</div>
