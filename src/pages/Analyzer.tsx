@@ -1903,27 +1903,36 @@ export default function Analyzer() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">
-          <img 
-            src={heroImage} 
-            alt="" 
-            className="w-full h-full object-cover opacity-15"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-background/40" />
+          <img src={heroImage} alt="" className="w-full h-full object-cover opacity-10" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/55" />
         </div>
-        
-        <div className="container relative py-12 lg:py-16">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+
+        <div className="container relative py-10 lg:py-14">
+          <div className="grid lg:grid-cols-[1fr_0.82fr] gap-8 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cream/10 border border-gold/40 text-[hsl(var(--cream))] text-sm font-medium mb-4">
                 <Search className="w-4 h-4" />
                 <span>Understand Your Situation</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-[hsl(var(--cream))] mb-4 drop-shadow-sm">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-[hsl(var(--cream))] mb-4 drop-shadow-sm">
                 Civil Rights Analyzer
               </h1>
-              <p className="text-[hsl(var(--cream-warm))] max-w-xl drop-shadow-sm">
+              <p className="text-[hsl(var(--cream-warm))] max-w-xl leading-relaxed drop-shadow-sm">
                 Answer a few questions to understand your situation and discover resources that may help.
               </p>
+            </div>
+            <div className="relative min-h-[230px] sm:min-h-[280px] overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
+              <img
+                src={heroImage}
+                alt="A cinematic view of organized information and case analysis"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/75 via-transparent to-background/10 lg:w-1/2" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="inline-flex rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/85 backdrop-blur-sm">
+                  Organize · Understand · Explore
+                </div>
+              </div>
             </div>
           </div>
         </div>
