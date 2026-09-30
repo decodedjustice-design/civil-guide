@@ -72,8 +72,10 @@ export function AnalyzerEndSummary({
   const authorities = aiResults.referenceAnchors.slice(0, 10);
   const review = getReviewLabel(findings, missing);
   const ReviewIcon = review.icon;
-  const executiveSummary = aiResults.systemIdentification ||
+  const executiveSummary = aiResults.executiveSummary || aiResults.systemIdentification ||
     "The analyzer organized the information you provided into research leads, open questions, records to locate, and practical next steps.";
+  const known = aiResults.whatWeKnow?.length ? aiResults.whatWeKnow : aiResults.usualProcess.slice(0, 4);
+  const verify = aiResults.whatWeNeedToVerify?.length ? aiResults.whatWeNeedToVerify : missing.slice(0, 6);
 
   const printPage = () => window.print();
   const shareSafely = async () => {
@@ -153,9 +155,9 @@ export function AnalyzerEndSummary({
 
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {[
-                ["What we know", aiResults.usualProcess.slice(0, 3), "The process or facts reflected in your answers."],
-                ["What we don't know", missing.slice(0, 4), "Open facts that could change the analysis."],
-                ["What could verify it", evidence.slice(0, 4), "Records or evidence worth locating."],
+                ["What we know", known.slice(0, 4), "Facts or information reflected in what you provided."],
+                ["What we need to verify", verify.slice(0, 4), "Open facts that could change the analysis."],
+                ["Records that could help", evidence.slice(0, 4), "Documents or other evidence worth locating."],
               ].map(([title, items, description]) => (
                 <div key={title as string} className="rounded-2xl border border-border bg-card p-5">
                   <p className="text-sm font-semibold text-foreground">{title as string}</p>
@@ -210,13 +212,13 @@ export function AnalyzerEndSummary({
               <div className="flex items-start gap-3">
                 <FileSearch className="mt-0.5 h-5 w-5 text-primary" />
                 <div>
-                  <p className="font-semibold text-foreground">Legalese → plain language</p>
+                  <p className="font-semibold text-foreground">Legal terms → plain language</p>
                   <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                    The analyzer can explain legal concepts in ordinary language. It should not rewrite missing facts or present a legal conclusion that the record does not support.
+                    The analyzer explains the terminology used in a research lead. This is not a quotation from a notice, statute, court order, or other source unless that source text was actually provided.
                   </p>
                   {findings[0] && (
                     <div className="mt-4 grid gap-3 lg:grid-cols-2">
-                      <div className="rounded-xl border border-border bg-background p-4"><p className="text-xs font-semibold text-muted-foreground">Analysis term</p><p className="mt-2 text-sm font-medium text-foreground">{findings[0].legalFramework.slice(0, 3).join(" · ") || findings[0].title}</p></div>
+                      <div className="rounded-xl border border-border bg-background p-4"><p className="text-xs font-semibold text-muted-foreground">Term or framework</p><p className="mt-2 text-sm font-medium text-foreground">{findings[0].legalFramework.slice(0, 3).join(" · ") || findings[0].title}</p></div>
                       <div className="rounded-xl border border-border bg-background p-4"><p className="text-xs font-semibold text-muted-foreground">Plain-language meaning</p><p className="mt-2 text-sm leading-6 text-foreground/80">{findings[0].whyFlagged}</p></div>
                     </div>
                   )}
