@@ -1,602 +1,155 @@
-import { useEffect, useState, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import {
-  FolderOpen,
-  Clock,
-  FileText,
-  Upload,
-  Scale,
-  Activity,
-  Feather,
-  Search,
-  Archive,
-  Briefcase,
-  Users,
-  BookOpen,
-  Bookmark,
-  TrendingUp,
-  ArrowRight,
-  Shield,
-  Mic,
-  Heart,
-} from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  PieChart,
-  Pie,
-} from "recharts";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { DjPageHeader } from "@/components/ui/dj-page-header";
-import { PhaseProgress } from "@/components/ui/dj-progress";
-import { StatCard, ActionCard, LinkListCard } from "@/components/ui/dj-card";
-import { SuggestedAction, PrivacyBadge, Widget } from "@/components/ui/dj-widget";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { ArrowRight, CalendarClock, ClipboardList, FileSearch, FolderArchive, ListTree, MessageSquare, Plus, ScanSearch, Users } from "lucide-react";
+import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { EducationalNotice } from "@/components/shared/EducationalNotice";
+import { Disclaimer } from "@/components/shared/Disclaimer";
+import { useCases } from "@/hooks/useCases";
+import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 
-/* ─── Types ─── */
-interface CaseStats {
-  evidenceCount: number;
-  timelineCount: number;
-  notesCount: number;
-  lastActivity: string | null;
-  clarionCount: number;
-  analyzerCount: number;
-  intakeCount: number;
-  attorneyContactCount: number;
-  bookmarkCount: number;
-}
+const ACTIVE_CASE_KEY = "dj:active-case-id";
 
-interface ActivityItem {
-  id: string;
-  type: "evidence" | "timeline" | "note" | "clarion" | "analyzer" | "intake" | "attorney";
-  title: string;
-  date: string;
-}
-
-interface AnalyzerInsight {
-  id: string;
-  system_label: string;
-  pattern_strength: string;
-  created_at: string;
-}
-
-/* ─── Helpers ─── */
-const typeIcons: Record<ActivityItem["type"], React.ElementType> = {
-  evidence: FolderOpen,
-  timeline: Clock,
-  note: FileText,
-  clarion: Feather,
-  analyzer: Search,
-  intake: Briefcase,
-  attorney: Users,
-};
-
-const typeLabels: Record<ActivityItem["type"], string> = {
-  evidence: "Evidence",
-  timeline: "Timeline",
-  note: "Note",
-  clarion: "Write Your Story",
-  analyzer: "Review Key Issues",
-  intake: "Intake Packet",
-  attorney: "Attorney Contact",
-};
-
-const strengthColor: Record<string, string> = {
-  none: "text-muted-foreground",
-  possible: "text-gold",
-  strong: "text-primary",
-  very_strong: "text-destructive",
-};
-
-function relativeTime(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "Just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d ago`;
-  return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-/* ─── Saved Guides Widget ─── */
-function SavedGuidesWidget({ userId }: { userId: string }) {
-  const [guides, setGuides] = useState<{ id: string; resource_id: string; resource_title: string; resource_url: string | null }[]>([]);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    supabase
-      .from("justice_place_bookmarks")
-      .select("id, resource_id, resource_title, resource_url")
-      .eq("user_id", userId)
-      .eq("resource_type", "guide")
-      .order("created_at", { ascending: false })
-      .limit(5)
-      .then(({ data }) => {
-        setGuides(data || []);
-        setLoaded(true);
-      });
-  }, [userId]);
-
-  return (
-    <Widget title="Saved Guides" action={{ label: "Library", href: "/education-library" }}>
-      {loaded && guides.length > 0 ? (
-        <div className="space-y-1">
-          {guides.map((g) => (
-            <Link
-              key={g.id}
-              to={g.resource_url || `/guide/${g.resource_id}`}
-              className="flex items-center gap-3 p-3 rounded-lg bg-muted/20 border border-border/40 hover:border-gold/30 transition-colors group"
-            >
-              <BookOpen className="w-4 h-4 text-gold/60 group-hover:text-gold transition-colors" strokeWidth={1.5} />
-              <span className="text-sm text-foreground truncate">{g.resource_title}</span>
-              <ArrowRight className="w-3 h-3 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
-            </Link>
-          ))}
-        </div>
-      ) : loaded ? (
-        <div className="py-6 text-center">
-          <BookOpen className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">No saved guides yet.</p>
-          <Link to="/education-library" className="text-xs text-primary mt-1 inline-block hover:underline">
-            Browse the Library →
-          </Link>
-        </div>
-      ) : (
-        <div className="py-6 text-center">
-          <p className="text-sm text-muted-foreground">Loading…</p>
-        </div>
-      )}
-    </Widget>
-  );
-}
-
-/* ─── Dashboard ─── */
 export default function Dashboard() {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-  const [stats, setStats] = useState<CaseStats>({
-    evidenceCount: 0, timelineCount: 0, notesCount: 0, lastActivity: null,
-    clarionCount: 0, analyzerCount: 0, intakeCount: 0, attorneyContactCount: 0, bookmarkCount: 0,
-  });
-  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
-  const [analyzerInsights, setAnalyzerInsights] = useState<AnalyzerInsight[]>([]);
-  const [justiceCase, setJusticeCase] = useState<{
-    case_name: string;
-    case_status: string;
-    issue_type: string;
-    state: string;
-    county: string;
-    created_at: string;
-  } | null>(null);
+  const { cases, isLoading } = useCases();
+  const storedActiveId = typeof window !== "undefined" ? window.localStorage.getItem(ACTIVE_CASE_KEY) : null;
+  const activeCase = cases.find((item) => item.id === storedActiveId) ?? cases[0] ?? null;
+  const { snapshot, isLoading: snapshotLoading } = useCaseSnapshot(activeCase?.id);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth?redirect=/dashboard", { replace: true });
-    }
-  }, [user, loading, navigate]);
+  const timelineCount = snapshot.timeline.length;
+  const evidenceCount = snapshot.evidence.length;
+  const issueCount = snapshot.issues.length;
+  const peopleCount = snapshot.people.length + snapshot.organizations.length;
+  const communicationCount = snapshot.communications.length;
+  const requestCount = snapshot.requests.length;
+  const recordGapCount = snapshot.record_gaps.filter((gap) => !["received", "resolved"].includes(gap.status)).length;
+  const reviewCount = [
+    ...snapshot.timeline, ...snapshot.evidence, ...snapshot.issues,
+    ...snapshot.people, ...snapshot.organizations, ...snapshot.communications, ...snapshot.record_gaps,
+  ].filter((item) => item.review_status === "needs_review").length;
+  const totalRecordItems = timelineCount + evidenceCount + issueCount + peopleCount + communicationCount + requestCount;
+  const lastUpdated = activeCase?.updated_at ? new Date(activeCase.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : null;
 
-  useEffect(() => {
-    if (!user) return;
+  if (isLoading) return <Layout><div className="container max-w-6xl mx-auto px-4 py-20 text-center text-muted-foreground">Loading your cases…</div></Layout>;
 
-    const fetchAll = async () => {
-      // Stats counts
-      const [evidenceRes, timelineRes, notesRes, clarionRes, analyzerRes, intakeRes, attorneyRes, bookmarkRes] = await Promise.all([
-        supabase.from("evidence").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("timeline_entries").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("notes").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("clarion_entries").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("analyzer_results").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("intake_packets").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("attorney_contacts").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("justice_place_bookmarks").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-      ]);
-
-      // Recent activity feed — pull latest 3 from each source
-      const [recentEv, recentTl, recentNt, recentCl, recentAn, justiceCaseRes] = await Promise.all([
-        supabase.from("evidence").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
-        supabase.from("timeline_entries").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
-        supabase.from("notes").select("id, title, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
-        supabase.from("clarion_entries").select("id, content, updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }).limit(3),
-        supabase.from("analyzer_results").select("id, system_label, pattern_strength, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
-        supabase.from("justice_place_cases").select("case_name, case_status, issue_type, state, county, created_at").eq("user_id", user.id).maybeSingle(),
-      ]);
-
-      // Build activity feed
-      const activities: ActivityItem[] = [];
-      recentEv.data?.forEach((r) => activities.push({ id: r.id, type: "evidence", title: r.title, date: r.updated_at }));
-      recentTl.data?.forEach((r) => activities.push({ id: r.id, type: "timeline", title: r.title, date: r.updated_at }));
-      recentNt.data?.forEach((r) => activities.push({ id: r.id, type: "note", title: r.title, date: r.updated_at }));
-      recentCl.data?.forEach((r) => activities.push({ id: r.id, type: "clarion", title: r.content.slice(0, 60) + (r.content.length > 60 ? "…" : ""), date: r.updated_at }));
-      activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-      const allDates = activities.map((a) => a.date);
-
-      setStats({
-        evidenceCount: evidenceRes.count || 0,
-        timelineCount: timelineRes.count || 0,
-        notesCount: notesRes.count || 0,
-        lastActivity: allDates[0] || null,
-        clarionCount: clarionRes.count || 0,
-        analyzerCount: analyzerRes.count || 0,
-        intakeCount: intakeRes.count || 0,
-        attorneyContactCount: attorneyRes.count || 0,
-        bookmarkCount: bookmarkRes.count || 0,
-      });
-      setRecentActivity(activities.slice(0, 8));
-      setAnalyzerInsights(recentAn.data || []);
-      setJusticeCase(justiceCaseRes.data || null);
-    };
-
-    fetchAll();
-  }, [user]);
-
-  /* Chart data */
-  const chartData = useMemo(() => [
-    { name: "Evidence", value: stats.evidenceCount, fill: "hsl(var(--primary))" },
-    { name: "Timeline", value: stats.timelineCount, fill: "hsl(var(--gold))" },
-    { name: "Notes", value: stats.notesCount, fill: "hsl(var(--navy))" },
-    { name: "Clarion", value: stats.clarionCount, fill: "hsl(var(--accent-strong))" },
-    { name: "Analyses", value: stats.analyzerCount, fill: "hsl(var(--teal))" },
-  ], [stats]);
-
-  if (loading || !user) {
+  if (!activeCase) {
     return (
-      <DashboardLayout pageTitle="Dashboard">
-        <div className="container py-20 text-center">
-          <p className="text-muted-foreground">Loading…</p>
+      <Layout>
+        <div className="container max-w-5xl mx-auto px-4 py-8 sm:py-12">
+          <EducationalNotice />
+          <div className="max-w-3xl mx-auto py-10 text-center">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground mb-3">Case command center</p>
+            <h1 className="font-serif text-4xl sm:text-5xl font-medium text-foreground">Start with your story.</h1>
+            <p className="text-muted-foreground max-w-xl mx-auto mt-4 leading-relaxed">
+              Your dashboard is built around one connected case record. Write what happened, and Decoded Justice can organize the timeline, people, evidence, issues, and missing records as you go.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3 mt-8">
+              <Button asChild size="lg"><Link to="/case-builder">Start a case <ArrowRight className="w-4 h-4 ml-2" /></Link></Button>
+              <Button asChild size="lg" variant="outline"><Link to="/cases"><FolderArchive className="w-4 h-4 mr-2" />Open case list</Link></Button>
+            </div>
+          </div>
+          <Disclaimer variant="prominent" />
         </div>
-      </DashboardLayout>
+      </Layout>
     );
   }
 
-  const displayName = user.email?.split("@")[0] || "there";
+  const primaryHref = totalRecordItems === 0 ? "/case-builder" : recordGapCount > 0 ? "/cases/" + activeCase.id + "/record-gaps" : "/cases/" + activeCase.id;
+  const primaryLabel = totalRecordItems === 0 ? "Continue your story" : recordGapCount > 0 ? "Review record gaps" : "Open case overview";
+  const statusLabel = activeCase.status?.replace(/_/g, " ") || "open";
 
-  const phases = [
-    { number: 1, title: "Write what happened", icon: Feather, started: stats.clarionCount > 0 || stats.notesCount > 0 },
-    { number: 2, title: "Build timeline", icon: Clock, started: stats.timelineCount > 0 },
-    { number: 3, title: "Upload evidence", icon: Archive, started: stats.evidenceCount > 0 },
-    { number: 4, title: "Review key issues", icon: Search, started: stats.analyzerCount > 0 },
-    { number: 5, title: "Generate case packet", icon: Briefcase, started: stats.intakeCount > 0 },
+  const sections = [
+    { label: "Timeline", count: timelineCount, icon: CalendarClock, to: "/cases/" + activeCase.id + "/timeline", detail: "What happened and when" },
+    { label: "Evidence", count: evidenceCount, icon: FolderArchive, to: "/cases/" + activeCase.id + "/evidence", detail: "Documents and exhibits" },
+    { label: "Issues", count: issueCount, icon: ListTree, to: "/cases/" + activeCase.id + "/issues", detail: "Questions and issues to review" },
+    { label: "People & organizations", count: peopleCount, icon: Users, to: "/cases/" + activeCase.id + "/people", detail: "Who is connected to the record" },
+    { label: "Communications", count: communicationCount, icon: MessageSquare, to: "/cases/" + activeCase.id + "/communications", detail: "Calls, messages, letters, and contacts" },
+    { label: "Requests", count: requestCount, icon: FileSearch, to: "/cases/" + activeCase.id + "/requests", detail: "Records requested and deadlines" },
   ];
 
-  const readinessPercent = Math.round((phases.filter((phase) => phase.started).length / phases.length) * 100);
-  const missingItems: string[] = [];
-  if (!stats.clarionCount && !stats.notesCount) missingItems.push("story details");
-  if (!stats.timelineCount) missingItems.push("timeline events");
-  if (!stats.evidenceCount) missingItems.push("additional evidence");
-  if (!stats.analyzerCount) missingItems.push("key issue review");
-  if (!stats.intakeCount) missingItems.push("generated case packet");
-
-  const getSuggestedStep = () => {
-    if (stats.clarionCount === 0 && stats.notesCount === 0 && stats.timelineCount === 0) {
-      return { text: "Start by writing what happened", href: "/clarion", label: "Write Your Story" };
-    }
-    if (stats.timelineCount === 0) {
-      return { text: "Add your first timeline event", href: "/timeline", label: "Build Timeline" };
-    }
-    if (stats.evidenceCount === 0) {
-      return { text: "Upload your first piece of evidence", href: "/evidence-vault", label: "Upload Evidence" };
-    }
-    if (stats.analyzerCount === 0) {
-      return { text: "Review key issues and identify missing facts", href: "/analyzer", label: "Review Key Issues" };
-    }
-    if (stats.intakeCount === 0) {
-      return { text: "Generate your attorney-ready case packet", href: "/intake-packet", label: "Generate Case Packet" };
-    }
-    return { text: "Your packet draft is ready to share with an attorney", href: "/find-help", label: "Find Help" };
-  };
-  const suggestedStep = getSuggestedStep();
-
-  const totalItems = stats.evidenceCount + stats.timelineCount + stats.notesCount + stats.clarionCount + stats.analyzerCount;
-
   return (
-    <DashboardLayout pageTitle="Dashboard">
-      {/* Header */}
-      <DjPageHeader
-        title={`Welcome back, ${displayName}.`}
-        subtitle="Track one guided flow from incident details to an attorney-ready packet."
-      />
-
-      {/* Phase Progress */}
-      <section className="bg-cream py-10 sm:py-12">
-        <div className="container max-w-5xl px-6">
-          <h2 className="font-serif text-xl font-medium text-foreground mb-6">Your Journey</h2>
-          <PhaseProgress phases={phases} />
-        </div>
-      </section>
-
-      {/* Suggested Next Step */}
-      <section className="bg-cream-warm py-8">
-        <div className="container max-w-5xl px-6">
-          <SuggestedAction text={suggestedStep.text} href={suggestedStep.href} label={suggestedStep.label} />
-          <div className="mt-4 p-4 rounded-xl bg-card border border-border">
-            <p className="text-sm font-medium text-foreground">Case Readiness: {readinessPercent}%</p>
-            {missingItems.length > 0 ? (
-              <div className="mt-2">
-                <p className="text-xs text-muted-foreground mb-1">Missing:</p>
-                <ul className="text-sm text-muted-foreground list-disc list-inside">
-                  {missingItems.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
+    <Layout>
+      <div className="container max-w-6xl mx-auto px-4 py-6 sm:py-8">
+        <EducationalNotice />
+        <section className="relative overflow-hidden rounded-3xl bg-espresso text-white mt-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,hsl(var(--gold)/0.16),transparent_34%)]" />
+          <div className="relative p-7 sm:p-10 lg:p-12">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-7">
+              <div className="max-w-3xl">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/50 mb-3">Case command center</p>
+                <div className="flex flex-wrap items-center gap-3 mb-3">
+                  <h1 className="font-serif text-3xl sm:text-4xl font-medium">{activeCase.title}</h1>
+                  <Badge variant="outline" className="border-white/20 text-white/70 capitalize">{statusLabel}</Badge>
+                </div>
+                <p className="text-white/65 max-w-2xl leading-relaxed">
+                  Your case record in one place. Nothing here is a legal conclusion; it is a working record you can review, correct, and build over time.
+                </p>
               </div>
-            ) : (
-              <p className="text-sm text-muted-foreground mt-2">All core sections are complete.</p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Main Grid: Stats + Chart + Activity + Insights ── */}
-      <section className="bg-cream py-12 sm:py-16">
-        <div className="container max-w-5xl px-6">
-          {/* Stats row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <StatCard icon={FolderOpen} value={stats.evidenceCount} label="Evidence Items" />
-            <StatCard icon={Clock} value={stats.timelineCount} label="Timeline Events" />
-            <StatCard icon={FileText} value={stats.notesCount} label="Notes" />
-            <StatCard icon={Bookmark} value={stats.bookmarkCount} label="Saved Resources" />
-          </div>
-
-          <div className="grid lg:grid-cols-5 gap-6">
-            {/* Left column — chart + quick actions (3/5) */}
-            <div className="lg:col-span-3 space-y-6">
-              {/* Case Progress Chart */}
-              <Widget title="Case Documentation" action={{ label: "Case Builder", href: "/case-builder" }}>
-                {totalItems > 0 ? (
-                  <div className="h-52">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData} barCategoryGap="20%">
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                        />
-                        <YAxis
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                          allowDecimals={false}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            background: "hsl(var(--card))",
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: 8,
-                            fontSize: 12,
-                          }}
-                        />
-                        <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                          {chartData.map((entry, idx) => (
-                            <Cell key={idx} fill={entry.fill} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                ) : (
-                  <div className="h-52 flex flex-col items-center justify-center text-center">
-                    <TrendingUp className="w-8 h-8 text-muted-foreground/30 mb-3" />
-                    <p className="text-sm text-muted-foreground">Your documentation chart will appear here as you add entries.</p>
-                    <Link to="/clarion" className="text-xs text-primary mt-2 hover:underline">Start with Clarion →</Link>
-                  </div>
-                )}
-              </Widget>
-
-              {/* Quick Actions */}
-              <div className="grid sm:grid-cols-2 gap-4">
-                <ActionCard icon={Feather} title="Write Your Story" description="Document what happened in plain language." href="/clarion" delay={0.1} />
-                <ActionCard icon={Clock} title="Build Timeline" description="Add events in chronological order." href="/timeline" delay={0.15} />
-                <ActionCard icon={Upload} title="Upload Evidence" description="Add files and records." href="/evidence-vault" delay={0.2} />
-                <ActionCard icon={Briefcase} title="Generate Case Packet" description="Create a packet you can send to an attorney." href="/intake-packet" delay={0.25} />
+              <div className="flex flex-wrap gap-2">
+                <Button asChild variant="secondary"><Link to="/case-builder"><Plus className="w-4 h-4 mr-2" />Continue building</Link></Button>
+                <Button asChild variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10"><Link to="/cases">Switch case</Link></Button>
               </div>
             </div>
-
-            {/* Right column — phase chart + activity feed + analyzer insights (2/5) */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Phase Progress Donut Chart */}
-              <Widget title="Progress by Phase">
-                {(() => {
-                  const phaseChartData = [
-                    { name: "Tell Your Story", value: 1, fill: phases[0].started ? "hsl(var(--primary))" : "hsl(var(--muted))" },
-                    { name: "Understand", value: 1, fill: phases[1].started ? "hsl(var(--gold))" : "hsl(var(--muted))" },
-                    { name: "Organize Proof", value: 1, fill: phases[2].started ? "hsl(var(--teal))" : "hsl(var(--muted))" },
-                    { name: "Prepare", value: 1, fill: phases[3].started ? "hsl(var(--accent-strong))" : "hsl(var(--muted))" },
-                    { name: "Connect", value: 1, fill: phases[4].started ? "hsl(var(--navy))" : "hsl(var(--muted))" },
-                  ];
-                  const startedCount = phases.filter(p => p.started).length;
-                  return (
-                    <div className="h-48 relative">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={phaseChartData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={70}
-                            paddingAngle={3}
-                            dataKey="value"
-                            stroke="none"
-                          >
-                            {phaseChartData.map((entry, idx) => (
-                              <Cell key={idx} fill={entry.fill} />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            contentStyle={{
-                              background: "hsl(var(--card))",
-                              border: "1px solid hsl(var(--border))",
-                              borderRadius: 8,
-                              fontSize: 12,
-                            }}
-                            formatter={(value: number, name: string) => [
-                              value === 1 ? "Started" : "Not started",
-                              name
-                            ]}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="text-center">
-                          <p className="text-2xl font-serif font-medium text-foreground">{startedCount}/5</p>
-                          <p className="text-[10px] text-muted-foreground">phases</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </Widget>
-
-              {/* Justice Place Case */}
-              <Widget title="Justice Place" action={{ label: "Open", href: "/justice-place" }}>
-                {justiceCase ? (
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {justiceCase.case_name || "Untitled Case"}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        {justiceCase.issue_type} · {justiceCase.state}{justiceCase.county ? `, ${justiceCase.county}` : ""}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary capitalize">
-                        {justiceCase.case_status.replace(/_/g, " ")}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      Created {new Date(justiceCase.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="py-6 text-center">
-                    <Scale className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No active case yet.</p>
-                    <Link to="/justice-place" className="text-xs text-primary mt-1 inline-block hover:underline">Set up Justice Place →</Link>
-                  </div>
-                )}
-              </Widget>
-
-              <Widget title="Recent Activity" action={{ label: "All Notes", href: "/notes" }}>
-                {recentActivity.length > 0 ? (
-                  <div className="space-y-1">
-                    {recentActivity.map((item) => {
-                      const Icon = typeIcons[item.type];
-                      return (
-                        <div key={item.id} className="flex items-start gap-3 py-2.5 border-b border-border/30 last:border-0">
-                          <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5">
-                            <Icon className="w-3.5 h-3.5 text-gold/70" strokeWidth={1.5} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm text-foreground truncate">{item.title}</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">
-                              {typeLabels[item.type]} · {relativeTime(item.date)}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="py-8 text-center">
-                    <Activity className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No activity yet.</p>
-                  </div>
-                )}
-              </Widget>
-
-              {/* Analyzer Insights */}
-              <Widget title="Analyzer Insights" action={{ label: "Run Analysis", href: "/analyzer" }}>
-                {analyzerInsights.length > 0 ? (
-                  <div className="space-y-2">
-                    {analyzerInsights.map((insight) => (
-                      <div key={insight.id} className="p-3 rounded-lg bg-muted/30 border border-border/50">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-sm font-medium text-foreground truncate">{insight.system_label}</span>
-                          <span className={cn("text-[11px] capitalize font-medium", strengthColor[insight.pattern_strength] || "text-muted-foreground")}>
-                            {insight.pattern_strength.replace("_", " ")}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground mt-1">
-                          {relativeTime(insight.created_at)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="py-6 text-center">
-                    <Search className="w-6 h-6 text-muted-foreground/30 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No analyses yet.</p>
-                    <Link to="/analyzer" className="text-xs text-primary mt-1 inline-block hover:underline">Start an analysis →</Link>
-                  </div>
-                )}
-              </Widget>
-
-              {/* Saved Guides */}
-              <SavedGuidesWidget userId={user.id} />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-9">
+              {[
+                ["Timeline events", timelineCount], ["Evidence items", evidenceCount], ["Issues to review", issueCount], ["Open record gaps", recordGapCount],
+              ].map(([label, count]) => (
+                <div key={label} className="rounded-2xl bg-white/5 border border-white/10 p-4">
+                  <p className="text-2xl font-serif">{count}</p><p className="text-xs text-white/50 mt-1">{label}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Three Sections */}
-      <section className="bg-cream-warm py-12 sm:py-16">
-        <div className="container max-w-5xl px-6">
-          <div className="grid sm:grid-cols-3 gap-6">
-            <LinkListCard
-              title="Guidance"
-              description="Plain-language explanations of systems, rights, and what to expect."
-              links={[
-                { label: "Rights Insight", href: "/rights-insight" },
-                { label: "Civil Rights Library", href: "/library" },
-                { label: "Courts & Filing", href: "/courts-filing-info" },
-              ]}
-            />
-            <LinkListCard
-              title="Legal Prep"
-              description="Templates, case preparation tools, and attorney readiness."
-              links={[
-                { label: "Legal Templates", href: "/legal-templates" },
-                { label: "Intake Packet", href: "/intake-packet" },
-                { label: "Case Analyzer", href: "/analyzer" },
-              ]}
-            />
-            <LinkListCard
-              title="Support"
-              description="Find attorneys, saved contacts, and support organizations."
-              links={[
-                { label: "Find Attorneys", href: "/find-help" },
-                { label: "Attorney Contact Hub", href: "/attorney-contacts" },
-                { label: "Support Network", href: "/support-network" },
-              ]}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Wellbeing + Privacy */}
-      <section className="py-8">
-        <div className="container max-w-5xl px-6 space-y-4">
-          <div className="p-4 rounded-xl bg-accent/5 border border-accent/20 flex items-start gap-3">
-            <Heart className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-            <p className="text-sm text-muted-foreground">
-              You can pause anytime. Your progress is saved automatically. Understanding takes time — and that's okay.
+        <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6 mt-6">
+          <Card><CardContent className="p-6 sm:p-7">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2">Continue where you left off</p>
+            <h2 className="font-serif text-2xl text-foreground">{primaryLabel}</h2>
+            <p className="text-sm text-muted-foreground mt-2 max-w-xl">
+              {snapshotLoading ? "Loading your current record…" : totalRecordItems === 0 ? "Your case is ready for the narrative-first workspace." : recordGapCount > 0 ? recordGapCount + " record gap" + (recordGapCount === 1 ? "" : "s") + " are still open." : "Your core case sections are available to review and expand."}
             </p>
-          </div>
-          <PrivacyBadge />
+            <Button asChild className="mt-5"><Link to={primaryHref}>{primaryLabel}<ArrowRight className="w-4 h-4 ml-2" /></Link></Button>
+            {lastUpdated && <p className="text-xs text-muted-foreground/70 mt-4">Case updated {lastUpdated}</p>}
+          </CardContent></Card>
+
+          <Card><CardContent className="p-6 sm:p-7">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2">Review queue</p>
+            <h2 className="font-serif text-2xl">Keep the record accurate</h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              {reviewCount > 0 ? reviewCount + " item" + (reviewCount === 1 ? "" : "s") + " changed or need review after narrative updates." : "No automatically flagged updates right now. You can still review any section manually."}
+            </p>
+            <Button asChild variant="outline" className="mt-5"><Link to={"/cases/" + activeCase.id + "/content-check"}><ScanSearch className="w-4 h-4 mr-2" />{reviewCount > 0 ? "Review flagged items" : "Run content check"}</Link></Button>
+          </CardContent></Card>
         </div>
-      </section>
-    </DashboardLayout>
+
+        <section className="mt-8">
+          <div className="flex items-end justify-between gap-4 mb-4">
+            <div><p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Your record</p><h2 className="font-serif text-2xl mt-1">Everything stays connected</h2></div>
+            <Link to={"/cases/" + activeCase.id} className="text-sm text-primary hover:underline hidden sm:inline-flex items-center gap-1">Open full overview <ArrowRight className="w-3.5 h-3.5" /></Link>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {sections.map((section) => (
+              <Link key={section.label} to={section.to} className="group">
+                <Card className="h-full transition-all hover:border-primary/30 hover:shadow-sm"><CardContent className="p-5">
+                  <section.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" strokeWidth={1.5} />
+                  <div className="flex items-end justify-between gap-3 mt-5"><div><p className="font-medium text-foreground">{section.label}</p><p className="text-xs text-muted-foreground mt-1">{section.detail}</p></div><span className="text-2xl font-serif text-foreground">{section.count}</span></div>
+                </CardContent></Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <Link to={"/cases/" + activeCase.id + "/record-gaps"} className="rounded-2xl border border-border bg-card p-5 hover:border-primary/30 transition-colors"><ClipboardList className="w-5 h-5 text-muted-foreground mb-4" /><p className="font-medium">Record gaps</p><p className="text-xs text-muted-foreground mt-1">See what records may still be missing.</p></Link>
+          <Link to={"/cases/" + activeCase.id + "/relationships"} className="rounded-2xl border border-border bg-card p-5 hover:border-primary/30 transition-colors"><Users className="w-5 h-5 text-muted-foreground mb-4" /><p className="font-medium">Record relationships</p><p className="text-xs text-muted-foreground mt-1">Connect people, events, evidence, and issues.</p></Link>
+          <Link to={"/cases/" + activeCase.id + "/packets"} className="rounded-2xl border border-border bg-card p-5 hover:border-primary/30 transition-colors"><FolderArchive className="w-5 h-5 text-muted-foreground mb-4" /><p className="font-medium">Packet builder</p><p className="text-xs text-muted-foreground mt-1">Prepare an organized packet from the canonical record.</p></Link>
+          <Link to="/find-help" className="rounded-2xl border border-border bg-card p-5 hover:border-primary/30 transition-colors"><FileSearch className="w-5 h-5 text-muted-foreground mb-4" /><p className="font-medium">Find help</p><p className="text-xs text-muted-foreground mt-1">Explore legal and support resources when you're ready.</p></Link>
+        </section>
+
+        <div className="mt-8"><Disclaimer variant="prominent" /></div>
+      </div>
+    </Layout>
   );
 }
