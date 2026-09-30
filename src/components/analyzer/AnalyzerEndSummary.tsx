@@ -252,38 +252,78 @@ export function AnalyzerEndSummary({
 
           {/* Authority */}
           <section id="analyzer-3" className="scroll-mt-6 px-5 py-8 sm:px-8 sm:py-10">
-            <SectionLabel>03 · Governing authority</SectionLabel>
-            <h3 className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">Laws, regulations & authorities to verify</h3>
+            <SectionLabel>03 · Legal grounding</SectionLabel>
+            <h3 className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">Research authority before drawing conclusions</h3>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-              These are reference points for research. The applicable authority depends on the facts, jurisdiction, date, and type of proceeding.
+              These authorities are research anchors, not conclusions. Confirm the controlling text, effective date, jurisdiction, and procedural context before relying on any authority.
             </p>
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 space-y-4">
               {lawModules.length > 0 ? lawModules.slice(0, 10).map(module => (
-                <div key={module.id} className="rounded-2xl border border-border bg-card p-5">
-                  <div className="flex items-start gap-3">
-                    <Scale className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                    <div className="min-w-0">
-                      <p className="font-semibold text-foreground">{module.title}</p>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{module.definition}</p>
-                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        <div className="rounded-xl bg-muted/40 p-4"><p className="text-xs font-semibold text-foreground">Elements to examine</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{module.elements.slice(0, 5).join(" ")}</p></div>
-                        <div className="rounded-xl bg-muted/40 p-4"><p className="text-xs font-semibold text-foreground">Evidence examples</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{module.evidenceExamples.slice(0, 6).join(" · ")}</p></div>
+                <article key={module.id} className="overflow-hidden rounded-2xl border border-border bg-card">
+                  <div className="flex flex-col gap-4 border-b border-border p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                        <Scale className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">Research authority</p>
+                        <h4 className="mt-1 text-base font-semibold text-foreground">{module.title}</h4>
+                      </div>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-border bg-background px-3 py-1 text-[11px] font-medium text-muted-foreground">Verify before relying</span>
+                  </div>
+
+                  <div className="p-5 sm:p-6">
+                    <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">What it covers</p>
+                        <p className="mt-2 text-sm leading-6 text-foreground/85">{module.definition}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">Requirements / elements to examine</p>
+                        <div className="mt-2">
+                          <EmptyAwareList items={module.elements.slice(0, 6)} fallback="No elements were returned for this authority module." />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 rounded-xl border border-border bg-muted/30 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-primary">Evidence that could map to it</p>
+                      <div className="mt-3">
+                        <EmptyAwareList items={module.evidenceExamples.slice(0, 8)} fallback="No evidence examples were returned for this authority module." />
                       </div>
                     </div>
                   </div>
-                </div>
+                </article>
               )) : (
-                <div className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">No specific authority module was selected. Use the research leads and verify the applicable law for your jurisdiction.</div>
+                <div className="rounded-2xl border border-dashed border-border p-6 text-sm leading-6 text-muted-foreground">
+                  No specific authority module was selected. Use the research leads above to identify the controlling authority for the jurisdiction, date, and proceeding involved.
+                </div>
               )}
             </div>
 
             {authorities.length > 0 && (
-              <div className="mt-6 rounded-2xl border border-border bg-muted/20 p-5">
-                <p className="text-sm font-semibold text-foreground">Reference anchors</p>
+              <div className="mt-6 rounded-2xl border border-border bg-muted/20 p-5 sm:p-6">
+                <p className="text-xs font-semibold uppercase tracking-wide text-primary">Reference anchors returned by the analysis</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  These labels can point you toward further research; they are not substitutes for checking the underlying source.
+                </p>
                 <div className="mt-4"><EmptyAwareList items={authorities} fallback="No reference anchors returned." /></div>
               </div>
             )}
+
+            <div className="mt-6 rounded-2xl border border-border bg-background p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <CircleHelp className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Authority check</p>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    A research lead may point to an authority without establishing that every element applies. Check the actual statute, regulation, case, order, policy, or agency source and compare it with the facts and records in your case.
+                  </p>
+                </div>
+              </div>
+            </div>
           </section>
 
           {/* Action plan */}
