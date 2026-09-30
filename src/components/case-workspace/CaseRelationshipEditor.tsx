@@ -49,7 +49,7 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   const addLink = async () => {
     if (!caseId || !user?.id || !fromId || !toId || !relation.trim()) return;
     setSaving(true);
-    const { error } = await supabase.from("case_relationships").insert({
+    const { error } = await supabase.from("case_links").insert({
       case_id: caseId, from_id: fromId, from_type: fromType,
       to_id: toId, to_type: toType, relation: relation.trim(),
     });
@@ -61,7 +61,7 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   };
 
   const removeLink = async (id: string) => {
-    const { error } = await supabase.from("case_relationships").delete().eq("id", id).eq("case_id", caseId);
+    const { error } = await supabase.from("case_links").delete().eq("id", id).eq("case_id", caseId);
     if (error) toast.error("Could not remove relationship");
     else { toast.success("Relationship removed"); await queryClient.invalidateQueries({ queryKey: ["case-snapshot", caseId] }); }
   };
