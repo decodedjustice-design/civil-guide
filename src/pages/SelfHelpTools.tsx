@@ -61,16 +61,16 @@ const phases: Phase[] = [
     tools: [
       {
         icon: Feather,
-        title: "Clarion",
-        description: "Build a structured narrative from your experience.",
-        href: "/clarion",
+        title: "Case Builder",
+        description: "Tell your story once and let the case record grow with it.",
+        href: "/case-builder",
         requiresAuth: true,
       },
       {
         icon: Clock,
-        title: "Timeline Creator",
-        description: "Organize events chronologically so the bigger picture becomes clear.",
-        href: "/timeline",
+        title: "Case Timeline",
+        description: "Review the timeline automatically built from your case record.",
+        href: "/dashboard",
         requiresAuth: true,
       },
       {
@@ -131,9 +131,9 @@ const phases: Phase[] = [
     tools: [
       {
         icon: FolderOpen,
-        title: "Evidence Vault",
-        description: "Catalog documents, photos, and records in one secure place.",
-        href: "/evidence-vault",
+        title: "Evidence & Exhibits",
+        description: "Review evidence connected to your active case.",
+        href: "/dashboard",
         requiresAuth: true,
       },
       {
@@ -160,9 +160,9 @@ const phases: Phase[] = [
       },
       {
         icon: ClipboardList,
-        title: "Intake Packet",
-        description: "Generate a structured summary to share with an attorney.",
-        href: "/intake-packet",
+        title: "Packet Builder",
+        description: "Build an organized packet from your canonical case record.",
+        href: "/dashboard",
         requiresAuth: true,
       },
       {
@@ -173,10 +173,9 @@ const phases: Phase[] = [
       },
       {
         icon: Bell,
-        title: "Deadlines & Reminders",
-        description: "Track critical dates so nothing slips through the cracks.",
-        href: "#",
-        comingSoon: true,
+        title: "Requests & Deadlines",
+        description: "Review record requests, due dates, and open case tasks.",
+        href: "/cases",
       },
     ],
   },
@@ -214,15 +213,14 @@ const phases: Phase[] = [
       },
       {
         icon: LayoutDashboard,
-        title: "Case Summary Dashboard",
-        description: "Auto-generated overview of your full case status.",
-        href: "#",
-        comingSoon: true,
+        title: "Case Command Center",
+        description: "Open the live dashboard for your active case.",
+        href: "/cases",
       },
       {
         icon: Download,
-        title: "Export Tools",
-        description: "Download your intake packet, evidence index, and timeline.",
+        title: "Export Center",
+        description: "Export organized case materials when you are ready.",
         href: "#",
         comingSoon: true,
       },
@@ -379,10 +377,10 @@ export default function SelfHelpTools() {
               <span>Your Guided System</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Your Path to Clarity
+              Your Tools & Case Workspace
             </h1>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              A connected system that moves with you — from first thoughts to informed action. Every tool supports the next.
+              A connected set of tools built around your case record. Start with your story, review what has been organized, learn what you need, and prepare when you are ready.
             </p>
           </div>
 
