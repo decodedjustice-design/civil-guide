@@ -19,7 +19,6 @@ import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import FullGuide from "./pages/FullGuide";
 import GovernmentBenefitsGuide from "./pages/GovernmentBenefitsGuide";
-import Library from "./pages/Library";
 import Transcription from "./pages/Transcription";
 import Tools from "./pages/Tools";
 import PublicRequestRights from "./pages/PublicRequestRights";
