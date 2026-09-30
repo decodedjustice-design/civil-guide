@@ -1,5 +1,21 @@
 import type { ReactNode } from "react";
-import { ArrowRight, CheckCircle2, CircleHelp, FileSearch, FolderOpen, ListChecks, Scale, ShieldAlert } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  CircleHelp,
+  Clock3,
+  ExternalLink,
+  FileSearch,
+  FolderOpen,
+  ListChecks,
+  Printer,
+  Scale,
+  Search,
+  Share2,
+  ShieldAlert,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalyzerResultsAI, PotentialViolation } from "@/hooks/useAnalyzerResultsAI";
 import type { LawModule } from "@/lib/law/issueLibrary";
@@ -10,6 +26,8 @@ interface AnalyzerEndSummaryProps {
   lawModules: LawModule[];
   policeMissingFacts: string[];
   onAddToCase: () => void;
+  systemLabel?: string;
+  location?: string;
 }
 
 const SectionLabel = ({ children }: { children: ReactNode }) => (
@@ -20,7 +38,7 @@ const EmptyAwareList = ({ items, fallback }: { items: string[]; fallback: string
   items.length ? (
     <ul className="space-y-3">
       {items.map((item, i) => (
-        <li key={`${item}-${i}`} className="flex gap-3 text-sm leading-6 text-foreground/80">
+        <li key={`${item}-${i}`} className="flex gap-3 text-sm leading-6 text-foreground/85">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
           <span>{item}</span>
         </li>
@@ -29,7 +47,21 @@ const EmptyAwareList = ({ items, fallback }: { items: string[]; fallback: string
   ) : <p className="text-sm leading-6 text-muted-foreground">{fallback}</p>
 );
 
-export function AnalyzerEndSummary({ aiResults, findings, lawModules, policeMissingFacts, onAddToCase }: AnalyzerEndSummaryProps) {
+function getReviewLabel(findings: PotentialViolation[], missing: string[]) {
+  if (findings.length === 0 && missing.length === 0) return { label: "Informational", icon: Search };
+  if (missing.length > findings.length * 2) return { label: "More information needed", icon: CircleHelp };
+  return { label: "Priority for review", icon: ShieldAlert };
+}
+
+export function AnalyzerEndSummary({
+  aiResults,
+  findings,
+  lawModules,
+  policeMissingFacts,
+  onAddToCase,
+  systemLabel = "Civil rights",
+  location = "Washington State",
+}: AnalyzerEndSummaryProps) {
   const evidence = Array.from(new Set(findings.flatMap(f => f.evidenceToLookFor))).slice(0, 12);
   const missing = Array.from(new Set([
     ...findings.flatMap(f => f.missingFacts ?? []),
@@ -38,177 +70,270 @@ export function AnalyzerEndSummary({ aiResults, findings, lawModules, policeMiss
   ])).slice(0, 14);
   const actions = aiResults.priorityActions.slice(0, 6);
   const authorities = aiResults.referenceAnchors.slice(0, 10);
+  const review = getReviewLabel(findings, missing);
+  const ReviewIcon = review.icon;
+  const executiveSummary = aiResults.systemIdentification ||
+    "The analyzer organized the information you provided into research leads, open questions, records to locate, and practical next steps.";
+
+  const printPage = () => window.print();
+  const shareSafely = async () => {
+    const shareData = { title: "Decoded Justice — Analyzer Results", text: "My Decoded Justice analysis", url: window.location.href };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else await navigator.clipboard.writeText(window.location.href);
+    } catch {
+      // User cancelled sharing; no action needed.
+    }
+  };
+  const quickExit = () => {
+    window.location.replace("https://www.google.com");
+  };
 
   return (
-    <section className="mt-10 mb-10" aria-label="Analyzer case map">
-      <div className="rounded-[28px] border border-border bg-card shadow-sm overflow-hidden">
-        <div className="border-b border-border bg-muted/30 px-5 py-7 sm:px-8">
-          <SectionLabel>Your results, organized</SectionLabel>
-          <h2 className="mt-2 font-serif text-3xl leading-tight text-foreground sm:text-4xl">
-            Your situation at a glance
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Instead of making you read a long list of findings, we’ve organized the analysis into five questions:
-            what we heard, what it may raise, what is still unknown, what records could help, and what you can do next.
-          </p>
-        </div>
+    <section className="mt-10 mb-10" aria-label="Analyzer results report">
+      <div className="overflow-hidden rounded-[30px] border border-border bg-background shadow-sm print:shadow-none print:border-0">
+        {/* Phase 1 — orientation */}
+        <header className="border-b border-border bg-card px-5 py-5 sm:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <SectionLabel>Legal Analyzer</SectionLabel>
+              <h2 className="mt-1 font-serif text-3xl leading-tight text-foreground sm:text-4xl">Your analysis, organized</h2>
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <span className="rounded-full border border-border bg-background px-3 py-1.5">{location}</span>
+                <span className="rounded-full border border-border bg-background px-3 py-1.5">{systemLabel}</span>
+                <button type="button" className="text-primary underline-offset-4 hover:underline print:hidden">Edit analysis inputs</button>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 print:hidden">
+              <Button variant="outline" size="sm" onClick={printPage} className="gap-2"><Printer className="h-4 w-4" />Save / Print</Button>
+              <Button variant="outline" size="sm" onClick={shareSafely} className="gap-2"><Share2 className="h-4 w-4" />Share safely</Button>
+              <Button variant="outline" size="sm" onClick={quickExit} className="gap-2 border-destructive/30 text-destructive hover:bg-destructive/10"><X className="h-4 w-4" />Quick exit</Button>
+            </div>
+          </div>
+        </header>
 
-        <div className="grid border-b border-border sm:grid-cols-4">
+        <nav className="grid border-b border-border bg-muted/20 sm:grid-cols-4 print:hidden" aria-label="Result sections">
           {[
-            ["1", "What we heard", "Your information"],
-            ["2", "What it raises", "Research leads"],
-            ["3", "What is missing", "Open questions"],
-            ["4", "What to do next", "Practical steps"],
+            ["1", "Summary", "What this means"],
+            ["2", "Findings", "What to examine"],
+            ["3", "Authority", "What governs"],
+            ["4", "Action plan", "What to do next"],
           ].map(([n, title, sub]) => (
-            <a key={n} href={`#analyzer-${n}`} className="border-b border-border p-4 transition-colors hover:bg-muted/40 sm:border-b-0 sm:border-r last:border-r-0">
+            <a key={n} href={`#analyzer-${n}`} className="border-b border-border p-4 transition-colors hover:bg-muted/50 sm:border-b-0 sm:border-r last:border-r-0">
               <span className="text-xs font-semibold text-primary">{n}</span>
               <p className="mt-1 text-sm font-semibold text-foreground">{title}</p>
               <p className="text-xs text-muted-foreground">{sub}</p>
             </a>
           ))}
-        </div>
+        </nav>
 
         <div className="divide-y divide-border">
-          <div id="analyzer-1" className="p-5 sm:p-8 scroll-mt-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <CheckCircle2 className="h-5 w-5" />
+          {/* Summary */}
+          <section id="analyzer-1" className="scroll-mt-6 px-5 py-8 sm:px-8 sm:py-10">
+            <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+              <div>
+                <SectionLabel>01 · Immediate orientation</SectionLabel>
+                <h3 className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">What does this information mean so far?</h3>
+                <p className="mt-4 max-w-3xl text-base leading-7 text-foreground/85">{executiveSummary}</p>
+                <p className="mt-4 max-w-3xl text-sm leading-6 text-muted-foreground">
+                  This is an organized research summary, not a determination that a legal violation occurred. The result depends on the underlying facts, records, and applicable law.
+                </p>
               </div>
-              <div className="min-w-0 flex-1">
-                <SectionLabel>01 · What we heard</SectionLabel>
-                <h3 className="mt-1 text-xl font-semibold text-foreground">How this system appears to work</h3>
-                <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{aiResults.systemIdentification}</p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  {aiResults.usualProcess.slice(0, 6).map((step, i) => (
-                    <div key={`${step}-${i}`} className="rounded-2xl border border-border bg-background p-4">
-                      <div className="flex gap-3">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">{i + 1}</span>
-                        <p className="text-sm leading-6 text-foreground/80">{step}</p>
-                      </div>
-                    </div>
-                  ))}
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <div className="flex items-center gap-2">
+                  <ReviewIcon className="h-5 w-5 text-primary" />
+                  <p className="text-sm font-semibold text-foreground">Status</p>
                 </div>
+                <p className="mt-3 text-xl font-semibold text-foreground">{review.label}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  Based on the amount of information currently organized. This is not a case-strength or liability score.
+                </p>
               </div>
             </div>
-          </div>
 
-          <div id="analyzer-2" className="p-5 sm:p-8 scroll-mt-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Scale className="h-5 w-5" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <SectionLabel>02 · What it raises</SectionLabel>
-                <h3 className="mt-1 text-xl font-semibold text-foreground">Questions worth investigating</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  These are research leads, not findings that a violation occurred. The underlying record still has to be examined.
-                </p>
-                <div className="mt-5 space-y-3">
-                  {findings.length ? findings.slice(0, 8).map((f) => (
-                    <details key={f.id} className="group rounded-2xl border border-border bg-background">
-                      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground"><CircleHelp className="h-4 w-4" /></span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-semibold text-foreground">{f.title}</span>
-                          <span className="mt-0.5 block text-xs text-muted-foreground">Why it was flagged: {f.whyFlagged}</span>
-                        </span>
-                        <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
-                      </summary>
-                      <div className="border-t border-border px-4 pb-5 pt-4 sm:px-5">
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div>
-                            <p className="text-xs font-semibold text-foreground">Evidence that could help</p>
-                            <EmptyAwareList items={f.evidenceToLookFor.slice(0, 8)} fallback="No specific evidence was identified." />
-                          </div>
-                          <div>
-                            <p className="text-xs font-semibold text-foreground">What still needs to be established</p>
-                            <EmptyAwareList items={f.whatWouldNeedToBeTrue.slice(0, 8)} fallback="No additional condition was identified." />
-                          </div>
-                        </div>
-                        <div className="mt-4 rounded-xl bg-muted/40 p-4">
-                          <p className="text-xs font-semibold text-foreground">Suggested next step</p>
-                          <p className="mt-1 text-sm leading-6 text-muted-foreground">{f.nextStep}</p>
-                        </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {[
+                ["What we know", aiResults.usualProcess.slice(0, 3), "The process or facts reflected in your answers."],
+                ["What we don't know", missing.slice(0, 4), "Open facts that could change the analysis."],
+                ["What could verify it", evidence.slice(0, 4), "Records or evidence worth locating."],
+              ].map(([title, items, description]) => (
+                <div key={title as string} className="rounded-2xl border border-border bg-card p-5">
+                  <p className="text-sm font-semibold text-foreground">{title as string}</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">{description as string}</p>
+                  <div className="mt-4"><EmptyAwareList items={items as string[]} fallback="Nothing specific identified yet." /></div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Findings */}
+          <section id="analyzer-2" className="scroll-mt-6 px-5 py-8 sm:px-8 sm:py-10">
+            <SectionLabel>02 · Analysis & legal grounding</SectionLabel>
+            <h3 className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">Key findings & issues to examine</h3>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+              Each item below is a research lead. Expand it to see why it was flagged, what would need to be established, and what evidence could help.
+            </p>
+            <div className="mt-6 space-y-3">
+              {findings.length ? findings.slice(0, 8).map((f) => (
+                <details key={f.id} className="group rounded-2xl border border-border bg-card">
+                  <summary className="flex cursor-pointer list-none items-center gap-3 p-5 [&::-webkit-details-marker]:hidden">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Scale className="h-4 w-4" /></span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-foreground">{f.title}</span>
+                      <span className="mt-1 block text-xs leading-5 text-muted-foreground">Why it was flagged: {f.whyFlagged}</span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
+                  </summary>
+                  <div className="border-t border-border px-5 pb-5 pt-5">
+                    <div className="grid gap-5 lg:grid-cols-2">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">What would need to be established</p>
+                        <div className="mt-3"><EmptyAwareList items={f.whatWouldNeedToBeTrue.slice(0, 8)} fallback="No additional condition identified." /></div>
                       </div>
-                    </details>
-                  )) : (
-                    <div className="rounded-2xl border border-dashed border-border p-5 text-sm text-muted-foreground">
-                      No specific research leads were generated from the information provided.
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Evidence that could help</p>
+                        <div className="mt-3"><EmptyAwareList items={f.evidenceToLookFor.slice(0, 8)} fallback="No specific evidence identified." /></div>
+                      </div>
+                    </div>
+                    <div className="mt-5 rounded-xl bg-muted/40 p-4">
+                      <p className="text-xs font-semibold text-foreground">Practical next step</p>
+                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{f.nextStep}</p>
+                    </div>
+                  </div>
+                </details>
+              )) : (
+                <div className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">No specific research leads were generated from the current information.</div>
+              )}
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-border bg-card p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <FileSearch className="mt-0.5 h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-semibold text-foreground">Legalese → plain language</p>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    The analyzer can explain legal concepts in ordinary language. It should not rewrite missing facts or present a legal conclusion that the record does not support.
+                  </p>
+                  {findings[0] && (
+                    <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                      <div className="rounded-xl border border-border bg-background p-4"><p className="text-xs font-semibold text-muted-foreground">Analysis term</p><p className="mt-2 text-sm font-medium text-foreground">{findings[0].legalFramework.slice(0, 3).join(" · ") || findings[0].title}</p></div>
+                      <div className="rounded-xl border border-border bg-background p-4"><p className="text-xs font-semibold text-muted-foreground">Plain-language meaning</p><p className="mt-2 text-sm leading-6 text-foreground/80">{findings[0].whyFlagged}</p></div>
                     </div>
                   )}
                 </div>
-                {lawModules.length > 0 && (
-                  <div className="mt-6 rounded-2xl border border-border bg-muted/20 p-5">
-                    <p className="text-sm font-semibold text-foreground">Related legal topics to verify</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {lawModules.slice(0, 10).map(m => <span key={m.id} className="rounded-full border border-border bg-background px-3 py-1.5 text-xs text-foreground">{m.title}</span>)}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
-          </div>
+          </section>
 
-          <div id="analyzer-3" className="p-5 sm:p-8 scroll-mt-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <ShieldAlert className="h-5 w-5" />
+          {/* Authority */}
+          <section id="analyzer-3" className="scroll-mt-6 px-5 py-8 sm:px-8 sm:py-10">
+            <SectionLabel>03 · Governing authority</SectionLabel>
+            <h3 className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">Laws, regulations & authorities to verify</h3>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+              These are reference points for research. The applicable authority depends on the facts, jurisdiction, date, and type of proceeding.
+            </p>
+
+            <div className="mt-6 space-y-3">
+              {lawModules.length > 0 ? lawModules.slice(0, 10).map(module => (
+                <div key={module.id} className="rounded-2xl border border-border bg-card p-5">
+                  <div className="flex items-start gap-3">
+                    <Scale className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                    <div className="min-w-0">
+                      <p className="font-semibold text-foreground">{module.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{module.definition}</p>
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-xl bg-muted/40 p-4"><p className="text-xs font-semibold text-foreground">Elements to examine</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{module.elements.slice(0, 5).join(" ")}</p></div>
+                        <div className="rounded-xl bg-muted/40 p-4"><p className="text-xs font-semibold text-foreground">Evidence examples</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{module.evidenceExamples.slice(0, 6).join(" · ")}</p></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <div className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">No specific authority module was selected. Use the research leads and verify the applicable law for your jurisdiction.</div>
+              )}
+            </div>
+
+            {authorities.length > 0 && (
+              <div className="mt-6 rounded-2xl border border-border bg-muted/20 p-5">
+                <p className="text-sm font-semibold text-foreground">Reference anchors</p>
+                <div className="mt-4"><EmptyAwareList items={authorities} fallback="No reference anchors returned." /></div>
               </div>
-              <div className="min-w-0 flex-1">
-                <SectionLabel>03 · What is missing</SectionLabel>
-                <h3 className="mt-1 text-xl font-semibold text-foreground">Facts and records that could change the picture</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  A missing item is not evidence that something happened. It simply identifies information that would help verify, contradict, or better understand the account.
-                </p>
-                <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-2xl border border-border bg-background p-5">
-                    <div className="flex items-center gap-2"><CircleHelp className="h-4 w-4 text-primary" /><p className="text-sm font-semibold text-foreground">Open questions</p></div>
-                    <div className="mt-4"><EmptyAwareList items={missing} fallback="No major missing facts were identified from the current answers." /></div>
-                  </div>
-                  <div className="rounded-2xl border border-border bg-background p-5">
-                    <div className="flex items-center gap-2"><FileSearch className="h-4 w-4 text-primary" /><p className="text-sm font-semibold text-foreground">Records worth locating</p></div>
-                    <div className="mt-4"><EmptyAwareList items={evidence} fallback="No specific records were identified yet." /></div>
-                  </div>
+            )}
+          </section>
+
+          {/* Action plan */}
+          <section id="analyzer-4" className="scroll-mt-6 px-5 py-8 sm:px-8 sm:py-10">
+            <SectionLabel>04 · Guidance & action plan</SectionLabel>
+            <h3 className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">What you can work on next</h3>
+
+            <div className="mt-6 rounded-2xl border border-border bg-card p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <Clock3 className="mt-0.5 h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-semibold text-foreground">Key deadlines</p>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    No verified deadline is identified by this analyzer output. Do not rely on an inferred deadline; verify dates from the actual notice, court order, statute, agency rule, or other controlling source.
+                  </p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div id="analyzer-4" className="p-5 sm:p-8 scroll-mt-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <ListChecks className="h-5 w-5" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <SectionLabel>04 · What to do next</SectionLabel>
-                <h3 className="mt-1 text-xl font-semibold text-foreground">A practical work plan</h3>
-                <div className="mt-5 space-y-3">
-                  {actions.map((action, i) => (
-                    <div key={`${action.title}-${i}`} className="flex gap-4 rounded-2xl border border-border bg-background p-4">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">{i + 1}</span>
-                      <div><p className="text-sm font-semibold text-foreground">{action.title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{action.description}</p></div>
-                    </div>
-                  ))}
+            <div className="mt-5 grid gap-3">
+              {actions.length ? actions.map((action, i) => (
+                <div key={`${action.title}-${i}`} className="flex gap-4 rounded-2xl border border-border bg-card p-5">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">{i + 1}</span>
+                  <div><p className="font-semibold text-foreground">{action.title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{action.description}</p></div>
                 </div>
-                {authorities.length > 0 && (
-                  <details className="mt-5 rounded-2xl border border-border bg-muted/20 group">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 p-4 text-sm font-semibold text-foreground [&::-webkit-details-marker]:hidden">
-                      <Scale className="h-4 w-4 text-primary" /> Reference authorities to verify
-                      <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
-                    </summary>
-                    <div className="border-t border-border p-4"><EmptyAwareList items={authorities} fallback="No reference anchors were returned." /></div>
-                  </details>
-                )}
-              </div>
+              )) : (
+                <EmptyAwareList items={[]} fallback="No prioritized action was generated yet." />
+              )}
             </div>
-          </div>
+
+            <div className="mt-8">
+              <p className="text-sm font-semibold text-foreground">Escalation roadmap</p>
+              <div className="mt-4 grid gap-2 md:grid-cols-6">
+                {["Understand", "Document", "Communicate", "Formalize", "Oversight", "Legal review"].map((step, i) => (
+                  <div key={step} className="rounded-xl border border-border bg-card p-3">
+                    <span className="text-[10px] font-semibold text-primary">0{i + 1}</span>
+                    <p className="mt-1 text-xs font-semibold text-foreground">{step}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-5 text-muted-foreground">The roadmap shows common process stages, not a recommendation that you take every stage.</p>
+            </div>
+          </section>
         </div>
 
-        <div className="border-t border-border bg-muted/30 px-5 py-7 sm:px-8">
+        {/* Tools & safeguards */}
+        <section className="border-t border-border bg-muted/20 px-5 py-8 sm:px-8 sm:py-10">
+          <SectionLabel>Tools, support & safeguards</SectionLabel>
+          <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <button type="button" onClick={onAddToCase} className="rounded-2xl border border-border bg-card p-4 text-left transition hover:border-primary/40 hover:shadow-sm">
+              <FolderOpen className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Add to Case Builder</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Turn this analysis into an organized case record.</p>
+            </button>
+            <a href="/dashboard" className="rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-sm">
+              <ListChecks className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Open Case Workspace</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Review timeline, evidence, issues, and requests.</p>
+            </a>
+            <a href="/find-help" className="rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-sm">
+              <ShieldCheck className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Find legal help</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Explore attorney and lower-cost support pathways.</p>
+            </a>
+            <a href="/education-library" className="rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-sm">
+              <Search className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Research the topic</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Continue learning before deciding what to do.</p>
+            </a>
+          </div>
+          <div className="mt-8 border-t border-border pt-6">
+            <p className="text-xs leading-5 text-muted-foreground">
+              Decoded Justice provides educational information and organizational tools, not legal advice. No attorney-client relationship is created. Verify laws, deadlines, procedures, and agency requirements against authoritative sources and consider qualified legal assistance for decisions specific to your situation.
+            </p>
+            <a href="mailto:feedback@decodedjustice.org" className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">Report an issue <ExternalLink className="h-3 w-3" /></a>
+          </div>
+        </section>
+
+        <div className="border-t border-border bg-card px-5 py-7 sm:px-8 print:hidden">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-base font-semibold text-foreground">Keep building instead of starting over</p>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">Your answers, questions, research leads, and records can become an organized case workspace.</p>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Your answers, research leads, and records can become an organized case workspace.</p>
             </div>
             <Button onClick={onAddToCase} className="gap-2 shrink-0"><FolderOpen className="h-4 w-4" />Open Case Workspace</Button>
           </div>
