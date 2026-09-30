@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import heroImage from "@/assets/hero-analysis.png";
-import legalResearchImage from "@/assets/tool-legal-research.jpg";
+import legalResearchImage from "@/assets/hero-documents-night.jpg";
 import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 
 interface DecodedResult {
