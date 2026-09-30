@@ -7,7 +7,7 @@ import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { DjPageHeader } from "@/components/ui/dj-page-header";
 import { NarrativeCaseBuilder } from "@/components/case-builder/NarrativeCaseBuilder";
 import { LogIn, Heart, ArrowRight } from "lucide-react";
-import storyImage from "@/assets/hero-family-courthouse.png";
+import storyImage from "@/assets/hero-workspace-calm.jpg";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function CaseBuilder() {
