@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import heroImage from "@/assets/hero-analysis.png";
+import legalResearchImage from "@/assets/tool-legal-research.jpg";
 import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 
 interface DecodedResult {
@@ -241,27 +242,36 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">
-          <img 
-            src={heroImage} 
-            alt="" 
-            className="w-full h-full object-cover opacity-15"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-background/40" />
+          <img src={heroImage} alt="" className="w-full h-full object-cover opacity-10" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/55" />
         </div>
-        
-        <div className="container relative py-12 lg:py-16">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+
+        <div className="container relative py-10 lg:py-14">
+          <div className="grid lg:grid-cols-[1fr_0.82fr] gap-8 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-4">
                 <FileText className="w-4 h-4" />
                 <span>Guided by Clarity</span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-foreground mb-4">
                 Justice Decoder
               </h1>
-              <p className="text-muted-foreground max-w-xl">
+              <p className="text-muted-foreground max-w-xl leading-relaxed">
                 Paste text or upload a PDF to get plain-language explanations, key terms, and preparation questions for professionals.
               </p>
+            </div>
+            <div className="relative min-h-[230px] sm:min-h-[280px] overflow-hidden rounded-2xl border border-border/70 shadow-warm-sm">
+              <img
+                src={legalResearchImage}
+                alt="A person reviewing legal information and case materials on a laptop"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent lg:w-1/2" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="inline-flex rounded-full border border-white/25 bg-black/35 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/85 backdrop-blur-sm">
+                  Read · Decode · Prepare
+                </div>
+              </div>
             </div>
           </div>
         </div>
