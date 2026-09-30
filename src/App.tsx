@@ -56,6 +56,7 @@ import CaseExportCenter from "./pages/cases/CaseExportCenter";
 import CaseRelationships from "./pages/cases/CaseRelationships";
 import AttorneySearch from "./pages/AttorneySearch";
 import JusticeResearchEngine from "./pages/JusticeResearchEngine";
+import Notes from "./pages/Notes";
 
 const queryClient = new QueryClient();
 
