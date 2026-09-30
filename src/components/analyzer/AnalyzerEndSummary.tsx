@@ -175,6 +175,7 @@ export function AnalyzerEndSummary({
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
               Each item below is a research lead. Expand it to see why it was flagged, what would need to be established, and what evidence could help.
             </p>
+                <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">The analyzer can preserve these findings in your case workspace so the result is not left as a standalone analysis.</p>
             <div className="mt-6 space-y-4">
               {findings.length ? findings.slice(0, 8).map((f, index) => (
                 <details key={f.id} className="group overflow-hidden rounded-2xl border border-border bg-card">
