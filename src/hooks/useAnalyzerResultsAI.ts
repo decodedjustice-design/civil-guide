@@ -26,6 +26,9 @@ export interface AnalyzerResultsAI {
   };
   potentialViolations?: PotentialViolation[];
   systemIdentification: string;
+  executiveSummary?: string;
+  whatWeKnow?: string[];
+  whatWeNeedToVerify?: string[];
   powerDynamics: {
     whoHasControl: string[];
     whoDoesNotControl: string[];
