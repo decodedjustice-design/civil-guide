@@ -828,8 +828,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
               <div className="flex items-center gap-2">
                 <div className="hidden sm:flex max-w-[220px] items-center gap-2 rounded-full border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground">
                   <FolderOpen className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate" title={activeCase?.title || "Untitled case"}>
-                    {activeCase?.title || "Untitled case"}
+                  <span className="truncate" title={activeCase?.name || "Untitled case"}>
+                    {activeCase?.name || "Untitled case"}
                   </span>
                 </div>
                 <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground mr-1">
