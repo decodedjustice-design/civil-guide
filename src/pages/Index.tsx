@@ -4,6 +4,9 @@ import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Clock, FileText, FolderOpen, Search, Users, Scale, Shield, Wrench, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import heroImage from "@/assets/hero-private-studio.jpg";
+import storyImage from "@/assets/hero-family-courthouse.png";
+import researchImage from "@/assets/tool-legal-research.jpg";
+import communityImage from "@/assets/category-support-network.jpg";
 import { LegalGate } from "@/components/LegalGate";
 
 const Index = () => {
@@ -119,6 +122,49 @@ const Index = () => {
                   ))}
                 </div>
                 <div className="px-6 py-5 bg-secondary/40 border-t border-border/60"><p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Story → Timeline → Records → Issues → Evidence → Case Packet</p></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-[#171514] text-cream py-20 sm:py-24 overflow-hidden">
+          <div className="container max-w-6xl px-6">
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+              <div className="max-w-2xl">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">A clearer way through</p>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight">See the work in context.</h2>
+              </div>
+              <p className="text-sm text-cream-warm/65 font-light leading-relaxed max-w-md lg:text-right">
+                From telling your story to understanding a document and finding support, each part of Decoded Justice is designed to feel calm, human, and focused.
+              </p>
+            </div>
+            <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-4 lg:gap-5">
+              <Link to={startCaseUrl} className="group relative min-h-[360px] sm:min-h-[430px] overflow-hidden rounded-sm border border-white/10">
+                <img src={storyImage} alt="A family reviewing important paperwork together" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#171514]/95 via-[#171514]/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-gold mb-2">01 · Your story</p>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-medium text-cream">Start with what happened.</h3>
+                  <p className="mt-2 max-w-xl text-sm text-cream-warm/75 font-light">Write in your own words. Build the record without having to translate your experience into legal language first.</p>
+                </div>
+              </Link>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-5">
+                <Link to="/legal-decoder" className="group relative min-h-[210px] overflow-hidden rounded-sm border border-white/10">
+                  <img src={researchImage} alt="Research materials and legal information on a laptop" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#171514]/95 via-[#171514]/30 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-gold mb-1">02 · Understand</p>
+                    <h3 className="font-serif text-xl sm:text-2xl font-medium text-cream">Make complex language clearer.</h3>
+                  </div>
+                </Link>
+                <Link to="/support-network" className="group relative min-h-[210px] overflow-hidden rounded-sm border border-white/10">
+                  <img src={communityImage} alt="People gathered together to work through a community issue" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#171514]/95 via-[#171514]/25 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-gold mb-1">03 · Connect</p>
+                    <h3 className="font-serif text-xl sm:text-2xl font-medium text-cream">Find people and resources.</h3>
+                  </div>
+                </Link>
               </div>
             </div>
           </div>
