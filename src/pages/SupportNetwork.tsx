@@ -31,7 +31,7 @@ import {
   type SystemTag 
 } from "@/data/supportNetworkResources";
 import { cn } from "@/lib/utils";
-import communityImage from "@/assets/category-healthcare.jpg";
+import { bannerLibrary as communityImage } from "@/assets/index";
 
 /* ── Icon map ── */
 const systemIcons: Record<string, React.ElementType> = {
@@ -108,7 +108,7 @@ export default function SupportNetwork() {
           <div className="relative mb-8 overflow-hidden rounded-2xl border border-border/70 bg-[#211C1A] min-h-[280px] sm:min-h-[330px] flex items-end shadow-warm-sm">
             <img
               src={communityImage}
-              alt="A community group gathered around a table"
+              alt="A resource-filled space representing places to find support"
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#171514]/95 via-[#171514]/45 to-[#171514]/10" />
