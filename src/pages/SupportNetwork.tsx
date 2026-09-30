@@ -31,6 +31,7 @@ import {
   type SystemTag 
 } from "@/data/supportNetworkResources";
 import { cn } from "@/lib/utils";
+import communityImage from "@/assets/category-support-network.jpg";
 
 /* ── Icon map ── */
 const systemIcons: Record<string, React.ElementType> = {
@@ -104,17 +105,25 @@ export default function SupportNetwork() {
       <div className="container py-12 lg:py-20">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
-              <Users className="w-4 h-4" />
-              <span>Support Network</span>
+          <div className="relative mb-8 overflow-hidden rounded-2xl border border-border/70 bg-[#211C1A] min-h-[280px] sm:min-h-[330px] flex items-end shadow-warm-sm">
+            <img
+              src={communityImage}
+              alt="A community group gathered around a table"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#171514]/95 via-[#171514]/45 to-[#171514]/10" />
+            <div className="relative z-10 p-7 sm:p-9 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/30 border border-white/20 text-cream text-xs font-medium mb-4 backdrop-blur-sm">
+                <Users className="w-3.5 h-3.5" />
+                <span>Support Network</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-serif font-medium text-cream mb-3">
+                People, organizations, and places to turn.
+              </h1>
+              <p className="text-sm sm:text-base text-cream-warm/80 max-w-2xl">
+                Oversight agencies and complaint offices across Washington State and the federal system, organized so you can explore without having everything figured out first.
+              </p>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Support Network
-            </h1>
-            <p className="text-muted-foreground">
-              Oversight agencies and complaint offices. Washington State and federal.
-            </p>
           </div>
 
           {/* Search */}
