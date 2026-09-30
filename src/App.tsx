@@ -93,7 +93,7 @@ const App = () => {
               <Route path="/timeline" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
               <Route path="/guide/government-full-guide" element={<GovernmentBenefitsGuide />} />
               <Route path="/guide/:guideId" element={<FullGuide />} />
-              <Route path="/library" element={<Library />} />
+              <Route path="/library" element={<Navigate to="/education-library" replace />} />
               <Route path="/education-library" element={<EducationLibrary />} />
               <Route path="/transcription" element={<ProtectedRoute><Transcription /></ProtectedRoute>} />
               <Route path="/public-request-rights" element={<PublicRequestRights />} />
