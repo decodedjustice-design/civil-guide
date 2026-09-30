@@ -45,7 +45,7 @@ export default function CasePackets() {
     schema_version: 1,
     generated_at: new Date().toISOString(),
     case_id: id,
-    case_name: activeCase?.title ?? null,
+    case_name: activeCase?.name ?? null,
     sections: selected.map((key) => {
       const sourceIds: Record<string, string[]> = {
         overview: id ? [id] : [],
@@ -60,7 +60,7 @@ export default function CasePackets() {
       };
       const labels: Record<string, string> = Object.fromEntries(sectionOptions.map((s) => [s.key, s.label]));
       const sourceRows: Record<string, { id: string; label: string }[]> = {
-        overview: id ? [{ id, label: activeCase?.title ?? "Case" }] : [],
+        overview: id ? [{ id, label: activeCase?.name ?? "Case" }] : [],
         issues: snapshot.issues.map((r) => ({ id: r.id, label: r.title || "Untitled issue" })),
         timeline: snapshot.timeline.map((r) => ({ id: r.id, label: r.title || "Untitled timeline entry" })),
         evidence: exportEvidence.map((r) => ({ id: r.id, label: `${exhibitLabel(r.exhibit_number)} — ${r.display_filename || "Untitled document"}` })),
@@ -97,7 +97,7 @@ export default function CasePackets() {
       ? items.map((i) => render(i).replace('<div class="item"', `<div class="item" data-record-id="${esc(i.id)}"`)).join("")
       : "<p class='empty'>Nothing recorded.</p>";
     const parts: string[] = [];
-    if (selected.includes("overview")) parts.push(`<section><h2>Case overview</h2><p><strong>${esc(activeCase?.title)}</strong></p><p>${esc(`${activeCase?.matter_type ?? ""} · ${activeCase?.jurisdiction ?? ""}`)}</p><p>${esc(activeCase?.jurisdiction)}</p></section>`);
+    if (selected.includes("overview")) parts.push(`<section><h2>Case overview</h2><p><strong>${esc(activeCase?.name)}</strong></p><p>${esc(`${activeCase?.case_type ?? ""} · ${activeCase?.state ?? ""}`)}</p><p>${esc(activeCase?.state)}</p></section>`);
     if (selected.includes("issues")) parts.push(`<section><h2>Claims &amp; issues</h2>${rows(snapshot.issues, (i) => `<div class="item"><h3>${esc(i.title)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[i.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")} · ${esc(i.status)}</p><p>${esc(i.description)}</p><p><strong>Supporting:</strong> ${esc(i.supporting_notes)}</p><p><strong>Still unknown:</strong> ${esc(i.missing_records)}</p></div>`)}</section>`);
     if (selected.includes("timeline")) parts.push(`<section><h2>Chronology</h2>${rows(snapshot.timeline, (t) => `<div class="item"><h3>${esc(t.occurred_at)} — ${esc(t.title)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[t.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")}${t.category ? ` · ${esc(t.category)}` : ""}</p><p>${esc(t.description)}</p></div>`)}</section>`);
     if (selected.includes("evidence")) parts.push(`<section><h2>Exhibit index</h2>${rows(snapshot.evidence.filter((e) => e.include_in_export !== false), (e) => `<div class="item"><h3>${esc(exhibitLabel(e.exhibit_number))} — ${esc(e.display_filename)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[e.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")}${e.source ? ` · Source: ${esc(e.source)}` : ""}${e.document_date ? ` · ${esc(e.document_date)}` : ""}${e.review_status ? ` · Review: ${esc(e.review_status)}` : ""}</p><p>${esc(e.description)}</p>${e.display_filename ? `<p class="meta">File: ${esc(e.display_filename)}</p>` : ""}</div>`)}</section>`);
@@ -107,7 +107,7 @@ export default function CasePackets() {
     if (selected.includes("record-gaps")) parts.push(`<section><h2>Record gaps / unresolved questions</h2>${rows(snapshot.record_gaps, (g) => `<div class="item"><h3>${esc(g.title)}</h3><p class="meta">${esc(g.status)}${g.record_holder ? ` · Holder: ${esc(g.record_holder)}` : ""}${g.due_at ? ` · Watch date: ${esc(g.due_at)}` : ""}</p><p>${esc(g.description)}</p><p><strong>Notes:</strong> ${esc(g.notes)}</p></div>`)}</section>`);
     if (selected.includes("relationships")) parts.push(`<section><h2>Record relationships</h2>${rows(snapshot.links, (l) => `<div class="item"><h3>${esc(l.from_type)} → ${esc(l.relation)} → ${esc(l.to_type)}</h3><p class="meta">${esc(l.from_id)} · ${esc(l.to_id)}</p></div>`)}</section>`);
     parts.push(`<section><h2>Packet provenance</h2><p class="notice">This audit trail records which case records were included when this packet was generated. It does not establish the truth of any record or legal conclusion.</p>${provenanceRows()}</section>`);
-    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(title || activeCase?.title || "Case packet")}</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 24px;color:#241c17;line-height:1.55}h1{font-size:28px;margin-bottom:4px}h2{font-size:19px;border-bottom:1px solid #d9cfc4;padding-bottom:6px;margin-top:36px}h3{font-size:15px;margin:0 0 2px}.meta{font-size:12px;color:#7a6a5d;margin:0 0 6px}.item{margin:0 0 18px}.empty{color:#7a6a5d;font-style:italic}.source-list{font-family:monospace;font-size:10px;word-break:break-all}.notice{background:#f6f1ea;padding:14px;border-radius:8px;font-size:12px;color:#5b4b40}</style></head><body><h1>${esc(title || activeCase?.title || "Case packet")}</h1><p class="meta">Case: ${esc(activeCase?.title)} · Prepared ${esc(new Date().toLocaleDateString())}</p><p class="notice">Educational record only. Items retain the classification entered in the workspace. This packet does not make a legal finding or provide legal advice.</p>${parts.join("")}</body></html>`;
+    return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(title || activeCase?.name || "Case packet")}</title><style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 24px;color:#241c17;line-height:1.55}h1{font-size:28px;margin-bottom:4px}h2{font-size:19px;border-bottom:1px solid #d9cfc4;padding-bottom:6px;margin-top:36px}h3{font-size:15px;margin:0 0 2px}.meta{font-size:12px;color:#7a6a5d;margin:0 0 6px}.item{margin:0 0 18px}.empty{color:#7a6a5d;font-style:italic}.source-list{font-family:monospace;font-size:10px;word-break:break-all}.notice{background:#f6f1ea;padding:14px;border-radius:8px;font-size:12px;color:#5b4b40}</style></head><body><h1>${esc(title || activeCase?.name || "Case packet")}</h1><p class="meta">Case: ${esc(activeCase?.name)} · Prepared ${esc(new Date().toLocaleDateString())}</p><p class="notice">Educational record only. Items retain the classification entered in the workspace. This packet does not make a legal finding or provide legal advice.</p>${parts.join("")}</body></html>`;
   };
 
   const savePacket = async () => {
