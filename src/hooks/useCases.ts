@@ -10,6 +10,8 @@ export interface CaseRow {
   case_type: string;
   status: string;
   state: string;
+  county?: string | null;
+  description?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +47,8 @@ export function useCases() {
           name: payload.name?.trim() || "Untitled case",
           case_type: payload.case_type ?? "general",
           state: payload.state ?? "Washington",
+          county: payload.county ?? null,
+          description: payload.description ?? null,
         })
         .select("*")
         .single();
