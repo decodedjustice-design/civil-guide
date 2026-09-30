@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCaseCollection } from "@/hooks/useCases";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
-import { classificationBadgeClass } from "@/lib/case/classification";
+import { classificationBadgeClass, classificationAccessibleLabel } from "@/lib/case/classification";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -189,9 +189,15 @@ export function RecordManager({
                       </div>
                     )}
                     {badgeFields.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-3">
+                      <div className="flex flex-wrap gap-2 mt-3" aria-label="Record status">
                         {badgeFields.map((k) => item[k] ? (
-                          <Badge key={k} variant="outline" className={k === "classification" ? classificationBadgeClass(item[k]) : ""}>
+                          <Badge
+                            key={k}
+                            variant="outline"
+                            title={k === "classification" ? classificationAccessibleLabel(item[k]) : undefined}
+                            aria-label={k === "classification" ? classificationAccessibleLabel(item[k]) : undefined}
+                            className={k === "classification" ? classificationBadgeClass(item[k]) : ""}
+                          >
                             {fields.find((f) => f.key === k)?.options?.find((o) => o.value === item[k])?.label ?? String(item[k])}
                           </Badge>
                         ) : null)}
