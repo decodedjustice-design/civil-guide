@@ -18,6 +18,19 @@ export const CLASSIFICATION_LABELS: Record<Classification, string> = CLASSIFICAT
   {} as Record<Classification, string>
 );
 
+export const CLASSIFICATION_DESCRIPTIONS: Record<Classification, string> = {
+  fact: "Documented in a record you can point to.",
+  allegation: "Someone stated it; it has not yet been independently verified.",
+  inference: "An interpretation drawn from the available record.",
+  disputed: "Accounts or records conflict about this item.",
+  unknown: "Not yet reviewed or classified.",
+};
+
+export const classificationAccessibleLabel = (value?: string | null): string => {
+  const key = (value || "unknown") as Classification;
+  return `Status: ${CLASSIFICATION_LABELS[key] ?? "Unknown"}. ${CLASSIFICATION_DESCRIPTIONS[key] ?? CLASSIFICATION_DESCRIPTIONS.unknown}`;
+};
+
 /** Tailwind classes per classification, using semantic tokens only. */
 export const classificationBadgeClass = (value?: string | null): string => {
   switch (value) {
