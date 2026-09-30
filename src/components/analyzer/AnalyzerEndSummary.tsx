@@ -175,31 +175,54 @@ export function AnalyzerEndSummary({
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
               Each item below is a research lead. Expand it to see why it was flagged, what would need to be established, and what evidence could help.
             </p>
-            <div className="mt-6 space-y-3">
-              {findings.length ? findings.slice(0, 8).map((f) => (
-                <details key={f.id} className="group rounded-2xl border border-border bg-card">
-                  <summary className="flex cursor-pointer list-none items-center gap-3 p-5 [&::-webkit-details-marker]:hidden">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Scale className="h-4 w-4" /></span>
+            <div className="mt-6 space-y-4">
+              {findings.length ? findings.slice(0, 8).map((f, index) => (
+                <details key={f.id} className="group overflow-hidden rounded-2xl border border-border bg-card">
+                  <summary className="flex cursor-pointer list-none items-start gap-4 p-5 [&::-webkit-details-marker]:hidden sm:p-6">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary text-sm font-semibold">{index + 1}</span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold text-foreground">{f.title}</span>
-                      <span className="mt-1 block text-xs leading-5 text-muted-foreground">Why it was flagged: {f.whyFlagged}</span>
+                      <span className="block text-base font-semibold text-foreground">{f.title}</span>
+                      <span className="mt-1 block text-sm leading-6 text-muted-foreground">{f.whyFlagged}</span>
                     </span>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
                   </summary>
-                  <div className="border-t border-border px-5 pb-5 pt-5">
-                    <div className="grid gap-5 lg:grid-cols-2">
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">What would need to be established</p>
-                        <div className="mt-3"><EmptyAwareList items={f.whatWouldNeedToBeTrue.slice(0, 8)} fallback="No additional condition identified." /></div>
+                  <div className="border-t border-border px-5 pb-6 pt-5 sm:px-6">
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      <div className="rounded-xl border border-border bg-background p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">Issue to examine</p>
+                        <p className="mt-2 text-sm leading-6 text-foreground/85">{f.whyFlagged}</p>
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Evidence that could help</p>
-                        <div className="mt-3"><EmptyAwareList items={f.evidenceToLookFor.slice(0, 8)} fallback="No specific evidence identified." /></div>
+                      <div className="rounded-xl border border-border bg-background p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">Current legal framework</p>
+                        <p className="mt-2 text-sm leading-6 text-foreground/85">{f.legalFramework.length ? f.legalFramework.slice(0, 4).join(" · ") : "Specific legal authority still needs verification."}</p>
                       </div>
                     </div>
-                    <div className="mt-5 rounded-xl bg-muted/40 p-4">
-                      <p className="text-xs font-semibold text-foreground">Practical next step</p>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{f.nextStep}</p>
+
+                    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Facts or conditions that need to be established</p>
+                        <div className="mt-3"><EmptyAwareList items={f.whatWouldNeedToBeTrue.slice(0, 8)} fallback="No additional conditions were identified." /></div>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Facts still missing</p>
+                        <div className="mt-3"><EmptyAwareList items={f.missingFacts.slice(0, 8)} fallback="No additional missing facts were identified." /></div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Evidence that could test the issue</p>
+                      <div className="mt-3"><EmptyAwareList items={f.evidenceToLookFor.slice(0, 10)} fallback="No specific evidence was identified yet." /></div>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <div className="rounded-xl bg-muted/30 p-4">
+                        <p className="text-xs font-semibold text-foreground">Practical next step</p>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">{f.nextStep}</p>
+                      </div>
+                      <div className="rounded-xl bg-muted/30 p-4">
+                        <p className="text-xs font-semibold text-foreground">What could change the analysis</p>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">New records, corrected dates or identities, additional context, or a different controlling rule could change whether this issue remains relevant.</p>
+                      </div>
                     </div>
                   </div>
                 </details>
