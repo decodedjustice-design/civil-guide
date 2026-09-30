@@ -19,7 +19,7 @@ import {
   Wrench
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
-import { bannerLibrary } from "@/assets/index";
+import { categoryCourts as insightImage } from "@/assets/index";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { SystemCard } from "@/components/shared/SystemCard";
@@ -95,7 +95,7 @@ export default function RightsInsight() {
       {/* Cinematic knowledge hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <img src={bannerLibrary} alt="" className="w-full h-full object-cover opacity-45" />
+          <img src={insightImage} alt="" className="w-full h-full object-cover opacity-45" />
           <div className="absolute inset-0 bg-gradient-to-r from-espresso/95 via-espresso/75 to-espresso/35" />
         </div>
         <div className="container relative py-14 lg:py-20">
