@@ -33,6 +33,9 @@ interface AnalyzerResultsAI {
   potentialViolations: PotentialViolation[];
   safetyNotice: string;
   systemIdentification: string;
+  executiveSummary: string;
+  whatWeKnow: string[];
+  whatWeNeedToVerify: string[];
   powerDynamics: { whoHasControl: string[]; whoDoesNotControl: string[]; decisionMakers: string[]; };
   usualProcess: string[];
   commonStuckPoints: string[];
@@ -93,6 +96,26 @@ serve(async (req) => {
     answeredQuestions.forEach(item => { if (item.questionId && item.answer) answerMap[item.questionId] = item.answer; });
     const potentialViolations = detectPotentialViolations(systemId, answerMap, location);
 
+    const knownFacts = [
+      ...timelineEntries.filter(e => hasText(e.title)).slice(0, 4).map(e => {
+        const date = hasText(e.date) ? ` on ${e.date}` : "";
+        return `${e.title}${date}${hasText(e.description) ? `: ${e.description}` : ""}`;
+      }),
+      ...answeredQuestions.filter(a => hasText(a.answer)).slice(0, 3).map(a => a.answer.trim()),
+    ].slice(0, 7);
+
+    const verifyItems = [
+      ...nextQuestions.slice(0, 5).map(q => q.prompt),
+      ...potentialViolations.flatMap(v => v.missingFacts || []),
+      ...potentialViolations.flatMap(v => v.evidenceToLookFor || []),
+    ].filter(Boolean).filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 10);
+
+    const executiveSummary = potentialViolations.length
+      ? `The information provided identifies ${potentialViolations.length} issue${potentialViolations.length === 1 ? "" : "s"} for further review within ${systemLabel}. The current record also contains ${unresolved.length} unresolved information gap${unresolved.length === 1 ? "" : "s"}, so the analyzer cannot determine from this information alone whether a legal violation occurred.`
+      : unresolved.length
+        ? `The current information does not identify a specific legal issue to characterize yet. There are ${unresolved.length} unresolved information gap${unresolved.length === 1 ? "" : "s"} that should be clarified before drawing stronger conclusions.`
+        : `The current information has been organized for research and verification within ${systemLabel}. No specific violation signal was generated from the information provided.`;
+
     const violationActions = potentialViolations.map(v => ({
       title: `Potential violation: ${v.title}`,
       description: `${v.whyFlagged} Confidence: ${v.confidence}. What must be established: ${v.whatWouldNeedToBeTrue.join('; ')} Evidence to look for: ${v.evidenceToLookFor.join('; ')} Missing facts: ${v.missingFacts.join('; ')} Next step: ${v.nextStep}`
@@ -106,6 +129,9 @@ serve(async (req) => {
       categories, questions: sorted, nextQuestions, potentialViolations,
       safetyNotice: 'Potential violations are issue-spotting signals, not findings that a law was violated. Each result requires the applicable jurisdiction, exact facts, current law, and evidence to be verified.',
       systemIdentification: `Issue-spotting analysis for ${systemLabel}, based on the facts and answers provided.`,
+      executiveSummary,
+      whatWeKnow: knownFacts,
+      whatWeNeedToVerify: verifyItems,
       powerDynamics: { whoHasControl: ['The other party’s decisions and records', 'Agency/employer/provider processes'], whoDoesNotControl: ['The legal outcome', 'What another party ultimately decides'], decisionMakers: ['Courts, agencies, employers, providers, or other authorized decision-makers depending on the issue'] },
       usualProcess: ['Identify potential legal issues', 'Separate known facts from missing facts', 'Map each issue to the applicable legal framework', 'Preserve evidence that can confirm or defeat the issue', 'Verify current law before taking legal action'],
       commonStuckPoints: ['Missing dates', 'Unclear actors', 'Events without supporting evidence', 'Assuming a legal conclusion before checking the exact rule and facts'],
