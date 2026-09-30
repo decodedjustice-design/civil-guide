@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ArrowRight, CheckCircle2, CircleHelp, FileSearch, FolderOpen, ListChecks, Scale, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AnalyzerResultsAI, PotentialViolation } from "@/hooks/useAnalyzerResultsAI";
@@ -11,7 +12,7 @@ interface AnalyzerEndSummaryProps {
   onAddToCase: () => void;
 }
 
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+const SectionLabel = ({ children }: { children: ReactNode }) => (
   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">{children}</p>
 );
 
