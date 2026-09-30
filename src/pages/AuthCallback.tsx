@@ -86,8 +86,8 @@ export default function AuthCallback() {
         if (cancelled) return;
 
         setStatus("Signed in. Opening your workspace…");
-        const storedRedirect = sessionStorage.getItem("auth_redirect");
-        sessionStorage.removeItem("auth_redirect");
+        const storedRedirect = localStorage.getItem("auth_redirect");
+        localStorage.removeItem("auth_redirect");
         navigate(getValidatedRedirect(storedRedirect), { replace: true });
       } catch (err) {
         if (cancelled) return;
