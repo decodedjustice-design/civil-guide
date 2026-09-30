@@ -170,35 +170,35 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="bg-[#211C1A] text-cream py-20 sm:py-24">
+        <section className="bg-background text-foreground py-20 sm:py-24">
           <div className="container max-w-6xl px-6">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Where it can help</p>
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-cream max-w-xl">Built for the systems you may have to navigate.</h2>
+                <p className="text-[10px] uppercase tracking-[0.22em] text-primary mb-3">Where it can help</p>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight text-foreground max-w-xl">Built for the systems you may have to navigate.</h2>
               </div>
-              <p className="text-sm text-cream-warm/65 font-light leading-relaxed max-w-md lg:text-right">Start with the area closest to your situation, then use the workspace, guides, and tools that fit what you need.</p>
+              <p className="text-sm text-muted-foreground font-light leading-relaxed max-w-md lg:text-right">Start with the area closest to your situation, then use the workspace, guides, and tools that fit what you need.</p>
             </div>
-            <div className="grid sm:grid-cols-2 border-t border-l border-white/10">
+            <div className="grid sm:grid-cols-2 border-t border-l border-border/60">
               {issueAreas.map((area, index) => (
-                <div key={area.title} className="min-h-28 border-r border-b border-white/10 p-5 sm:p-6 bg-white/[0.02] hover:bg-white/[0.06] transition-colors duration-300">
-                  <div className="flex items-center justify-between mb-4"><span className="text-[10px] tracking-[0.2em] text-cream-warm/45">0{index + 1}</span><span className="h-px w-7 bg-gold/35" /></div>
-                  <h3 className="font-serif text-lg font-medium text-cream mb-1">{area.title}</h3>
-                  <p className="text-xs text-cream-warm/60 leading-relaxed">{area.detail}</p>
+                <div key={area.title} className="min-h-28 border-r border-b border-border/60 p-5 sm:p-6 bg-background hover:bg-secondary/30 transition-colors duration-300">
+                  <div className="flex items-center justify-between mb-4"><span className="text-[10px] tracking-[0.2em] text-muted-foreground/65">0{index + 1}</span><span className="h-px w-7 bg-primary/35" /></div>
+                  <h3 className="font-serif text-lg font-medium text-foreground mb-1">{area.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{area.detail}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="bg-background py-20 sm:py-24">
+        <section className="bg-[#211C1A] text-cream py-20 sm:py-24">
           <div className="container max-w-6xl px-6">
             <div className="max-w-3xl mb-10">
               <p className="text-[10px] uppercase tracking-[0.22em] text-gold mb-3">Understand the system</p>
-              <h2 className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-foreground mb-4">Learn what matters before you decide what to do next.</h2>
-              <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed">Plain-language education helps you understand how a process works, what information may matter, and what questions to ask.</p>
+              <h2 className="font-serif text-3xl sm:text-4xl font-medium tracking-tight text-cream mb-4">Learn what matters before you decide what to do next.</h2>
+              <p className="text-sm sm:text-base text-cream-warm/70 font-light leading-relaxed">Plain-language education helps you understand how a process works, what information may matter, and what questions to ask.</p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-border/60 max-w-5xl">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-white/10 max-w-5xl">
               {[
                 ["01", "KNOW YOUR RIGHTS", "Understand protections, responsibilities, and limits that may apply to your situation."],
                 ["02", "UNDERSTAND THE PROCESS", "See how an agency, court, program, or other system generally works."],
@@ -206,10 +206,10 @@ const Index = () => {
                 ["04", "KNOW WHAT TO ASK", "Turn uncertainty into specific questions you can research, verify, or raise."],
                 ["05", "PREPARE FOR WHAT COMES NEXT", "Use what you learn to organize your information and prepare for the next step."],
               ].map(([number, title, description]) => (
-                <div key={number} className="min-h-40 border-r border-b border-border/60 p-6 bg-background hover:bg-secondary/30 transition-colors duration-300">
-                  <div className="text-[10px] tracking-[0.2em] text-muted-foreground/65 mb-6">{number}</div>
-                  <h3 className="font-serif text-xl font-medium text-foreground mb-2">{title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
+                <div key={number} className="min-h-40 border-r border-b border-white/10 p-6 bg-white/[0.02] hover:bg-white/[0.06] transition-colors duration-300">
+                  <div className="text-[10px] tracking-[0.2em] text-cream-warm/45 mb-6">{number}</div>
+                  <h3 className="font-serif text-xl font-medium text-cream mb-2">{title}</h3>
+                  <p className="text-xs text-cream-warm/65 leading-relaxed">{description}</p>
                 </div>
               ))}
             </div>
