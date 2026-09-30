@@ -9,7 +9,7 @@ import { EducationalNotice } from "@/components/shared/EducationalNotice";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import heroImage from "@/assets/hero-paperwork.png";
+import heroImage from "@/assets/banner-evidence-vault.jpg";
 import { emptyStateNoDocuments } from "@/assets/index";
 
 interface Evidence {
