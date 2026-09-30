@@ -20,6 +20,7 @@ export function ClarifyingQuestions({
 }: ClarifyingQuestionsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answeredIds, setAnsweredIds] = useState<Set<string>>(new Set());
+  const [customAnswer, setCustomAnswer] = useState('');
   
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex >= questions.length - 1;
@@ -115,6 +116,31 @@ export function ClarifyingQuestions({
         ))}
       </div>
       
+      <div className="mt-4 rounded-xl border border-dashed border-border bg-muted/20 p-4">
+        <label className="text-sm font-medium text-foreground block mb-2">
+          Or explain in your own words
+        </label>
+        <p className="text-xs text-muted-foreground mb-3">
+          Add a detail that the choices above don't capture. You can say "I don't know" if you're unsure.
+        </p>
+        <textarea
+          value={customAnswer}
+          onChange={(e) => setCustomAnswer(e.target.value)}
+          placeholder="Tell us what happened, what you know, or what is still unclear…"
+          className="w-full min-h-24 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-3"
+          disabled={!customAnswer.trim()}
+          onClick={() => handleAnswer(customAnswer.trim())}
+        >
+          Add this detail
+        </Button>
+      </div>
+
       {/* Skip link */}
       <button
         onClick={handleSkip}
