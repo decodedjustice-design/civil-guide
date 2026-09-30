@@ -15,11 +15,9 @@ const Index = () => {
 
   useEffect(() => {
     if (user) {
-      const storedRedirect = sessionStorage.getItem("auth_redirect");
-      if (storedRedirect) {
-        sessionStorage.removeItem("auth_redirect");
-        navigate(storedRedirect, { replace: true });
-      }
+      const storedRedirect = localStorage.getItem("auth_redirect");
+      localStorage.removeItem("auth_redirect");
+      navigate(storedRedirect || "/dashboard", { replace: true });
     }
   }, [user, navigate]);
 
