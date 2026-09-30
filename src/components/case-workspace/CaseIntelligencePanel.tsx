@@ -68,6 +68,30 @@ export function CaseIntelligencePanel({
     snapshot.organizations.length;
   const connected = snapshot.links.length;
 
+  const actions = [
+    ...gaps.slice(0, 3).map((gap) => ({
+      key: `gap-${gap.id}`,
+      label: "Record needed",
+      detail: gap.title || gap.description || "A record gap is still open.",
+      to: `/cases/${caseId}/record-gaps`,
+    })),
+    ...snapshot.evidence.filter((item) => item.review_status === "needs_review").slice(0, 2).map((item) => ({
+      key: `evidence-${item.id}`,
+      label: "Evidence needs review",
+      detail: item.display_filename || "An exhibit is waiting for review.",
+      to: `/cases/${caseId}/evidence`,
+    })),
+    ...[...snapshot.timeline, ...snapshot.evidence]
+      .filter((item) => !item.classification || item.classification === "unknown")
+      .slice(0, 2)
+      .map((item) => ({
+        key: `class-${item.id}`,
+        label: "Classification needed",
+        detail: item.title || item.display_filename || "An item is still marked unknown.",
+        to: `/cases/${caseId}/content-check`,
+      })),
+  ].slice(0, 5);
+
   const strands = snapshot.issues
     .map((issue) => ({
       issue,
@@ -131,6 +155,39 @@ export function CaseIntelligencePanel({
         </div>
 
         <div className="p-5 sm:p-6 space-y-5">
+          <section className="rounded-xl border border-primary/15 bg-primary/[0.025] p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="font-medium">Next actions from the record</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  These are organizational prompts generated from what is currently missing or unreviewed — not a legal assessment.
+                </p>
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+            </div>
+            {actions.length > 0 ? (
+              <div className="mt-4 space-y-2">
+                {actions.map((action) => (
+                  <Link
+                    key={action.key}
+                    to={action.to}
+                    className="flex items-center gap-3 rounded-lg border bg-background p-3 hover:border-primary/30 transition-colors"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-semibold text-primary">{action.label}</p>
+                      <p className="text-sm text-foreground mt-0.5 truncate">{action.detail}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">
+                No immediate record-maintenance action was identified from the current snapshot.
+              </p>
+            )}
+          </section>
+
           <div className="grid lg:grid-cols-2 gap-5">
             <section className="rounded-xl border bg-muted/20 p-4">
               <div className="flex items-center justify-between gap-3">
