@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
@@ -81,8 +81,8 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/analyzer" element={<ProtectedRoute><Analyzer /></ProtectedRoute>} />
-              <Route path="/justice-place" element={<ProtectedRoute><JusticePlace /></ProtectedRoute>} />
-              <Route path="/clarion" element={<ProtectedRoute><Clarion /></ProtectedRoute>} />
+              <Route path="/justice-place" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
+              <Route path="/clarion" element={<ProtectedRoute><Navigate to="/case-builder" replace /></ProtectedRoute>} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/legal-decoder" element={<LegalDecoder />} />
               <Route path="/self-help" element={<SelfHelpTools />} />
@@ -97,9 +97,9 @@ const App = () => {
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/signin" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
-              <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
-              <Route path="/evidence-vault" element={<ProtectedRoute><EvidenceVault /></ProtectedRoute>} />
-              <Route path="/timeline" element={<ProtectedRoute><Timeline /></ProtectedRoute>} />
+              <Route path="/notes" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
+              <Route path="/evidence-vault" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
+              <Route path="/timeline" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
               <Route path="/guide/government-full-guide" element={<GovernmentBenefitsGuide />} />
               <Route path="/guide/:guideId" element={<FullGuide />} />
               <Route path="/library" element={<Library />} />
@@ -110,14 +110,14 @@ const App = () => {
               <Route path="/saved-attorneys" element={<ProtectedRoute><SavedAttorneys /></ProtectedRoute>} />
               <Route path="/templates" element={<Templates />} />
               <Route path="/legal-templates" element={<StarterLegalTemplates />} />
-              <Route path="/intake-packet" element={<ProtectedRoute><IntakePacket /></ProtectedRoute>} />
+              <Route path="/intake-packet" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
               <Route path="/attorney-contacts" element={<ProtectedRoute><AttorneyContacts /></ProtectedRoute>} />
               <Route path="/founders-story" element={<FoundersStory />} />
               <Route path="/case-builder" element={<ProtectedRoute><CaseBuilder /></ProtectedRoute>} />
               <Route path="/law-modules" element={<LawModules />} />
-              <Route path="/decoded-justice/dashboard" element={<ProtectedRoute><DecodedJusticeDashboard /></ProtectedRoute>} />
-              <Route path="/decoded-justice/builder" element={<ProtectedRoute><DecodedJusticeBuilder /></ProtectedRoute>} />
-              <Route path="/decoded-justice/packet" element={<ProtectedRoute><DecodedJusticePacket /></ProtectedRoute>} />
+              <Route path="/decoded-justice/dashboard" element={<ProtectedRoute><Navigate to="/dashboard" replace /></ProtectedRoute>} />
+              <Route path="/decoded-justice/builder" element={<ProtectedRoute><Navigate to="/case-builder" replace /></ProtectedRoute>} />
+              <Route path="/decoded-justice/packet" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
               <Route path="/cases" element={<ProtectedRoute><CasesList /></ProtectedRoute>} />
               <Route path="/wa-statutes" element={<DecodedJusticeEmbed />} />
               <Route path="/wa-rights" element={<DecodedJusticeEmbed />} />
