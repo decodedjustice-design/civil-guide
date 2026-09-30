@@ -175,7 +175,7 @@ export function AnalyzerEndSummary({
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
               Each item below is a research lead. Expand it to see why it was flagged, what would need to be established, and what evidence could help.
             </p>
-                <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">The analyzer can preserve these findings in your case workspace so the result is not left as a standalone analysis.</p>
+                
             <div className="mt-6 space-y-4">
               {findings.length ? findings.slice(0, 8).map((f, index) => (
                 <details key={f.id} className="group overflow-hidden rounded-2xl border border-border bg-card">
@@ -375,7 +375,7 @@ export function AnalyzerEndSummary({
           <SectionLabel>Tools, support & safeguards</SectionLabel>
           <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <button type="button" onClick={onAddToCase} className="rounded-2xl border border-border bg-card p-4 text-left transition hover:border-primary/40 hover:shadow-sm">
-              <FolderOpen className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Add to Case Builder</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Turn this analysis into an organized case record.</p>
+              <FolderOpen className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Commit to Workspace</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Turn this analysis into an organized case record.</p>
             </button>
             <a href="/dashboard" className="rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-sm">
               <ListChecks className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Open Case Workspace</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Review timeline, evidence, issues, and requests.</p>
