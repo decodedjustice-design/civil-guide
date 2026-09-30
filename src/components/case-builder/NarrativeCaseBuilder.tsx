@@ -101,9 +101,9 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     if (!activeCaseId) {
       const created = await createCase.mutateAsync({
-        title: "Untitled case",
-        matter_type: "general",
-        jurisdiction: "Washington",
+        name: "Untitled case",
+        case_type: "general",
+        state: "Washington",
       });
       activeCaseId = created.id;
     }
@@ -114,14 +114,14 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     onCaseReady?.(activeCaseId);
 
     const { data: storyNote, error: noteError } = await supabase
-      .from("case_narratives")
-      .select("id,narrative")
+      .from("notes")
+      .select("id,title,content")
       .eq("case_id", activeCaseId)
       .limit(1)
       .maybeSingle();
 
     if (noteError) throw noteError;
-    setStory(storyNote?.narrative ?? "");
+    setStory(storyNote?.content ?? "");
   }, [activeId, caseId, cases, casesLoading, createCase, onCaseReady, selectActiveCase, user]);
 
   useEffect(() => {
@@ -156,8 +156,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     onCaseReady?.(nextCaseId);
 
     const { data: narrative, error: narrativeError } = await supabase
-      .from("case_narratives")
-      .select("narrative")
+      .from("notes")
+      .select("id,title,content")
       .eq("case_id", nextCaseId)
       .limit(1)
       .maybeSingle();
@@ -165,7 +165,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       setError("We couldn't load that case's story. Please try again.");
       return;
     }
-    setStory(narrative?.narrative ?? "");
+    setStory(narrative?.content ?? "");
   }, [cases, onCaseReady, resetBuilderState, selectActiveCase, user]);
 
   const createNewCase = useCallback(async () => {
@@ -174,9 +174,9 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     setError(null);
     try {
       const created = await createCase.mutateAsync({
-        title: "Untitled case",
-        matter_type: "general",
-        jurisdiction: "Washington",
+        name: "Untitled case",
+        case_type: "general",
+        state: "Washington",
       });
       resetBuilderState();
       activeCaseIdRef.current = created.id;
@@ -199,7 +199,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     try {
       const { data: existingNarrative, error: findError } = await supabase
-        .from("case_narratives")
+        .from("notes")
         .select("id")
         .eq("case_id", caseId)
         .limit(1)
@@ -209,23 +209,25 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
       if (existingNarrative) {
         const { error: updateError } = await supabase
-          .from("case_narratives")
-          .update({ narrative: nextStory })
+          .from("notes")
+          .update({ content: nextStory, title: STORY_NOTE_TITLE })
           .eq("id", existingNarrative.id)
           .eq("case_id", caseId);
 
         if (updateError) throw updateError;
       } else {
-        const { error: insertError } = await supabase.from("case_narratives").insert({
+        const { error: insertError } = await supabase.from("notes").insert({
+          user_id: user.id,
           case_id: caseId,
-          narrative: nextStory,
+          title: STORY_NOTE_TITLE,
+          content: nextStory,
         });
 
         if (insertError) throw insertError;
       }
 
       const title = deriveTitle(nextStory);
-      await updateCase.mutateAsync({ id: caseId, title });
+      await updateCase.mutateAsync({ id: caseId, name: title });
 
       setSaveState("saved");
     } catch (err) {
