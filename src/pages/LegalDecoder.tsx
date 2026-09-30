@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import heroImage from "@/assets/hero-analysis.png";
 import legalResearchImage from "@/assets/hero-documents-night.jpg";
 import { sanitizeSafetyLanguage } from "@/legal/applySafetyLanguage";
 
@@ -242,7 +241,6 @@ ${result.questionsForProfessional.map((q, i) => `${i + 1}. ${q}`).join('\n')}
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="" className="w-full h-full object-cover opacity-10" aria-hidden="true" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/55" />
         </div>
 
