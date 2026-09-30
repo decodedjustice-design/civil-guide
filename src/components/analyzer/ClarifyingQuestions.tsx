@@ -63,12 +63,12 @@ export function ClarifyingQuestions({
   }
   
   return (
-    <div className="rounded-2xl bg-muted/30 border border-border p-6">
+    <div className="rounded-2xl bg-card border border-border p-6 shadow-sm">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-            <HelpCircle className="w-4 h-4 text-accent" />
+          <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <HelpCircle className="w-4 h-4 text-primary" />
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium">
@@ -103,13 +103,13 @@ export function ClarifyingQuestions({
           <button
             key={option.id}
             onClick={() => handleAnswer(option.id)}
-            className="w-full p-3 rounded-xl bg-background border border-border hover:border-accent/50 hover:bg-accent/5 text-left transition-all duration-200 group"
+            className="w-full p-4 rounded-xl bg-background border border-border hover:border-primary/50 hover:bg-primary/5 text-left transition-all duration-200 group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">
+              <span className="text-sm sm:text-base font-medium text-foreground group-hover:text-primary transition-colors">
                 {option.label}
               </span>
-              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
             </div>
           </button>
         ))}
