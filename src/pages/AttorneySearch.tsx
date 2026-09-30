@@ -76,7 +76,7 @@ export default function AttorneySearch() {
       if (error) throw error;
 
       if (caseId) {
-        const { error: communicationError } = await supabase.from("communications").insert({
+        const { error: communicationError } = await supabase.from("case_communications").insert({
           case_id: caseId,
           occurred_at: new Date().toISOString(),
           method: "Attorney outreach",
