@@ -64,6 +64,7 @@ interface GenerateInput {
   }>;
   answeredQuestions?: Array<{ questionId: string; answer: string }>;
   maxQuestions?: number;
+  force?: boolean;
 }
 
 interface UseAnalyzerResultsAIReturn {
@@ -80,7 +81,7 @@ export function useAnalyzerResultsAI(): UseAnalyzerResultsAIReturn {
   const [generateError, setGenerateError] = useState<string | null>(null);
 
   const generateResults = useCallback(async (input: GenerateInput): Promise<boolean> => {
-    if (generatedResults && !generateError) return true;
+    if (generatedResults && !generateError && !input.force) return true;
     setIsGenerating(true);
     setGenerateError(null);
     try {
