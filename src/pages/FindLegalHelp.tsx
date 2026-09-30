@@ -23,7 +23,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import { bannerLibrary } from "@/assets/index";
+import { categoryGovernment as helpImage } from "@/assets/index";
 import { Input } from "@/components/ui/input";
 import { AttorneyDirectory } from "@/components/legal/AttorneyDirectory";
 import { LegalResourceCard } from "@/components/legal/LegalResourceCard";
@@ -209,7 +209,7 @@ export default function FindLegalHelp() {
           
           {/* Cinematic hero */}
           <section className="relative overflow-hidden rounded-3xl min-h-[360px] mb-10 border border-border">
-            <img src={bannerLibrary} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <img src={helpImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-espresso/95 via-espresso/80 to-espresso/35" />
             <div className="relative min-h-[360px] flex items-end p-7 sm:p-10 lg:p-12">
               <div className="max-w-3xl text-white">
