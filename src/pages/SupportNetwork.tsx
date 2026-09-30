@@ -31,7 +31,7 @@ import {
   type SystemTag 
 } from "@/data/supportNetworkResources";
 import { cn } from "@/lib/utils";
-import communityImage from "@/assets/category-support-network.jpg";
+import communityImage from "@/assets/category-healthcare.jpg";
 
 /* ── Icon map ── */
 const systemIcons: Record<string, React.ElementType> = {
