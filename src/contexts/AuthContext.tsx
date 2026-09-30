@@ -42,9 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(nextSession?.user ?? null);
 
         if (event === "SIGNED_IN" && nextSession?.user) {
-          const storedRedirect = sessionStorage.getItem("auth_redirect");
+          const storedRedirect = localStorage.getItem("auth_redirect");
           if (storedRedirect?.startsWith("/") && !storedRedirect.startsWith("//")) {
-            sessionStorage.removeItem("auth_redirect");
+            localStorage.removeItem("auth_redirect");
             window.location.replace(storedRedirect);
             return;
           }
