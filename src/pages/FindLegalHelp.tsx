@@ -23,6 +23,7 @@ import {
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
+import { bannerLibrary } from "@/assets/index";
 import { Input } from "@/components/ui/input";
 import { AttorneyDirectory } from "@/components/legal/AttorneyDirectory";
 import { LegalResourceCard } from "@/components/legal/LegalResourceCard";
@@ -206,29 +207,52 @@ export default function FindLegalHelp() {
       <div className="container py-12 lg:py-20">
         <div className="max-w-6xl mx-auto">
           
-          {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Find Legal Help
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Attorneys, legal aid, and official resources — organized and searchable. Take your time.
-            </p>
-          </div>
+          {/* Cinematic hero */}
+          <section className="relative overflow-hidden rounded-3xl min-h-[360px] mb-10 border border-border">
+            <img src={bannerLibrary} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-espresso/95 via-espresso/80 to-espresso/35" />
+            <div className="relative min-h-[360px] flex items-end p-7 sm:p-10 lg:p-12">
+              <div className="max-w-3xl text-white">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-white/55 mb-4">Find support</p>
+                <h1 className="font-serif text-4xl sm:text-5xl font-medium leading-tight mb-4">You don't have to know exactly where to start.</h1>
+                <p className="text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed">
+                  Start with the kind of help you need. Explore legal aid, attorneys, advocacy, or official resources — then prepare only as much as feels useful.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Three starting paths */}
+          <section className="mb-10">
+            <div className="grid md:grid-cols-3 gap-3">
+              {[
+                { icon: Scale, title: "I need an attorney", detail: "Search the Washington civil-rights directory and review referral resources.", href: "#attorneys" },
+                { icon: HandHeart, title: "I need free or lower-cost help", detail: "Browse legal-aid organizations and advocacy resources.", href: "#legal-aid" },
+                { icon: FileSearch, title: "I need to understand first", detail: "Use the Analyzer, Rights Insight, and Case Builder before reaching out.", href: "/analyzer" },
+              ].map((path) => (
+                <Link key={path.title} to={path.href} className="group rounded-2xl border border-border bg-card p-5 hover:border-primary/30 hover:shadow-sm transition-all">
+                  <path.icon className="w-5 h-5 text-primary mb-5" strokeWidth={1.5} />
+                  <h2 className="font-serif text-xl text-foreground group-hover:text-primary transition-colors">{path.title}</h2>
+                  <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{path.detail}</p>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary mt-4 transition-colors" />
+                </Link>
+              ))}
+            </div>
+          </section>
 
           <div className="max-w-3xl mx-auto mb-12">
             <Disclaimer variant="prominent" />
           </div>
 
           <section className="mb-10">
-            <div className="rounded-2xl border border-gold/30 bg-secondary/35 p-6 md:p-8">
+            <div id="pro-se" className="rounded-2xl border border-gold/30 bg-secondary/35 p-6 md:p-8">
               <h2 className="font-serif text-2xl text-foreground mb-2">Couldn’t Find an Attorney?</h2>
               <p className="text-muted-foreground mb-5">
                 Access structured tools to organize your situation and understand next steps.
               </p>
               <Button asChild>
-                <Link to="/pro-se-toolkit">
-                  Open Pro Se Case Toolkit
+                <Link to="/case-builder">
+                  Build your case record first
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
@@ -236,7 +260,7 @@ export default function FindLegalHelp() {
           </section>
 
           {/* ── Attorney Directory Card ── */}
-          <section className="mb-10">
+          <section id="attorneys" className="mb-10">
             <div className="rounded-2xl bg-card border border-border overflow-hidden">
               <div className="flex items-center gap-4 px-6 py-5 border-b border-border/50">
                 <div className="w-11 h-11 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
@@ -254,7 +278,7 @@ export default function FindLegalHelp() {
           </section>
 
           {/* ── Legal Aid & Advocacy Cards ── */}
-          <section className="mb-10">
+          <section id="legal-aid" className="mb-10">
             <div className="flex items-center gap-4 mb-5">
               <div className="w-11 h-11 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
                 <Heart className="w-5 h-5 text-accent" />
