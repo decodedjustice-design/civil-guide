@@ -129,6 +129,8 @@ export default function FoundersStory() {
             Decoded Justice was not born in a boardroom. It was built in the middle of a life that kept colliding with systems I had never been taught to navigate—and in the realization that I should not have had to become an accidental expert just to understand what was happening to my family.
           </p>
 
+          <Timeline items={timelineItems} />
+
           <Section label="The Beginning" title="I Didn't Set Out to Build This." style={{ animationDelay: "0.15s" }}>
             <p className={styles.bodyParagraph}>
               I was trying to survive systems I didn't understand.
@@ -470,17 +472,41 @@ export default function FoundersStory() {
               What needs to happen next?
             </p>
             <p className={styles.bodyParagraph}>
-              The platform brings those pieces together through case organization, timelines, evidence and exhibits, issues, people and organizations, communications, records requests, legal education, guided analysis, and preparation tools.
+              The platform now brings those pieces together through a narrative-first Case Builder, a canonical case record, timelines, evidence and exhibits, issues, people and organizations, communications, records requests and record gaps, legal research and education, guided analysis, case packets, and export tools.
             </p>
             <p className={styles.bodyParagraph}>
-              It does not replace an attorney, a court, an agency, or an advocate. It does not decide who is right.
+              The goal is not to turn a person's story into an automated legal conclusion. The goal is to turn a story into an organized record that can be examined, verified, corrected, and used to prepare for the next step.
+            </p>
+            <p className={styles.bodyParagraph}>
+              Decoded Justice is designed to keep the original narrative intact while separating documented facts, allegations, questions, missing information, and research leads. When the system identifies something that may need review, it is presented as something to investigate—not silently converted into a fact.
+            </p>
+            <p className={styles.bodyParagraph}>
+              It does not replace an attorney, a court, an agency, or an advocate. It does not decide who is right. It helps people build the information those professionals and institutions need to work from.
             </p>
             <p className={styles.bodyParagraph}>
               It helps people prepare the information they need to understand their situation and take their next step.
             </p>
           </Section>
 
-          <Section label="The Philosophy" title="Don't Manufacture Certainty. Build the Record." style={{ animationDelay: "0.69s" }}>
+          <Section label="What It Became" title="A Story Becomes a Record. A Record Becomes a Roadmap." style={{ animationDelay: "0.67s" }}>
+            <p className={styles.bodyParagraph}>
+              The original idea was simple: give a person somewhere to start when everything feels scattered.
+            </p>
+            <p className={styles.bodyParagraph}>
+              That idea has grown into a case workspace where the story can remain the starting point while the surrounding record is built piece by piece.
+            </p>
+            <p className={styles.bodyParagraph}>
+              A person can move from narrative to timeline, from timeline to evidence, from evidence to issues and communications, from missing information to records requests, and from research questions to a prepared packet or export.
+            </p>
+            <p className={styles.bodyParagraph}>
+              The system is intentionally designed so that uncertainty remains visible. A missing record can stay a missing record. A disputed statement can stay disputed. A research question can remain a research question until the underlying source is checked.
+            </p>
+            <p className={styles.italicBlock}>
+              The objective is not to manufacture certainty. It is to make the path to verified information easier to see.
+            </p>
+          </Section>
+
+          <Section label="The Philosophy" title="Don't Manufacture Certainty. Build the Record." style={{ animationDelay: "0.70s" }}>
             <p className={styles.bodyParagraph}>
               My experiences taught me something I want built into the foundation of Decoded Justice:
             </p>
@@ -507,7 +533,7 @@ export default function FoundersStory() {
             </p>
           </Section>
 
-          <Section label="Why It Exists" title="I Don't Want the Next Person to Have to Learn This the Hard Way." style={{ animationDelay: "0.74s" }}>
+          <Section label="Why It Exists" title="I Don't Want the Next Person to Have to Learn This the Hard Way." style={{ animationDelay: "0.76s" }}>
             <p className={styles.bodyParagraph}>
               I became relentless because I had to.
             </p>
@@ -531,7 +557,7 @@ export default function FoundersStory() {
             </p>
           </Section>
 
-          <Section label="The Person Behind It" title="This Is the Work I Wish Someone Had Done for Me." style={{ animationDelay: "0.79s" }}>
+          <Section label="The Person Behind It" title="This Is the Work I Wish Someone Had Done for Me." style={{ animationDelay: "0.81s" }}>
             <p className={styles.bodyParagraph}>
               Decoded Justice is deeply personal to me, but it is not meant to be a monument to my own experiences.
             </p>
@@ -564,7 +590,7 @@ export default function FoundersStory() {
             </p>
           </Section>
 
-          <Closing style={{ animationDelay: "0.84s" }} />
+          <Closing style={{ animationDelay: "0.86s" }} />
         </main>
       </article>
     </Layout>
