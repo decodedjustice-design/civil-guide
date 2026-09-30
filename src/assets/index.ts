@@ -43,6 +43,9 @@ export const categoryImages: Record<string, string> = {
 };
 
 export {
+  // Categories used by page banners
+  categoryGovernment,
+  categoryCourts,
   // Tools
   toolIntakePacket,
   toolLegalResearch,
