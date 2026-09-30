@@ -2123,8 +2123,24 @@ export default function Analyzer() {
                   systemLabel: systemInfo.label,
                   patternStrength: analysis?.strength || 'none',
                   location: 'Washington State',
+                  answeredQuestions: Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer })),
+                  force: true,
                 });
               }
+            }}
+            onClarifyingAnswer={(questionId, answer) => {
+              const systemInfo = systemCategories.find(s => s.id === selectedSystem);
+              if (!systemInfo) return;
+              const updatedAnswers = { ...answers, [questionId]: answer };
+              setAnswers(updatedAnswers);
+              generateAIResults({
+                systemId: selectedSystem,
+                systemLabel: systemInfo.label,
+                patternStrength: analysis?.strength || 'none',
+                location: 'Washington State',
+                answeredQuestions: Object.entries(updatedAnswers).map(([id, value]) => ({ questionId: id, answer: value })),
+                force: true,
+              });
             }}
           />
           
