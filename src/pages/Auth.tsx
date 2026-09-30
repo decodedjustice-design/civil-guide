@@ -41,9 +41,9 @@ export default function Auth() {
   useEffect(() => {
     if (!loading && user) {
       // Check for a stored redirect (from OAuth flow)
-      const storedRedirect = sessionStorage.getItem("auth_redirect");
+      const storedRedirect = localStorage.getItem("auth_redirect");
       if (storedRedirect) {
-        sessionStorage.removeItem("auth_redirect");
+        localStorage.removeItem("auth_redirect");
         navigate(getValidatedRedirect(storedRedirect), { replace: true });
       } else {
         navigate(redirectTo, { replace: true });
@@ -104,7 +104,7 @@ export default function Auth() {
     try {
       // Store redirect target before OAuth navigates away, and carry it in the
       // return URL so the user lands back on the page they came from.
-      sessionStorage.setItem("auth_redirect", redirectTo);
+      localStorage.setItem("auth_redirect", redirectTo);
       const { error } = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: `${window.location.origin}/auth/callback`,
       });
