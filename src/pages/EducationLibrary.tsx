@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight, BookOpen, Bookmark, BookmarkCheck, CheckCircle2, ChevronRight,
   Clock, FileText, Gavel, GraduationCap, Home, LibraryBig, Search, Shield,
-  Scale, Settings2, Users, Accessibility, Landmark
+  Scale, Settings2, Users, Accessibility, Landmark, Car, Megaphone, Lock, Stethoscope, Building2
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducationLibrary";
+import { libraryCategories } from "@/data/legalEducationLibrary";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -71,7 +71,7 @@ function getRecent(): string[] {
   try { return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]"); } catch { return []; }
 }
 
-function TopicCard({ topic, category, saved, onSave }: { topic: Topic; category?: LibraryCategoryCard; saved: boolean; onSave?: () => void }) {
+function TopicCard({ topic, saved, onSave }: { topic: Topic; saved: boolean; onSave?: () => void }) {
   const Icon = topic.icon;
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm">
@@ -171,8 +171,7 @@ export default function EducationLibrary() {
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredTopics.map((topic) => {
-                const category = libraryCategories.find((c) => c.guideId === topic.guideId);
-                return <TopicCard key={topic.guideId} topic={topic} category={category} saved={saved.has(topic.guideId)} onSave={user ? () => toggleSave(topic.guideId, topic.title) : undefined} />;
+                return <TopicCard key={topic.guideId} topic={topic} saved={saved.has(topic.guideId)} onSave={user ? () => toggleSave(topic.guideId, topic.title) : undefined} />;
               })}
             </div>
             {!filteredTopics.length && <div className="rounded-2xl border border-dashed border-border py-14 text-center text-sm text-muted-foreground">No topic matches “{query}”. Try a broader phrase or start with a problem below.</div>}
