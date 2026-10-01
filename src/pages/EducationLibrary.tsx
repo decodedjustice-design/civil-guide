@@ -36,6 +36,11 @@ const topics: Topic[] = [
   { title: "Disability & Access", description: "Disability rights, accommodations, accessibility, and discrimination.", icon: Accessibility, guideId: "disability-full-guide", subtopics: ["ADA", "Section 504", "Accommodations", "Accessibility"] },
   { title: "Courts & Legal Process", description: "Hearings, filings, procedure, appeals, and understanding court documents.", icon: Gavel, guideId: "courts-full-guide", subtopics: ["Hearings", "Filings", "Appeals", "Court terminology"] },
   { title: "Benefits & Education", description: "Public benefits, Social Security, education records, attendance, and student rights.", icon: GraduationCap, guideId: "education-full-guide", subtopics: ["Benefits", "Social Security", "Education records", "Special education"] },
+  { title: "Traffic & Transportation", description: "Traffic stops, citations, vehicle searches, and transportation-related rights.", icon: Car, guideId: "traffic-stops-full-guide", subtopics: ["Traffic stops", "Citations", "Searches", "Vehicle records"] },
+  { title: "Speech & Protest", description: "First Amendment principles, public demonstrations, recording, and expressive activity.", icon: Megaphone, guideId: "protest-full-guide", subtopics: ["First Amendment", "Demonstrations", "Recording", "Public spaces"] },
+  { title: "Jail & Detention", description: "Rights during incarceration, grievances, medical care, and oversight.", icon: Lock, guideId: "incarceration-full-guide", subtopics: ["Conditions", "Medical care", "Grievances", "Oversight"] },
+  { title: "Healthcare & Patient Rights", description: "Medical records, privacy, informed consent, access, and complaints.", icon: Stethoscope, guideId: "healthcare-full-guide", subtopics: ["Medical records", "Privacy", "Consent", "Complaints"] },
+  { title: "Government Programs & Benefits", description: "Agency decisions, public assistance, notices, eligibility, and appeals.", icon: Building2, guideId: "government-full-guide", subtopics: ["Benefits", "Eligibility", "Notices", "Appeals"] },
 ];
 
 const problems: Problem[] = [
