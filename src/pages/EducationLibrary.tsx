@@ -1,529 +1,279 @@
-import { useState, useEffect, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { BookOpen, ArrowRight, Search, ChevronRight, Bookmark, Clock, Star, BookmarkCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight, BookOpen, Bookmark, BookmarkCheck, CheckCircle2, ChevronRight,
+  Clock, FileText, Gavel, GraduationCap, Home, LibraryBig, Search, Shield,
+  Scale, Settings2, Users, Accessibility, Landmark
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducationLibrary";
-import { additionalEducationalGuides } from "@/data/educationFullGuides";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
 
-/* ─── Recently Viewed (localStorage) ─── */
 const RECENTLY_VIEWED_KEY = "dj_recently_viewed_guides";
-const MAX_RECENT = 10;
 
-function getRecentlyViewed(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]");
-  } catch {
-    return [];
-  }
+type Topic = {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  guideId: string;
+  subtopics: string[];
+};
+
+type Problem = {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+};
+
+const topics: Topic[] = [
+  { title: "Housing & Stability", description: "Housing rights, vouchers, accommodations, notices, and housing programs.", icon: Home, guideId: "housing-full-guide", subtopics: ["Eviction & termination", "Accommodation", "Discrimination", "Vouchers & public housing"] },
+  { title: "Family & Child Welfare", description: "CPS, dependency, caregiver rights, investigations, placement, and records.", icon: Users, guideId: "cps-dcyf-full-guide", subtopics: ["CPS / DCYF", "Dependency", "Caregiver rights", "Placement & court"] },
+  { title: "Rights & Government", description: "Police encounters, public records, government decisions, and oversight.", icon: Shield, guideId: "police-full-guide", subtopics: ["Police encounters", "Public records", "Government decisions", "Oversight"] },
+  { title: "Disability & Access", description: "Disability rights, accommodations, accessibility, and discrimination.", icon: Accessibility, guideId: "disability-full-guide", subtopics: ["ADA", "Section 504", "Accommodations", "Accessibility"] },
+  { title: "Courts & Legal Process", description: "Hearings, filings, procedure, appeals, and understanding court documents.", icon: Gavel, guideId: "courts-full-guide", subtopics: ["Hearings", "Filings", "Appeals", "Court terminology"] },
+  { title: "Benefits & Education", description: "Public benefits, Social Security, education records, attendance, and student rights.", icon: GraduationCap, guideId: "education-full-guide", subtopics: ["Benefits", "Social Security", "Education records", "Special education"] },
+];
+
+const problems: Problem[] = [
+  { title: "I received a notice", description: "Understand what the document says, what it may require, and what to preserve.", icon: FileText },
+  { title: "Someone made a decision about me", description: "Learn how decisions, notices, reviews, and appeals may work.", icon: Landmark },
+  { title: "I need records", description: "Identify records that may exist and organize a request for them.", icon: LibraryBig },
+  { title: "A government agency is investigating me", description: "Understand the process, participants, and records that may matter.", icon: Shield },
+  { title: "I need an accommodation", description: "Learn how disability-access and accommodation processes work.", icon: Accessibility },
+  { title: "I'm going to court", description: "Understand hearings, filings, procedure, and important terminology.", icon: Gavel },
+  { title: "I need to appeal", description: "Start by identifying the decision, notice, review path, and applicable deadline.", icon: ArrowRight },
+  { title: "I want to understand the law", description: "Move from plain-language guidance to statutes, regulations, and official sources.", icon: Scale },
+];
+
+const authorityTypes = [
+  ["Statutes", "Primary authority", Scale],
+  ["Regulations", "Primary authority", Settings2],
+  ["Court decisions", "Primary authority", Gavel],
+  ["Agency rules", "Official authority", Landmark],
+  ["Official guidance", "Official authority", FileText],
+  ["Research guides", "Secondary authority", BookOpen],
+] as const;
+
+const tools = [
+  ["Case Builder", "Turn what happened into an organized case record.", "/case-builder"],
+  ["Timeline", "Build a chronological record of events and communications.", "/cases"],
+  ["Evidence & Exhibits", "Organize documents and evidence mentioned in your story.", "/cases"],
+  ["Record Requests", "Track requests, productions, gaps, and follow-up.", "/cases"],
+  ["Legal Templates", "Use structured templates for common legal and administrative tasks.", "/templates"],
+  ["Find Legal Help", "Locate legal-aid, self-help, and referral resources.", "/find-help"],
+];
+
+function getRecent(): string[] {
+  try { return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]"); } catch { return []; }
 }
 
-/* ─── Recommended guides (static logic based on popular topics) ─── */
-const authorityResources: Record<string, { label: string; type: string; url: string }[]> = {
-  police: [
-    { label: "Washington Constitution, Article I §7", type: "State Constitution", url: "https://app.leg.wa.gov/const/default.aspx?cite=1%20-%207" },
-    { label: "U.S. Constitution — Fourth Amendment", type: "Federal law", url: "https://constitution.congress.gov/constitution/amendment-4/" },
-    { label: "42 U.S.C. § 1983", type: "Federal civil-rights law", url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title42-section1983" },
-    { label: "Washington CJTC", type: "State agency / training", url: "https://cjtc.wa.gov/" },
-  ],
-  traffic: [
-    { label: "RCW Title 46 — Motor Vehicles", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=46" },
-    { label: "Washington Constitution, Article I §7", type: "State Constitution", url: "https://app.leg.wa.gov/const/default.aspx?cite=1%20-%207" },
-    { label: "U.S. Constitution — Fourth Amendment", type: "Federal law", url: "https://constitution.congress.gov/constitution/amendment-4/" },
-    { label: "Washington State Patrol", type: "State agency", url: "https://wsp.wa.gov/" },
-  ],
-  housing: [
-    { label: "RCW 59.18 — Residential Landlord-Tenant Act", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=59.18" },
-    { label: "RCW 49.60 — Law Against Discrimination", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60" },
-    { label: "Fair Housing Act", type: "Federal law", url: "https://www.hud.gov/fair-housing" },
-    { label: "HUD laws & regulations", type: "Federal agency", url: "https://www.hud.gov/laws-and-regulations" },
-  ],
-  disability: [
-    { label: "RCW 49.60 — Law Against Discrimination", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=49.60" },
-    { label: "Americans with Disabilities Act", type: "Federal law", url: "https://www.ada.gov/law-and-regs/" },
-    { label: "Section 504", type: "Federal law", url: "https://www.hhs.gov/civil-rights/for-individuals/disability/index.html" },
-  ],
-  public_records: [
-    { label: "RCW 42.56 — Public Records Act", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=42.56" },
-    { label: "Washington Attorney General — Public Records", type: "State guidance", url: "https://www.atg.wa.gov/public-records-act" },
-  ],
-  education: [
-    { label: "RCW Title 28A — Common Schools", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=28A" },
-    { label: "RCW 28A.225 — Attendance", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=28A.225" },
-    { label: "FERPA — 34 CFR Part 99", type: "Federal law", url: "https://www.ecfr.gov/current/title-34/subtitle-A/part-99" },
-    { label: "IDEA", type: "Federal law", url: "https://sites.ed.gov/idea/" },
-  ],
-  benefits: [
-    { label: "RCW Title 74 — Public Assistance", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=74" },
-    { label: "Social Security Act", type: "Federal law", url: "https://www.ssa.gov/OP_Home/ssact/ssact.htm" },
-  ],
-  cps_dcyf: [
-    { label: "DCYF Child Welfare Policies & Procedures", type: "Agency policy manual", url: "https://www.dcyf.wa.gov/practices-and-procedures" },
-    { label: "DCYF Policy, Laws & Rules", type: "Agency policy hub", url: "https://dcyf.wa.gov/practice/policy-laws-rules" },
-    { label: "Chapter 13.34 RCW — Dependency", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=13.34" },
-    { label: "Chapter 26.44 RCW — Abuse of Children", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=26.44" },
-    { label: "Chapter 74.13 RCW — Child Welfare Services", type: "Washington law", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=74.13" },
-    { label: "Chapter 110-30 WAC — CPS", type: "Washington administrative rule", url: "https://app.leg.wa.gov/WAC/default.aspx?cite=110-30" },
-    { label: "Federal child-welfare laws", type: "Federal law", url: "https://www.acf.hhs.gov/cb/laws-policies" },
-  ],
-};
-
-const practicalKnowledge: Record<string, { mustKnow: string[]; records: string[]; programs: { label: string; url: string }[] }> = {
-  police: {
-    mustKnow: [
-      "An encounter can involve consensual contact, detention, search, arrest, or questioning, and the rules differ.",
-      "Important facts include why the encounter began, how long it lasted, whether consent was requested or given, the basis for a search, force used, and what officers knew at the time.",
-      "Afterward, preserve CAD/dispatch, body-camera footage, reports, citations, photographs, medical records, and witness information."
-    ],
-    records: ["CAD/dispatch logs", "Body-worn camera/video", "Officer reports", "Use-of-force records", "911 recordings", "Witness information"],
-    programs: []
-  },
-  traffic: {
-    mustKnow: [
-      "Washington has a Blue Envelope Program for qualified people with disabilities or conditions that may affect traffic-stop interactions.",
-      "The Blue Envelope is available at no cost through Washington driver licensing offices and contains safety and communication information plus space for vehicle documents.",
-      "Keep the citation, CAD/dispatch, dash/body-camera video, officer report, photographs, and witness evidence."
-    ],
-    records: ["Citation/infraction", "CAD/dispatch", "Dash/body-camera video", "Officer report", "Vehicle records", "Witness/video evidence"],
-    programs: [{ label: "Blue Envelope Program — RCW 46.19.090", url: "https://app.leg.wa.gov/RCW/default.aspx?cite=46.19.090" }]
-  },
-  housing: {
-    mustKnow: [
-      "Washington landlord-tenant rules can overlap with local protections and federal fair-housing law.",
-      "An eviction notice is not itself a court judgment; deadlines and local procedures matter.",
-      "Disability accommodation and discrimination issues can involve both Washington and federal law."
-    ],
-    records: ["Lease/addenda", "Notices", "Rent ledger", "Repair records", "Accommodation correspondence", "Inspection photographs", "Court filings"],
-    programs: []
-  },
-  disability: {
-    mustKnow: [
-      "Disability rights may arise under Washington law, the ADA, Section 504, and program-specific rules.",
-      "Document the disability-related barrier, requested accommodation, response, and any denial.",
-      "Keep relevant policies, requests, responses, supporting records, and appeals."
-    ],
-    records: ["Accommodation request", "Entity response", "Relevant policy", "Supporting documentation", "Denial/appeal", "Communications"],
-    programs: []
-  },
-  public_records: {
-    mustKnow: [
-      "A public-records request seeks existing agency records; it is different from asking an agency to create a new record or answer a legal question.",
-      "Keep the request, acknowledgement, estimated completion dates, productions, redactions, exemptions, and correspondence.",
-      "Describe records by category, date range, custodian, record type, and identifiers when possible."
-    ],
-    records: ["Original request", "Acknowledgement", "Production log", "Produced records", "Withholding/redaction explanation", "Extensions"],
-    programs: []
-  },
-  education: {
-    mustKnow: [
-      "School issues can involve Washington law, district policy, FERPA, IDEA, Section 504, and the ADA depending on the facts.",
-      "Distinguish education, discipline, special-education, and health records because different rules can apply.",
-      "Keep written requests, responses, meeting notices, evaluations, IEP/504 records, attendance, discipline, and complaints."
-    ],
-    records: ["Education records", "IEP/504", "Evaluations", "Attendance", "Discipline", "Meeting records", "District correspondence"],
-    programs: []
-  },
-  benefits: {
-    mustKnow: [
-      "Benefits decisions are usually governed by program-specific statutes, regulations, agency manuals, notices, and appeal procedures.",
-      "Keep applications, verification documents, notices, caseworker communications, payment history, and appeal deadlines.",
-      "When a decision matters, obtain the written decision and the rule or policy relied upon."
-    ],
-    records: ["Application", "Eligibility notices", "Case notes", "Verification", "Payment history", "Appeal request", "Hearing documents"],
-    programs: []
-  },
-  cps_dcyf: {
-    mustKnow: [
-      "DCYF policy does not replace statutes or court orders, but applicable agency policies govern employee procedures.",
-      "The current DCYF library covers intake, CPS, risk assessment, health and safety visits, case plans, reasonable efforts, documentation, placement moves, and dependency petitions.",
-      "Policy 6600 addresses documentation of case communications, events, and activities in FamLink.",
-      "For a disputed event, compare the timeline against the applicable policy, RCW/WAC, court order, and underlying records."
-    ],
-    records: ["Intake", "Safety/risk assessments", "FamLink documentation", "Health and safety visits", "Placement records", "Court filings/orders", "Service referrals", "Written notices"],
-    programs: []
-  }
-};
-
-const recommendedIds = ["housing-full-guide", "police-full-guide", "cps-dcyf-full-guide", "education-full-guide", "disability-full-guide", "traffic-stops-full-guide"];
-
-/* ─── Category Card ─── */
-function CategoryCard({ category, index, isSaved, onToggleSave }: {
-  category: LibraryCategoryCard;
-  index: number;
-  isSaved?: boolean;
-  onToggleSave?: () => void;
-}) {
-  const Icon = category.icon;
-
+function TopicCard({ topic, category, saved, onSave }: { topic: Topic; category?: LibraryCategoryCard; saved: boolean; onSave?: () => void }) {
+  const Icon = topic.icon;
   return (
-    <article
-      style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
-      className="group relative rounded-2xl border border-border bg-card overflow-hidden animate-fade-in transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm"
-    >
-      {onToggleSave && (
-        <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleSave(); }}
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all"
-          title={isSaved ? "Remove from saved" : "Save guide"}
-          aria-label={isSaved ? `Remove ${category.title} from saved guides` : `Save ${category.title}`}
-        >
-          {isSaved ? <BookmarkCheck className="w-4 h-4 text-primary" /> : <Bookmark className="w-4 h-4 text-muted-foreground" />}
+    <article className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm">
+      {onSave && (
+        <button onClick={(e) => { e.preventDefault(); onSave(); }} aria-label={saved ? `Remove ${topic.title} from saved` : `Save ${topic.title}`} className="absolute right-4 top-4 z-10 rounded-lg border border-border bg-card p-2 text-muted-foreground hover:text-primary">
+          {saved ? <BookmarkCheck className="h-4 w-4 text-primary" /> : <Bookmark className="h-4 w-4" />}
         </button>
       )}
-
-      <Link
-        to={`/guide/${category.guideId}`}
-        className="flex items-center gap-5 p-5 sm:p-6 pr-16 min-h-[150px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-      >
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
-          <Icon className="w-6 h-6 text-primary" />
+      <Link to={`/guide/${topic.guideId}`} className="block p-6 pr-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-primary/15 bg-primary/10">
+          <Icon className="h-5 w-5 text-primary" />
         </div>
-
-        <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">
-            {category.title}
-          </h3>
-          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-            {category.subtitle}
-          </p>
-          <div className="flex flex-wrap gap-1.5 mt-3">
-            {category.quickFacts.slice(0, 3).map((fact, i) => {
-              const shortFact = fact.length > 28 ? fact.slice(0, 27).replace(/[,.;:!?]?s+S*$/, "") + "…" : fact;
-              return (
-                <span key={i} className="rounded-full bg-secondary/70 border border-border px-2.5 py-1 text-[10px] text-muted-foreground">
-                  {shortFact}
-                </span>
-              );
-            })}
-          </div>
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Explore topic</p>
+        <h3 className="text-xl font-semibold tracking-tight text-foreground group-hover:text-primary">{topic.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{topic.description}</p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          {topic.subtopics.map((item) => <span key={item} className="rounded-full border border-border bg-secondary/40 px-2.5 py-1 text-[10px] text-muted-foreground">{item}</span>)}
         </div>
-
-        <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+        <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary">Explore <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></span>
       </Link>
     </article>
   );
 }
-/* ─── Empty state ─── */
-function EmptyState({ icon: Icon, title, description, actionLabel, actionHref }: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  actionLabel?: string;
-  actionHref?: string;
-}) {
-  return (
-    <div className="text-center py-16">
-      <Icon className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4" />
-      <h3 className="text-lg font-medium text-foreground mb-1">{title}</h3>
-      <p className="text-sm text-muted-foreground mb-4">{description}</p>
-      {actionLabel && actionHref && (
-        <Button variant="soft" size="sm" asChild>
-          <Link to={actionHref}>{actionLabel}</Link>
-        </Button>
-      )}
-    </div>
-  );
-}
 
 export default function EducationLibrary() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get("tab") || "all";
-  const [activeTab, setActiveTab] = useState(initialTab);
-  const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
-
-  // Saved guide IDs from DB
-  const [savedGuideIds, setSavedGuideIds] = useState<Set<string>>(new Set());
-  const [savedLoaded, setSavedLoaded] = useState(false);
-
-  // Recently viewed
-  const [recentIds] = useState(() => getRecentlyViewed());
+  const [query, setQuery] = useState("");
+  const [saved, setSaved] = useState<Set<string>>(new Set());
+  const [recentIds] = useState<string[]>(getRecent);
 
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from("justice_place_bookmarks")
-      .select("resource_id")
-      .eq("user_id", user.id)
-      .eq("resource_type", "guide")
-      .then(({ data }) => {
-        setSavedGuideIds(new Set((data || []).map((d) => d.resource_id)));
-        setSavedLoaded(true);
-      });
+    supabase.from("justice_place_bookmarks").select("resource_id").eq("user_id", user.id).eq("resource_type", "guide")
+      .then(({ data }) => setSaved(new Set((data || []).map((row) => row.resource_id))));
   }, [user]);
-
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    if (tab === "all") {
-      searchParams.delete("tab");
-    } else {
-      searchParams.set("tab", tab);
-    }
-    setSearchParams(searchParams, { replace: true });
-  };
 
   const toggleSave = async (guideId: string, title: string) => {
     if (!user) return;
-    const newSet = new Set(savedGuideIds);
-    if (newSet.has(guideId)) {
-      newSet.delete(guideId);
-      setSavedGuideIds(newSet);
-      await supabase
-        .from("justice_place_bookmarks")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("resource_type", "guide")
-        .eq("resource_id", guideId);
+    const next = new Set(saved);
+    if (next.has(guideId)) {
+      next.delete(guideId);
+      setSaved(next);
+      await supabase.from("justice_place_bookmarks").delete().eq("user_id", user.id).eq("resource_type", "guide").eq("resource_id", guideId);
     } else {
-      newSet.add(guideId);
-      setSavedGuideIds(newSet);
-      await supabase.from("justice_place_bookmarks").insert({
-        user_id: user.id,
-        resource_type: "guide",
-        resource_id: guideId,
-        resource_title: title,
-        resource_url: `/guide/${guideId}`,
-      });
+      next.add(guideId);
+      setSaved(next);
+      await supabase.from("justice_place_bookmarks").insert({ user_id: user.id, resource_type: "guide", resource_id: guideId, resource_title: title, resource_url: `/guide/${guideId}` });
     }
   };
 
-  // Filtered categories for search
-  const allFiltered = useMemo(() => {
-    return libraryCategories.filter((cat) => {
-      if (!searchQuery) return true;
-      const q = searchQuery.toLowerCase();
-      return (
-        cat.title.toLowerCase().includes(q) ||
-        cat.subtitle.toLowerCase().includes(q) ||
-        cat.quickFacts.some((f) => f.toLowerCase().includes(q))
-      );
-    });
-  }, [searchQuery]);
+  const filteredTopics = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return topics;
+    return topics.filter((topic) => [topic.title, topic.description, ...topic.subtopics].join(" ").toLowerCase().includes(q));
+  }, [query]);
 
-  const savedCategories = libraryCategories.filter((c) => savedGuideIds.has(c.guideId));
-  const recentCategories = recentIds
-    .map((id) => libraryCategories.find((c) => c.guideId === id))
-    .filter(Boolean) as LibraryCategoryCard[];
-  const recommendedCategories = libraryCategories.filter((c) => recommendedIds.includes(c.guideId));
+  const recentCategories = recentIds.map((id) => libraryCategories.find((c) => c.guideId === id)).filter(Boolean) as LibraryCategoryCard[];
 
   return (
     <Layout>
-      {/* Hero */}
-      <div className="container pt-12 lg:pt-16 pb-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
-            <BookOpen className="w-4 h-4" />
-            <span>Legal Education Library</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Know Your Rights
-          </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Start with the system you're dealing with. Learn the basics, find the records that matter, and follow the rules to their source.
-          </p>
-        </div>
-      </div>
-
-      <div className="container pb-16">
-        {/* Orientation */}
-        <div className="max-w-4xl mx-auto mb-10">
-          <div className="grid grid-cols-3 rounded-2xl border border-border bg-card overflow-hidden">
-            {[
-              ["1", "Choose a topic"],
-              ["2", "Learn the basics"],
-              ["3", "Build your record"],
-            ].map(([number, label], i) => (
-              <div key={number} className={`px-3 py-4 sm:px-5 text-center ${i < 2 ? "border-r border-border" : ""}`}>
-                <span className="inline-flex w-6 h-6 items-center justify-center rounded-full bg-primary/10 text-primary text-[10px] font-semibold mb-2">{number}</span>
-                <p className="text-xs sm:text-sm font-medium text-foreground">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick path */}
-        <div className="max-w-6xl mx-auto mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 rounded-2xl border border-primary/15 bg-primary/5">
-            <div>
-              <p className="text-sm font-semibold text-foreground">Not sure which guide fits?</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Start with what happened — the Analyzer can help you sort the situation.</p>
-            </div>
-            <Button variant="soft" size="sm" asChild className="shrink-0">
-              <Link to="/analyzer">Help me find a starting point <ArrowRight className="w-4 h-4" /></Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="max-w-6xl mx-auto">
-          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <TabsList className="h-auto p-1 bg-secondary/50 border border-border rounded-xl w-full sm:w-auto">
-                <TabsTrigger value="all" className="rounded-lg py-2 px-4 text-sm data-[state=active]:bg-card data-[state=active]:shadow-sm gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5" />
-                  All Guides
-                </TabsTrigger>
-                <TabsTrigger value="saved" className="rounded-lg py-2 px-4 text-sm data-[state=active]:bg-card data-[state=active]:shadow-sm gap-1.5">
-                  <Bookmark className="w-3.5 h-3.5" />
-                  Saved
-                  {savedGuideIds.size > 0 && (
-                    <span className="ml-1 text-[10px] bg-primary/15 text-primary rounded-full px-1.5 py-0.5 font-medium">
-                      {savedGuideIds.size}
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="recent" className="rounded-lg py-2 px-4 text-sm data-[state=active]:bg-card data-[state=active]:shadow-sm gap-1.5">
-                  <Clock className="w-3.5 h-3.5" />
-                  Recent
-                </TabsTrigger>
-                <TabsTrigger value="recommended" className="rounded-lg py-2 px-4 text-sm data-[state=active]:bg-card data-[state=active]:shadow-sm gap-1.5">
-                  <Star className="w-3.5 h-3.5" />
-                  Recommended
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Search — only on All tab */}
-              {activeTab === "all" && (
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search topics..."
-                    className="w-full h-10 pl-10 pr-4 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
-                  />
+      <main className="bg-background">
+        <section className="border-b border-border bg-card">
+          <div className="container py-12 lg:py-16">
+            <div className="mx-auto max-w-5xl">
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">Knowledge Center</p>
+              <div className="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:items-end">
+                <div>
+                  <h1 className="font-serif text-4xl leading-tight tracking-tight text-foreground md:text-5xl">Legal knowledge, decoded.</h1>
+                  <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">Understand the system. Find the authority. Know what to look for.</p>
                 </div>
-              )}
-            </div>
-
-            {/* All Guides */}
-            <TabsContent value="all">
-              <div className="mb-5 flex items-center gap-3">
-                <span className="text-[10px] uppercase tracking-[0.18em] font-semibold text-muted-foreground">Knowledge map</span>
-                <span className="h-px flex-1 bg-border" />
-                <span className="text-[10px] text-muted-foreground">Choose the system closest to your situation</span>
+                <div>
+                  <label htmlFor="knowledge-search" className="sr-only">What are you trying to understand?</label>
+                  <div className="flex h-14 items-center rounded-xl border border-border bg-background px-4 shadow-sm focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10">
+                    <Search className="mr-3 h-5 w-5 shrink-0 text-muted-foreground" />
+                    <input id="knowledge-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="What are you trying to understand?" className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground" />
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {["Notice", "Records", "Appeals", "Accommodation", "Investigations"].map((item) => (
+                      <button key={item} onClick={() => setQuery(item)} className="rounded-full border border-border px-3 py-1.5 text-[11px] text-muted-foreground transition hover:border-primary/30 hover:text-primary">{item}</button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {allFiltered.map((category, i) => (
-                  <CategoryCard
-                    key={category.id}
-                    category={category}
-                    index={i}
-                    isSaved={savedGuideIds.has(category.guideId)}
-                    onToggleSave={user ? () => toggleSave(category.guideId, category.title) : undefined}
-                  />
+            </div>
+          </div>
+        </section>
+
+        <section className="container py-12 lg:py-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-7 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Explore</p>
+                <h2 className="mt-2 font-serif text-3xl text-foreground">Start with a legal topic</h2>
+                <p className="mt-2 text-sm text-muted-foreground">Choose the system closest to your situation.</p>
+              </div>
+              <span className="hidden text-xs text-muted-foreground sm:block">{filteredTopics.length} topic areas</span>
+            </div>
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {filteredTopics.map((topic) => {
+                const category = libraryCategories.find((c) => c.guideId === topic.guideId);
+                return <TopicCard key={topic.guideId} topic={topic} category={category} saved={saved.has(topic.guideId)} onSave={user ? () => toggleSave(topic.guideId, topic.title) : undefined} />;
+              })}
+            </div>
+            {!filteredTopics.length && <div className="rounded-2xl border border-dashed border-border py-14 text-center text-sm text-muted-foreground">No topic matches “{query}”. Try a broader phrase or start with a problem below.</div>}
+          </div>
+        </section>
+
+        <section className="border-y border-border bg-secondary/20">
+          <div className="container py-12 lg:py-16">
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-7">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Problem pathways</p>
+                <h2 className="mt-2 font-serif text-3xl text-foreground">Start with what happened</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">You do not need to know the legal term first. Start with the situation you are trying to understand.</p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {problems.map(({ title, description, icon: Icon }) => (
+                  <Link key={title} to="/analyzer" className="group rounded-xl border border-border bg-card p-5 transition hover:border-primary/30 hover:shadow-sm">
+                    <Icon className="mb-4 h-5 w-5 text-primary" />
+                    <h3 className="font-medium text-foreground">{title}</h3>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{description}</p>
+                    <span className="mt-4 inline-flex items-center text-xs font-medium text-primary">Explore <ArrowRight className="ml-1 h-3.5 w-3.5" /></span>
+                  </Link>
                 ))}
               </div>
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="rounded-xl border border-border bg-secondary/30 px-4 py-3">
-                  <p className="text-xs font-semibold text-foreground">DCYF / CPS knowledge trail</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">Intake → investigation → safety/risk → placement → court → records & policy.</p>
-                </div>
-                <div className="rounded-xl border border-border bg-secondary/30 px-4 py-3">
-                  <p className="text-xs font-semibold text-foreground">Government agency knowledge trail</p>
-                  <p className="text-[11px] text-muted-foreground mt-1">Authority → decision → notice → records → appeal/review → verification.</p>
-                </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="container py-12 lg:py-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">Research & authority</p>
+                <h2 className="mt-2 font-serif text-3xl text-foreground">Trace the answer to its source.</h2>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">Move from plain-language guidance to the statutes, regulations, decisions, and official material behind it.</p>
+                <Button variant="outline" className="mt-6" asChild><Link to="/education-library?view=research">Open research center <ArrowRight className="h-4 w-4" /></Link></Button>
               </div>
-              {allFiltered.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">No topics match your search.</p>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Saved Guides */}
-            <TabsContent value="saved">
-              {!user ? (
-                <EmptyState
-                  icon={Bookmark}
-                  title="Sign in to see saved guides"
-                  description="Save guides to your case for quick access later."
-                  actionLabel="Sign In"
-                  actionHref="/auth?redirect=/education-library?tab=saved"
-                />
-              ) : savedCategories.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {savedCategories.map((category, i) => (
-                    <CategoryCard
-                      key={category.id}
-                      category={category}
-                      index={i}
-                      isSaved
-                      onToggleSave={() => toggleSave(category.guideId, category.title)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState
-                  icon={Bookmark}
-                  title="No saved guides yet"
-                  description="Use the bookmark icon on any guide to save it here for quick access."
-                />
-              )}
-            </TabsContent>
-
-            {/* Recently Viewed */}
-            <TabsContent value="recent">
-              {recentCategories.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {recentCategories.map((category, i) => (
-                    <CategoryCard
-                      key={category.id}
-                      category={category}
-                      index={i}
-                      isSaved={savedGuideIds.has(category.guideId)}
-                      onToggleSave={user ? () => toggleSave(category.guideId, category.title) : undefined}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState
-                  icon={Clock}
-                  title="No recently viewed guides"
-                  description="Guides you open will appear here for easy return."
-                />
-              )}
-            </TabsContent>
-
-            {/* Recommended */}
-            <TabsContent value="recommended">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {recommendedCategories.map((category, i) => (
-                  <CategoryCard
-                    key={category.id}
-                    category={category}
-                    index={i}
-                    isSaved={savedGuideIds.has(category.guideId)}
-                    onToggleSave={user ? () => toggleSave(category.guideId, category.title) : undefined}
-                  />
+              <div className="grid gap-3 sm:grid-cols-2">
+                {authorityTypes.map(([title, type, Icon]) => (
+                  <div key={title} className="rounded-xl border border-border bg-card p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-lg bg-primary/10 p-2"><Icon className="h-4 w-4 text-primary" /></div>
+                      <div><p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{type}</p><h3 className="mt-1 text-sm font-medium text-foreground">{title}</h3></div>
+                    </div>
+                  </div>
                 ))}
               </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+            </div>
+          </div>
+        </section>
 
-        {/* CTA */}
-        <div className="max-w-2xl mx-auto mt-16 text-center">
-          <p className="text-sm text-muted-foreground mb-4">Have a specific situation?</p>
-          <Button variant="hero" size="lg" asChild>
-            <Link to="/analyzer">
-              Start the Analyzer
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </Button>
-        </div>
+        <section className="border-y border-border bg-card">
+          <div className="container py-12 lg:py-16">
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-7">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Tools & forms</p>
+                <h2 className="mt-2 font-serif text-3xl text-foreground">Turn knowledge into organized work.</h2>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {tools.map(([title, description, href]) => (
+                  <Link key={title} to={href} className="group rounded-xl border border-border bg-background p-5 transition hover:border-primary/30">
+                    <div className="flex items-center justify-between"><h3 className="font-medium text-foreground">{title}</h3><ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary" /></div>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{description}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* Disclaimer */}
-        <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-border">
-          <Disclaimer className="justify-center" />
-        </div>
-      </div>
+        <section className="container py-12 lg:py-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-7 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your library</p>
+                <h2 className="mt-2 font-serif text-3xl text-foreground">Keep your research close.</h2>
+              </div>
+              <Link to="/education-library?tab=saved" className="text-xs font-medium text-primary">View saved →</Link>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Link to="/education-library?tab=saved" className="rounded-xl border border-border bg-card p-5 hover:border-primary/30">
+                <Bookmark className="h-5 w-5 text-primary" /><h3 className="mt-4 font-medium">Saved</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{saved.size ? `${saved.size} saved guide${saved.size === 1 ? "" : "s"}.` : "Save guides and return to them later."}</p>
+              </Link>
+              <div className="rounded-xl border border-border bg-card p-5">
+                <Clock className="h-5 w-5 text-primary" /><h3 className="mt-4 font-medium">Recently viewed</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{recentCategories.length ? `${recentCategories.length} recent guide${recentCategories.length === 1 ? "" : "s"}.` : "Guides you open can appear here."}</p>
+              </div>
+              <Link to="/cases" className="rounded-xl border border-primary/20 bg-primary/5 p-5 hover:border-primary/40">
+                <CheckCircle2 className="h-5 w-5 text-primary" /><h3 className="mt-4 font-medium">For your case</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">Connect research to your Case Workspace as you work.</p><span className="mt-4 inline-flex text-xs font-medium text-primary">Open Case Workspace →</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="container pb-16">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-primary/15 bg-primary/5 p-7 text-center">
+            <p className="text-sm text-muted-foreground">Have a specific situation and do not know where to begin?</p>
+            <Button variant="hero" className="mt-4" asChild><Link to="/analyzer">Start with the Analyzer <ArrowRight className="h-4 w-4" /></Link></Button>
+          </div>
+          <div className="mx-auto mt-10 max-w-4xl border-t border-border pt-8"><Disclaimer className="justify-center" /></div>
+        </section>
+      </main>
     </Layout>
   );
 }
