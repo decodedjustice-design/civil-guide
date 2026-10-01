@@ -104,6 +104,9 @@ function TopicCard({ topic, saved, onSave }: { topic: Topic; saved: boolean; onS
 
 export default function EducationLibrary() {
   const { user } = useAuth();
+  const { cases } = useCases();
+  const { activeId } = useActiveCaseId();
+  const activeCase = useMemo(() => cases.find((item) => item.id === activeId) ?? null, [cases, activeId]);
   const [query, setQuery] = useState("");
   const [saved, setSaved] = useState<Set<string>>(new Set());
   const [recentIds] = useState<string[]>(getRecent);
