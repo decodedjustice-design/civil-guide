@@ -85,7 +85,7 @@ function TopicCard({ topic, saved, onSave }: { topic: Topic; saved: boolean; onS
           {saved ? <BookmarkCheck className="h-4 w-4 text-primary" /> : <Bookmark className="h-4 w-4" />}
         </button>
       )}
-      <Link to={`/guide/${topic.guideId}`} className="block p-6 pr-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
+      <Link to={`/education-library/topic/${topic.id}`} className="block p-6 pr-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
         <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-primary/15 bg-primary/10">
           <Icon className="h-5 w-5 text-primary" />
         </div>
