@@ -28,6 +28,7 @@ import StarterLegalTemplates from "./pages/StarterLegalTemplates";
 import Templates from "./pages/Templates";
 import AttorneyContacts from "./pages/AttorneyContacts";
 import EducationLibrary from "./pages/EducationLibrary";
+import KnowledgeTopicHub from "./pages/KnowledgeTopicHub";
 import CaseBuilder from "./pages/CaseBuilder";
 import FoundersStory from "./pages/FoundersStory";
 import Privacy from "./pages/Privacy";
@@ -95,6 +96,7 @@ const App = () => {
               <Route path="/guide/:guideId" element={<FullGuide />} />
               <Route path="/library" element={<Navigate to="/education-library" replace />} />
               <Route path="/education-library" element={<EducationLibrary />} />
+              <Route path="/education-library/topic/:slug" element={<KnowledgeTopicHub />} />
               <Route path="/transcription" element={<ProtectedRoute><Transcription /></ProtectedRoute>} />
               <Route path="/public-request-rights" element={<PublicRequestRights />} />
               <Route path="/courts-filing-info" element={<CourtsFilingInfo />} />
