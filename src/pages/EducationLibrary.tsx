@@ -12,6 +12,7 @@ import { Disclaimer } from "@/components/shared/Disclaimer";
 import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducationLibrary";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useCases, useActiveCaseId } from "@/hooks/useCases";
 
 const RECENTLY_VIEWED_KEY = "dj_recently_viewed_guides";
 
@@ -264,7 +265,10 @@ export default function EducationLibrary() {
                 <Clock className="h-5 w-5 text-primary" /><h3 className="mt-4 font-medium">Recently viewed</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{recentCategories.length ? `${recentCategories.length} recent guide${recentCategories.length === 1 ? "" : "s"}.` : "Guides you open can appear here."}</p>
               </div>
               <Link to="/cases" className="rounded-xl border border-primary/20 bg-primary/5 p-5 hover:border-primary/40">
-                <CheckCircle2 className="h-5 w-5 text-primary" /><h3 className="mt-4 font-medium">For your case</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">Connect research to your Case Workspace as you work.</p><span className="mt-4 inline-flex text-xs font-medium text-primary">Open Case Workspace →</span>
+                <CheckCircle2 className="h-5 w-5 text-primary" />
+                <h3 className="mt-4 font-medium">For your case</h3>
+                {activeCase ? <><p className="mt-1 text-xs font-medium text-foreground">{activeCase.name}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Active workspace: {activeCase.case_type.replace(/_/g, " ")}{activeCase.state ? ` · ${activeCase.state}` : ""}</p></> : <p className="mt-1 text-xs leading-5 text-muted-foreground">Open a case to keep your research alongside your case record.</p>}
+                <span className="mt-4 inline-flex text-xs font-medium text-primary">Open Case Workspace →</span>
               </Link>
             </div>
           </div>
