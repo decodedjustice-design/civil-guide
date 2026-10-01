@@ -9,7 +9,7 @@ import type { LucideIcon } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "@/components/shared/Disclaimer";
-import { libraryCategories } from "@/data/legalEducationLibrary";
+import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducationLibrary";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
