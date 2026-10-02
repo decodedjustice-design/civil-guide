@@ -255,6 +255,52 @@ export const LAW_MODULES: LawModule[] = [
   }
 ];
 
+export const FIRST_ISSUE_LIBRARY: LawModule[] = [
+  {
+    id: "first-amendment-retaliation",
+    category: "Constitutional Rights",
+    analyzerSystems: ["police", "government", "courts", "jail", "school"],
+    title: "First Amendment retaliation",
+    definition: "A government actor may violate the First Amendment when they take adverse action because a person engaged in constitutionally protected speech, petitioning, or other protected activity. The key questions are what was protected, what adverse action occurred, and whether the protected activity caused the action.",
+    elements: [
+      "Protected activity: the person engaged in speech, petitioning, filing a grievance or complaint, or another activity protected by the First Amendment.",
+      "Adverse action: the government actor took an action that would deter a person of ordinary firmness from continuing the protected activity.",
+      "Causation: the protected activity was a substantial or motivating factor in the adverse action; the required causation test can vary with the type of retaliation claim.",
+      "Identify the government actor and the action taken, and distinguish retaliation from an independently justified government action.",
+      "For retaliatory-arrest claims, probable cause and the narrow Nieves exception require a separate analysis."
+    ],
+    evidenceExamples: ["Complaint, grievance, petition, public comment, recording, or other protected expression","Dates showing what happened before and after the protected activity","Texts, emails, reports, messages, or statements referencing the protected activity","Citation, arrest, search, restriction, discipline, denial, or other alleged adverse action","Records showing how similarly situated people were treated, when relevant","Body-camera, CAD/dispatch, case notes, or other contemporaneous records"],
+    questions: ["What exactly did the person say, write, file, or do?","Why is that activity protected by the First Amendment?","What specific action happened afterward, and who took it?","What evidence connects the action to the protected activity?","Was there a stated legitimate reason for the action, and what records support that reason?","If the allegation involves an arrest, was there probable cause and does the Nieves exception potentially apply?"],
+    authorities: [
+      { citation: "Skoog v. County of Clackamas, 469 F.3d 1221, 1231–32 (9th Cir. 2006)", title: "First Amendment retaliation", type: "case", jurisdiction: "United States / Ninth Circuit", url: "https://cdn.ca9.uscourts.gov/datastore/opinions/2006/11/27/0413670.pdf", note: "Ninth Circuit authority describing the core retaliation inquiry: protected activity, an adverse action that would chill a person of ordinary firmness, and causation." },
+      { citation: "O'Brien v. Welty, 818 F.3d 920, 932–33 (9th Cir. 2016)", title: "Retaliation for protected speech", type: "case", jurisdiction: "United States / Ninth Circuit", url: "https://cdn.ca9.uscourts.gov/datastore/opinions/2016/04/07/13-16279.pdf", note: "Ninth Circuit explains that otherwise lawful government action may still be unconstitutional if substantially motivated by protected speech or expressive conduct." },
+      { citation: "Nieves v. Bartlett, 587 U.S. 391, 402–07 (2019)", title: "Retaliatory arrest and probable cause", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/587/17-1174/", note: "Supreme Court framework for First Amendment retaliatory-arrest claims, including the general probable-cause rule and a narrow exception." }
+    ]
+  },
+  {
+    id: "fourth-amendment-search",
+    category: "Constitutional Rights",
+    analyzerSystems: ["police", "government", "jail"],
+    title: "Fourth Amendment search",
+    definition: "The Fourth Amendment protects against unreasonable searches. Start by asking whether government conduct was a search—such as an intrusion into a protected privacy interest or a physical intrusion to obtain information—and then examine the warrant requirement, any exception, the scope of the search, and overall reasonableness.",
+    elements: [
+      "Search threshold: determine whether government conduct intruded on a reasonable expectation of privacy or physically intruded on a constitutionally protected area to obtain information.",
+      "Warrant requirement: if a search occurred, determine whether a warrant was required and, if so, whether a valid warrant existed.",
+      "Exception or justification: if there was no warrant, identify the claimed exception, such as consent, exigent circumstances, search incident to arrest, or another recognized exception.",
+      "Scope: compare what officers searched with what the warrant, consent, or exception actually authorized.",
+      "Reasonableness and remedy: identify the circumstances, intrusion, governmental justification, and any separate exclusionary-rule or civil-claim questions."
+    ],
+    evidenceExamples: ["Search warrant, affidavit, return, and inventory","Body-camera, dash-camera, photographs, and scene documentation","Consent form, recording, or statements about consent","Reports describing what officers knew before the search","CAD/dispatch records and time stamps","Phone, vehicle, home, person, container, or digital-device records showing the scope of the search"],
+    questions: ["What exactly was searched, and what information were officers trying to obtain?","Where did the search occur, and did the person have a privacy interest there?","Was there a warrant? If so, what did it specifically authorize?","If there was no warrant, what exception did the government rely on?","What facts were known before the search, and when did officers learn them?","Did the search stay within the authorized scope?"],
+    authorities: [
+      { citation: "Katz v. United States, 389 U.S. 347, 351–53 (1967)", title: "Reasonable expectation of privacy", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/389/347/", note: "Supreme Court authority recognizing Fourth Amendment protection for certain reasonable expectations of privacy." },
+      { citation: "United States v. Jones, 565 U.S. 400, 404–13 (2012)", title: "Physical intrusion and information gathering", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/565/400/", note: "Supreme Court held that a government trespassory intrusion on a constitutionally protected area to obtain information is a search." },
+      { citation: "Riley v. California, 573 U.S. 373, 385–97 (2014)", title: "Searching digital information", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/573/373/", note: "Supreme Court held that police generally must obtain a warrant before searching digital information on a cell phone seized from an arrested person, subject to applicable exceptions." },
+      { citation: "Terry v. Ohio, 392 U.S. 1, 20–27 (1968)", title: "Reasonable suspicion for limited investigative stops and frisks", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/392/1/", note: "Supreme Court permits limited investigative detention and a protective frisk under the circumstances described in Terry; it is not a general warrant exception for every search." }
+    ]
+  }
+];
+
 export const getLawModulesForAnalyzer = (systemId: string): LawModule[] =>
   LAW_MODULES.filter((module) => module.analyzerSystems.includes(systemId));
 
