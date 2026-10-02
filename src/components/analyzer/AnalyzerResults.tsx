@@ -103,6 +103,17 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
 
       const findings = analyzerFindings;
       const selected = selectedModule ? [selectedModule] : [];
+      const selectedKnowledgeIds = selected.map((module) => module.id);
+      const { data: knowledgeIssues, error: knowledgeIssueError } = selectedKnowledgeIds.length
+        ? await supabase
+            .from("legal_issues")
+            .select("id, analyzer_issue_id")
+            .in("analyzer_issue_id", selectedKnowledgeIds)
+        : { data: [], error: null };
+      if (knowledgeIssueError) throw knowledgeIssueError;
+      const knowledgeIdByAnalyzerId = new Map(
+        (knowledgeIssues ?? []).map((issue) => [issue.analyzer_issue_id, issue.id])
+      );
       const issueRows = findings.length ? findings.map((f) => ({
         case_id: targetCaseId,
         title: f.title,
@@ -116,7 +127,20 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         missing_records: [...f.evidenceToLookFor, ...f.missingFacts].join("; "),
         next_action: f.nextStep,
       })) : [{ case_id: targetCaseId, title: `${systemLabel} review`, category: systemId, description: "Analyzer result saved for further review.", classification: "unknown", status: "open", origin: "analyzer", source: "Decoded Justice Analyzer", supporting_notes: "", missing_records: "", next_action: "" }];
-      if (selected.length) issueRows.push(...selected.map((module) => ({ case_id: targetCaseId, title: module.title, category: module.category, description: module.definition, classification: "unknown", status: "open", origin: "issue-library", source: "Decoded Justice Law Modules", supporting_notes: module.elements.join("; "), missing_records: module.evidenceExamples.join("; "), next_action: module.questions.join("; ") })));
+      if (selected.length) issueRows.push(...selected.map((module) => ({
+        case_id: targetCaseId,
+        legal_issue_id: knowledgeIdByAnalyzerId.get(module.id) ?? null,
+        title: module.title,
+        category: module.category,
+        description: module.definition,
+        classification: "unknown",
+        status: "open",
+        origin: "issue-library",
+        source: "Decoded Justice Law Modules",
+        supporting_notes: module.elements.join("; "),
+        missing_records: module.evidenceExamples.join("; "),
+        next_action: module.questions.join("; "),
+      })));
       const { error: issueError } = await supabase.from("issues").insert(issueRows);
       if (issueError) throw issueError;
 
