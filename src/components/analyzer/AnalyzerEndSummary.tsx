@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { AnalyzerResultsAI, PotentialViolation } from "@/hooks/useAnalyzerResultsAI";
 import type { LawModule } from "@/lib/law/issueLibrary";
+import { AnalyzerKnowledgeCore } from "./AnalyzerKnowledgeCore";
 
 interface AnalyzerEndSummaryProps {
   aiResults: AnalyzerResultsAI;
@@ -169,6 +170,10 @@ export function AnalyzerEndSummary({
               ))}
             </div>
           </section>
+
+          {firstIssueLibrary.length > 0 && (
+            <AnalyzerKnowledgeCore issueIds={firstIssueLibrary.map((module) => module.id)} />
+          )}
 
           {firstIssueLibrary.length > 0 && (
             <section className="scroll-mt-6 border-b border-border bg-muted/10 px-5 py-8 sm:px-8 sm:py-10" aria-labelledby="first-issue-library">
