@@ -10,7 +10,7 @@ import { buildCaseContext, getRelevantQuestions, SystemType } from "@/hooks/useC
 import { usePatternAwareness } from "@/hooks/usePatternAwareness";
 import { SafetyBanner } from "@/components/SafetyBanner";
 import { supabase } from "@/integrations/supabase/client";
-import { getLawModulesForAnalyzer, type LawModule } from "@/lib/law/issueLibrary";
+import { FIRST_ISSUE_LIBRARY, getLawModulesForAnalyzer, type LawModule } from "@/lib/law/issueLibrary";
 import { getPoliceLawModules } from "@/lib/law/policeIssueModules";
 
 import type { EntityTags } from "@/hooks/useEntityTags";
@@ -153,7 +153,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       policeMissingFacts={policeMissingFacts}
       systemLabel={systemLabel}
       location={location}
-      onAddToCase={() => startCaseWorkspace()}
+      firstIssueLibrary={FIRST_ISSUE_LIBRARY}\n      onAddToCase={(module) => startCaseWorkspace(module)}
     />
     {tools.filter(t => !t.isLocked).length > 0 && <section className="mt-8 print:hidden"><h2 className="text-lg font-semibold text-foreground mb-4">Additional tools</h2><div className="space-y-3">{tools.filter(t => !t.isLocked).map(tool => <ToolCard key={tool.name} {...tool} />)}</div></section>}
     <PrintShareModal open={printShareOpen} onOpenChange={setPrintShareOpen} title="Analyzer results" systemId={systemId} systemLabel={systemLabel} savedResultId={savedResult?.id} />
