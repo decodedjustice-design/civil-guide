@@ -127,7 +127,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const { error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "txt", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true });
       if (evidenceError) throw evidenceError;
       const packetContent = { generated_at: new Date().toISOString(), source: "analyzer", system: systemLabel, answers: mergedTriageAnswers, selected_issue_modules: selected.map((m) => m.id), sections: ["overview", "issues", "timeline", "evidence"], note: "Draft organizational packet. It does not establish that a legal violation occurred." };
-      const { error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, title: `${systemLabel} triage packet`, packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: packetContent });
+      const { error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, title: `${systemLabel} triage packet`, purpose: "Preserve Analyzer triage results for case review.", requested_action: "Review the triage findings, timeline context, and records identified for follow-up.", packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: packetContent });
       if (packetError) throw packetError;
 
       onStartOrganizing?.();
