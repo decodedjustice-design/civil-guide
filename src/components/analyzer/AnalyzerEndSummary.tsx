@@ -28,6 +28,7 @@ interface AnalyzerEndSummaryProps {
   onAddToCase: (module?: LawModule) => void;
   systemLabel?: string;
   location?: string;
+  firstIssueLibrary?: LawModule[];
 }
 
 const SectionLabel = ({ children }: { children: ReactNode }) => (
@@ -61,6 +62,7 @@ export function AnalyzerEndSummary({
   onAddToCase,
   systemLabel = "Civil rights",
   location = "Washington State",
+  firstIssueLibrary = [],
 }: AnalyzerEndSummaryProps) {
   const evidence = Array.from(new Set(findings.flatMap(f => f.evidenceToLookFor))).slice(0, 12);
   const missing = Array.from(new Set([
