@@ -44,7 +44,7 @@ export function useCaseSnapshot(caseId?: string) {
           load("communications", "occurred_at"),
           load("record_requests", "due_at"),
           load("tasks", "due_at", (q) => q.eq("task_type", "record_gap")),
-          load("case_links", "created_at"),
+          load("case_relationships", "created_at"),
         ]);
 
       return {
