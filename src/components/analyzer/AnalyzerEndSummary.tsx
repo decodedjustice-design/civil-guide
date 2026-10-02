@@ -25,7 +25,7 @@ interface AnalyzerEndSummaryProps {
   findings: PotentialViolation[];
   lawModules: LawModule[];
   policeMissingFacts: string[];
-  onAddToCase: () => void;
+  onAddToCase: (module?: LawModule) => void;
   systemLabel?: string;
   location?: string;
 }
@@ -167,6 +167,25 @@ export function AnalyzerEndSummary({
               ))}
             </div>
           </section>
+
+          {firstIssueLibrary.length > 0 && (
+            <section className="scroll-mt-6 border-b border-border bg-muted/10 px-5 py-8 sm:px-8 sm:py-10" aria-labelledby="first-issue-library">
+              <SectionLabel>Start here · First-issue library</SectionLabel>
+              <h3 id="first-issue-library" className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">Common constitutional issues to check first</h3>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">These are structured issue-spotting guides. They do not mean the issue applies to your facts. Open an issue to compare the plain-language factors with the records you have.</p>
+              <div className="mt-6 grid gap-4 lg:grid-cols-2">
+                {firstIssueLibrary.map((module) => (
+                  <article key={module.id} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+                    <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">{module.category}</p><h4 className="mt-1 text-lg font-semibold text-foreground">{module.title}</h4></div><Scale className="h-5 w-5 shrink-0 text-primary" /></div>
+                    <p className="mt-3 text-sm leading-6 text-foreground/85">{module.definition}</p>
+                    <div className="mt-5"><p className="text-xs font-semibold uppercase tracking-wide text-primary">Plain-language factors</p><ul className="mt-3 space-y-2">{module.elements.map((element) => <li key={element} className="flex gap-2 text-sm leading-6 text-muted-foreground"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" /><span>{element}</span></li>)}</ul></div>
+                    <div className="mt-5 rounded-xl border border-border bg-background p-4"><p className="text-xs font-semibold uppercase tracking-wide text-primary">Key authorities</p><div className="mt-3 space-y-3">{module.authorities.map((authority) => <div key={authority.citation}><a href={authority.url} target="_blank" rel="noreferrer" className="text-sm font-medium text-primary hover:underline">{authority.citation}</a><p className="mt-1 text-xs leading-5 text-muted-foreground">{authority.note}</p></div>)}</div></div>
+                    <div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={() => onAddToCase(module)} className="gap-2"><FolderOpen className="h-4 w-4" />Add issue to case</Button><a href={module.authorities[0]?.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"><ExternalLink className="h-3.5 w-3.5" />Open primary authority</a></div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Findings */}
           <section id="analyzer-2" className="scroll-mt-6 px-5 py-8 sm:px-8 sm:py-10">
