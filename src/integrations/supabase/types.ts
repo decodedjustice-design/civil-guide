@@ -548,6 +548,62 @@ export type Database = {
           },
         ]
       }
+      decoded_explanations: {
+        Row: {
+          common_misunderstandings: string[] | null
+          created_at: string
+          evidence_to_collect: string[] | null
+          id: string
+          is_published: boolean
+          issue_id: string
+          plain_language: string | null
+          questions_to_ask: string[] | null
+          review_status: string
+          title: string
+          updated_at: string
+          what_it_does_not_mean: string | null
+          what_it_means: string | null
+        }
+        Insert: {
+          common_misunderstandings?: string[] | null
+          created_at?: string
+          evidence_to_collect?: string[] | null
+          id?: string
+          is_published?: boolean
+          issue_id: string
+          plain_language?: string | null
+          questions_to_ask?: string[] | null
+          review_status?: string
+          title: string
+          updated_at?: string
+          what_it_does_not_mean?: string | null
+          what_it_means?: string | null
+        }
+        Update: {
+          common_misunderstandings?: string[] | null
+          created_at?: string
+          evidence_to_collect?: string[] | null
+          id?: string
+          is_published?: boolean
+          issue_id?: string
+          plain_language?: string | null
+          questions_to_ask?: string[] | null
+          review_status?: string
+          title?: string
+          updated_at?: string
+          what_it_does_not_mean?: string | null
+          what_it_means?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decoded_explanations_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "legal_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_derivatives: {
         Row: {
           case_id: string
@@ -1023,6 +1079,111 @@ export type Database = {
           },
         ]
       }
+      issue_authorities: {
+        Row: {
+          created_at: string
+          id: string
+          issue_id: string
+          jurisdiction: string | null
+          note: string | null
+          priority: number
+          proposition_id: string | null
+          relationship: string
+          source_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          issue_id: string
+          jurisdiction?: string | null
+          note?: string | null
+          priority?: number
+          proposition_id?: string | null
+          relationship: string
+          source_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          issue_id?: string
+          jurisdiction?: string | null
+          note?: string | null
+          priority?: number
+          proposition_id?: string | null
+          relationship?: string
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issue_authorities_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "legal_issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issue_authorities_proposition_id_fkey"
+            columns: ["proposition_id"]
+            isOneToOne: false
+            referencedRelation: "legal_propositions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issue_authorities_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "legal_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issue_elements: {
+        Row: {
+          authority_note: string | null
+          created_at: string
+          element_code: string
+          element_description: string | null
+          element_name: string
+          id: string
+          issue_id: string
+          jurisdiction: string | null
+          required: boolean
+          sequence_no: number
+        }
+        Insert: {
+          authority_note?: string | null
+          created_at?: string
+          element_code: string
+          element_description?: string | null
+          element_name: string
+          id?: string
+          issue_id: string
+          jurisdiction?: string | null
+          required?: boolean
+          sequence_no?: number
+        }
+        Update: {
+          authority_note?: string | null
+          created_at?: string
+          element_code?: string
+          element_description?: string | null
+          element_name?: string
+          id?: string
+          issue_id?: string
+          jurisdiction?: string | null
+          required?: boolean
+          sequence_no?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issue_elements_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "legal_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       issues: {
         Row: {
           allegation_date: string | null
@@ -1033,6 +1194,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          legal_issue_id: string | null
           missing_records: string | null
           next_action: string | null
           notice_provided: boolean | null
@@ -1059,6 +1221,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          legal_issue_id?: string | null
           missing_records?: string | null
           next_action?: string | null
           notice_provided?: boolean | null
@@ -1085,6 +1248,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          legal_issue_id?: string | null
           missing_records?: string | null
           next_action?: string | null
           notice_provided?: boolean | null
@@ -1111,6 +1275,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "issues_legal_issue_id_fkey"
+            columns: ["legal_issue_id"]
+            isOneToOne: false
+            referencedRelation: "legal_issues"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "issues_source_locator_id_fkey"
             columns: ["source_locator_id"]
             isOneToOne: false
@@ -1118,6 +1289,376 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      legal_chunks: {
+        Row: {
+          authority_level: number | null
+          binding_status: string | null
+          chunk_text: string
+          citation: string | null
+          created_at: string
+          document_id: string | null
+          id: string
+          issue_codes: string[]
+          jurisdiction: string | null
+          metadata: Json
+          section: string | null
+          source_id: string
+        }
+        Insert: {
+          authority_level?: number | null
+          binding_status?: string | null
+          chunk_text: string
+          citation?: string | null
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          issue_codes?: string[]
+          jurisdiction?: string | null
+          metadata?: Json
+          section?: string | null
+          source_id: string
+        }
+        Update: {
+          authority_level?: number | null
+          binding_status?: string | null
+          chunk_text?: string
+          citation?: string | null
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          issue_codes?: string[]
+          jurisdiction?: string | null
+          metadata?: Json
+          section?: string | null
+          source_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_chunks_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "legal_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_citations: {
+        Row: {
+          citation_text: string
+          citation_type: string
+          cited_source_id: string | null
+          citing_source_id: string
+          created_at: string
+          id: string
+          metadata: Json
+          relationship: string | null
+          verified: boolean
+          verified_at: string | null
+        }
+        Insert: {
+          citation_text: string
+          citation_type?: string
+          cited_source_id?: string | null
+          citing_source_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          relationship?: string | null
+          verified?: boolean
+          verified_at?: string | null
+        }
+        Update: {
+          citation_text?: string
+          citation_type?: string
+          cited_source_id?: string | null
+          citing_source_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          relationship?: string | null
+          verified?: boolean
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_citations_cited_source_id_fkey"
+            columns: ["cited_source_id"]
+            isOneToOne: false
+            referencedRelation: "legal_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_citations_citing_source_id_fkey"
+            columns: ["citing_source_id"]
+            isOneToOne: false
+            referencedRelation: "legal_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_documents: {
+        Row: {
+          created_at: string
+          document_type: string
+          effective_from: string | null
+          effective_to: string | null
+          full_text: string | null
+          html: string | null
+          id: string
+          metadata: Json
+          pdf_url: string | null
+          retrieved_at: string
+          source_id: string
+          source_version: string | null
+          text_hash: string | null
+          title: string
+          xml: string | null
+        }
+        Insert: {
+          created_at?: string
+          document_type: string
+          effective_from?: string | null
+          effective_to?: string | null
+          full_text?: string | null
+          html?: string | null
+          id?: string
+          metadata?: Json
+          pdf_url?: string | null
+          retrieved_at?: string
+          source_id: string
+          source_version?: string | null
+          text_hash?: string | null
+          title: string
+          xml?: string | null
+        }
+        Update: {
+          created_at?: string
+          document_type?: string
+          effective_from?: string | null
+          effective_to?: string | null
+          full_text?: string | null
+          html?: string | null
+          id?: string
+          metadata?: Json
+          pdf_url?: string | null
+          retrieved_at?: string
+          source_id?: string
+          source_version?: string | null
+          text_hash?: string | null
+          title?: string
+          xml?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_documents_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "legal_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_issues: {
+        Row: {
+          active: boolean
+          analyzer_issue_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          issue_code: string
+          issue_name: string
+          jurisdiction: string | null
+          legal_domain: string
+          parent_issue_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          analyzer_issue_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          issue_code: string
+          issue_name: string
+          jurisdiction?: string | null
+          legal_domain: string
+          parent_issue_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          analyzer_issue_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          issue_code?: string
+          issue_name?: string
+          jurisdiction?: string | null
+          legal_domain?: string
+          parent_issue_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_issues_parent_issue_id_fkey"
+            columns: ["parent_issue_id"]
+            isOneToOne: false
+            referencedRelation: "legal_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_propositions: {
+        Row: {
+          binding_status: string
+          confidence_status: string
+          created_at: string
+          document_id: string | null
+          id: string
+          is_published: boolean
+          jurisdiction: string
+          locator: string | null
+          proposition: string
+          proposition_type: string
+          review_status: string
+          source_id: string
+          supporting_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          binding_status?: string
+          confidence_status?: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          is_published?: boolean
+          jurisdiction: string
+          locator?: string | null
+          proposition: string
+          proposition_type: string
+          review_status?: string
+          source_id: string
+          supporting_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          binding_status?: string
+          confidence_status?: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          is_published?: boolean
+          jurisdiction?: string
+          locator?: string | null
+          proposition?: string
+          proposition_type?: string
+          review_status?: string
+          source_id?: string
+          supporting_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_propositions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_propositions_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "legal_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_sources: {
+        Row: {
+          authority_level: number
+          binding_status: string
+          checksum: string | null
+          citation: string
+          court_or_agency: string | null
+          created_at: string
+          effective_date: string | null
+          expiration_date: string | null
+          id: string
+          is_published: boolean
+          jurisdiction: string
+          last_verified_at: string | null
+          metadata: Json
+          official_url: string | null
+          precedential_status: string | null
+          publication_date: string | null
+          repository_url: string | null
+          source_type: string
+          status: string
+          title: string
+          updated_at: string
+          version: string | null
+        }
+        Insert: {
+          authority_level: number
+          binding_status?: string
+          checksum?: string | null
+          citation?: string
+          court_or_agency?: string | null
+          created_at?: string
+          effective_date?: string | null
+          expiration_date?: string | null
+          id?: string
+          is_published?: boolean
+          jurisdiction: string
+          last_verified_at?: string | null
+          metadata?: Json
+          official_url?: string | null
+          precedential_status?: string | null
+          publication_date?: string | null
+          repository_url?: string | null
+          source_type: string
+          status?: string
+          title: string
+          updated_at?: string
+          version?: string | null
+        }
+        Update: {
+          authority_level?: number
+          binding_status?: string
+          checksum?: string | null
+          citation?: string
+          court_or_agency?: string | null
+          created_at?: string
+          effective_date?: string | null
+          expiration_date?: string | null
+          id?: string
+          is_published?: boolean
+          jurisdiction?: string
+          last_verified_at?: string | null
+          metadata?: Json
+          official_url?: string | null
+          precedential_status?: string | null
+          publication_date?: string | null
+          repository_url?: string | null
+          source_type?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          version?: string | null
+        }
+        Relationships: []
       }
       organizations: {
         Row: {
