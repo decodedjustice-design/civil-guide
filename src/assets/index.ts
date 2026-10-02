@@ -27,6 +27,19 @@ import dashboardOrientation from "@/assets/dashboard-orientation.jpg";
 import emptyStateNoCases from "@/assets/empty-state-no-cases.jpg";
 import emptyStateNoTimeline from "@/assets/empty-state-no-timeline.jpg";
 
+// Knowledge Center subject photography
+import knowledgeHousing from "@/assets/education-library/housing-stability.jpg";
+import knowledgeFamily from "@/assets/education-library/family-child-welfare.jpg";
+import knowledgeRightsGovernment from "@/assets/education-library/rights-government.jpg";
+import knowledgeDisability from "@/assets/education-library/disability-access.jpg";
+import knowledgeCourts from "@/assets/education-library/courts-legal-process.jpg";
+import knowledgeBenefitsEducation from "@/assets/education-library/benefits-education.jpg";
+import knowledgeTraffic from "@/assets/education-library/traffic-transportation.jpg";
+import knowledgeSpeech from "@/assets/education-library/speech-protest.jpg";
+import knowledgeDetention from "@/assets/education-library/jail-detention.jpg";
+import knowledgeHealthcare from "@/assets/education-library/healthcare-patient-rights.jpg";
+import knowledgePrograms from "@/assets/education-library/government-programs-benefits.jpg";
+
 /** Map category IDs to their illustration */
 export const categoryImages: Record<string, string> = {
   police: categoryPolice,
@@ -41,6 +54,20 @@ export const categoryImages: Record<string, string> = {
   healthcare: categoryHealthcare,
   support: categorySupportNetwork,
 };
+
+export const knowledgeCenterImages = {
+  housing: knowledgeHousing,
+  family: knowledgeFamily,
+  rightsGovernment: knowledgeRightsGovernment,
+  disability: knowledgeDisability,
+  courts: knowledgeCourts,
+  benefitsEducation: knowledgeBenefitsEducation,
+  traffic: knowledgeTraffic,
+  speech: knowledgeSpeech,
+  detention: knowledgeDetention,
+  healthcare: knowledgeHealthcare,
+  programs: knowledgePrograms,
+} as const;
 
 export {
   // Categories used by page banners
