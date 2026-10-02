@@ -11,6 +11,14 @@ import {
   categoryGovernment,
   categoryCourts,
 } from "@/assets";
+import heroPrivateStudio from "@/assets/hero-private-studio.jpg";
+import heroFamilyCourthouse from "@/assets/hero-family-courthouse.png";
+import heroAuthWorkspace from "@/assets/hero-auth-workspace.jpg";
+import heroAnalysis from "@/assets/hero-analysis.png";
+import heroPaperwork from "@/assets/hero-paperwork.png";
+import heroDocumentsNight from "@/assets/hero-documents-night.jpg";
+import heroWorkspaceCalm from "@/assets/hero-workspace-calm.jpg";
+import heroOrganizedFiles from "@/assets/hero-organized-files.jpg";
 
 type HeaderConfig = {
   eyebrow: string;
@@ -22,8 +30,8 @@ type HeaderConfig = {
 
 const configs: Array<{ match: (pathname: string) => boolean; config: HeaderConfig }> = [
   { match: p => p === "/dashboard", config: { eyebrow: "Case command center", title: "Your case, organized.", description: "Keep the record connected as you build it.", image: dashboardOrientation } },
-  { match: p => p === "/analyzer", config: { eyebrow: "Civil Rights Analyzer", title: "Understand what to look at.", description: "Work through the facts, questions, and records that may matter.", image: categoryImages.police } },
-  { match: p => p === "/case-builder", config: { eyebrow: "Case Builder", title: "Start with your story.", description: "Tell us what happened. We’ll help organize it with you.", image: knowledgeCenterImages.family } },
+  { match: p => p === "/analyzer", config: { eyebrow: "Civil Rights Analyzer", title: "Understand what to look at.", description: "Work through the facts, questions, and records that may matter.", image: heroAnalysis } },
+  { match: p => p === "/case-builder", config: { eyebrow: "Case Builder", title: "Start with your story.", description: "Tell us what happened. We’ll help organize it with you.", image: heroFamilyCourthouse } },
   { match: p => p === "/legal-decoder", config: { eyebrow: "Legal Decoder", title: "Make the language clearer.", description: "Explore legal concepts and authorities in plain language.", image: knowledgeCenterImages.rightsGovernment } },
   { match: p => p === "/support-network", config: { eyebrow: "Support Network", title: "Find people and organizations.", description: "Explore advocates, services, and community resources.", image: categoryImages.support } },
   { match: p => p === "/find-help" || p === "/legal-help" || p === "/attorney-search", config: { eyebrow: "Legal Help", title: "Find the right next conversation.", description: "Explore legal-help and advocacy resources.", image: knowledgeCenterImages.programs } },
@@ -32,7 +40,7 @@ const configs: Array<{ match: (pathname: string) => boolean; config: HeaderConfi
   { match: p => p === "/tools", config: { eyebrow: "Documentation Tools", title: "Turn information into an organized record.", description: "Practical tools for documenting and preparing.", image: toolLegalResearch } },
   { match: p => p === "/public-request-rights", config: { eyebrow: "Public Records", title: "Request. Track. Preserve.", description: "Organize public-records requests, responses, and gaps.", image: bannerCourtsFiling } },
   { match: p => p === "/courts-filing-info", config: { eyebrow: "Courts & Filing", title: "Navigate the process.", description: "Understand filing and court-process information.", image: categoryImages.courts } },
-  { match: p => p === "/templates" || p === "/legal-templates", config: { eyebrow: "Templates", title: "Start with a usable document.", description: "Practical templates for organizing and communicating.", image: categoryImages.government } },
+  { match: p => p === "/templates" || p === "/legal-templates", config: { eyebrow: "Templates", title: "Start with a usable document.", description: "Practical templates for organizing and communicating.", image: heroOrganizedFiles } },
   { match: p => p === "/transcription", config: { eyebrow: "Transcription", title: "Turn recordings into a record.", description: "Create an organized text record from audio.", image: knowledgeCenterImages.speech } },
   { match: p => p === "/housing-navigator", config: { eyebrow: "Housing", title: "Find a clearer path to housing resources.", description: "Explore housing information and navigation tools.", image: knowledgeCenterImages.housing } },
   { match: p => p === "/founders-story", config: { eyebrow: "Why Decoded Justice exists", title: "Built from lived experience.", description: "The story behind the work.", image: knowledgeCenterImages.family } },
@@ -44,7 +52,7 @@ const configs: Array<{ match: (pathname: string) => boolean; config: HeaderConfi
   { match: p => p === "/cases", config: { eyebrow: "Your cases", title: "Your case workspace.", description: "Open a case or start organizing a new one.", image: bannerEvidenceVault } },
   { match: p => p === "/cases/" || p === "/cases/overview", config: { eyebrow: "Case workspace", title: "Keep the record connected.", description: "Review, organize, and build from the same underlying case record.", image: bannerLibrary } },
   { match: p => p.endsWith("/timeline"), config: { eyebrow: "Case timeline", title: "What happened, and when.", description: "Build a chronological record you can review and refine.", image: categoryImages.traffic } },
-  { match: p => p.endsWith("/evidence") || p.endsWith("/documents"), config: { eyebrow: "Evidence & exhibits", title: "Preserve what supports the record.", description: "Keep documents, source information, and review status together.", image: categoryImages.incarceration } },
+  { match: p => p.endsWith("/evidence") || p.endsWith("/documents"), config: { eyebrow: "Evidence & exhibits", title: "Preserve what supports the record.", description: "Keep documents, source information, and review status together.", image: heroDocumentsNight } },
   { match: p => p.endsWith("/issues") || p.endsWith("/claims"), config: { eyebrow: "Claims & issues", title: "Separate questions from conclusions.", description: "Track allegations, questions, and what still needs verification.", image: categoryImages.protest } },
   { match: p => p.endsWith("/people"), config: { eyebrow: "People & organizations", title: "Keep the people connected.", description: "Record who is involved and how they relate to the case.", image: categoryImages.education } },
   { match: p => p.endsWith("/communications"), config: { eyebrow: "Communications", title: "Keep every contact in context.", description: "Organize calls, messages, letters, and notices.", image: knowledgeCenterImages.healthcare } },
