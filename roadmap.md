@@ -23,3 +23,8 @@
 - [x] Add source record IDs to exported packet items for item-level traceability
 - [x] Add pre-export source tracing in Packet Builder
 - [x] Add saved-packet source audit in Export Center
+
+## Knowledge Center subject photography
+- [ ] Generate 11 distinct, realistic, subject-matched card photographs
+- [ ] Wire a dedicated image map into `/education-library` without changing card content or behavior
+- [ ] Verify all assets, imports, desktop layout, and mobile layout

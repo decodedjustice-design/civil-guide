@@ -13,16 +13,17 @@ import { libraryCategories, type LibraryCategoryCard } from "@/data/legalEducati
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useCases, useActiveCaseId } from "@/hooks/useCases";
-import { categoryImages } from "@/assets";
+import { knowledgeCenterImages } from "@/assets";
 
 const RECENTLY_VIEWED_KEY = "dj_recently_viewed_guides";
 
 type Topic = {
+  id: string;
   title: string;
   description: string;
   icon: LucideIcon;
   guideId: string;
-  imageKey: keyof typeof categoryImages;
+  imageKey: keyof typeof knowledgeCenterImages;
   subtopics: string[];
 };
 
@@ -33,17 +34,17 @@ type Problem = {
 };
 
 const topics: Topic[] = [
-  { title: "Housing & Stability", description: "Housing rights, vouchers, accommodations, notices, and housing programs.", icon: Home, guideId: "housing-full-guide", imageKey: "housing", subtopics: ["Eviction & termination", "Accommodation", "Discrimination", "Vouchers & public housing"] },
-  { title: "Family & Child Welfare", description: "CPS, dependency, caregiver rights, investigations, placement, and records.", icon: Users, guideId: "cps-dcyf-full-guide", imageKey: "support", subtopics: ["CPS / DCYF", "Dependency", "Caregiver rights", "Placement & court"] },
-  { title: "Rights & Government", description: "Police encounters, public records, government decisions, and oversight.", icon: Shield, guideId: "police-full-guide", imageKey: "police", subtopics: ["Police encounters", "Public records", "Government decisions", "Oversight"] },
-  { title: "Disability & Access", description: "Disability rights, accommodations, accessibility, and discrimination.", icon: Accessibility, guideId: "disability-full-guide", imageKey: "disability", subtopics: ["ADA", "Section 504", "Accommodations", "Accessibility"] },
-  { title: "Courts & Legal Process", description: "Hearings, filings, procedure, appeals, and understanding court documents.", icon: Gavel, guideId: "courts-full-guide", imageKey: "courts", subtopics: ["Hearings", "Filings", "Appeals", "Court terminology"] },
-  { title: "Benefits & Education", description: "Public benefits, Social Security, education records, attendance, and student rights.", icon: GraduationCap, guideId: "education-full-guide", imageKey: "education", subtopics: ["Benefits", "Social Security", "Education records", "Special education"] },
-  { title: "Traffic & Transportation", description: "Traffic stops, citations, vehicle searches, and transportation-related rights.", icon: Car, guideId: "traffic-stops-full-guide", imageKey: "traffic", subtopics: ["Traffic stops", "Citations", "Searches", "Vehicle records"] },
-  { title: "Speech & Protest", description: "First Amendment principles, public demonstrations, recording, and expressive activity.", icon: Megaphone, guideId: "protest-full-guide", imageKey: "protest", subtopics: ["First Amendment", "Demonstrations", "Recording", "Public spaces"] },
-  { title: "Jail & Detention", description: "Rights during incarceration, grievances, medical care, and oversight.", icon: Lock, guideId: "incarceration-full-guide", imageKey: "incarceration", subtopics: ["Conditions", "Medical care", "Grievances", "Oversight"] },
-  { title: "Healthcare & Patient Rights", description: "Medical records, privacy, informed consent, access, and complaints.", icon: Stethoscope, guideId: "healthcare-full-guide", imageKey: "healthcare", subtopics: ["Medical records", "Privacy", "Consent", "Complaints"] },
-  { title: "Government Programs & Benefits", description: "Agency decisions, public assistance, notices, eligibility, and appeals.", icon: Building2, guideId: "government-full-guide", imageKey: "government", subtopics: ["Benefits", "Eligibility", "Notices", "Appeals"] },
+  { id: "housing", title: "Housing & Stability", description: "Housing rights, vouchers, accommodations, notices, and housing programs.", icon: Home, guideId: "housing-full-guide", imageKey: "housing", subtopics: ["Eviction & termination", "Accommodation", "Discrimination", "Vouchers & public housing"] },
+  { id: "cps_dcyf", title: "Family & Child Welfare", description: "CPS, dependency, caregiver rights, investigations, placement, and records.", icon: Users, guideId: "cps-dcyf-full-guide", imageKey: "family", subtopics: ["CPS / DCYF", "Dependency", "Caregiver rights", "Placement & court"] },
+  { id: "police", title: "Rights & Government", description: "Police encounters, public records, government decisions, and oversight.", icon: Shield, guideId: "police-full-guide", imageKey: "rightsGovernment", subtopics: ["Police encounters", "Public records", "Government decisions", "Oversight"] },
+  { id: "disability", title: "Disability & Access", description: "Disability rights, accommodations, accessibility, and discrimination.", icon: Accessibility, guideId: "disability-full-guide", imageKey: "disability", subtopics: ["ADA", "Section 504", "Accommodations", "Accessibility"] },
+  { id: "courts", title: "Courts & Legal Process", description: "Hearings, filings, procedure, appeals, and understanding court documents.", icon: Gavel, guideId: "courts-full-guide", imageKey: "courts", subtopics: ["Hearings", "Filings", "Appeals", "Court terminology"] },
+  { id: "education", title: "Benefits & Education", description: "Public benefits, Social Security, education records, attendance, and student rights.", icon: GraduationCap, guideId: "education-full-guide", imageKey: "benefitsEducation", subtopics: ["Benefits", "Social Security", "Education records", "Special education"] },
+  { id: "traffic", title: "Traffic & Transportation", description: "Traffic stops, citations, vehicle searches, and transportation-related rights.", icon: Car, guideId: "traffic-stops-full-guide", imageKey: "traffic", subtopics: ["Traffic stops", "Citations", "Searches", "Vehicle records"] },
+  { id: "protest", title: "Speech & Protest", description: "First Amendment principles, public demonstrations, recording, and expressive activity.", icon: Megaphone, guideId: "protest-full-guide", imageKey: "speech", subtopics: ["First Amendment", "Demonstrations", "Recording", "Public spaces"] },
+  { id: "incarceration", title: "Jail & Detention", description: "Rights during incarceration, grievances, medical care, and oversight.", icon: Lock, guideId: "incarceration-full-guide", imageKey: "detention", subtopics: ["Conditions", "Medical care", "Grievances", "Oversight"] },
+  { id: "healthcare", title: "Healthcare & Patient Rights", description: "Medical records, privacy, informed consent, access, and complaints.", icon: Stethoscope, guideId: "healthcare-full-guide", imageKey: "healthcare", subtopics: ["Medical records", "Privacy", "Consent", "Complaints"] },
+  { id: "government", title: "Government Programs & Benefits", description: "Agency decisions, public assistance, notices, eligibility, and appeals.", icon: Building2, guideId: "government-full-guide", imageKey: "programs", subtopics: ["Benefits", "Eligibility", "Notices", "Appeals"] },
 ];
 
 const problems: Problem[] = [
@@ -90,7 +91,7 @@ function TopicCard({ topic, saved, onSave }: { topic: Topic; saved: boolean; onS
       )}
       <Link to={`/education-library/topic/${topic.id}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
         <div className="relative aspect-[16/8] overflow-hidden bg-muted">
-          <img src={categoryImages[topic.imageKey]} alt="" aria-hidden="true" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
+          <img src={knowledgeCenterImages[topic.imageKey]} alt="" aria-hidden="true" loading="lazy" width={1536} height={768} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
           <div className="absolute bottom-4 left-5 flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-black/30 text-white backdrop-blur-sm">
             <Icon className="h-5 w-5" />
