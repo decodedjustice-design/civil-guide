@@ -83,14 +83,14 @@ function getRecent(): string[] {
 function TopicCard({ topic, saved, onSave }: { topic: Topic; saved: boolean; onSave?: () => void }) {
   const Icon = topic.icon;
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-primary/30 hover:shadow-warm-sm">
+    <article className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#121214] transition-all duration-300 hover:border-[#C5A880]/30 hover:shadow-warm-sm">
       {onSave && (
-        <button onClick={(e) => { e.preventDefault(); onSave(); }} aria-label={saved ? `Remove ${topic.title} from saved` : `Save ${topic.title}`} className="absolute right-4 top-4 z-10 rounded-lg border border-border bg-card p-2 text-muted-foreground hover:text-primary">
-          {saved ? <BookmarkCheck className="h-4 w-4 text-primary" /> : <Bookmark className="h-4 w-4" />}
+        <button onClick={(e) => { e.preventDefault(); onSave(); }} aria-label={saved ? `Remove ${topic.title} from saved` : `Save ${topic.title}`} className="absolute right-4 top-4 z-10 rounded-lg border border-white/10 bg-[#121214] p-2 text-white/65 hover:text-[#C5A880]">
+          {saved ? <BookmarkCheck className="h-4 w-4 text-[#C5A880]" /> : <Bookmark className="h-4 w-4" />}
         </button>
       )}
       <Link to={`/education-library/topic/${topic.id}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
-        <div className="relative aspect-[16/8] overflow-hidden bg-muted">
+        <div className="relative aspect-[16/8] overflow-hidden bg-[#171719]">
           <img src={knowledgeCenterImages[topic.imageKey]} alt="" aria-hidden="true" loading="lazy" width={1536} height={768} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
           <div className="absolute bottom-4 left-5 flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-black/30 text-white backdrop-blur-sm">
@@ -98,13 +98,13 @@ function TopicCard({ topic, saved, onSave }: { topic: Topic; saved: boolean; onS
           </div>
         </div>
         <div className="p-6 pr-14">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Explore topic</p>
-        <h3 className="text-xl font-semibold tracking-tight text-foreground group-hover:text-primary">{topic.title}</h3>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">{topic.description}</p>
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/65">Explore topic</p>
+        <h3 className="text-xl font-semibold tracking-tight text-[#F4F4F0] group-hover:text-[#C5A880]">{topic.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-white/65">{topic.description}</p>
         <div className="mt-5 flex flex-wrap gap-2">
-          {topic.subtopics.map((item) => <span key={item} className="rounded-full border border-border bg-secondary/40 px-2.5 py-1 text-[10px] text-muted-foreground">{item}</span>)}
+          {topic.subtopics.map((item) => <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] text-white/65">{item}</span>)}
         </div>
-        <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary">Explore <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></span>
+        <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-[#C5A880]">Explore <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></span>
         </div>
       </Link>
     </article>
@@ -150,25 +150,25 @@ export default function EducationLibrary() {
 
   return (
     <Layout>
-      <main className="bg-background">
-        <section className="border-b border-border bg-card">
+      <main className="min-h-screen bg-[#0D0D0E] text-[#F4F4F0]">
+        <section className="border-b border-white/10 bg-[#0D0D0E]">
           <div className="container py-12 lg:py-16">
             <div className="mx-auto max-w-5xl">
-              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">Knowledge Center</p>
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#C5A880]">Knowledge Center</p>
               <div className="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:items-end">
                 <div>
-                  <h1 className="font-serif text-4xl leading-tight tracking-tight text-foreground md:text-5xl">Legal knowledge, decoded.</h1>
-                  <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">Understand the system. Find the authority. Know what to look for.</p>
+                  <h1 className="font-serif text-4xl leading-tight tracking-tight text-[#F4F4F0] md:text-5xl">Legal knowledge, decoded.</h1>
+                  <p className="mt-4 max-w-xl text-base leading-7 text-white/65">Understand the system. Find the authority. Know what to look for.</p>
                 </div>
                 <div>
                   <label htmlFor="knowledge-search" className="sr-only">What are you trying to understand?</label>
-                  <div className="flex h-14 items-center rounded-xl border border-border bg-background px-4 shadow-sm focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10">
-                    <Search className="mr-3 h-5 w-5 shrink-0 text-muted-foreground" />
-                    <input id="knowledge-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="What are you trying to understand?" className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground" />
+                  <div className="flex h-14 items-center rounded-xl border border-white/15 bg-black/40 px-4 shadow-sm focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10">
+                    <Search className="mr-3 h-5 w-5 shrink-0 text-white/65" />
+                    <input id="knowledge-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="What are you trying to understand?" className="w-full bg-transparent text-sm text-[#F4F4F0] outline-none placeholder:text-white/65" />
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {["Notice", "Records", "Appeals", "Accommodation", "Investigations"].map((item) => (
-                      <button key={item} onClick={() => setQuery(item)} className="rounded-full border border-border px-3 py-1.5 text-[11px] text-muted-foreground transition hover:border-primary/30 hover:text-primary">{item}</button>
+                      <button key={item} onClick={() => setQuery(item)} className="rounded-full border border-white/10 px-3 py-1.5 text-[11px] text-white/65 transition hover:border-[#C5A880]/30 hover:text-[#C5A880]">{item}</button>
                     ))}
                   </div>
                 </div>
@@ -181,36 +181,36 @@ export default function EducationLibrary() {
           <div className="mx-auto max-w-6xl">
             <div className="mb-7 flex items-end justify-between gap-4">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Explore</p>
-                <h2 className="mt-2 font-serif text-3xl text-foreground">Start with a legal topic</h2>
-                <p className="mt-2 text-sm text-muted-foreground">Choose the system closest to your situation.</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/65">Explore</p>
+                <h2 className="mt-2 font-serif text-3xl text-[#F4F4F0]">Start with a legal topic</h2>
+                <p className="mt-2 text-sm text-white/65">Choose the system closest to your situation.</p>
               </div>
-              <span className="hidden text-xs text-muted-foreground sm:block">{filteredTopics.length} topic areas</span>
+              <span className="hidden text-xs text-white/65 sm:block">{filteredTopics.length} topic areas</span>
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredTopics.map((topic) => {
                 return <TopicCard key={topic.guideId} topic={topic} saved={saved.has(topic.guideId)} onSave={user ? () => toggleSave(topic.guideId, topic.title) : undefined} />;
               })}
             </div>
-            {!filteredTopics.length && <div className="rounded-2xl border border-dashed border-border py-14 text-center text-sm text-muted-foreground">No topic matches “{query}”. Try a broader phrase or start with a problem below.</div>}
+            {!filteredTopics.length && <div className="rounded-2xl border border-dashed border-white/10 py-14 text-center text-sm text-white/65">No topic matches “{query}”. Try a broader phrase or start with a problem below.</div>}
           </div>
         </section>
 
-        <section className="border-y border-border bg-secondary/20">
+        <section className="border-y border-white/10 bg-[#111113]">
           <div className="container py-12 lg:py-16">
             <div className="mx-auto max-w-6xl">
               <div className="mb-7">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Problem pathways</p>
-                <h2 className="mt-2 font-serif text-3xl text-foreground">Start with what happened</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">You do not need to know the legal term first. Start with the situation you are trying to understand.</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/65">Problem pathways</p>
+                <h2 className="mt-2 font-serif text-3xl text-[#F4F4F0]">Start with what happened</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/65">You do not need to know the legal term first. Start with the situation you are trying to understand.</p>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {problems.map(({ title, description, icon: Icon }) => (
-                  <Link key={title} to="/analyzer" className="group rounded-xl border border-border bg-card p-5 transition hover:border-primary/30 hover:shadow-sm">
-                    <Icon className="mb-4 h-5 w-5 text-primary" />
-                    <h3 className="font-medium text-foreground">{title}</h3>
-                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{description}</p>
-                    <span className="mt-4 inline-flex items-center text-xs font-medium text-primary">Explore <ArrowRight className="ml-1 h-3.5 w-3.5" /></span>
+                  <Link key={title} to="/analyzer" className="group rounded-xl border border-white/10 bg-[#121214] p-5 transition hover:border-[#C5A880]/30 hover:shadow-sm">
+                    <Icon className="mb-4 h-5 w-5 text-[#C5A880]" />
+                    <h3 className="font-medium text-[#F4F4F0]">{title}</h3>
+                    <p className="mt-2 text-xs leading-5 text-white/65">{description}</p>
+                    <span className="mt-4 inline-flex items-center text-xs font-medium text-[#C5A880]">Explore <ArrowRight className="ml-1 h-3.5 w-3.5" /></span>
                   </Link>
                 ))}
               </div>
@@ -222,17 +222,17 @@ export default function EducationLibrary() {
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">Research & authority</p>
-                <h2 className="mt-2 font-serif text-3xl text-foreground">Trace the answer to its source.</h2>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">Move from plain-language guidance to the statutes, regulations, decisions, and official material behind it.</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#C5A880]">Research & authority</p>
+                <h2 className="mt-2 font-serif text-3xl text-[#F4F4F0]">Trace the answer to its source.</h2>
+                <p className="mt-3 text-sm leading-6 text-white/65">Move from plain-language guidance to the statutes, regulations, decisions, and official material behind it.</p>
                 <Button variant="outline" className="mt-6" asChild><Link to="/education-library?view=research">Open research center <ArrowRight className="h-4 w-4" /></Link></Button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 {authorityTypes.map(([title, type, Icon]) => (
-                  <div key={title} className="rounded-xl border border-border bg-card p-4">
+                  <div key={title} className="rounded-xl border border-white/10 bg-[#121214] p-4">
                     <div className="flex items-start gap-3">
-                      <div className="rounded-lg bg-primary/10 p-2"><Icon className="h-4 w-4 text-primary" /></div>
-                      <div><p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{type}</p><h3 className="mt-1 text-sm font-medium text-foreground">{title}</h3></div>
+                      <div className="rounded-lg bg-[#C5A880]/10 p-2"><Icon className="h-4 w-4 text-[#C5A880]" /></div>
+                      <div><p className="text-[10px] font-semibold uppercase tracking-wider text-white/65">{type}</p><h3 className="mt-1 text-sm font-medium text-[#F4F4F0]">{title}</h3></div>
                     </div>
                   </div>
                 ))}
@@ -241,18 +241,18 @@ export default function EducationLibrary() {
           </div>
         </section>
 
-        <section className="border-y border-border bg-card">
+        <section className="border-y border-white/10 bg-[#121214]">
           <div className="container py-12 lg:py-16">
             <div className="mx-auto max-w-6xl">
               <div className="mb-7">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Tools & forms</p>
-                <h2 className="mt-2 font-serif text-3xl text-foreground">Turn knowledge into organized work.</h2>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/65">Tools & forms</p>
+                <h2 className="mt-2 font-serif text-3xl text-[#F4F4F0]">Turn knowledge into organized work.</h2>
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {tools.map(([title, description, href]) => (
-                  <Link key={title} to={href} className="group rounded-xl border border-border bg-background p-5 transition hover:border-primary/30">
-                    <div className="flex items-center justify-between"><h3 className="font-medium text-foreground">{title}</h3><ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary" /></div>
-                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{description}</p>
+                  <Link key={title} to={href} className="group rounded-xl border border-white/15 bg-black/40 p-5 transition hover:border-[#C5A880]/30">
+                    <div className="flex items-center justify-between"><h3 className="font-medium text-[#F4F4F0]">{title}</h3><ArrowRight className="h-4 w-4 text-white/65 group-hover:text-[#C5A880]" /></div>
+                    <p className="mt-2 text-xs leading-5 text-white/65">{description}</p>
                   </Link>
                 ))}
               </div>
@@ -264,34 +264,34 @@ export default function EducationLibrary() {
           <div className="mx-auto max-w-6xl">
             <div className="mb-7 flex items-end justify-between gap-4">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Your library</p>
-                <h2 className="mt-2 font-serif text-3xl text-foreground">Keep your research close.</h2>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/65">Your library</p>
+                <h2 className="mt-2 font-serif text-3xl text-[#F4F4F0]">Keep your research close.</h2>
               </div>
-              <Link to="/education-library?tab=saved" className="text-xs font-medium text-primary">View saved →</Link>
+              <Link to="/education-library?tab=saved" className="text-xs font-medium text-[#C5A880]">View saved →</Link>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              <Link to="/education-library?tab=saved" className="rounded-xl border border-border bg-card p-5 hover:border-primary/30">
-                <Bookmark className="h-5 w-5 text-primary" /><h3 className="mt-4 font-medium">Saved</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{saved.size ? `${saved.size} saved guide${saved.size === 1 ? "" : "s"}.` : "Save guides and return to them later."}</p>
+              <Link to="/education-library?tab=saved" className="rounded-xl border border-white/10 bg-[#121214] p-5 hover:border-[#C5A880]/30">
+                <Bookmark className="h-5 w-5 text-[#C5A880]" /><h3 className="mt-4 font-medium">Saved</h3><p className="mt-1 text-xs leading-5 text-white/65">{saved.size ? `${saved.size} saved guide${saved.size === 1 ? "" : "s"}.` : "Save guides and return to them later."}</p>
               </Link>
-              <div className="rounded-xl border border-border bg-card p-5">
-                <Clock className="h-5 w-5 text-primary" /><h3 className="mt-4 font-medium">Recently viewed</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{recentCategories.length ? `${recentCategories.length} recent guide${recentCategories.length === 1 ? "" : "s"}.` : "Guides you open can appear here."}</p>
+              <div className="rounded-xl border border-white/10 bg-[#121214] p-5">
+                <Clock className="h-5 w-5 text-[#C5A880]" /><h3 className="mt-4 font-medium">Recently viewed</h3><p className="mt-1 text-xs leading-5 text-white/65">{recentCategories.length ? `${recentCategories.length} recent guide${recentCategories.length === 1 ? "" : "s"}.` : "Guides you open can appear here."}</p>
               </div>
-              <Link to="/cases" className="rounded-xl border border-primary/20 bg-primary/5 p-5 hover:border-primary/40">
-                <CheckCircle2 className="h-5 w-5 text-primary" />
+              <Link to="/cases" className="rounded-xl border border-[#C5A880]/20 bg-[#C5A880]/[0.06] p-5 hover:border-[#C5A880]/40">
+                <CheckCircle2 className="h-5 w-5 text-[#C5A880]" />
                 <h3 className="mt-4 font-medium">For your case</h3>
-                {activeCase ? <><p className="mt-1 text-xs font-medium text-foreground">{activeCase.name}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Active workspace: {activeCase.case_type.replace(/_/g, " ")}{activeCase.state ? ` · ${activeCase.state}` : ""}</p></> : <p className="mt-1 text-xs leading-5 text-muted-foreground">Open a case to keep your research alongside your case record.</p>}
-                <span className="mt-4 inline-flex text-xs font-medium text-primary">Open Case Workspace →</span>
+                {activeCase ? <><p className="mt-1 text-xs font-medium text-[#F4F4F0]">{activeCase.name}</p><p className="mt-1 text-xs leading-5 text-white/65">Active workspace: {activeCase.case_type.replace(/_/g, " ")}{activeCase.state ? ` · ${activeCase.state}` : ""}</p></> : <p className="mt-1 text-xs leading-5 text-white/65">Open a case to keep your research alongside your case record.</p>}
+                <span className="mt-4 inline-flex text-xs font-medium text-[#C5A880]">Open Case Workspace →</span>
               </Link>
             </div>
           </div>
         </section>
 
         <section className="container pb-16">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-primary/15 bg-primary/5 p-7 text-center">
-            <p className="text-sm text-muted-foreground">Have a specific situation and do not know where to begin?</p>
+          <div className="mx-auto max-w-3xl rounded-2xl border border-[#C5A880]/15 bg-[#C5A880]/[0.06] p-7 text-center">
+            <p className="text-sm text-white/65">Have a specific situation and do not know where to begin?</p>
             <Button variant="hero" className="mt-4" asChild><Link to="/analyzer">Start with the Analyzer <ArrowRight className="h-4 w-4" /></Link></Button>
           </div>
-          <div className="mx-auto mt-10 max-w-4xl border-t border-border pt-8"><Disclaimer className="justify-center" /></div>
+          <div className="mx-auto mt-10 max-w-4xl border-t border-white/10 pt-8"><Disclaimer className="justify-center" /></div>
         </section>
       </main>
     </Layout>
