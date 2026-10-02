@@ -5,13 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export interface CaseRow {
   id: string;
-  user_id: string;
-  name: string;
-  case_type: string;
+  owner_user_id: string;
+  title: string;
+  matter_type: string;
   status: string;
-  state: string;
-  county?: string | null;
-  description?: string | null;
+  jurisdiction: string;
   created_at: string;
   updated_at: string;
 }
@@ -29,8 +27,8 @@ export function useCases() {
       if (!user) return [];
       const { data, error } = await supabase
         .from("cases")
-        .select("id,user_id,name,case_type,status,state,created_at,updated_at,county,description")
-        .eq("user_id", user.id)
+        .select("id,owner_user_id,title,matter_type,status,jurisdiction,created_at,updated_at")
+        .eq("owner_user_id", user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
       return (data ?? []) as CaseRow[];
@@ -43,12 +41,10 @@ export function useCases() {
       const { data, error } = await supabase
         .from("cases")
         .insert({
-          user_id: user.id,
-          name: payload.name?.trim() || "Untitled case",
-          case_type: payload.case_type ?? "general",
-          state: payload.state ?? "Washington",
-          county: payload.county ?? null,
-          description: payload.description ?? null,
+          owner_user_id: user.id,
+          title: payload.title?.trim() || payload.name?.trim() || "Untitled case",
+          matter_type: payload.matter_type ?? payload.case_type ?? "general",
+          jurisdiction: payload.jurisdiction ?? payload.state ?? "Washington State",
         })
         .select("*")
         .single();
@@ -60,7 +56,7 @@ export function useCases() {
 
   const updateCase = useMutation({
     mutationFn: async ({ id, ...patch }: Partial<CaseRow> & { id: string }) => {
-      const { error } = await supabase.from("cases").update(patch).eq("id", id).eq("user_id", user?.id ?? "");
+      const { error } = await supabase.from("cases").update(patch).eq("id", id).eq("owner_user_id", user?.id ?? "");
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cases"] }),
