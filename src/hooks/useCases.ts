@@ -36,7 +36,7 @@ export function useCases() {
   });
 
   const createCase = useMutation({
-    mutationFn: async (payload: Partial<CaseRow>) => {
+    mutationFn: async (payload: Partial<CaseRow> & { name?: string; case_type?: string; state?: string }) => {
       if (!user) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("cases")
