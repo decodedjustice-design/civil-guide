@@ -1010,7 +1010,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
               >
                 <p className="font-medium text-sm text-foreground">{item.title || "Untitled case"}</p>
                 <p className="mt-1 text-xs text-muted-foreground capitalize">
-                  {[item.matter_type, item.jurisdiction, item.status?.replace(/_/g, " ")].filter(Boolean).join(" · ")}
+                  {[item.case_type, item.state, item.status?.replace(/_/g, " ")].filter(Boolean).join(" · ")}
                 </p>
               </button>
             ))}

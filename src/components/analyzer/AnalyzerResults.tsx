@@ -97,6 +97,10 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         if (error) throw error;
         targetCaseId = created.id;
       }
+      const { data: authData } = await supabase.auth.getUser();
+      const userId = authData.user?.id;
+      if (!userId) throw new Error("Your session expired. Please sign in again.");
+
       const findings = analyzerFindings;
       const selected = selectedModule ? [selectedModule] : [];
       const issueRows = findings.length ? findings.map((f) => ({
@@ -117,10 +121,6 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       if (issueError) throw issueError;
 
       const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");
-      const { data: authData } = await supabase.auth.getUser();
-      const userId = authData.user?.id;
-      if (!userId) throw new Error("Your session expired. Please sign in again.");
-
       const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
       const { error: timelineError } = await supabase.from("timeline_entries").insert({ user_id: userId, case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event." });
       if (timelineError) throw timelineError;
