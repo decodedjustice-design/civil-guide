@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, FolderOpen, Share2, Check, Loader2, LogIn, AlertCircle, RefreshCw, BriefcaseBusiness, ExternalLink, Scale, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -105,7 +105,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
   const startCaseWorkspace = async (selectedModule?: LawModule) => {
     if (!isLoggedIn) {
       saveAnalyzerDraft({
-        selectedSystem,
+        selectedSystem: systemId,
         answers,
         freeformNarrative: answers.narrative ?? "",
         entityName: entityName ?? "",
