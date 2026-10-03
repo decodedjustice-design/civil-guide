@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { 
   ArrowRight, 
   ArrowLeft,
@@ -24,7 +24,6 @@ import { CaseProfileForm } from "@/components/analyzer/CaseProfileForm";
 import { AnalyzerResults, generateResultContent } from "@/components/analyzer/AnalyzerResults";
 import { EntityClarifyingQuestions } from "@/components/analyzer/EntityClarifyingQuestions";
 import { usePatternEngine, CivilRightsSystem } from "@/hooks/usePatternEngine";
-import { useAuth } from "@/contexts/AuthContext";
 import { useAutoSaveAnalyzerResult } from "@/hooks/useAutoSaveAnalyzerResult";
 import { useAnalyzerResultsAI } from "@/hooks/useAnalyzerResultsAI";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
@@ -1667,8 +1666,6 @@ export default function Analyzer() {
   const [entityTags, setEntityTags] = useState<EntityTags>(createEmptyEntityTags());
   const [showEntityQuestions, setShowEntityQuestions] = useState(false);
   
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const { cases } = useCases();
   const { snapshot: caseSnapshot, isLoading: isCaseLoading } = useCaseSnapshot(caseId);
   const activeCase = cases.find((item) => item.id === caseId);
