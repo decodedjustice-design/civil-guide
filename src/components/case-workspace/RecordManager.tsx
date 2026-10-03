@@ -99,7 +99,7 @@ export function RecordManager({
       const { data: urlData } = supabase.storage.from("evidence").getPublicUrl(path);
       setValues((v) => ({
         ...v,
-        title: v.title || file.name,
+        title: v.display_filename || file.name,
         file_url: urlData.publicUrl,
         file_type: file.type || null,
       }));
@@ -230,7 +230,7 @@ export function RecordManager({
                   </div>
                 ))}
               </div>
-              {table === "evidence" && (
+              {table === "documents" && (
                 <div className="rounded-lg border p-4">
                   <p className="text-sm font-medium flex items-center gap-2"><FileText className="h-4 w-4" />Packet status</p>
                   <p className="text-xs text-muted-foreground mt-1">{viewingItem.include_in_export === false ? "Excluded from packet exports by current setting." : "Included in packet exports when the Exhibit Index section is selected."}</p>
