@@ -95,7 +95,8 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       if (!ownerId) throw new Error("Your session expired. Please sign in again.");
       let targetCaseId = caseId;
       const createdNewCase = !targetCaseId;
-      const createdIssueIds: string[] = [];\n      const createdTaskIds: string[] = [];
+      const createdIssueIds: string[] = [];
+      const createdTaskIds: string[] = [];
       let createdEventId: string | null = null;
       let createdDocumentId: string | null = null;
       let createdPacketId: string | null = null;
