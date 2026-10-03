@@ -7,10 +7,22 @@ import { REQUEST_STATUSES } from "@/lib/case/classification";
 import { ClipboardCopy, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function CaseRequests() {
   const { id } = useParams();
   const { snapshot } = useCaseSnapshot(id);
+
+  const addBusinessDays = (start: Date, days: number) => { const d = new Date(start); let added = 0; while (added < days) { d.setDate(d.getDate() + 1); const day = d.getDay(); if (day !== 0 && day !== 6) added++; } return d; };
+
+  const markSent = async (request: any) => {
+    if (!id) return;
+    const sent = new Date();
+    const checkpoint = addBusinessDays(sent, 5);
+    const { error } = await supabase.from("record_requests").update({ status: "sent", requested_at: sent.toISOString().slice(0, 10), due_at: checkpoint.toISOString() }).eq("id", request.id).eq("case_id", id);
+    if (error) { toast({ title: "Could not mark sent", description: error.message, variant: "destructive" }); return; }
+    toast({ title: "Request marked sent", description: `Washington PRA initial-response checkpoint set for ${checkpoint.toLocaleDateString()}.` });
+  };
 
   const copyRequest = async (request: any) => {
     const body = `Records Request\\n\\nTo: ${request.contact_name || "Records Officer"}${request.record_holder ? `\\nOrganization: ${request.record_holder}` : ""}${request.contact_email ? `\\nEmail: ${request.contact_email}` : ""}\\n\\nI am requesting the following records: ${request.title}.\\n\\nPlease provide the records in an electronic format if available. If any portion is withheld, please identify the withheld material and the basis for withholding it.\\n\\nRequest tracking number: ${request.request_number || "To be assigned"}`;
@@ -29,7 +41,7 @@ export default function CaseRequests() {
         addLabel="Add a request"
         customItemActions={(request) => (
           <>
-            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
+            <Button variant="ghost" size="sm" onClick={() => void markSent(request)} aria-label="Mark request sent" title="Mark sent"><span className="text-xs">Sent</span></Button>\n            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
             {request.submission_url ? <Button variant="ghost" size="sm" asChild><a href={request.submission_url} target="_blank" rel="noreferrer" aria-label="Open official request portal" title="Open official request portal"><ExternalLink className="w-4 h-4 text-primary" /></a></Button> : null}
           </>
         )}
@@ -40,6 +52,7 @@ export default function CaseRequests() {
         orderBy={{ column: "due_at", ascending: true }}
         fields={[
           { key: "title", label: "What you asked for", type: "text", required: true },
+          { key: "request_type", label: "Request type", type: "select", options: [{ value: "washington_pra", label: "Washington Public Records Act" }, { value: "other", label: "Other records request" }], defaultValue: "washington_pra", help: "For Washington PRA requests, the tracker calculates a five-business-day initial-response checkpoint. This is not a deadline for producing all records." },
           { key: "record_holder", label: "Agency or organization", type: "text" },
           { key: "contact_name", label: "Records contact", type: "text" },
           { key: "contact_email", label: "Records email", type: "text" },
