@@ -298,6 +298,7 @@ ${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library s
       onStartOrganizing?.();
       clearAnalyzerDraft();
       setPendingCaseBuildModuleId(undefined);
+      setPendingCaseId(undefined);
       navigate(`/cases/${targetCaseId}`);
     } catch (e: any) {
       console.error("Unable to create case from analyzer", e);
