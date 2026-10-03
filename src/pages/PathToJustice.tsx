@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Accessibility, ArrowRight, BookOpen, Building2, Car, CheckCircle2,
-  ChevronDown, FileText, Gavel, HeartPulse, Home, Landmark, Scale,
+  Accessibility, ArrowRight, Building2, Car, CheckCircle2,
+  FileText, Gavel, HeartPulse, Home, Landmark, Scale,
   Shield, Speech, Users
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
