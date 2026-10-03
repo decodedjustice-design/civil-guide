@@ -50,6 +50,16 @@ serve(async (req) => {
       });
     }
 
+    if (text.length > 500_000) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Document text is too large for this extraction pass. Analyze a smaller section or use preserved extracted text.",
+      }), {
+        status: 413,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
     const extractions: Extraction[] = [];
     const seen = new Set<string>();
 
