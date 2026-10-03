@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { Search, Filter, X, ArrowRight, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -170,7 +170,7 @@ export function AttorneyDirectory() {
 
   const hasActiveFilters = practiceFilters.length > 0 || countyFilters.length > 0 || feeFilters.length > 0;
 
-  const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>, value: string) => {
+  const toggle = (setter: Dispatch<SetStateAction<string[]>>, value: string) => {
     setter((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value]);
   };
 
