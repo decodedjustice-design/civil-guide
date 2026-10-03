@@ -1,15 +1,58 @@
 import { useParams } from "react-router-dom";
+import { FileSearch, Loader2 } from "lucide-react";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { RecordManager } from "@/components/case-workspace/RecordManager";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { CLASSIFICATIONS, REVIEW_STATUSES, exhibitLabel } from "@/lib/case/classification";
 
 export default function CaseEvidence() {
   const { id } = useParams();
+  const { snapshot, isLoading } = useCaseSnapshot(id);
+  const mentions = snapshot.evidence_mentions;
+
   return (
     <CaseWorkspaceLayout title="Evidence & exhibits"
       description="Store source documents with preservation and provenance information. Original files remain separate from extracted or derived content.">
+      {mentions.length > 0 && (
+        <Card className="mb-5 border-primary/20 bg-primary/[0.03]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <FileSearch className="w-4 h-4 text-primary" />
+              Evidence mentioned in your story
+              <Badge variant="secondary">{mentions.length}</Badge>
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">
+              These are things your narrative says exist or were observed. They are not documents yet. Add the actual record below when you have it.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {mentions.map((mention: any) => (
+              <div key={mention.id} className="rounded-lg border border-border/60 bg-background p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{mention.evidence_type}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{mention.description}</p>
+                    {mention.approximate_date && mention.approximate_date !== "unknown" && (
+                      <p className="text-[11px] text-muted-foreground mt-2">Date: {mention.approximate_date}</p>
+                    )}
+                  </div>
+                  {mention.priority && <Badge variant="outline" className="shrink-0 text-[10px]">{mention.priority}</Badge>}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+      {isLoading && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
+          <Loader2 className="w-3.5 h-3.5 animate-spin" /> Checking for evidence mentioned in your story…
+        </div>
+      )}
+
       <RecordManager
-        table="evidence" caseId={id} addLabel="Add document"
+        table="evidence" caseId={id} addLabel="Add document" enableFileUpload
         emptyMessage="No source documents yet. Add the records that form the documentary basis of this case."
         titleField="title"
         subtitleFields={["source", "document_date", "description"]}

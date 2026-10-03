@@ -1,54 +1,43 @@
-import { Link, useParams } from "react-router-dom";
-import { ArrowRight, FolderSearch } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
+import { RecordManager } from "@/components/case-workspace/RecordManager";
+import { RECORD_GAP_STATUSES } from "@/lib/case/classification";
 
 export default function CaseRecordGaps() {
   const { id } = useParams();
-  const { snapshot, isLoading } = useCaseSnapshot(id);
 
   return (
     <CaseWorkspaceLayout
       title="Record gaps"
-      description="Records your case still needs. Each one comes from an issue's “what's still unknown” note, so nothing here is tracked twice."
+      description="Track records you believe are missing, why they matter, who may hold them, and what happened after you looked for them."
     >
-      {isLoading ? (
-        <Skeleton className="h-40 w-full" />
-      ) : snapshot.record_gaps.length === 0 ? (
-        <Card>
-          <CardContent className="p-6 text-center">
-            <FolderSearch className="h-6 w-6 mx-auto mb-3 text-muted-foreground" strokeWidth={1.5} />
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              No record gaps are tracked yet. When you note what an issue still needs on the Claims &amp; Issues page, it shows up here.
-            </p>
-            <Link to={`/cases/${id}/issues`} className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-4">
-              Go to Claims & Issues <ArrowRight className="h-3 w-3" />
-            </Link>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {snapshot.record_gaps.map((gap) => (
-            <Card key={gap.id}>
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground">{gap.title}</p>
-                    <p className="text-xs text-muted-foreground mt-2 whitespace-pre-wrap">{gap.description}</p>
-                  </div>
-                  <Badge variant="outline" className="shrink-0 text-[10px]">{gap.status}</Badge>
-                </div>
-                <Link to={`/cases/${id}/issues`} className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-3">
-                  Update on the issue <ArrowRight className="h-3 w-3" />
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <RecordManager
+        table="case_record_gaps"
+        caseId={id}
+        addLabel="Add record gap"
+        emptyMessage="No record gaps tracked yet. Add one when an important source is missing, unclear, or still needs to be requested."
+        titleField="title"
+        subtitleFields={["record_holder", "status", "due_date"]}
+        badgeFields={["status"]}
+        orderBy={{ column: "due_date", ascending: true }}
+        fields={[
+          { key: "title", label: "Record needed", type: "text", required: true, placeholder: "e.g. Complete CPS contact log" },
+          { key: "description", label: "Why it matters", type: "textarea" },
+          { key: "record_holder", label: "Likely record holder", type: "text", placeholder: "Agency, court, provider, person" },
+          {
+            key: "status",
+            label: "Status",
+            type: "select",
+            options: RECORD_GAP_STATUSES,
+            defaultValue: "identified",
+          },
+          { key: "identified_at", label: "Date identified", type: "date" },
+          { key: "requested_at", label: "Date requested", type: "date" },
+          { key: "due_date", label: "Date to watch", type: "date" },
+          { key: "received_date", label: "Date received", type: "date" },
+          { key: "notes", label: "Notes", type: "textarea" },
+        ]}
+      />
     </CaseWorkspaceLayout>
   );
 }
