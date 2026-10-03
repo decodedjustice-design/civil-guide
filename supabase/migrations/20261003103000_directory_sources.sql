@@ -39,3 +39,9 @@ values
 ('Washington Law Help Legal Help Directory','legal_aid_directory','Washington','https://www.washingtonlawhelp.org/en/get-legal-help','public_page',30,'active','Maintained by Northwest Justice Project; useful for legal-aid and local organization coverage.'),
 ('WSBA Qualified Legal Service Providers Directory','legal_aid_directory','Washington','https://www.wsba.org/connect-serve/pro-bono-public-service/qlsp-directory','public_page',30,'active','Official statewide QLSP directory for civil legal service providers.'),
 ('Disability Rights Washington','organization_site','Washington','https://www.disabilityrightswa.org/','public_page',90,'active','Organization-specific source for program scope and intake information.');
+
+update public.directory_entries d
+set source_id = s.id
+from public.directory_sources s
+where d.source_id is null
+  and d.source_url = s.url;
