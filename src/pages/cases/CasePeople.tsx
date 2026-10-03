@@ -17,7 +17,7 @@ export default function CasePeople() {
         </TabsList>
         <TabsContent value="people">
           <RecordManager
-            table="case_people"
+            table="people"
             caseId={id}
             addLabel="Add person"
             emptyMessage="No people added yet."
