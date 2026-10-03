@@ -52,20 +52,20 @@ export default function CaseEvidence() {
       )}
 
       <RecordManager
-        table="evidence" caseId={id} addLabel="Add document" enableFileUpload
+        table="documents" caseId={id} addLabel="Add document" enableFileUpload
         emptyMessage="No source documents yet. Add the records that form the documentary basis of this case."
-        titleField="title"
+        titleField="display_filename"
         subtitleFields={["source", "document_date", "description"]}
-        badgeFields={["classification", "review_status", "file_type"]}
+        badgeFields={["classification", "review_status", "document_type"]}
         orderBy={{ column: "exhibit_number", ascending: true }}
         prefixLabel={(item) => exhibitLabel(item.exhibit_number)}
         fields={[
-          { key: "title", label: "Document title / filename", type: "text", required: true },
-          { key: "file_type", label: "Document type", type: "text", placeholder: "Order, report, email, photo, recording" },
+          { key: "display_filename", label: "Document title / filename", type: "text", required: true },
+          { key: "document_type", label: "Document type", type: "text", placeholder: "Order, report, email, photo, recording" },
           { key: "description", label: "What it shows", type: "textarea" },
           { key: "source", label: "Where it came from", type: "text", placeholder: "Agency, person, portal" },
           { key: "document_date", label: "Date on the record", type: "date" },
-          { key: "received_date", label: "Date received", type: "date" },
+          { key: "received_at", label: "Date received", type: "text" },
           { key: "classification", label: "Classification", type: "select", options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })), defaultValue: "unknown" },
           { key: "review_status", label: "Review status", type: "select", options: REVIEW_STATUSES, defaultValue: "needs_review" },
           { key: "system_involved", label: "System involved", type: "text" },
