@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
-import { FileSearch, Loader2 } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import { FileSearch, Loader2, ClipboardCheck } from "lucide-react";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { RecordManager } from "@/components/case-workspace/RecordManager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { CLASSIFICATIONS, REVIEW_STATUSES, exhibitLabel } from "@/lib/case/classification";
@@ -15,6 +16,9 @@ export default function CaseEvidence() {
   return (
     <CaseWorkspaceLayout title="Evidence & exhibits"
       description="Store source documents with preservation and provenance information. Original files remain separate from extracted or derived content.">
+      <div className="flex justify-end mb-4">
+        <Button asChild variant="outline" size="sm"><Link to={id ? `/cases/${id}/evidence-review` : "#"}><ClipboardCheck className="w-4 h-4 mr-2" /> Evidence Review</Link></Button>
+      </div>
       {mentions.length > 0 && (
         <Card className="mb-5 border-primary/20 bg-primary/[0.03]">
           <CardHeader className="pb-3">
