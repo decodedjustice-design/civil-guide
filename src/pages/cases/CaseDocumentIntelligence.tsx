@@ -187,6 +187,24 @@ export default function CaseDocumentIntelligence() {
       createdId = data?.id || null;
       label = "claim";
       if (error) setNotice(error.message);
+    } else if (item.kind === "issue_signal") {
+      const { data, error } = await (supabase as any).from("issues").insert({
+        case_id: id,
+        title: item.text.slice(0, 180),
+        description: "Potential issue signal extracted from a source document. This is an investigation lead, not a finding that a legal violation occurred.",
+        status: "open",
+        classification: "unknown",
+        category: "document-extracted",
+        source_locator_id: locator.id,
+        source_type: "Document Intelligence",
+        supporting_notes: item.text,
+        origin: "document-intelligence",
+        source: "Decoded Justice Document Intelligence",
+        review_status: "needs_review",
+      }).select("id").single();
+      createdId = data?.id || null;
+      label = "potential issue";
+      if (error) setNotice(error.message);
     } else if (item.kind === "person_or_role") {
       const match = item.text.match(/^(?:Officer|Deputy|Detective|Sergeant|Lieutenant|Sheriff|Caseworker|Social Worker|Investigator|Supervisor|Judge|Attorney|Lawyer|Landlord|Property Manager|Teacher|Principal|Doctor|Nurse|Employer|HR|Agency|Worker|Caregiver)\s+/i);
       const role = match?.[0]?.trim() || null;
@@ -197,6 +215,7 @@ export default function CaseDocumentIntelligence() {
         role_label: role,
         source_type: "Document Intelligence",
         review_status: "needs_review",
+        source_locator_id: locator.id,
         notes: `Source extraction: ${item.text}. Verify identity and role before relying on this person record. Locator ${locator.id}.`,
       }).select("id").single();
       createdId = data?.id || null;
@@ -209,6 +228,7 @@ export default function CaseDocumentIntelligence() {
         org_type: "document-extracted",
         source_type: "Document Intelligence",
         review_status: "needs_review",
+        source_locator_id: locator.id,
         notes: `Source locator: ${locator.id}. Verify the organization name and context against the original document.`,
       }).select("id").single();
       createdId = data?.id || null;
@@ -224,6 +244,7 @@ export default function CaseDocumentIntelligence() {
         status: "needs_review",
         source_type: "Document Intelligence",
         review_status: "needs_review",
+        source_locator_id: locator.id,
       }).select("id").single();
       createdId = data?.id || null;
       label = "evidence reference";
@@ -368,7 +389,7 @@ export default function CaseDocumentIntelligence() {
                 <p className="text-sm leading-6">{item.text}</p>
                 <p className="text-[11px] text-muted-foreground mt-2">Source locator: characters {item.locator.start}–{item.locator.end}</p>
                 <p className="text-[11px] text-muted-foreground mt-1">{item.rationale}</p>
-                {["event", "claim", "person_or_role", "organization", "evidence_reference"].includes(item.kind) && !promoted[item.id] && (
+                {["event", "claim", "person_or_role", "organization", "evidence_reference", "issue_signal"].includes(item.kind) && !promoted[item.id] && (
                   <Button size="sm" variant="outline" className="mt-3" onClick={() => promote(item)} disabled={promoting === item.id}>
                     {promoting === item.id ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5 mr-2" />}
                     Promote to case record
