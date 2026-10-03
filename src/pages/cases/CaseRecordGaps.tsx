@@ -15,7 +15,7 @@ export default function CaseRecordGaps() {
   const createRequestFromGap = async (gap: any) => {
     if (!id || gap.related_request_id) return;
     try {
-      const title = String(gap.title ?? "Record request").replace(/^(Locate|Clarify):\\s*/i, "");
+      const title = String(gap.title ?? "Record request").replace(/^(Locate|Clarify):\s*/i, "");
       const { data: request, error: requestError } = await supabase
         .from("record_requests")
         .insert({ case_id: id, title, record_holder: gap.record_holder ?? null, status: "draft", notes: gap.description ?? gap.notes ?? null, related_issue_id: gap.related_issue_id ?? null })
