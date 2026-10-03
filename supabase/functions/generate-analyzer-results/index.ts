@@ -142,25 +142,47 @@ serve(async (req) => {
     answeredQuestions.forEach(item => { if (item.questionId && item.answer) answerMap[item.questionId] = item.answer; });
     const inferredSystems = inferSystemsFromNarrative(clarionNarrative);
     const extractedFacts = extractFactsFromNarrative(clarionNarrative);
+    const narrativeText = clarionNarrative || '';
+
+    // A narrative can contain multiple legally relevant event signals. Keep each
+    // signal independent instead of collapsing the narrative to one issue type.
+    const inferIssueTypes = (system: string): string[] => {
+      const issueTypes: string[] = [];
+      const add = (type: string, pattern: RegExp) => { if (pattern.test(narrativeText)) issueTypes.push(type); };
+
+      if (system === 'police') {
+        add('search', /\b(search|searched|searching|seized|entered|looked through)\b/i);
+        add('stop', /\b(stopped|stop|pulled me over|detained|detention|held me|questioned)\b/i);
+        add('force', /\b(force|tackled|struck|hit|kicked|punched|taser|tased|choked|restrained|beat|physical contact)\b/i);
+        add('retaliation', /\b(retaliat|punished me|targeted me after|because I complained|after I reported|after I recorded)\b/i);
+      } else {
+        add('removal', /\b(removal|removed|placement|investigation)\b/i);
+        add('eviction', /\b(evict|eviction|notice to vacate)\b/i);
+        add('discrimination', /\b(discriminat|treated differently)\b/i);
+      }
+
+      // Preserve a questionnaire-selected issue when there is one, while still
+      // adding independently supported narrative signals.
+      const selected = answerMap['issue-type'];
+      if (selected && selected !== 'none' && !issueTypes.includes(selected)) issueTypes.unshift(selected);
+      return [...new Set(issueTypes)];
+    };
+
     const systemsToCheck = systemId === 'unsure' && inferredSystems.length
       ? inferredSystems.slice(0, 3)
       : [{ id: systemId, label: systemLabel, signals: [] }];
-    const potentialViolations = systemsToCheck.flatMap(system => detectPotentialViolations(
-      system.id,
-      {
-        ...answerMap,
-        'issue-type': answerMap['issue-type'] || (
-          /search|searched|seized|entered my home/i.test(clarionNarrative || '') ? 'search' :
-          /arrest|detained|stop|pulled me over/i.test(clarionNarrative || '') ? 'arrest' :
-          /retaliat|punished me|targeted me after/i.test(clarionNarrative || '') ? 'retaliation' :
-          /removal|removed|placement|investigation/i.test(clarionNarrative || '') ? 'removal' :
-          /evict|eviction|notice to vacate/i.test(clarionNarrative || '') ? 'eviction' :
-          /discriminat|treated differently/i.test(clarionNarrative || '') ? 'discrimination' :
-          ''
-        )
-      },
-      location
-    ));
+
+    const potentialViolations = systemsToCheck.flatMap(system => {
+      const issueTypes = inferIssueTypes(system.id);
+      if (!issueTypes.length) {
+        return detectPotentialViolations(system.id, { ...answerMap }, location);
+      }
+      return issueTypes.flatMap(issueType =>
+        detectPotentialViolations(system.id, { ...answerMap, 'issue-type': issueType }, location)
+      );
+    }).filter((violation, index, all) =>
+      all.findIndex(other => other.id === violation.id) === index
+    );
 
     const knownFacts = [
       ...timelineEntries.filter(e => hasText(e.title)).slice(0, 4).map(e => {
