@@ -1,17 +1,23 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { RecordManager } from "@/components/case-workspace/RecordManager";
 import { CaseWorkspaceSummary } from "@/components/case-workspace/CaseWorkspaceSummary";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { REQUEST_STATUSES } from "@/lib/case/classification";
-import { ClipboardCopy, ExternalLink } from "lucide-react";
+import { ClipboardCopy, ExternalLink, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function CaseRequests() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { snapshot } = useCaseSnapshot(id);
+  const [linkingRequest, setLinkingRequest] = useState<any | null>(null);
+  const [selectedDocumentId, setSelectedDocumentId] = useState("");
 
   const addBusinessDays = (start: Date, days: number) => { const d = new Date(start); let added = 0; while (added < days) { d.setDate(d.getDate() + 1); const day = d.getDay(); if (day !== 0 && day !== 6) added++; } return d; };
 
@@ -127,6 +133,37 @@ export default function CaseRequests() {
     toast({ title: "Request updated", description: `Status changed to ${status.replace("_", " ")}.` });
   };
 
+  const linkDocument = async () => {
+    if (!id || !linkingRequest || !selectedDocumentId) return;
+    const exists = snapshot.links.some((link: any) =>
+      link.from_type === "request" && link.from_id === linkingRequest.id &&
+      link.to_type === "document" && link.to_id === selectedDocumentId
+    );
+    if (exists) {
+      toast({ title: "Already linked", description: "That document is already connected to this request." });
+      return;
+    }
+
+    const { error } = await supabase.from("case_relationships").insert({
+      case_id: id,
+      from_type: "request",
+      from_id: linkingRequest.id,
+      to_type: "document",
+      to_id: selectedDocumentId,
+      relation: "response_document",
+      note: "Document linked as a response to this records request.",
+    });
+
+    if (error) {
+      toast({ title: "Could not link document", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    setLinkingRequest(null);
+    setSelectedDocumentId("");
+    toast({ title: "Document linked", description: "The received record is now connected to this request." });
+  };
+
   const copyRequest = async (request: any) => {
     const body = `Records Request\\n\\nTo: ${request.contact_name || "Records Officer"}${request.record_holder ? `\\nOrganization: ${request.record_holder}` : ""}${request.contact_email ? `\\nEmail: ${request.contact_email}` : ""}\\n\\nI am requesting the following records: ${request.title}.\\n\\nPlease provide the records in an electronic format if available. If any portion is withheld, please identify the withheld material and the basis for withholding it.\\n\\nRequest tracking number: ${request.request_number || "To be assigned"}`;
     await navigator.clipboard.writeText(body);
@@ -149,6 +186,7 @@ export default function CaseRequests() {
             {request.status === "acknowledged" ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "partial")} aria-label="Mark partial response" title="Mark partial response"><span className="text-xs">Partial</span></Button> : null}
             {["acknowledged", "partial"].includes(request.status) ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "complete")} aria-label="Mark request complete" title="Mark complete"><span className="text-xs">Complete</span></Button> : null}
             {["sent", "acknowledged"].includes(request.status) ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "denied")} aria-label="Mark request denied" title="Mark denied"><span className="text-xs">Denied</span></Button> : null}\n            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
+            {(request.status === "partial" || request.status === "complete") ? <Button variant="ghost" size="sm" onClick={() => { setLinkingRequest(request); setSelectedDocumentId(""); }} aria-label="Link response document" title="Link response document"><Link2 className="w-4 h-4 text-primary" /></Button> : null}
             {request.submission_url ? <Button variant="ghost" size="sm" asChild><a href={request.submission_url} target="_blank" rel="noreferrer" aria-label="Open official request portal" title="Open official request portal"><ExternalLink className="w-4 h-4 text-primary" /></a></Button> : null}
           </>
         )}
@@ -181,6 +219,32 @@ export default function CaseRequests() {
           { key: "notes", label: "Notes", type: "textarea" },
         ]}
       />
+      
+      <Dialog open={Boolean(linkingRequest)} onOpenChange={(next) => !next && setLinkingRequest(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Link response document</DialogTitle>
+            <DialogDescription>
+              Connect a document already stored in this case to “{linkingRequest?.title}”. Upload the record first from Evidence & exhibits if you do not see it here.
+            </DialogDescription>
+          </DialogHeader>
+          <Select value={selectedDocumentId} onValueChange={setSelectedDocumentId}>
+            <SelectTrigger><SelectValue placeholder="Choose a document" /></SelectTrigger>
+            <SelectContent>
+              {snapshot.evidence.length === 0
+                ? <SelectItem value="__none" disabled>No documents yet</SelectItem>
+                : snapshot.evidence.map((doc: any) => (
+                  <SelectItem key={doc.id} value={doc.id}>{doc.display_filename || doc.title || "Untitled document"}</SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLinkingRequest(null)}>Cancel</Button>
+            <Button onClick={() => void linkDocument()} disabled={!selectedDocumentId}>Link document</Button>
+            <Button variant="ghost" onClick={() => navigate(id ? `/cases/${id}/evidence` : "#")}>Open Evidence</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </CaseWorkspaceLayout>
   );
 }
