@@ -20,12 +20,20 @@ export default function CaseRequests() {
         addLabel="Add a request"
         emptyMessage="No requests tracked yet."
         titleField="title"
-        subtitleFields={["record_holder", "requested_at", "due_at", "notes"]}
+        subtitleFields={["record_holder", "contact_email", "submission_method", "requested_at", "due_at", "notes"]}
         badgeFields={["status"]}
         orderBy={{ column: "due_at", ascending: true }}
         fields={[
           { key: "title", label: "What you asked for", type: "text", required: true },
           { key: "record_holder", label: "Agency or organization", type: "text" },
+          { key: "contact_name", label: "Records contact", type: "text" },
+          { key: "contact_email", label: "Records email", type: "text" },
+          { key: "contact_phone", label: "Records phone", type: "text" },
+          { key: "submission_method", label: "Submission method", type: "text", placeholder: "Email, online portal, mail, fax" },
+          { key: "submission_url", label: "Official request portal", type: "text" },
+          { key: "mailing_address", label: "Mailing address", type: "textarea" },
+          { key: "routing_source", label: "Routing source", type: "text", placeholder: "Official agency records page" },
+          { key: "routing_verified_at", label: "Routing verified", type: "date" },
           
           { key: "status", label: "Status", type: "select", options: REQUEST_STATUSES, defaultValue: "draft" },
           
