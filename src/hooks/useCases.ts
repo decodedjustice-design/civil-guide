@@ -132,7 +132,7 @@ export function useCaseCollection<T extends { id: string }>(
       if (!user || !caseId) throw new Error("No active case");
       const { error } = await (supabase as any)
         .from(table)
-        .insert({ ...values, case_id: caseId, user_id: user.id });
+        .insert({ ...values, case_id: caseId });
       if (error) throw error;
     },
     onSuccess: invalidate,
