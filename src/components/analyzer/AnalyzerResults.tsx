@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, FolderOpen, Share2, Check, Loader2, LogIn, AlertCircle, RefreshCw, BriefcaseBusiness, ExternalLink, Scale } from "lucide-react";
+import { ArrowRight, FolderOpen, Share2, Check, Loader2, LogIn, AlertCircle, RefreshCw, BriefcaseBusiness, ExternalLink, Scale, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PrintShareModal } from "@/components/shared/PrintShareModal";
 import { ClarifyingQuestions } from "./ClarifyingQuestions";
@@ -15,7 +15,7 @@ import { getPoliceLawModules } from "@/lib/law/policeIssueModules";
 
 import type { EntityTags } from "@/hooks/useEntityTags";
 import type { PatternAnalysis } from "@/hooks/usePatternEngine";
-import type { AnalyzerResultsAI, PotentialViolation } from "@/hooks/useAnalyzerResultsAI";
+import type { AnalyzerResultsAI, PotentialViolation, ExtractedFact } from "@/hooks/useAnalyzerResultsAI";
 
 interface ToolCardProps { name: string; purpose: string; relevance: string; link: string; icon: React.ElementType; isLocked?: boolean; lockReason?: string; }
 interface SavedResult { id: string; savedAt: Date; }
@@ -71,7 +71,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
   const [printShareOpen, setPrintShareOpen] = useState(false);
   const [showClarifyingQuestions, setShowClarifyingQuestions] = useState(true);
   const [clarifyingAnswers, setClarifyingAnswers] = useState<Record<string, string>>({});
-  const [creatingCase, setCreatingCase] = useState(false);
+  const [creatingCase, setCreatingCase] = useState(false);\n  const [reviewedFacts, setReviewedFacts] = useState<Record<string, boolean>>({});\n  const [factEdits, setFactEdits] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const patternAwareness = usePatternAwareness(entityTags, answers, patternStrength);
   const mergedTriageAnswers = useMemo(() => ({ ...answers, ...clarifyingAnswers }), [answers, clarifyingAnswers]);
@@ -144,8 +144,8 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const { error: issueError } = await supabase.from("issues").insert(issueRows);
       if (issueError) throw issueError;
 
-      const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");
-      const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
+      const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");\n      const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));\n      const extractedFactSummary = confirmedExtractedFacts.length\n        ? `Confirmed extracted facts:\\n${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\\n")}`\n        : "";
+      const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
       const { error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" });
       if (timelineError) throw timelineError;
       const { error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "txt", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true });
@@ -169,7 +169,35 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     {isLoggedIn ? <div className="mb-6 flex items-center justify-center">{isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/60 text-muted-foreground text-sm"><Loader2 className="w-4 h-4 animate-spin" /><span>Saving to your file...</span></div>}{savedResult && !isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium"><Check className="w-4 h-4" /><span>Saved to your file</span></div>}{saveError && !isSaving && !savedResult && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 text-destructive text-sm"><span>Could not save · Please try again later</span></div>}</div> : <div className="mb-6 flex items-center justify-center"><Link to="/auth?redirect=/analyzer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"><LogIn className="w-4 h-4" /><span>Sign in to save this result</span></Link></div>}
     <header className="mb-8 rounded-3xl border border-border bg-card px-5 py-6 text-left shadow-sm sm:px-7"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Analyzer workspace</p><h1 className="mt-2 font-serif text-3xl leading-tight text-foreground sm:text-4xl">Your results, organized</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{caseId && caseDataSource ? `This analysis uses ${caseDataSource.timelineCount} timeline event${caseDataSource.timelineCount === 1 ? "" : "s"}, ${caseDataSource.evidenceCount} exhibit${caseDataSource.evidenceCount === 1 ? "" : "s"}, and ${caseDataSource.issueCount} tracked issue${caseDataSource.issueCount === 1 ? "" : "s"} from your case, alongside your Analyzer answers.` : "Your answers have been organized into research leads, open questions, records to locate, and practical next steps."}</p></div><Button variant="outline" size="sm" onClick={() => setPrintShareOpen(true)} className="gap-2 shrink-0 print:hidden"><Share2 className="w-4 h-4" />Print or Share</Button></div></header>
     {showClarifyingQuestions && clarifyingQuestions.length > 0 && <ClarifyingQuestions questions={clarifyingQuestions} context={caseContext} onAnswer={(questionId, answer) => { setClarifyingAnswers(prev => ({ ...prev, [questionId]: answer })); onClarifyingAnswer?.(questionId, answer); }} onSkip={() => {}} onComplete={() => setShowClarifyingQuestions(false)} />}
-    {patternAwareness?.hasPattern && <PatternAwarenessBlock blocks={patternAwareness.patternBlocks} />}
+    {patternAwareness?.hasPattern && <PatternAwarenessBlock blocks={patternAwareness.patternBlocks} />}\n    {(aiResults.extractedFacts?.length ?? 0) > 0 && <section className="mb-8 rounded-3xl border border-border bg-card shadow-sm overflow-hidden">
+      <div className="border-b border-border px-5 py-5 sm:px-7">
+        <div className="flex items-start gap-3">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"><ClipboardList className="h-5 w-5 text-primary" /></div>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Fact extraction</p>
+            <h2 className="mt-1 font-serif text-2xl text-foreground">What I understood from your story</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">These are draft facts extracted from your narrative. Review and edit them before they can be carried into your case workspace.</p>
+          </div>
+        </div>
+      </div>
+      <div className="divide-y divide-border">
+        {(aiResults.extractedFacts ?? []).map((fact: ExtractedFact) => {
+          const value = factEdits[fact.id] ?? fact.text;
+          const confirmed = Boolean(reviewedFacts[fact.id]);
+          return <div key={fact.id} className="px-5 py-4 sm:px-7">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{fact.kind.replace(/_/g, " ")}</span>
+              <button type="button" onClick={() => setReviewedFacts(prev => ({ ...prev, [fact.id]: !confirmed }))} className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${confirmed ? "border-primary/30 bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30 hover:text-primary"}`}>
+                {confirmed ? "Confirmed" : "Confirm fact"}
+              </button>
+            </div>
+            <textarea value={value} onChange={(e) => setFactEdits(prev => ({ ...prev, [fact.id]: e.target.value }))} rows={2} className="w-full resize-y rounded-xl border border-border bg-background px-3 py-2 text-sm leading-6 text-foreground outline-none focus:ring-2 focus:ring-primary/20" />
+            {fact.date && <p className="mt-2 text-xs text-muted-foreground">Detected date: {fact.date}</p>}
+            <p className="mt-2 text-[11px] text-muted-foreground">Source: your narrative · Verification required</p>
+          </div>;
+        })}
+      </div>
+    </section>}
     <AnalyzerEndSummary
       aiResults={aiResults}
       findings={analyzerFindings}
