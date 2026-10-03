@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Plus, Pencil, Trash2, Upload, FileText, Download, Eye, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,7 +38,7 @@ interface RecordManagerProps {
   prefixLabel?: (item: any) => string | null;
   addLabel: string;
   emptyMessage: string;
-  enableFileUpload?: boolean;
+  enableFileUpload?: boolean;\n  customItemActions?: (item: any) => ReactNode;
 }
 
 const emptyValues = (fields: FieldConfig[]) =>
@@ -206,7 +206,7 @@ export function RecordManager({
                   <div className="flex gap-2 shrink-0">
                     <Button variant="ghost" size="sm" onClick={() => setViewingItem(item)}><Eye className="w-4 h-4" /><span className="sr-only">View record</span></Button>
                     <Button variant="ghost" size="sm" onClick={() => openEdit(item)}><Pencil className="w-4 h-4" /><span className="sr-only">Edit</span></Button>
-                    <Button variant="ghost" size="sm" onClick={() => remove.mutate(item.id)} aria-label="Remove"><Trash2 className="w-4 h-4 text-muted-foreground" /></Button>
+                    {customItemActions?.(item)}\n                    {target}
                   </div>
                 </div>
               </CardContent>
