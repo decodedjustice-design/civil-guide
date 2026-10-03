@@ -1837,10 +1837,15 @@ export default function Analyzer() {
       // and could only return generic research guidance.
       const systemInfo = systemCategories.find(s => s.id === selectedSystem);
       if (systemInfo) {
-        const answerEntries = Object.entries(newAnswers).map(([id, value]) => ({
-          questionId: id,
-          answer: value,
-        }));
+        const answerEntries = Object.entries(newAnswers).map(([id, value]) => {
+          const question = currentFollowUps.find((item) => item.id === id);
+          const option = question?.options.find((item) => item.id === value);
+          return {
+            questionId: id,
+            answer: value,
+            answerLabel: option?.label || value,
+          };
+        });
         const answerNarrative = currentFollowUps
           .map((question) => {
             const answerId = newAnswers[question.id];
