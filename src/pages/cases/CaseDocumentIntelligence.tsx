@@ -125,7 +125,7 @@ export default function CaseDocumentIntelligence() {
       text_end: item.locator.end,
       quoted_text: item.locator.quoted_text,
       locator_hash: await crypto.subtle.digest("SHA-256", new TextEncoder().encode(
-        \`\${selectedId}|\${versionId || "source-text"}|\${item.locator.start}|\${item.locator.end}|\${item.locator.quoted_text}\`
+        `${selectedId}|${versionId || "source-text"}|${item.locator.start}|${item.locator.end}|${item.locator.quoted_text}`
       )).then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("")),
     };
     if (extractedTextId) locatorPayload.extracted_text_id = extractedTextId;
@@ -146,7 +146,7 @@ export default function CaseDocumentIntelligence() {
     let label = "";
     if (item.kind === "event") {
       const parsedDate = item.normalized && /^\d{4}-\d{2}-\d{2}$/.test(item.normalized)
-        ? new Date(\`\${item.normalized}T12:00:00Z\`).toISOString()
+        ? new Date(`${item.normalized}T12:00:00Z`).toISOString()
         : null;
       const { data, error } = await (supabase as any).from("events").insert({
         case_id: id,
@@ -190,7 +190,7 @@ export default function CaseDocumentIntelligence() {
         role_label: role,
         source_type: "Document Intelligence",
         review_status: "needs_review",
-        notes: \`Source extraction: \${item.text}. Verify identity and role before relying on this person record. Locator \${locator.id}.\`,
+        notes: `Source extraction: ${item.text}. Verify identity and role before relying on this person record. Locator ${locator.id}.`,
       }).select("id").single();
       createdId = data?.id || null;
       label = "person";
@@ -202,7 +202,7 @@ export default function CaseDocumentIntelligence() {
         org_type: "document-extracted",
         source_type: "Document Intelligence",
         review_status: "needs_review",
-        notes: \`Source locator: \${locator.id}. Verify the organization name and context against the original document.\`,
+        notes: `Source locator: ${locator.id}. Verify the organization name and context against the original document.`,
       }).select("id").single();
       createdId = data?.id || null;
       label = "organization";
@@ -225,7 +225,7 @@ export default function CaseDocumentIntelligence() {
 
     if (createdId) {
       setPromoted(prev => ({ ...prev, [item.id]: label }));
-      setNotice(\`Promoted to \${label}. The new record remains marked Needs review and retains source locator \${locator.id}.\`);
+      setNotice(`Promoted to ${label}. The new record remains marked Needs review and retains source locator ${locator.id}.`);
     } else if (!notice) {
       setNotice("This extraction type stays as a source signal until it has enough context to safely promote.");
     }
