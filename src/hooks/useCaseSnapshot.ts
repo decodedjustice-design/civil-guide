@@ -11,6 +11,7 @@ export interface CaseSnapshot {
   requests: any[];
   record_gaps: any[];
   evidence_mentions: any[];
+  evidence_reviews: any[];
   notes: any[];
   links: any[];
   packets: any[];
@@ -38,7 +39,7 @@ export function useCaseSnapshot(caseId?: string) {
         return data ?? [];
       };
 
-      const [documents, events, issues, people, organizations, communications, requests, tasks, evidence_mentions, links, packets] =
+      const [documents, events, issues, people, organizations, communications, requests, tasks, evidence_mentions, evidence_reviews, links, packets] =
         await Promise.all([
           load("documents", "created_at"),
           load("events", "occurred_at"),
@@ -49,6 +50,7 @@ export function useCaseSnapshot(caseId?: string) {
           load("record_requests", "due_at"),
           load("tasks", "due_at"),
           load("evidence_mentions", "created_at"),
+          load("evidence_reviews", "created_at"),
           load("case_relationships", "created_at"),
           load("case_packets", "created_at"),
         ]);
@@ -66,7 +68,7 @@ export function useCaseSnapshot(caseId?: string) {
       const notes: any[] = [];
       return {
         evidence, timeline, issues, people, organizations,
-        communications, requests, record_gaps, evidence_mentions, notes, links, packets,
+        communications, requests, record_gaps, evidence_mentions, evidence_reviews, notes, links, packets,
       };
     },
   });
