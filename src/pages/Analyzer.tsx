@@ -1832,14 +1832,33 @@ export default function Analyzer() {
       
       setShowResults(true);
       
-      // Trigger AI generation when showing results
+      // Generate from the complete answer set. Previously this call sent only
+      // the system, so the results engine had no access to the user's answers
+      // and could only return generic research guidance.
       const systemInfo = systemCategories.find(s => s.id === selectedSystem);
       if (systemInfo) {
+        const answerEntries = Object.entries(newAnswers).map(([id, value]) => ({
+          questionId: id,
+          answer: value,
+        }));
+        const answerNarrative = currentFollowUps
+          .map((question) => {
+            const answerId = newAnswers[question.id];
+            const option = question.options.find((item) => item.id === answerId);
+            return answerId
+              ? `${question.question}: ${option?.label || answerId}`
+              : null;
+          })
+          .filter(Boolean)
+          .join("\n");
+
         generateAIResults({
           systemId: selectedSystem,
           systemLabel: systemInfo.label,
-          patternStrength: 'none',
+          patternStrength: analysis?.strength || 'none',
           location: 'Washington State',
+          clarionNarrative: answerNarrative,
+          answeredQuestions: answerEntries,
         });
       }
     }
