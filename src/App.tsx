@@ -44,6 +44,7 @@ import LawModules from "./pages/LawModules";
 import CasesList from "./pages/cases/CasesList";
 import CaseOverview from "./pages/cases/CaseOverview";
 import CaseEvidence from "./pages/cases/CaseEvidence";
+import CaseEvidenceReview from "./pages/cases/CaseEvidenceReview";
 import CaseTimeline from "./pages/cases/CaseTimeline";
 import CasePeople from "./pages/cases/CasePeople";
 import CaseIssues from "./pages/cases/CaseIssues";
@@ -119,6 +120,7 @@ const App = () => {
               <Route path="/wa-templates" element={<DecodedJusticeEmbed />} />
               <Route path="/cases/:id" element={<ProtectedRoute><CaseOverview /></ProtectedRoute>} />
               <Route path="/cases/:id/evidence" element={<ProtectedRoute><CaseEvidence /></ProtectedRoute>} />
+              <Route path="/cases/:id/evidence-review" element={<ProtectedRoute><CaseEvidenceReview /></ProtectedRoute>} />
               <Route path="/cases/:id/documents" element={<ProtectedRoute><CaseEvidence /></ProtectedRoute>} />
               <Route path="/cases/:id/timeline" element={<ProtectedRoute><CaseTimeline /></ProtectedRoute>} />
               <Route path="/cases/:id/people" element={<ProtectedRoute><CasePeople /></ProtectedRoute>} />
