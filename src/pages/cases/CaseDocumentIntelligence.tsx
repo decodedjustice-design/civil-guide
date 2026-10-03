@@ -86,6 +86,7 @@ export default function CaseDocumentIntelligence() {
         .limit(1);
       if (!cancelled) {
         setVersionId(latest.id);
+        setExtractedTextId(extracted?.[0]?.id || null);
         setSourceText(extracted?.[0]?.normalized_text || "");
         if (!extracted?.[0]) setNotice("A document version exists, but no extracted text is available. Paste text below.");
       }
@@ -115,6 +116,10 @@ export default function CaseDocumentIntelligence() {
 
   const promote = async (item: Extraction) => {
     if (!id || !selectedId) return;
+    if (!versionId) {
+      setNotice("This source was pasted text without a preserved document version. Save the extraction first; promotion requires a source version so the locator can be preserved.");
+      return;
+    }
     setPromoting(item.id);
     setNotice("");
 
@@ -268,7 +273,7 @@ export default function CaseDocumentIntelligence() {
     const { error: extractionError } = await (supabase as any).from("ai_extractions").insert({
       case_id: id,
       ai_run_id: runRow.id,
-      validation_status: "needs_review",
+      validation_status: "pending",
       payload: {
         source: { document_id: selectedId, document_version_id: versionId, character_count: sourceText.length },
         extraction_method: "deterministic-pattern-v1",
