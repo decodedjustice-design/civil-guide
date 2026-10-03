@@ -39,8 +39,7 @@ const extractFactsFromNarrative = (narrative?: string): ExtractedFact[] => {
     facts.push({ id: 'fact_' + (facts.length + 1), kind, text: cleaned.slice(0, 280), ...(date ? { date } : {}), source, verification: 'needs_user_verification' });
   };
 
-  const sentences = text.split(/(?<=[.!?])\s+|
-+/).map(cleanSentence).filter(Boolean);
+  const sentences = text.split(/(?<=[.!?])\s+|\n+/).map(cleanSentence).filter(Boolean);
   const datePattern = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,\s*\d{4})?|\b\d{1,2}\/\d{1,2}\/\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b/;
   const eventSignals = /\b(?:happened|occurred|called|contacted|visited|came|went|left|entered|searched|seized|stopped|detained|arrested|removed|placed|evicted|terminated|fired|denied|requested|reported|filed|served|received|sent|met|heard|ordered|approved|rejected|investigated|interviewed|threatened|hit|injured|restrained|took|returned)\b/i;
   const outcomeSignals = /\b(?:injured|hurt|hospitalized|arrested|detained|removed|placed|evicted|homeless|fired|terminated|denied|lost|damaged|charged|convicted|dismissed|approved|rejected|suspended|disciplined|missed|failed|received|no longer|resulted in)\b/i;
