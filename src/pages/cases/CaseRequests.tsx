@@ -21,6 +21,7 @@ export default function CaseRequests() {
     const checkpoint = addBusinessDays(sent, 5);
     const { error } = await supabase.from("record_requests").update({ status: "sent", requested_at: sent.toISOString().slice(0, 10), due_at: checkpoint.toISOString() }).eq("id", request.id).eq("case_id", id);
     if (error) { toast({ title: "Could not mark sent", description: error.message, variant: "destructive" }); return; }
+    await supabase.from("tasks").insert({ case_id: id, task_type: "follow_up", title: `Check response: ${request.title}`, description: "Check for the agency’s initial response to this records request. For Washington PRA requests, this is the five-business-day initial-response checkpoint; it is not necessarily a deadline for producing all records.", status: "identified", due_at: checkpoint.toISOString(), related_request_id: request.id, identified_at: sent.toISOString().slice(0, 10), notes: "Created automatically when the request was marked sent." });
     toast({ title: "Request marked sent", description: `Washington PRA initial-response checkpoint set for ${checkpoint.toLocaleDateString()}.` });
   };
 
