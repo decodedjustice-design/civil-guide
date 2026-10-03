@@ -36,6 +36,7 @@ export default function CaseOverview() {
     { label: "Communications", count: snapshot.communications.length, to: "communications", icon: MessageSquare },
     { label: "Requests", count: snapshot.requests.length, to: "requests", icon: FileSearch },
     { label: "Record gaps", count: snapshot.record_gaps.filter((g) => !["received", "resolved"].includes(g.status)).length, to: "record-gaps", icon: ClipboardList },
+    { label: "Case packets", count: snapshot.packets.length, to: "packets", icon: ClipboardList },
   ];
 
   const needsReview = snapshot.evidence.filter((e) => e.review_status !== "reviewed").length;
@@ -101,6 +102,23 @@ export default function CaseOverview() {
                   className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline pt-1"
                 >
                   Run a content check <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+
+          {snapshot.packets.length > 0 && (
+            <Card>
+              <CardContent className="p-5 space-y-3">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">Analyzer intake</p>
+                  <h2 className="font-serif text-lg mt-1">Your analysis is now part of this case</h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    The Analyzer saved its findings, intake answers, timeline context, and review packet here. These records remain drafts for your review.
+                  </p>
+                </div>
+                <Link to={`/cases/${id}/packets`} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+                  Open case packets <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </CardContent>
             </Card>
