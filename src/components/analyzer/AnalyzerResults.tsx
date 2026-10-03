@@ -77,6 +77,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
   const [factEdits, setFactEdits] = useState<Record<string, string>>(savedDraft?.factEdits ?? {});
   const [clarifyingAnswers, setClarifyingAnswers] = useState<Record<string, string>>(savedDraft?.clarifyingAnswers ?? {});
   const [pendingCaseBuildModuleId, setPendingCaseBuildModuleId] = useState<string | undefined>(savedDraft?.pendingCaseBuildModuleId);
+  const [pendingCaseId, setPendingCaseId] = useState<string | undefined>(savedDraft?.pendingCaseId);
   const navigate = useNavigate();
   const patternAwareness = usePatternAwareness(entityTags, answers, patternStrength);
   const mergedTriageAnswers = useMemo(() => ({ ...answers, ...clarifyingAnswers }), [answers, clarifyingAnswers]);
@@ -99,8 +100,9 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       factEdits,
       clarifyingAnswers,
       pendingCaseBuildModuleId,
+      pendingCaseId,
     });
-  }, [aiResults, reviewedFacts, factEdits, clarifyingAnswers, pendingCaseBuildModuleId]);
+  }, [aiResults, reviewedFacts, factEdits, clarifyingAnswers, pendingCaseBuildModuleId, pendingCaseId]);
 
   const startCaseWorkspace = async (selectedModule?: LawModule) => {
     if (!isLoggedIn) {
@@ -117,6 +119,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         factEdits,
         clarifyingAnswers,
         pendingCaseBuildModuleId: selectedModule?.id,
+        pendingCaseId,
       });
       navigate(`/auth?redirect=/analyzer`);
       return;
@@ -127,11 +130,30 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const { data: authUser } = await supabase.auth.getUser();
       const ownerId = authUser.user?.id;
       if (!ownerId) throw new Error("Your session expired. Please sign in again.");
-      let targetCaseId = caseId;
+      const draftAtStart = loadAnalyzerDraft();
+      let targetCaseId = caseId ?? pendingCaseId ?? draftAtStart?.pendingCaseId;
       if (!targetCaseId) {
         const { data: created, error } = await supabase.from("cases").insert({ owner_user_id: ownerId, title: `${systemLabel} case`, matter_type: systemId, jurisdiction: "Washington State" }).select("id").single();
         if (error) throw error;
         targetCaseId = created.id;
+        setPendingCaseId(targetCaseId);
+        saveAnalyzerDraft({
+          ...(draftAtStart ?? {
+            selectedSystem: systemId,
+            answers,
+            freeformNarrative: answers.narrative ?? "",
+            entityName: entityName ?? "",
+            entityTags,
+            step: 0,
+            showResults: true,
+            showEntityQuestions: false,
+            reviewedFacts,
+            factEdits,
+            clarifyingAnswers,
+            pendingCaseBuildModuleId: selectedModule?.id,
+          }),
+          pendingCaseId: targetCaseId,
+        });
       }
       const { data: authData } = await supabase.auth.getUser();
       const userId = authData.user?.id;
@@ -186,6 +208,83 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         ? `Confirmed extracted facts:
 ${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\n")}`
         : "";
+      // Confirmed facts become native case records. Exact-match checks make retries idempotent after partial failures.
+      if (confirmedExtractedFacts.length) {
+        const eventFacts = confirmedExtractedFacts.filter((fact) => fact.kind === "event" || fact.kind === "outcome");
+        const peopleFacts = confirmedExtractedFacts.filter((fact) => fact.kind === "person_or_role");
+        const organizationFacts = confirmedExtractedFacts.filter((fact) => fact.kind === "organization");
+        const evidenceFacts = confirmedExtractedFacts.filter((fact) => fact.kind === "evidence_mention");
+        const eventTexts = [...new Set(eventFacts.map((fact) => fact.text))];
+        const peopleTexts = [...new Set(peopleFacts.map((fact) => fact.text))];
+        const organizationTexts = [...new Set(organizationFacts.map((fact) => fact.text))];
+        const evidenceTexts = [...new Set(evidenceFacts.map((fact) => fact.text))];
+
+        const [existingEvents, existingPeople, existingOrganizations, existingEvidence] = await Promise.all([
+          eventTexts.length ? supabase.from("events").select("description").eq("case_id", targetCaseId).in("description", eventTexts) : Promise.resolve({ data: [], error: null }),
+          peopleTexts.length ? supabase.from("people").select("display_name").eq("case_id", targetCaseId).in("display_name", peopleTexts) : Promise.resolve({ data: [], error: null }),
+          organizationTexts.length ? supabase.from("organizations").select("name").eq("case_id", targetCaseId).in("name", organizationTexts) : Promise.resolve({ data: [], error: null }),
+          evidenceTexts.length ? supabase.from("evidence_mentions").select("description").eq("case_id", targetCaseId).in("description", evidenceTexts) : Promise.resolve({ data: [], error: null }),
+        ]);
+        const lookupErrors = [existingEvents.error, existingPeople.error, existingOrganizations.error, existingEvidence.error].filter(Boolean);
+        if (lookupErrors.length) throw lookupErrors[0];
+
+        const existingEventTexts = new Set((existingEvents.data ?? []).map((row) => row.description));
+        const existingPeopleTexts = new Set((existingPeople.data ?? []).map((row) => row.display_name));
+        const existingOrganizationTexts = new Set((existingOrganizations.data ?? []).map((row) => row.name));
+        const existingEvidenceTexts = new Set((existingEvidence.data ?? []).map((row) => row.description));
+        const parseDate = (value?: string) => {
+          if (!value) return undefined;
+          const parsed = new Date(value);
+          return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+        };
+
+        const newEventRows = eventFacts.filter((fact) => !existingEventTexts.has(fact.text)).map((fact) => ({
+          case_id: targetCaseId,
+          title: fact.kind === "outcome" ? "Confirmed outcome" : "Confirmed event",
+          description: fact.text,
+          occurred_at: parseDate(fact.date),
+          classification: "unknown",
+          category: "analyzer-confirmed",
+          reviewed: true,
+          disputed: false,
+          source_type: "Analyzer narrative",
+          reason: "User-confirmed fact extracted from the Analyzer narrative.",
+          review_status: "reviewed",
+        }));
+        const newPeopleRows = peopleFacts.filter((fact) => !existingPeopleTexts.has(fact.text)).map((fact) => ({
+          case_id: targetCaseId,
+          display_name: fact.text,
+          role_label: "Mentioned person or role",
+          involvement: "User-confirmed Analyzer fact",
+          notes: fact.date ? "Associated date: " + fact.date : null,
+          source_type: "analyzer_confirmed",
+          review_status: "reviewed",
+        }));
+        const newOrganizationRows = organizationFacts.filter((fact) => !existingOrganizationTexts.has(fact.text)).map((fact) => ({
+          case_id: targetCaseId,
+          name: fact.text,
+          org_type: "Mentioned organization",
+          notes: fact.date ? "Associated date: " + fact.date : null,
+          source_type: "analyzer_confirmed",
+          review_status: "reviewed",
+        }));
+        const newEvidenceRows = evidenceFacts.filter((fact) => !existingEvidenceTexts.has(fact.text)).map((fact) => ({
+          case_id: targetCaseId,
+          evidence_type: "Narrative evidence mention",
+          description: fact.text,
+          approximate_date: fact.date ?? null,
+          priority: "medium",
+          status: "mentioned",
+          source_type: "user_narrative",
+          review_status: "reviewed",
+        }));
+
+        if (newEventRows.length) { const { error } = await supabase.from("events").insert(newEventRows); if (error) throw error; }
+        if (newPeopleRows.length) { const { error } = await supabase.from("people").insert(newPeopleRows); if (error) throw error; }
+        if (newOrganizationRows.length) { const { error } = await supabase.from("organizations").insert(newOrganizationRows); if (error) throw error; }
+        if (newEvidenceRows.length) { const { error } = await supabase.from("evidence_mentions").insert(newEvidenceRows); if (error) throw error; }
+      }
+
       const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:
 ${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
       const { error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" });
