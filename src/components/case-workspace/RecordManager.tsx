@@ -62,7 +62,8 @@ export function RecordManager({
   prefixLabel,
   enableFileUpload = false,
 }: RecordManagerProps) {
-  const { items, isLoading, add, update, remove } = useCaseCollection<any>(table, caseId, orderBy);
+  const { items: collectionItems, isLoading, add, update, remove } = useCaseCollection<any>(table, caseId, orderBy);
+  const items = table === "tasks" ? collectionItems.filter((item: any) => item.task_type === "record_gap") : collectionItems;
   const { snapshot } = useCaseSnapshot(caseId);
   const [viewingItem, setViewingItem] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
