@@ -39,6 +39,7 @@ import DecodedJusticeEmbed from "./pages/decoded-justice/DecodedJusticeEmbed";
 import ProSeToolkit from "./pages/pro-se/ProSeToolkit";
 import ProSeDashboard from "./pages/pro-se/ProSeDashboard";
 import HousingNavigator from "./pages/HousingNavigator";
+import GuidedWorkflows from "./pages/GuidedWorkflows";
 import OAuthConsent from "./pages/OAuthConsent";
 import LawModules from "./pages/LawModules";
 import CasesList from "./pages/cases/CasesList";
@@ -149,6 +150,7 @@ const App = () => {
               <Route path="/pro-se-toolkit" element={<ProSeToolkit />} />
               <Route path="/pro-se-toolkit/dashboard" element={<ProtectedRoute><ProSeDashboard /></ProtectedRoute>} />
               <Route path="/housing-navigator" element={<HousingNavigator />} />
+              <Route path="/guided-workflows" element={<GuidedWorkflows />} />
               <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
