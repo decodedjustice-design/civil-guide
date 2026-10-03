@@ -16,13 +16,76 @@ export default function CaseRequests() {
   const addBusinessDays = (start: Date, days: number) => { const d = new Date(start); let added = 0; while (added < days) { d.setDate(d.getDate() + 1); const day = d.getDay(); if (day !== 0 && day !== 6) added++; } return d; };
 
   const markSent = async (request: any) => {
-    if (!id) return;
+    if (!id || request.status !== "draft") return;
+
     const sent = new Date();
-    const checkpoint = addBusinessDays(sent, 5);
-    const { error } = await supabase.from("record_requests").update({ status: "sent", requested_at: sent.toISOString().slice(0, 10), due_at: checkpoint.toISOString() }).eq("id", request.id).eq("case_id", id);
-    if (error) { toast({ title: "Could not mark sent", description: error.message, variant: "destructive" }); return; }
-    await supabase.from("tasks").insert({ case_id: id, task_type: "follow_up", title: `Check response: ${request.title}`, description: "Check for the agency’s initial response to this records request. For Washington PRA requests, this is the five-business-day initial-response checkpoint; it is not necessarily a deadline for producing all records.", status: "identified", due_at: checkpoint.toISOString(), related_request_id: request.id, identified_at: sent.toISOString().slice(0, 10), notes: "Created automatically when the request was marked sent." });
-    toast({ title: "Request marked sent", description: `Washington PRA initial-response checkpoint set for ${checkpoint.toLocaleDateString()}.` });
+    const sentDate = sent.toISOString().slice(0, 10);
+    const isWashingtonPRA = request.request_type === "washington_pra";
+    const checkpoint = isWashingtonPRA ? addBusinessDays(sent, 5) : null;
+
+    const { error } = await supabase
+      .from("record_requests")
+      .update({
+        status: "sent",
+        requested_at: sentDate,
+        due_at: checkpoint ? checkpoint.toISOString() : request.due_at ?? null,
+      })
+      .eq("id", request.id)
+      .eq("case_id", id);
+
+    if (error) {
+      toast({ title: "Could not mark sent", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    if (isWashingtonPRA && checkpoint) {
+      const { data: existingTasks, error: taskLookupError } = await supabase
+        .from("tasks")
+        .select("id")
+        .eq("case_id", id)
+        .eq("related_request_id", request.id)
+        .eq("task_type", "follow_up")
+        .limit(1);
+
+      if (taskLookupError) {
+        toast({
+          title: "Request marked sent",
+          description: "The request was saved, but the follow-up task could not be checked. Review the request tracker.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!existingTasks?.length) {
+        const { error: taskError } = await supabase.from("tasks").insert({
+          case_id: id,
+          task_type: "follow_up",
+          title: `Check response: ${request.title}`,
+          description: "Check for the agency’s initial response to this records request. For Washington PRA requests, this is the five-business-day initial-response checkpoint; it is not necessarily a deadline for producing all records.",
+          status: "identified",
+          due_at: checkpoint.toISOString(),
+          related_request_id: request.id,
+          identified_at: sentDate,
+          notes: "Created automatically when the request was marked sent.",
+        });
+
+        if (taskError) {
+          toast({
+            title: "Request marked sent",
+            description: "The request was saved, but the follow-up task could not be created. You can add a follow-up task manually.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+    }
+
+    toast({
+      title: "Request marked sent",
+      description: checkpoint
+        ? `Washington PRA initial-response checkpoint set for ${checkpoint.toLocaleDateString()}.`
+        : "The request was marked sent. No automatic five-business-day checkpoint was added for this request type.",
+    });
   };
 
   const copyRequest = async (request: any) => {
@@ -42,7 +105,7 @@ export default function CaseRequests() {
         addLabel="Add a request"
         customItemActions={(request) => (
           <>
-            <Button variant="ghost" size="sm" onClick={() => void markSent(request)} aria-label="Mark request sent" title="Mark sent"><span className="text-xs">Sent</span></Button>\n            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
+            <Button variant="ghost" size="sm" onClick={() => void markSent(request)} aria-label="Mark request sent" title={request.status === "draft" ? "Mark sent" : "Already sent"} disabled={request.status !== "draft"}><span className="text-xs">{request.status === "draft" ? "Sent" : "Sent"}</span></Button>\n            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
             {request.submission_url ? <Button variant="ghost" size="sm" asChild><a href={request.submission_url} target="_blank" rel="noreferrer" aria-label="Open official request portal" title="Open official request portal"><ExternalLink className="w-4 h-4 text-primary" /></a></Button> : null}
           </>
         )}
