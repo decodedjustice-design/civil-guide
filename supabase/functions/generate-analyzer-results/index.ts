@@ -14,6 +14,7 @@ interface AnalyzerInput {
   entityName?: string;
   clarionNarrative?: string;
   timelineEntries?: TimelineEntry[];
+  caseContext?: string;
   evidenceItems?: EvidenceItem[];
   answeredQuestions?: Array<{ questionId: string; answer: string; answerLabel?: string }>;
   maxQuestions?: number;
@@ -108,7 +109,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
     const input = await req.json() as AnalyzerInput;
-    const { systemId, systemLabel, location, clarionNarrative, timelineEntries = [], evidenceItems = [], answeredQuestions = [], maxQuestions = 5 } = input;
+    const { systemId, systemLabel, location, clarionNarrative, caseContext = '', timelineEntries = [], evidenceItems = [], answeredQuestions = [], maxQuestions = 5 } = input;
     const gaps: GapQuestion[] = [];
     const resolvedByUserAnswers: string[] = [];
     const entryEvidenceMap = new Map<string, number>();
@@ -142,7 +143,7 @@ serve(async (req) => {
     answeredQuestions.forEach(item => { if (item.questionId && item.answer) answerMap[item.questionId] = item.answer; });
     const inferredSystems = inferSystemsFromNarrative(clarionNarrative);
     const extractedFacts = extractFactsFromNarrative(clarionNarrative);
-    const narrativeText = clarionNarrative || '';
+    const narrativeText = [clarionNarrative || '', caseContext || ''].filter(Boolean).join('\n');
 
     // A narrative can contain multiple legally relevant event signals. Keep each
     // signal independent instead of collapsing the narrative to one issue type.
@@ -189,6 +190,7 @@ serve(async (req) => {
         const date = hasText(e.date) ? ` on ${e.date}` : "";
         return `${e.title}${date}${hasText(e.description) ? `: ${e.description}` : ""}`;
       }),
+      ...(caseContext ? [`Existing case context supplied for cross-checking: ${caseContext.slice(0, 1800)}`] : []),
       ...answeredQuestions.filter(a => hasText(a.answer)).slice(0, 5).map(a =>
         `${a.questionId}: ${(a.answerLabel || a.answer).trim()}`
       ),
