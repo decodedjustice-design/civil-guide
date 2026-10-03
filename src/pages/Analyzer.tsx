@@ -1771,10 +1771,6 @@ export default function Analyzer() {
   const handleBroadStart = async () => {
     const narrative = freeformNarrative.trim();
     if (!narrative) return;
-    if (!user) {
-      navigate("/auth?redirect=/analyzer");
-      return;
-    }
     setSelectedSystem("unsure");
     setEntityName("");
     setAnswers({ narrative: narrative });
