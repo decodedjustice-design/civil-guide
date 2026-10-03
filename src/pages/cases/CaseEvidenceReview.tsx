@@ -71,6 +71,7 @@ export default function CaseEvidenceReview() {
   };
 
   const docTitle = (id: string) => snapshot.evidence.find((d: any) => d.id === id)?.display_filename || "Untitled document";
+  // Keep source-document naming centralized so every review card resolves against the canonical documents collection.
   const issueTitle = (id: string) => snapshot.issues.find((i: any) => i.id === id)?.title || "No linked issue";
 
   return (
