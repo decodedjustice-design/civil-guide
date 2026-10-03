@@ -223,7 +223,6 @@ ${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library s
             disabled={creatingCase}
             onClick={() => {
               const pendingModule = [...lawModules, ...FIRST_ISSUE_LIBRARY].find((module) => module.id === pendingCaseBuildModuleId);
-              setPendingCaseBuildModuleId(undefined);
               void startCaseWorkspace(pendingModule);
             }}
           >
@@ -232,7 +231,7 @@ ${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library s
           </Button>
         </div>
       </div>
-    ) : null}
+    )}
     {isLoggedIn ? <div className="mb-6 flex items-center justify-center">{isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/60 text-muted-foreground text-sm"><Loader2 className="w-4 h-4 animate-spin" /><span>Saving to your file...</span></div>}{savedResult && !isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium"><Check className="w-4 h-4" /><span>Saved to your file</span></div>}{saveError && !isSaving && !savedResult && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 text-destructive text-sm"><span>Could not save · Please try again later</span></div>}</div> : <div className="mb-6 flex items-center justify-center"><Link to="/auth?redirect=/analyzer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"><LogIn className="w-4 h-4" /><span>Sign in to save & build a case — your Analyzer work will be preserved</span></Link></div>}
     <header className="mb-8 rounded-3xl border border-border bg-card px-5 py-6 text-left shadow-sm sm:px-7"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Analyzer workspace</p><h1 className="mt-2 font-serif text-3xl leading-tight text-foreground sm:text-4xl">Your results, organized</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{caseId && caseDataSource ? `This analysis uses ${caseDataSource.timelineCount} timeline event${caseDataSource.timelineCount === 1 ? "" : "s"}, ${caseDataSource.evidenceCount} exhibit${caseDataSource.evidenceCount === 1 ? "" : "s"}, and ${caseDataSource.issueCount} tracked issue${caseDataSource.issueCount === 1 ? "" : "s"} from your case, alongside your Analyzer answers.` : "Your answers have been organized into research leads, open questions, records to locate, and practical next steps."}</p></div><Button variant="outline" size="sm" onClick={() => setPrintShareOpen(true)} className="gap-2 shrink-0 print:hidden"><Share2 className="w-4 h-4" />Print or Share</Button></div></header>
     {showClarifyingQuestions && clarifyingQuestions.length > 0 && <ClarifyingQuestions questions={clarifyingQuestions} context={caseContext} onAnswer={(questionId, answer) => { setClarifyingAnswers(prev => ({ ...prev, [questionId]: answer })); onClarifyingAnswer?.(questionId, answer); }} onSkip={() => {}} onComplete={() => setShowClarifyingQuestions(false)} />}
