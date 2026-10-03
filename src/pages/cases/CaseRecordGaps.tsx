@@ -22,7 +22,7 @@ export default function CaseRecordGaps() {
         orderBy={{ column: "due_at", ascending: true }}
         fields={[
           { key: "title", label: "Record needed", type: "text", required: true, placeholder: "e.g. Complete CPS contact log" },
-          { key: "task_type", label: "Task type", type: "text", defaultValue: "record_gap" },
+          { key: "task_type", label: "Task type", type: "text", defaultValue: "record_gap", help: "This workspace only displays tasks classified as record gaps." },
           { key: "description", label: "Why it matters", type: "textarea" },
           { key: "record_holder", label: "Likely record holder", type: "text", placeholder: "Agency, court, provider, person" },
           {
