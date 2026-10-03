@@ -31,6 +31,7 @@ import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { useCases } from "@/hooks/useCases";
 import { getEntityQuestionsForSystem, EntityTags, createEmptyEntityTags } from "@/hooks/useEntityTags";
 import heroImage from "@/assets/hero-analysis.png";
+import { clearAnalyzerDraft, loadAnalyzerDraft, saveAnalyzerDraft } from "@/lib/analyzerDraft";
 
 type SystemId = 
   | "police" 
@@ -1824,15 +1825,10 @@ export default function Analyzer() {
     if (currentQuestionIndex < currentFollowUps.length - 1) {
       setStep(step + 1);
     } else {
-      // Auth gate: redirect to login if not authenticated
-      if (!user) {
-        navigate('/auth?redirect=/analyzer');
-        return;
-      }
-      
+      // Completing the Analyzer never requires an account. Users can review
+      // their results first and decide later whether to build a case.
       setShowResults(true);
       
-      // Trigger AI generation when showing results
       const systemInfo = systemCategories.find(s => s.id === selectedSystem);
       if (systemInfo) {
         generateAIResults({
@@ -1840,6 +1836,7 @@ export default function Analyzer() {
           systemLabel: systemInfo.label,
           patternStrength: 'none',
           location: 'Washington State',
+          answeredQuestions: Object.entries(newAnswers).map(([questionId, answer]) => ({ questionId, answer })),
         });
       }
     }
@@ -1881,10 +1878,10 @@ export default function Analyzer() {
     setFreeformNarrative("");
     setShowResults(false);
     setShowEntityQuestions(false);
-    setFreeformNarrative("");
     setEntityTags(createEmptyEntityTags());
     resetSaveState();
     resetAIResults();
+    clearAnalyzerDraft();
   };
 
   const selectedSystemInfo = systemCategories.find(s => s.id === selectedSystem);
@@ -1895,6 +1892,60 @@ export default function Analyzer() {
   const generatedResultContent = selectedSystem 
     ? generateResultContent(selectedSystem, analysis?.strength || 'none')
     : null;
+
+  // Restore an in-progress Analyzer session after sign-in or navigation.
+  // The draft is local to this device so users never have to re-tell a traumatic
+  // or complicated story simply because they chose to create a case later.
+  useEffect(() => {
+    if (caseId || caseLoaded) return;
+    const draft = loadAnalyzerDraft();
+    if (!draft) return;
+
+    setSelectedSystem((draft.selectedSystem as SystemId | null) ?? null);
+    setAnswers(draft.answers ?? {});
+    setFreeformNarrative(draft.freeformNarrative ?? draft.answers?.narrative ?? "");
+    setEntityName(draft.entityName ?? "");
+    setEntityTags(draft.entityTags ?? createEmptyEntityTags());
+    setStep(draft.step ?? 0);
+    setShowResults(Boolean(draft.showResults));
+    setShowEntityQuestions(Boolean(draft.showEntityQuestions));
+    setCaseLoaded(true);
+
+    if (draft.showResults && draft.selectedSystem) {
+      const systemInfo = systemCategories.find((item) => item.id === draft.selectedSystem);
+      if (systemInfo) {
+        void generateAIResults({
+          systemId: draft.selectedSystem as SystemId,
+          systemLabel: systemInfo.label,
+          patternStrength: "none",
+          location: "Washington State",
+          clarionNarrative: draft.freeformNarrative || draft.answers?.narrative,
+          answeredQuestions: Object.entries(draft.answers ?? {}).map(([questionId, answer]) => ({ questionId, answer })),
+        });
+      }
+    }
+  }, [caseId, caseLoaded, generateAIResults]);
+
+  // Keep the Analyzer draft current while the user works. This runs before
+  // authentication, so choosing "Build a Case" cannot erase the intake.
+  useEffect(() => {
+    if (caseId || caseLoaded && !selectedSystem && !freeformNarrative && Object.keys(answers).length === 0) return;
+    if (!selectedSystem && !freeformNarrative && Object.keys(answers).length === 0) return;
+
+    saveAnalyzerDraft({
+      selectedSystem,
+      answers,
+      freeformNarrative,
+      entityName,
+      entityTags,
+      step,
+      showResults,
+      showEntityQuestions,
+      reviewedFacts: {},
+      factEdits: {},
+      clarifyingAnswers: {},
+    });
+  }, [caseId, caseLoaded, selectedSystem, answers, freeformNarrative, entityName, entityTags, step, showResults, showEntityQuestions]);
 
   // Auto-save analyzer results when AI results are ready and user is logged in
   useEffect(() => {
