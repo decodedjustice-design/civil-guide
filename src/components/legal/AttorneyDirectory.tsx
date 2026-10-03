@@ -132,7 +132,7 @@ export function AttorneyDirectory() {
       }
 
       if (countyFilters.length) {
-        query = query.overlaps("counties_served", countyFilters);
+        query = query.overlaps("counties_served", [...countyFilters, "Statewide"]);
       }
 
       if (feeFilters.length) {
