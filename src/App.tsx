@@ -48,6 +48,7 @@ import CaseEvidenceReview from "./pages/cases/CaseEvidenceReview";
 import CaseTimeline from "./pages/cases/CaseTimeline";
 import CasePeople from "./pages/cases/CasePeople";
 import CaseIssues from "./pages/cases/CaseIssues";
+import CaseClaims from "./pages/cases/CaseClaims";
 import CaseCommunications from "./pages/cases/CaseCommunications";
 import CaseRequests from "./pages/cases/CaseRequests";
 import CaseRecordGaps from "./pages/cases/CaseRecordGaps";
