@@ -36,7 +36,7 @@ export default function CasePeople() {
         </TabsContent>
         <TabsContent value="orgs">
           <RecordManager
-            table="case_organizations"
+            table="organizations"
             caseId={id}
             addLabel="Add organization"
             emptyMessage="No organizations added yet."
