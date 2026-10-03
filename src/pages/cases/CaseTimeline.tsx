@@ -9,9 +9,9 @@ export default function CaseTimeline() {
     <CaseWorkspaceLayout title="Master chronology"
       description="Events in order, each marked for what it is — documented fact, allegation, inference, disputed, or not yet known.">
       <RecordManager
-        table="timeline_entries" caseId={id} addLabel="Add event"
+        table="events" caseId={id} addLabel="Add event"
         emptyMessage="No events yet. Start with the dates you're most sure about."
-        titleField="title" subtitleFields={["event_date", "description"]}
+        titleField="title" subtitleFields={["occurred_at", "description"]}
         badgeFields={["classification", "category", "importance"]}
         orderBy={{ column: "event_date", ascending: true }}
         fields={[
