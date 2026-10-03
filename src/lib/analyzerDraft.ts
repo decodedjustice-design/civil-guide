@@ -17,6 +17,7 @@ export interface AnalyzerDraft {
   factEdits: Record<string, string>;
   clarifyingAnswers: Record<string, string>;
   pendingCaseBuildModuleId?: string;
+  pendingCaseId?: string;
 }
 
 export function loadAnalyzerDraft(): AnalyzerDraft | null {
