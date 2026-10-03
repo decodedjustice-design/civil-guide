@@ -17,7 +17,7 @@ export default function CaseEvidence() {
     <CaseWorkspaceLayout title="Evidence & exhibits"
       description="Store source documents with preservation and provenance information. Original files remain separate from extracted or derived content.">
       <div className="flex justify-end mb-4">
-        <Button asChild variant="outline" size="sm"><Link to={id ? `/cases/${id}/evidence-review` : "#"}><ClipboardCheck className="w-4 h-4 mr-2" /> Evidence Review</Link></Button>
+        <Button asChild variant="outline" size="sm"><Link to={id ? `/cases/${id}/evidence-review` : "#"}><ClipboardCheck className="w-4 h-4 mr-2" /> Evidence Review</Link></Button> <Button asChild variant="outline" size="sm"><Link to={id ? `/cases/${id}/document-intelligence` : "#"}><FileSearch className="w-4 h-4 mr-2" /> Document Intelligence</Link></Button>
       </div>
       {mentions.length > 0 && (
         <Card className="mb-5 border-primary/20 bg-primary/[0.03]">
