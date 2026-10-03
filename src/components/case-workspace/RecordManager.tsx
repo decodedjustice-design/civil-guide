@@ -38,7 +38,8 @@ interface RecordManagerProps {
   prefixLabel?: (item: any) => string | null;
   addLabel: string;
   emptyMessage: string;
-  enableFileUpload?: boolean;\n  customItemActions?: (item: any) => ReactNode;
+  enableFileUpload?: boolean;
+  customItemActions?: (item: any) => ReactNode;
 }
 
 const emptyValues = (fields: FieldConfig[]) =>
@@ -61,6 +62,7 @@ export function RecordManager({
   emptyMessage,
   prefixLabel,
   enableFileUpload = false,
+  customItemActions,
 }: RecordManagerProps) {
   const { items: collectionItems, isLoading, add, update, remove } = useCaseCollection<any>(table, caseId, orderBy);
   const items = table === "tasks" ? collectionItems.filter((item: any) => item.task_type === "record_gap") : collectionItems;
@@ -206,7 +208,7 @@ export function RecordManager({
                   <div className="flex gap-2 shrink-0">
                     <Button variant="ghost" size="sm" onClick={() => setViewingItem(item)}><Eye className="w-4 h-4" /><span className="sr-only">View record</span></Button>
                     <Button variant="ghost" size="sm" onClick={() => openEdit(item)}><Pencil className="w-4 h-4" /><span className="sr-only">Edit</span></Button>
-                    {customItemActions?.(item)}\n                    {target}
+                    {customItemActions?.(item)}
                   </div>
                 </div>
               </CardContent>
