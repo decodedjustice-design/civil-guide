@@ -58,6 +58,18 @@ const problems: Problem[] = [
   { title: "I want to understand the law", description: "Move from plain-language guidance to statutes, regulations, and official sources.", icon: Scale },
 ];
 
+
+const problemWorkflowIds: Record<string, string> = {
+  "I received a notice": "notice",
+  "Someone made a decision about me": "decision",
+  "I need records": "records",
+  "A government agency is investigating me": "investigation",
+  "I need an accommodation": "accommodation",
+  "I'm going to court": "court",
+  "I need to appeal": "appeal",
+  "I want to understand the law": "understand",
+};
+
 const authorityTypes = [
   ["Statutes", "Primary authority", Scale],
   ["Regulations", "Primary authority", Settings2],
@@ -206,7 +218,7 @@ export default function EducationLibrary() {
               </div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {problems.map(({ title, description, icon: Icon }) => (
-                  <Link key={title} to="/analyzer" className="group rounded-xl border border-white/10 bg-[#121214] p-5 transition hover:border-[#C5A880]/30 hover:shadow-sm">
+                  <Link key={title} to={`/guided-workflows?type=${problemWorkflowIds[title] || "notice"}`} className="group rounded-xl border border-white/10 bg-[#121214] p-5 transition hover:border-[#C5A880]/30 hover:shadow-sm">
                     <Icon className="mb-4 h-5 w-5 text-[#C5A880]" />
                     <h3 className="font-medium text-[#F4F4F0]">{title}</h3>
                     <p className="mt-2 text-xs leading-5 text-white/65">{description}</p>
