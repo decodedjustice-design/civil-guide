@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,10 @@ const navItems = [
   { name: "About", href: "/about" },
   { name: "Founder's Story", href: "/founders-story" },
 ];
+
+function quickExit() {
+  window.location.replace("https://weather.com/");
+}
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -101,6 +105,18 @@ export function Header() {
           </button>
         </nav>
       </header>
+
+
+      <button
+        type="button"
+        onClick={quickExit}
+        className="fixed bottom-4 right-4 z-[60] hidden items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-2 text-xs font-medium text-muted-foreground shadow-lg backdrop-blur-sm transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:flex"
+        aria-label="Quick Exit"
+        title="Leave Decoded Justice immediately"
+      >
+        <LogOut className="h-3.5 w-3.5" />
+        Quick Exit
+      </button>
 
       <MobileNavMenu
         isOpen={mobileMenuOpen}
