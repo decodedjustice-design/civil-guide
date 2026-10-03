@@ -11,3 +11,6 @@ ALTER TABLE public.record_requests
 
 COMMENT ON COLUMN public.record_requests.routing_source IS 'Source used to verify the routing information, such as the official agency records page.';
 COMMENT ON COLUMN public.record_requests.routing_verified_at IS 'Date the routing information was last verified.';
+
+ALTER TABLE public.record_requests
+  ADD COLUMN IF NOT EXISTS request_type text DEFAULT 'washington_pra';
