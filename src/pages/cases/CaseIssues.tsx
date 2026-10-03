@@ -9,14 +9,14 @@ export default function CaseIssues() {
     <CaseWorkspaceLayout title="Claims & issues"
       description="The questions your record may raise. These are areas that may warrant closer review — not conclusions.">
       <RecordManager
-        table="case_issues" caseId={id} addLabel="Add issue"
+        table="issues" caseId={id} addLabel="Add issue"
         emptyMessage="No issues tracked yet. Analyzer research leads arrive marked unknown — never as a settled fact."
-        titleField="title" subtitleFields={["summary", "who_made_allegation"]}
+        titleField="title" subtitleFields={["description", "category"]}
         badgeFields={["classification", "status", "origin"]}
         orderBy={{ column: "created_at", ascending: true }}
         fields={[
           { key: "title", label: "Issue", type: "text", required: true },
-          { key: "summary", label: "Summary", type: "textarea" },
+          { key: "description", label: "What this issue is about", type: "textarea", required: true },
           { key: "classification", label: "How should this be treated?", type: "select", options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })), defaultValue: "unknown" },
           { key: "status", label: "Status", type: "select", options: ISSUE_STATUSES, defaultValue: "open" },
           { key: "category", label: "Category", type: "text" },
