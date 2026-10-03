@@ -1712,9 +1712,15 @@ export default function Analyzer() {
       entityName: activeCase?.name,
       clarionNarrative: [
         caseDescription,
-        caseFacts.notes.map((note: any) => note.content).filter(Boolean).join("\n"),
         caseFacts.issues.map((issue: any) => issue.title || issue.summary).filter(Boolean).join("\n"),
       ].filter(Boolean).join("\n\n"),
+      caseContext: [
+        caseDescription ? `Case description: ${caseDescription}` : "",
+        caseFacts.issues.length ? `Issues: ${caseFacts.issues.map((issue: any) => issue.title || issue.summary).filter(Boolean).join(" | ")}` : "",
+        caseFacts.communications.length ? `Communications: ${caseFacts.communications.map((item: any) => [item.occurred_at, item.subject, item.summary].filter(Boolean).join(" — ")).slice(0, 12).join(" | ")}` : "",
+        caseFacts.requests.length ? `Records requests: ${caseFacts.requests.map((item: any) => [item.requested_at, item.title, item.record_holder, item.status].filter(Boolean).join(" — ")).slice(0, 12).join(" | ")}` : "",
+        caseFacts.evidence_reviews.length ? `Evidence reviews: ${caseFacts.evidence_reviews.map((item: any) => [item.review_status, item.supports, item.contradicts, item.unresolved, item.reviewer_notes].filter(Boolean).join(" — ")).slice(0, 12).join(" | ")}` : "",
+      ].filter(Boolean).join("\n"),
       timelineEntries: caseFacts.timeline.map((entry: any) => ({
         id: entry.id,
         title: entry.title,
