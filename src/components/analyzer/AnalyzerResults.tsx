@@ -148,7 +148,10 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
 
       const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");
       const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));
-      const extractedFactSummary = confirmedExtractedFacts.length\n        ? `Confirmed extracted facts:\\n${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\\n")}`\n        : "";
+      const extractedFactSummary = confirmedExtractedFacts.length
+        ? `Confirmed extracted facts:
+${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\n")}`
+        : "";
       const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
       const { error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" });
       if (timelineError) throw timelineError;
