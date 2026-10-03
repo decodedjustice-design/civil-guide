@@ -15,7 +15,7 @@ interface AnalyzerInput {
   clarionNarrative?: string;
   timelineEntries?: TimelineEntry[];
   evidenceItems?: EvidenceItem[];
-  answeredQuestions?: Array<{ questionId: string; answer: string }>;
+  answeredQuestions?: Array<{ questionId: string; answer: string; answerLabel?: string }>;
   maxQuestions?: number;
 }
 interface TimelineEntry { id?: string; title?: string; description?: string; date?: string; actors?: string[]; outcome?: string; }
@@ -167,8 +167,10 @@ serve(async (req) => {
         const date = hasText(e.date) ? ` on ${e.date}` : "";
         return `${e.title}${date}${hasText(e.description) ? `: ${e.description}` : ""}`;
       }),
-      ...answeredQuestions.filter(a => hasText(a.answer)).slice(0, 3).map(a => a.answer.trim()),
-    ].slice(0, 7);
+      ...answeredQuestions.filter(a => hasText(a.answer)).slice(0, 5).map(a =>
+        `${a.questionId}: ${(a.answerLabel || a.answer).trim()}`
+      ),
+    ].slice(0, 9);
 
     const verifyItems = [
       ...nextQuestions.slice(0, 5).map(q => q.prompt),
@@ -176,11 +178,17 @@ serve(async (req) => {
       ...potentialViolations.flatMap(v => v.evidenceToLookFor || []),
     ].filter(Boolean).filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 10);
 
+    const issueSummary = potentialViolations.map(v => v.title).join("; ");
+    const answerSummary = answeredQuestions
+      .filter(a => hasText(a.answer))
+      .slice(0, 6)
+      .map(a => (a.answerLabel || a.answer).trim())
+      .join("; ");
     const executiveSummary = potentialViolations.length
-      ? `The information provided identifies ${potentialViolations.length} issue${potentialViolations.length === 1 ? "" : "s"} for further review within ${systemLabel}. The current record also contains ${unresolved.length} unresolved information gap${unresolved.length === 1 ? "" : "s"}, so the analyzer cannot determine from this information alone whether a legal violation occurred.`
+      ? `Based on the answers you provided, the Analyzer identified ${issueSummary}. It also identified ${unresolved.length} information gap${unresolved.length === 1 ? "" : "s"} that could change how the issue is evaluated. Your reported information currently includes: ${answerSummary || "no specific answer details"}.`
       : unresolved.length
-        ? `The current information does not identify a specific legal issue to characterize yet. There are ${unresolved.length} unresolved information gap${unresolved.length === 1 ? "" : "s"} that should be clarified before drawing stronger conclusions.`
-        : `The current information has been organized for research and verification within ${systemLabel}. No specific violation signal was generated from the information provided.`;
+        ? `The Analyzer has organized the answers you provided, but it did not generate a specific issue signal yet. The main unresolved information gaps are being shown below so you can add facts that could change the analysis. Your current answers include: ${answerSummary || "no specific answer details"}.`
+        : `The Analyzer organized the information provided for ${systemLabel}. No specific issue signal was generated from the current answers, so the result focuses on verification and record-building.`;
 
     const violationActions = potentialViolations.map(v => ({
       title: `Potential violation: ${v.title}`,
