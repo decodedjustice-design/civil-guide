@@ -10,46 +10,55 @@ export interface CaseSnapshot {
   communications: any[];
   requests: any[];
   record_gaps: any[];
+  evidence_mentions: any[];
   notes: any[];
   links: any[];
 }
 
 const empty: CaseSnapshot = {
   evidence: [], timeline: [], issues: [], people: [], organizations: [],
-  communications: [], requests: [], record_gaps: [], notes: [], links: [],
+  communications: [], requests: [], record_gaps: [], evidence_mentions: [], notes: [], links: [],
 };
 
-/** Canonical Milestone 1B case snapshot used across workspace screens. */
+/** Canonical case snapshot used across workspace screens. */
 export function useCaseSnapshot(caseId?: string) {
   const query = useQuery({
     queryKey: ["case-snapshot", caseId],
     enabled: !!caseId,
     queryFn: async (): Promise<CaseSnapshot> => {
       if (!caseId) return empty;
-      const load = async (table: string, order: string, extra?: (q: any) => any) => {
-        let q = (supabase as any).from(table).select("*").eq("case_id", caseId);
-        if (extra) q = extra(q);
-        const { data, error } = await q.order(order, { ascending: true, nullsFirst: false });
-        if (error) throw error;
-        return data ?? [];
+      const load = async (table: string, order: string) => {
+        try {
+          const { data, error } = await (supabase as any)
+            .from(table)
+            .select("*")
+            .eq("case_id", caseId)
+            .order(order, { ascending: true, nullsFirst: false });
+          if (error) return [];
+          return data ?? [];
+        } catch {
+          return [];
+        }
       };
 
-      const [evidence, timeline, issues, people, organizations, communications, requests, record_gaps, links] =
+      const [evidence, timeline, issues, people, organizations, communications, requests, record_gaps, evidence_mentions, notes, links] =
         await Promise.all([
-          load("documents", "exhibit_number"),
-          load("events", "occurred_at"),
-          load("issues", "created_at"),
-          load("people", "display_name"),
-          load("organizations", "name"),
-          load("communications", "occurred_at"),
-          load("record_requests", "due_at"),
-          load("tasks", "due_at", (q) => q.eq("task_type", "record_gap")),
-          load("case_relationships", "created_at"),
+          load("evidence", "exhibit_number"),
+          load("timeline_entries", "event_date"),
+          load("case_issues", "created_at"),
+          load("case_people", "name"),
+          load("case_organizations", "name"),
+          load("case_communications", "occurred_on"),
+          load("case_records_requests", "due_date"),
+          load("case_record_gaps", "due_date"),
+          load("case_evidence_mentions", "created_at"),
+          load("notes", "created_at"),
+          load("case_links", "created_at"),
         ]);
 
       return {
         evidence, timeline, issues, people, organizations,
-        communications, requests, record_gaps, notes: [], links,
+        communications, requests, record_gaps, evidence_mentions, notes, links,
       };
     },
   });

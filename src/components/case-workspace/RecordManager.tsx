@@ -101,9 +101,7 @@ export function RecordManager({
         ...v,
         title: v.title || file.name,
         file_url: urlData.publicUrl,
-        file_name: file.name,
         file_type: file.type || null,
-        file_size: file.size,
       }));
       toast({ title: "File attached", description: "Save the exhibit to keep the attachment with this record." });
     } catch (e: any) {
@@ -181,11 +179,11 @@ export function RecordManager({
                       {item[titleField] || "Untitled"}
                     </p>
                     {subtitleFields.length > 0 && <p className="text-sm text-muted-foreground mt-1 break-words">{subtitleFields.map((k) => item[k]).filter(Boolean).join(" · ")}</p>}
-                    {item.file_name && (
+                    {item.file_url && (
                       <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                         <FileText className="w-3.5 h-3.5" />
-                        <span className="truncate">{item.file_name}</span>
-                        {item.file_url && <a className="ml-auto inline-flex items-center gap-1 text-primary" href={item.file_url} target="_blank" rel="noreferrer"><Download className="w-3.5 h-3.5" /> Open</a>}
+                        <span className="truncate">{decodeURIComponent(String(item.file_url).split("/").pop() ?? "Attached file")}</span>
+                        <a className="ml-auto inline-flex items-center gap-1 text-primary" href={item.file_url} target="_blank" rel="noreferrer"><Download className="w-3.5 h-3.5" /> Open</a>
                       </div>
                     )}
                     {badgeFields.length > 0 && (
@@ -232,7 +230,7 @@ export function RecordManager({
                   </div>
                 ))}
               </div>
-              {table === "documents" && (
+              {table === "evidence" && (
                 <div className="rounded-lg border p-4">
                   <p className="text-sm font-medium flex items-center gap-2"><FileText className="h-4 w-4" />Packet status</p>
                   <p className="text-xs text-muted-foreground mt-1">{viewingItem.include_in_export === false ? "Excluded from packet exports by current setting." : "Included in packet exports when the Exhibit Index section is selected."}</p>

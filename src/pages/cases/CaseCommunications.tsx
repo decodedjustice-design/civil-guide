@@ -3,7 +3,7 @@ import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLa
 import { RecordManager } from "@/components/case-workspace/RecordManager";
 import { CaseWorkspaceSummary } from "@/components/case-workspace/CaseWorkspaceSummary";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
-import { COMMUNICATION_METHODS } from "@/lib/case/classification";
+import { CLASSIFICATIONS, COMMUNICATION_METHODS } from "@/lib/case/classification";
 
 export default function CaseCommunications() {
   const { id } = useParams();
@@ -15,30 +15,29 @@ export default function CaseCommunications() {
     >
       <CaseWorkspaceSummary communications={snapshot.communications} requests={snapshot.requests} />
       <RecordManager
-        table="communications"
+        table="case_communications"
         caseId={id}
         addLabel="Log a contact"
         emptyMessage="Nothing logged yet. Even a short note about a phone call helps later."
         titleField="subject"
-        subtitleFields={["occurred_at", "method", "summary"]}
+        subtitleFields={["occurred_on", "person", "summary"]}
         badgeFields={["classification", "method"]}
-        orderBy={{ column: "occurred_at", ascending: false }}
+        orderBy={{ column: "occurred_on", ascending: false }}
         fields={[
           { key: "subject", label: "Subject", type: "text", required: true },
-          { key: "occurred_at", label: "Date / time", type: "date" },
+          { key: "occurred_on", label: "Date", type: "date" },
+          { key: "occurred_time", label: "Time", type: "text", placeholder: "Optional, e.g. 2:15 PM" },
           { key: "method", label: "How", type: "select", options: COMMUNICATION_METHODS, defaultValue: "Phone" },
-          { key: "person_id", label: "Person ID", type: "text", placeholder: "Optional person UUID" },
-          { key: "organization_id", label: "Organization ID", type: "text", placeholder: "Optional organization UUID" },
+          { key: "person", label: "Who you spoke with", type: "text" },
+          { key: "agency", label: "Agency or organization", type: "text" },
           { key: "summary", label: "What was said", type: "textarea" },
-          
-          {
-            key: "follow_up_required",
-            label: "Follow-up needed",
-            type: "checkbox",
-            placeholder: "Something still needs a reply",
-          },
-          { key: "related_issue_id", label: "Related issue ID", type: "text", placeholder: "Optional issue UUID" },
-          { key: "related_request_id", label: "Related request ID", type: "text", placeholder: "Optional request UUID" },
+          { key: "requested", label: "What you asked for", type: "textarea" },
+          { key: "response", label: "What they said back", type: "textarea" },
+          { key: "promises_made", label: "Promises or commitments made", type: "textarea" },
+          { key: "classification", label: "How should this be treated?", type: "select", options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })), defaultValue: "unknown" },
+          { key: "follow_up_needed", label: "Follow-up needed", type: "checkbox", placeholder: "Something still needs a reply" },
+          { key: "follow_up_date", label: "Follow-up date", type: "date" },
+          { key: "notes", label: "Notes", type: "textarea" },
         ]}
       />
     </CaseWorkspaceLayout>

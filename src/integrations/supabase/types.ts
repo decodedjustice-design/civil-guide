@@ -139,8 +139,11 @@ export type Database = {
           occurred_time: string | null
           person: string | null
           promises_made: string | null
+          related_issue_id: string | null
           requested: string | null
           response: string | null
+          review_status: string | null
+          source_type: string | null
           subject: string | null
           summary: string | null
           updated_at: string
@@ -160,8 +163,11 @@ export type Database = {
           occurred_time?: string | null
           person?: string | null
           promises_made?: string | null
+          related_issue_id?: string | null
           requested?: string | null
           response?: string | null
+          review_status?: string | null
+          source_type?: string | null
           subject?: string | null
           summary?: string | null
           updated_at?: string
@@ -181,8 +187,11 @@ export type Database = {
           occurred_time?: string | null
           person?: string | null
           promises_made?: string | null
+          related_issue_id?: string | null
           requested?: string | null
           response?: string | null
+          review_status?: string | null
+          source_type?: string | null
           subject?: string | null
           summary?: string | null
           updated_at?: string
@@ -194,6 +203,76 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_communications_related_issue_id_fkey"
+            columns: ["related_issue_id"]
+            isOneToOne: false
+            referencedRelation: "case_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_evidence_mentions: {
+        Row: {
+          approximate_date: string | null
+          case_id: string
+          created_at: string
+          description: string | null
+          evidence_type: string
+          id: string
+          priority: string | null
+          related_issue_id: string | null
+          review_status: string | null
+          source_type: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approximate_date?: string | null
+          case_id: string
+          created_at?: string
+          description?: string | null
+          evidence_type: string
+          id?: string
+          priority?: string | null
+          related_issue_id?: string | null
+          review_status?: string | null
+          source_type?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approximate_date?: string | null
+          case_id?: string
+          created_at?: string
+          description?: string | null
+          evidence_type?: string
+          id?: string
+          priority?: string | null
+          related_issue_id?: string | null
+          review_status?: string | null
+          source_type?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_evidence_mentions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_evidence_mentions_related_issue_id_fkey"
+            columns: ["related_issue_id"]
+            isOneToOne: false
+            referencedRelation: "case_issues"
             referencedColumns: ["id"]
           },
         ]
@@ -211,6 +290,7 @@ export type Database = {
           next_action: string | null
           origin: string
           requested_remedy: string | null
+          review_status: string | null
           source: string | null
           status: string
           summary: string | null
@@ -232,6 +312,7 @@ export type Database = {
           next_action?: string | null
           origin?: string
           requested_remedy?: string | null
+          review_status?: string | null
           source?: string | null
           status?: string
           summary?: string | null
@@ -253,6 +334,7 @@ export type Database = {
           next_action?: string | null
           origin?: string
           requested_remedy?: string | null
+          review_status?: string | null
           source?: string | null
           status?: string
           summary?: string | null
@@ -328,6 +410,8 @@ export type Database = {
           name: string
           notes: string | null
           org_type: string | null
+          review_status: string | null
+          source_type: string | null
           updated_at: string
           user_id: string
         }
@@ -339,6 +423,8 @@ export type Database = {
           name: string
           notes?: string | null
           org_type?: string | null
+          review_status?: string | null
+          source_type?: string | null
           updated_at?: string
           user_id: string
         }
@@ -350,6 +436,8 @@ export type Database = {
           name?: string
           notes?: string | null
           org_type?: string | null
+          review_status?: string | null
+          source_type?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -423,7 +511,9 @@ export type Database = {
           name: string
           notes: string | null
           organization: string | null
+          review_status: string | null
           role: string | null
+          source_type: string | null
           updated_at: string
           user_id: string
         }
@@ -436,7 +526,9 @@ export type Database = {
           name: string
           notes?: string | null
           organization?: string | null
+          review_status?: string | null
           role?: string | null
+          source_type?: string | null
           updated_at?: string
           user_id: string
         }
@@ -449,7 +541,9 @@ export type Database = {
           name?: string
           notes?: string | null
           organization?: string | null
+          review_status?: string | null
           role?: string | null
+          source_type?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -528,6 +622,91 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      case_record_gaps: {
+        Row: {
+          case_id: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          identified_at: string | null
+          notes: string | null
+          received_date: string | null
+          record_holder: string | null
+          related_issue_id: string | null
+          related_request_id: string | null
+          requested_at: string | null
+          review_status: string | null
+          source_type: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          identified_at?: string | null
+          notes?: string | null
+          received_date?: string | null
+          record_holder?: string | null
+          related_issue_id?: string | null
+          related_request_id?: string | null
+          requested_at?: string | null
+          review_status?: string | null
+          source_type?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          identified_at?: string | null
+          notes?: string | null
+          received_date?: string | null
+          record_holder?: string | null
+          related_issue_id?: string | null
+          related_request_id?: string | null
+          requested_at?: string | null
+          review_status?: string | null
+          source_type?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_record_gaps_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_record_gaps_related_issue_id_fkey"
+            columns: ["related_issue_id"]
+            isOneToOne: false
+            referencedRelation: "case_issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "case_record_gaps_related_request_id_fkey"
+            columns: ["related_request_id"]
+            isOneToOne: false
+            referencedRelation: "case_records_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       case_records_requests: {
         Row: {
@@ -674,10 +853,12 @@ export type Database = {
           include_in_export: boolean
           people_involved: string | null
           received_date: string | null
+          related_issue_id: string | null
           relevance_notes: string | null
           review_status: string
           sensitive: boolean
           source: string | null
+          source_type: string | null
           system_involved: string | null
           tags: string[]
           title: string
@@ -697,10 +878,12 @@ export type Database = {
           include_in_export?: boolean
           people_involved?: string | null
           received_date?: string | null
+          related_issue_id?: string | null
           relevance_notes?: string | null
           review_status?: string
           sensitive?: boolean
           source?: string | null
+          source_type?: string | null
           system_involved?: string | null
           tags?: string[]
           title: string
@@ -720,10 +903,12 @@ export type Database = {
           include_in_export?: boolean
           people_involved?: string | null
           received_date?: string | null
+          related_issue_id?: string | null
           relevance_notes?: string | null
           review_status?: string
           sensitive?: boolean
           source?: string | null
+          source_type?: string | null
           system_involved?: string | null
           tags?: string[]
           title?: string
@@ -736,6 +921,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_related_issue_id_fkey"
+            columns: ["related_issue_id"]
+            isOneToOne: false
+            referencedRelation: "case_issues"
             referencedColumns: ["id"]
           },
         ]
@@ -1012,6 +1204,7 @@ export type Database = {
           id: string
           importance: string
           reason: string | null
+          review_status: string | null
           reviewed: boolean
           source_evidence_id: string | null
           source_type: string | null
@@ -1030,6 +1223,7 @@ export type Database = {
           id?: string
           importance?: string
           reason?: string | null
+          review_status?: string | null
           reviewed?: boolean
           source_evidence_id?: string | null
           source_type?: string | null
@@ -1048,6 +1242,7 @@ export type Database = {
           id?: string
           importance?: string
           reason?: string | null
+          review_status?: string | null
           reviewed?: boolean
           source_evidence_id?: string | null
           source_type?: string | null

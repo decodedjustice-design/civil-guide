@@ -395,7 +395,7 @@ export function AnalyzerEndSummary({
         <section className="border-t border-border bg-muted/20 px-5 py-8 sm:px-8 sm:py-10">
           <SectionLabel>Tools, support & safeguards</SectionLabel>
           <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <button type="button" onClick={onAddToCase} className="rounded-2xl border border-border bg-card p-4 text-left transition hover:border-primary/40 hover:shadow-sm">
+            <button type="button" onClick={() => onAddToCase()} className="rounded-2xl border border-border bg-card p-4 text-left transition hover:border-primary/40 hover:shadow-sm">
               <FolderOpen className="h-5 w-5 text-primary" /><p className="mt-3 text-sm font-semibold text-foreground">Commit to Workspace</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Turn this analysis into an organized case record.</p>
             </button>
             <a href="/dashboard" className="rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:shadow-sm">
@@ -422,7 +422,7 @@ export function AnalyzerEndSummary({
               <p className="text-base font-semibold text-foreground">Keep building instead of starting over</p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">Your answers, research leads, and records can become an organized case workspace.</p>
             </div>
-            <Button onClick={onAddToCase} className="gap-2 shrink-0"><FolderOpen className="h-4 w-4" />Open Case Workspace</Button>
+            <Button onClick={() => onAddToCase()} className="gap-2 shrink-0"><FolderOpen className="h-4 w-4" />Open Case Workspace</Button>
           </div>
         </div>
       </div>

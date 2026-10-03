@@ -9,21 +9,21 @@ export default function CaseTimeline() {
     <CaseWorkspaceLayout title="Master chronology"
       description="Events in order, each marked for what it is — documented fact, allegation, inference, disputed, or not yet known.">
       <RecordManager
-        table="events" caseId={id} addLabel="Add event"
+        table="timeline_entries" caseId={id} addLabel="Add event"
         emptyMessage="No events yet. Start with the dates you're most sure about."
-        titleField="title" subtitleFields={["occurred_at", "description"]}
+        titleField="title" subtitleFields={["event_date", "description"]}
         badgeFields={["classification", "category", "importance"]}
-        orderBy={{ column: "occurred_at", ascending: true }}
+        orderBy={{ column: "event_date", ascending: true }}
         fields={[
           { key: "title", label: "What happened", type: "text", required: true },
-          { key: "occurred_at", label: "Date / time", type: "date", required: true },
+          { key: "event_date", label: "Date / time", type: "date", required: true },
           { key: "description", label: "Details", type: "textarea" },
           { key: "classification", label: "How should this be treated?", type: "select", options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })), defaultValue: "unknown" },
           { key: "category", label: "Category", type: "select", options: TIMELINE_CATEGORIES },
           { key: "importance", label: "Importance", type: "select", options: IMPORTANCE_LEVELS },
           { key: "reviewed", label: "Reviewed", type: "checkbox", placeholder: "I've checked this against a record" },
           { key: "disputed", label: "Disputed", type: "checkbox", placeholder: "Accounts conflict on this" },
-          { key: "source_locator_id", label: "Source locator ID", type: "text", help: "Use an evidence locator ID when a specific page, quote, or text range supports this event." },
+          { key: "source_evidence_id", label: "Supporting exhibit ID", type: "text", help: "Use an exhibit identifier when a specific record supports this event." },
           { key: "source_type", label: "Source type", type: "text", placeholder: "Report, email, order, recording, firsthand account" },
           { key: "reason", label: "Why this matters", type: "textarea" },
         ]}

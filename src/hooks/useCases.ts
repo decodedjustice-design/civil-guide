@@ -5,16 +5,23 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export interface CaseRow {
   id: string;
-  owner_user_id: string;
-  title: string;
-  matter_type: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  case_type: string;
   status: string;
-  jurisdiction: string;
+  county: string | null;
+  state: string | null;
+  legacy_justice_place_case_id: string | null;
   created_at: string;
   updated_at: string;
 }
 
+export type CaseDraft = Partial<Omit<CaseRow, "id" | "user_id" | "created_at" | "updated_at">>;
+
 const ACTIVE_CASE_KEY = "dj:active-case-id";
+const CASE_COLUMNS: string =
+  "id,user_id,name,description,case_type,status,county,state,legacy_justice_place_case_id,created_at,updated_at";
 
 export function useCases() {
   const { user } = useAuth();
@@ -27,36 +34,43 @@ export function useCases() {
       if (!user) return [];
       const { data, error } = await supabase
         .from("cases")
-        .select("id,owner_user_id,title,matter_type,status,jurisdiction,created_at,updated_at")
-        .eq("owner_user_id", user.id)
+        .select(CASE_COLUMNS)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as CaseRow[];
+      return (data ?? []) as unknown as CaseRow[];
     },
   });
 
   const createCase = useMutation({
-    mutationFn: async (payload: Partial<CaseRow> & { name?: string; case_type?: string; state?: string }) => {
+    mutationFn: async (payload: CaseDraft & { name?: string }) => {
       if (!user) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("cases")
         .insert({
-          owner_user_id: user.id,
-          title: payload.title?.trim() || payload.name?.trim() || "Untitled case",
-          matter_type: payload.matter_type ?? payload.case_type ?? "general",
-          jurisdiction: payload.jurisdiction ?? payload.state ?? "Washington State",
+          user_id: user.id,
+          name: payload.name?.trim() || "Untitled case",
+          case_type: payload.case_type ?? "general",
+          description: payload.description ?? null,
+          county: payload.county ?? null,
+          state: payload.state ?? "WA",
+          status: payload.status ?? "active",
         })
         .select("*")
         .single();
       if (error) throw error;
-      return data as CaseRow;
+      return data as unknown as CaseRow;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cases"] }),
   });
 
   const updateCase = useMutation({
-    mutationFn: async ({ id, ...patch }: Partial<CaseRow> & { id: string }) => {
-      const { error } = await supabase.from("cases").update(patch).eq("id", id).eq("owner_user_id", user?.id ?? "");
+    mutationFn: async ({ id, ...patch }: CaseDraft & { id: string }) => {
+      const { error } = await supabase
+        .from("cases")
+        .update(patch)
+        .eq("id", id)
+        .eq("user_id", user?.id ?? "");
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cases"] }),
@@ -118,7 +132,7 @@ export function useCaseCollection<T extends { id: string }>(
       if (!user || !caseId) throw new Error("No active case");
       const { error } = await (supabase as any)
         .from(table)
-        .insert({ ...values, case_id: caseId });
+        .insert({ ...values, case_id: caseId, user_id: user.id });
       if (error) throw error;
     },
     onSuccess: invalidate,

@@ -79,7 +79,7 @@ export default function Dashboard() {
               <div className="max-w-3xl">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/50 mb-3">Case command center</p>
                 <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <h1 className="font-serif text-3xl sm:text-4xl font-medium">{activeCase.title}</h1>
+                  <h1 className="font-serif text-3xl sm:text-4xl font-medium">{activeCase.name}</h1>
                   <Badge variant="outline" className="border-white/20 text-white/70 capitalize">{statusLabel}</Badge>
                 </div>
                 <p className="text-white/65 max-w-2xl leading-relaxed">

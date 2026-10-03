@@ -50,7 +50,7 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
     if (!caseId || !user?.id || !fromId || !toId || !relation.trim()) return;
     setSaving(true);
     const { error } = await supabase.from("case_links").insert({
-      case_id: caseId, from_id: fromId, from_type: fromType,
+      case_id: caseId, user_id: user.id, from_id: fromId, from_type: fromType,
       to_id: toId, to_type: toType, relation: relation.trim(),
     });
     setSaving(false);

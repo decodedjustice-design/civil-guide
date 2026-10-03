@@ -40,10 +40,13 @@ function unknownItems(snapshot: Snapshot) {
 }
 
 function issueConnections(snapshot: Snapshot, issueId: string) {
-  const evidence = snapshot.evidence.filter((item) => item.related_issue_id === issueId).length;
-  const communications = snapshot.communications.filter(
-    (item) => item.related_issue_id === issueId
-  ).length;
+  const linked = snapshot.links.filter(
+    (link) =>
+      (link.from_type === "issue" && link.from_id === issueId) ||
+      (link.to_type === "issue" && link.to_id === issueId)
+  );
+  const evidence = linked.filter((link) => link.from_type === "evidence" || link.to_type === "evidence").length;
+  const communications = snapshot.communications.filter((item) => item.related_issue_id === issueId).length;
   const gaps = snapshot.record_gaps.filter((item) => item.related_issue_id === issueId).length;
 
   return { evidence, communications, gaps, total: evidence + communications + gaps };
@@ -78,7 +81,7 @@ export function CaseIntelligencePanel({
     ...snapshot.evidence.filter((item) => item.review_status === "needs_review").slice(0, 2).map((item) => ({
       key: `evidence-${item.id}`,
       label: "Evidence needs review",
-      detail: item.display_filename || "An exhibit is waiting for review.",
+      detail: item.title || "An exhibit is waiting for review.",
       to: `/cases/${caseId}/evidence`,
     })),
     ...[...snapshot.timeline, ...snapshot.evidence]
@@ -87,7 +90,7 @@ export function CaseIntelligencePanel({
       .map((item) => ({
         key: `class-${item.id}`,
         label: "Classification needed",
-        detail: item.title || item.display_filename || "An item is still marked unknown.",
+        detail: item.title || "An item is still marked unknown.",
         to: `/cases/${caseId}/content-check`,
       })),
   ].slice(0, 5);
