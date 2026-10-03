@@ -67,6 +67,7 @@ interface GenerateInput {
     actors?: string[];
     outcome?: string;
   }>;
+  caseContext?: string;
   evidenceItems?: Array<{
     id?: string;
     type?: string;
