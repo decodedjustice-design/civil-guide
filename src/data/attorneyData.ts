@@ -39,10 +39,27 @@ export const WA_COUNTIES = [
 export const PRACTICE_AREAS = [
   "Civil Rights",
   "Police Misconduct",
+  "Government / Agency Conduct",
+  "Constitutional Rights",
+  "Federal Civil Rights",
+  "Disability Rights",
+  "ADA / Section 504",
   "Housing Discrimination",
+  "Fair Housing",
+  "Landlord / Tenant",
+  "DCYF / Child Welfare",
+  "Dependency",
   "Family Defense",
+  "Family / Guardianship",
+  "Education",
   "Employment Discrimination",
-  "Disability Rights"
+  "Public Records",
+  "Benefits / Social Security",
+  "Administrative Law",
+  "Immigration",
+  "Consumer Law",
+  "Appeals / Appellate",
+  "Federal Litigation",
 ];
 
 export const FEE_TYPES = [
