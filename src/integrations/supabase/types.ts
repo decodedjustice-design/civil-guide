@@ -14,6 +14,55 @@ export type Database = {
   }
   public: {
     Tables: {
+      directory_sources: {
+        Row: {
+          access_method: string
+          cadence_days: number
+          created_at: string
+          id: string
+          jurisdiction: string | null
+          last_checked_at: string | null
+          name: string
+          next_check_at: string | null
+          notes: string | null
+          source_type: string
+          status: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          access_method: string
+          cadence_days?: number
+          created_at?: string
+          id?: string
+          jurisdiction?: string | null
+          last_checked_at?: string | null
+          name: string
+          next_check_at?: string | null
+          notes?: string | null
+          source_type: string
+          status?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          access_method?: string
+          cadence_days?: number
+          created_at?: string
+          id?: string
+          jurisdiction?: string | null
+          last_checked_at?: string | null
+          name?: string
+          next_check_at?: string | null
+          notes?: string | null
+          source_type?: string
+          status?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+
       directory_entries: {
         Row: {
           accepts_case_builder_summary: boolean
