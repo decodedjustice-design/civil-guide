@@ -217,9 +217,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
             title: candidate.kind === "record" ? "Locate: " + candidate.item : "Clarify: " + candidate.item,
             description: candidate.kind === "record"
               ? "A source or record identified by the Analyzer as useful for evaluating this issue."
-              : candidate.kind === "fact"
-                ? "A fact the Analyzer identified as unresolved and worth confirming."
-                : "A fact the Analyzer identified as unresolved and worth confirming.",
+              : "A fact the Analyzer identified as unresolved and worth confirming.",
             status: "identified",
             identified_at: new Date().toISOString().slice(0, 10),
             related_issue_id: candidate.issueId,
