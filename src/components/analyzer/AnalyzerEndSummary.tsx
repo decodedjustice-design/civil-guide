@@ -32,6 +32,17 @@ interface AnalyzerEndSummaryProps {
   firstIssueLibrary?: LawModule[];
 }
 
+function getIssueLibraryMatches(finding: PotentialViolation, library: LawModule[]) {
+  const haystack = `${finding.id} ${finding.title} ${finding.whyFlagged} ${finding.legalFramework.join(" ")}`.toLowerCase();
+  return library.filter((module) => {
+    const id = module.id.toLowerCase();
+    if (haystack.includes(id)) return true;
+    if (id === "fourth-amendment-search") return /search|searched|warrant|vehicle|home|property|privacy/.test(haystack) && /fourth|search|warrant/.test(haystack);
+    if (id === "first-amendment-retaliation") return /retaliat|protected speech|complaint|recording|petition|grievance/.test(haystack);
+    return false;
+  });
+}
+
 const SectionLabel = ({ children }: { children: ReactNode }) => (
   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">{children}</p>
 );
@@ -79,6 +90,7 @@ export function AnalyzerEndSummary({
     "The analyzer organized the information you provided into research leads, open questions, records to locate, and practical next steps.";
   const known = aiResults.whatWeKnow?.length ? aiResults.whatWeKnow : aiResults.usualProcess.slice(0, 4);
   const verify = aiResults.whatWeNeedToVerify?.length ? aiResults.whatWeNeedToVerify : missing.slice(0, 6);
+  const issueLibraryMatches = findings.flatMap((finding) => getIssueLibraryMatches(finding, firstIssueLibrary));
 
   const printPage = () => window.print();
   const shareSafely = async () => {
@@ -177,7 +189,7 @@ export function AnalyzerEndSummary({
 
           {firstIssueLibrary.length > 0 && (
             <section className="scroll-mt-6 border-b border-border bg-muted/10 px-5 py-8 sm:px-8 sm:py-10" aria-labelledby="first-issue-library">
-              <SectionLabel>Start here · First-issue library</SectionLabel>
+              <SectionLabel>{issueLibraryMatches.length > 0 ? "Matched · First-issue library" : "Start here · First-issue library"}</SectionLabel>
               <h3 id="first-issue-library" className="mt-2 font-serif text-2xl text-foreground sm:text-3xl">Common constitutional issues to check first</h3>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">These are structured issue-spotting guides. They do not mean the issue applies to your facts. Open an issue to compare the plain-language factors with the records you have.</p>
               <div className="mt-6 grid gap-4 lg:grid-cols-2">
@@ -224,6 +236,24 @@ export function AnalyzerEndSummary({
                         <p className="mt-2 text-sm leading-6 text-foreground/85">{f.legalFramework.length ? f.legalFramework.slice(0, 4).join(" · ") : "Specific legal authority still needs verification."}</p>
                       </div>
                     </div>
+
+                    {getIssueLibraryMatches(f, firstIssueLibrary).length > 0 && (
+                      <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">First-Issue Library match</p>
+                        {getIssueLibraryMatches(f, firstIssueLibrary).slice(0, 2).map((module) => (
+                          <div key={module.id} className="mt-3">
+                            <p className="text-sm font-semibold text-foreground">{module.title}</p>
+                            <p className="mt-1 text-sm leading-6 text-muted-foreground">{module.definition}</p>
+                            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                              {module.elements.slice(0, 3).map((element) => <div key={element} className="rounded-lg bg-background/70 p-3 text-xs leading-5 text-muted-foreground">{element}</div>)}
+                            </div>
+                            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                              {module.authorities.slice(0, 3).map((authority) => <a key={authority.citation} href={authority.url} target="_blank" rel="noreferrer" className="text-xs font-medium text-primary hover:underline">{authority.citation}</a>)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="mt-4 grid gap-4 lg:grid-cols-2">
                       <div>
