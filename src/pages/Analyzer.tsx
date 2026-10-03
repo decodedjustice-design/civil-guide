@@ -1932,6 +1932,7 @@ export default function Analyzer() {
     if (caseId || caseLoaded && !selectedSystem && !freeformNarrative && Object.keys(answers).length === 0) return;
     if (!selectedSystem && !freeformNarrative && Object.keys(answers).length === 0) return;
 
+    const existingDraft = loadAnalyzerDraft();
     saveAnalyzerDraft({
       selectedSystem,
       answers,
@@ -1941,9 +1942,10 @@ export default function Analyzer() {
       step,
       showResults,
       showEntityQuestions,
-      reviewedFacts: {},
-      factEdits: {},
-      clarifyingAnswers: {},
+      reviewedFacts: existingDraft?.reviewedFacts ?? {},
+      factEdits: existingDraft?.factEdits ?? {},
+      clarifyingAnswers: existingDraft?.clarifyingAnswers ?? {},
+      pendingCaseBuildModuleId: existingDraft?.pendingCaseBuildModuleId,
     });
   }, [caseId, caseLoaded, selectedSystem, answers, freeformNarrative, entityName, entityTags, step, showResults, showEntityQuestions]);
 
