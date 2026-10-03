@@ -6,6 +6,8 @@ import {
   FileText,
   ArrowRight,
   Scale,
+  CalendarDays,
+  Route,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -143,6 +145,13 @@ export default function Tools() {
                 <span className="text-accent mt-0.5">•</span>
                 Find Help directory
               </li>
+              <li className="flex items-start gap-2">
+                <span className="text-accent mt-0.5">•</span>
+                Guided self-advocacy workflows
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-accent mt-0.5">•</span>
+                Deadline calculation and calendar export
             </ul>
             <p className="text-sm text-muted-foreground">
               You only need to choose from many options after your packet is generated.
@@ -153,6 +162,12 @@ export default function Tools() {
               </Button>
               <Button variant="outline" size="sm" asChild>
                 <Link to="/education-library">Learn Your Rights</Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/guided-workflows"><Route className="mr-1.5 h-4 w-4" /> Guided Workflows</Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/deadline-calculator"><CalendarDays className="mr-1.5 h-4 w-4" /> Deadline Calculator</Link>
               </Button>
             </div>
           </div>
