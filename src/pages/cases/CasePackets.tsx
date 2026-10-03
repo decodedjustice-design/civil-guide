@@ -114,14 +114,17 @@ export default function CasePackets() {
     if (!id || !activeCase) return;
     setSaving(true);
     try {
+      const { data: authData } = await supabase.auth.getUser();
+      const userId = authData.user?.id;
+      if (!userId) throw new Error("Your session expired. Please sign in again.");
       const generatedHtml = buildHtml();
       const manifest = provenance();
       const payload = { title: title || "Attorney Case Packet", packet_type: "attorney", sections: selected, content: { generated_at: manifest.generated_at, section_count: selected.length, html: generatedHtml, provenance: manifest } };
       if (savedPacketId) {
-        const { error } = await supabase.from("case_packets").update(payload).eq("id", savedPacketId);
+        const { error } = await supabase.from("case_packets").update(payload).eq("id", savedPacketId).eq("user_id", userId);
         if (error) throw error;
       } else {
-        const { data, error } = await supabase.from("case_packets").insert({ ...payload, case_id: id }).select("id").single();
+        const { data, error } = await supabase.from("case_packets").insert({ ...payload, case_id: id, user_id: userId }).select("id").single();
         if (error) throw error;
         setSavedPacketId(data.id);
       }

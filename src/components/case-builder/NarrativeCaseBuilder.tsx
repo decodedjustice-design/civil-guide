@@ -1008,7 +1008,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
                 onClick={() => void openExistingCase(item.id)}
                 className={`w-full rounded-xl border p-3 text-left transition hover:border-primary/40 hover:bg-muted/40 ${item.id === caseId ? "border-primary/40 bg-primary/5" : "border-border/60"}`}
               >
-                <p className="font-medium text-sm text-foreground">{item.title || "Untitled case"}</p>
+                <p className="font-medium text-sm text-foreground">{item.name || "Untitled case"}</p>
                 <p className="mt-1 text-xs text-muted-foreground capitalize">
                   {[item.case_type, item.state, item.status?.replace(/_/g, " ")].filter(Boolean).join(" · ")}
                 </p>
