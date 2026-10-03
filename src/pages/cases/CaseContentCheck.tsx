@@ -10,47 +10,23 @@ export default function CaseContentCheck() {
   const { snapshot, isLoading } = useCaseSnapshot(id);
 
   const reviewItems = [
-    ...snapshot.timeline.filter((item) => item.review_status === "needs_review").map((item) => ({
-      type: "Timeline event",
-      label: item.title,
-      reason: "This narrative-derived event is no longer supported by the latest story.",
-      tab: "timeline",
-    })),
     ...snapshot.evidence.filter((item) => item.review_status === "needs_review").map((item) => ({
       type: "Evidence",
-      label: item.display_filename || "Evidence item",
-      reason: "This narrative-derived evidence reference changed or is no longer supported by the latest story.",
+      label: item.title || "Evidence item",
+      reason: "This exhibit is still marked as waiting for your review.",
       tab: "evidence",
     })),
-    ...snapshot.issues.filter((item) => item.review_status === "needs_review").map((item) => ({
+    ...snapshot.issues.filter((item) => item.classification === "unknown").map((item) => ({
       type: "Issue",
       label: item.title,
-      reason: "This narrative-derived issue changed or is no longer supported by the latest story.",
+      reason: "This issue has no classification yet, so it can't be treated as anything in particular.",
       tab: "issues",
     })),
-    ...snapshot.people.filter((item) => item.review_status === "needs_review").map((item) => ({
-      type: "Person",
-      label: item.display_name,
-      reason: "This narrative-derived person is no longer supported by the latest story.",
-      tab: "people",
-    })),
-    ...snapshot.organizations.filter((item) => item.review_status === "needs_review").map((item) => ({
-      type: "Organization",
-      label: item.name,
-      reason: "This narrative-derived organization is no longer supported by the latest story.",
-      tab: "people",
-    })),
-    ...snapshot.communications.filter((item) => item.review_status === "needs_review").map((item) => ({
-      type: "Communication",
-      label: item.subject || item.method || "Communication",
-      reason: "This narrative-derived communication changed or is no longer supported by the latest story.",
-      tab: "communications",
-    })),
-    ...snapshot.record_gaps.filter((item) => item.review_status === "needs_review").map((item) => ({
-      type: "Record gap",
+    ...snapshot.timeline.filter((item) => item.classification === "unknown").map((item) => ({
+      type: "Timeline event",
       label: item.title,
-      reason: "This narrative-derived record gap changed or is no longer supported by the latest story.",
-      tab: "record-gaps",
+      reason: "This event has no classification yet.",
+      tab: "timeline",
     })),
   ];
 
@@ -71,13 +47,13 @@ export default function CaseContentCheck() {
       tab: "evidence",
     },
     {
-      label: "Evidence preservation status is recorded",
-      failing: snapshot.evidence.filter((e) => e.original_preserved === null || e.original_preserved === undefined || e.metadata_preserved === null || e.metadata_preserved === undefined).length,
+      label: "Evidence arrival date is recorded",
+      failing: snapshot.evidence.filter((e) => !e.received_date).length,
       tab: "evidence",
     },
     {
       label: "Issues identify their source or explicitly remain unsourced",
-      failing: snapshot.issues.filter((i) => !i.source && !i.source_evidence_id).length,
+      failing: snapshot.issues.filter((i) => !i.source).length,
       tab: "issues",
     },
     {
@@ -135,10 +111,10 @@ export default function CaseContentCheck() {
             <Card className="border-accent/30 bg-accent/5">
               <CardContent className="p-5 space-y-4">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Narrative updates</p>
-                  <h2 className="font-serif text-xl mt-1">Review these changes</h2>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Still waiting on you</p>
+                  <h2 className="font-serif text-xl mt-1">Review these items</h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    These items were created from your story and later stopped matching the latest version. They were not deleted.
+                    Nothing here was deleted. These are simply the parts of your record that haven't been settled yet.
                   </p>
                 </div>
                 <div className="space-y-2">
