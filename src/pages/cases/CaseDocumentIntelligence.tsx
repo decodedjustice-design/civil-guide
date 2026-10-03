@@ -60,6 +60,8 @@ export default function CaseDocumentIntelligence() {
       setLoadingText(true);
       setNotice("");
       setResults([]);
+      setVersionId(null);
+      setExtractedTextId(null);
       const { data: versions } = await (supabase as any)
         .from("document_versions")
         .select("id, version_no")
