@@ -72,7 +72,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/analyzer" element={<ProtectedRoute><Analyzer /></ProtectedRoute>} />
+              <Route path="/analyzer" element={<Analyzer />} />
               <Route path="/justice-place" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
               <Route path="/clarion" element={<ProtectedRoute><Navigate to="/case-builder" replace /></ProtectedRoute>} />
               <Route path="/tools" element={<Tools />} />
