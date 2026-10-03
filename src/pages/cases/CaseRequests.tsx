@@ -88,6 +88,45 @@ export default function CaseRequests() {
     });
   };
 
+  const setRequestStatus = async (request: any, status: string) => {
+    if (!id || request.status === status) return;
+    const terminal = ["complete", "denied"].includes(request.status);
+    if (terminal) return;
+
+    const update: Record<string, any> = { status };
+    if (status === "partial" || status === "complete") {
+      update.received_at = request.received_at ?? new Date().toISOString().slice(0, 10);
+    }
+
+    const { error } = await supabase
+      .from("record_requests")
+      .update(update)
+      .eq("id", request.id)
+      .eq("case_id", id);
+
+    if (error) {
+      toast({ title: "Could not update request", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    if (["acknowledged", "partial", "complete", "denied"].includes(status)) {
+      const taskStatus = status === "partial" ? "in_progress" : "completed";
+      const taskUpdate: Record<string, any> = { status: taskStatus };
+      if (status === "partial" || status === "complete") {
+        taskUpdate.received_at = request.received_at ?? new Date().toISOString().slice(0, 10);
+      }
+      await supabase
+        .from("tasks")
+        .update(taskUpdate)
+        .eq("case_id", id)
+        .eq("related_request_id", request.id)
+        .eq("task_type", "follow_up")
+        .in("status", ["identified", "in_progress"]);
+    }
+
+    toast({ title: "Request updated", description: `Status changed to ${status.replace("_", " ")}.` });
+  };
+
   const copyRequest = async (request: any) => {
     const body = `Records Request\\n\\nTo: ${request.contact_name || "Records Officer"}${request.record_holder ? `\\nOrganization: ${request.record_holder}` : ""}${request.contact_email ? `\\nEmail: ${request.contact_email}` : ""}\\n\\nI am requesting the following records: ${request.title}.\\n\\nPlease provide the records in an electronic format if available. If any portion is withheld, please identify the withheld material and the basis for withholding it.\\n\\nRequest tracking number: ${request.request_number || "To be assigned"}`;
     await navigator.clipboard.writeText(body);
@@ -105,7 +144,11 @@ export default function CaseRequests() {
         addLabel="Add a request"
         customItemActions={(request) => (
           <>
-            <Button variant="ghost" size="sm" onClick={() => void markSent(request)} aria-label="Mark request sent" title={request.status === "draft" ? "Mark sent" : "Already sent"} disabled={request.status !== "draft"}><span className="text-xs">{request.status === "draft" ? "Sent" : "Sent"}</span></Button>\n            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
+            <Button variant="ghost" size="sm" onClick={() => void markSent(request)} aria-label="Mark request sent" title="Mark sent" disabled={request.status !== "draft"}><span className="text-xs">Sent</span></Button>
+            {request.status === "sent" ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "acknowledged")} aria-label="Mark request acknowledged" title="Mark acknowledged"><span className="text-xs">Ack</span></Button> : null}
+            {request.status === "acknowledged" ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "partial")} aria-label="Mark partial response" title="Mark partial response"><span className="text-xs">Partial</span></Button> : null}
+            {["acknowledged", "partial"].includes(request.status) ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "complete")} aria-label="Mark request complete" title="Mark complete"><span className="text-xs">Complete</span></Button> : null}
+            {["sent", "acknowledged"].includes(request.status) ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "denied")} aria-label="Mark request denied" title="Mark denied"><span className="text-xs">Denied</span></Button> : null}\n            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
             {request.submission_url ? <Button variant="ghost" size="sm" asChild><a href={request.submission_url} target="_blank" rel="noreferrer" aria-label="Open official request portal" title="Open official request portal"><ExternalLink className="w-4 h-4 text-primary" /></a></Button> : null}
           </>
         )}
@@ -130,6 +173,7 @@ export default function CaseRequests() {
           { key: "status", label: "Status", type: "select", options: REQUEST_STATUSES, defaultValue: "draft" },
           
           { key: "requested_at", label: "Date sent", type: "date" },
+          { key: "received_at", label: "Date response received", type: "date" },
           
           { key: "due_at", label: "Date you're watching", type: "text" },
           { key: "request_number", label: "Reference or tracking number", type: "text" },
