@@ -21,8 +21,8 @@ export default function CaseRequests() {
         emptyMessage="No requests tracked yet."
         titleField="title"
         subtitleFields={["record_holder", "requested_at", "due_at", "notes"]}
-        badgeFields={["status", "request_method"]}
-        orderBy={{ column: "due_date", ascending: true }}
+        badgeFields={["status"]}
+        orderBy={{ column: "due_at", ascending: true }}
         fields={[
           { key: "title", label: "What you asked for", type: "text", required: true },
           { key: "record_holder", label: "Agency or organization", type: "text" },
