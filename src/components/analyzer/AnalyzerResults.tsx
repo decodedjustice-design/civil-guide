@@ -256,7 +256,8 @@ ${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.dat
         if (createdPacketId) await supabase.from("case_packets").delete().eq("id", createdPacketId);
         if (createdDocumentId) await supabase.from("documents").delete().eq("id", createdDocumentId);
         if (createdEventId) await supabase.from("events").delete().eq("id", createdEventId);
-        if (createdTaskIds.length) await supabase.from("tasks").delete().in("id", createdTaskIds);\n        if (createdIssueIds.length) await supabase.from("issues").delete().in("id", createdIssueIds);
+        if (createdTaskIds.length) await supabase.from("tasks").delete().in("id", createdTaskIds);
+        if (createdIssueIds.length) await supabase.from("issues").delete().in("id", createdIssueIds);
         if (createdNewCase && targetCaseId) await supabase.from("cases").delete().eq("id", targetCaseId);
       } catch (cleanupError) {
         console.error("Analyzer save cleanup failed", cleanupError);
