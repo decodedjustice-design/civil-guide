@@ -11,3 +11,5 @@ verify_jwt = false
 
 [functions.case-signal-engine]
 verify_jwt = false
+[functions.document-intelligence]
+verify_jwt = true
