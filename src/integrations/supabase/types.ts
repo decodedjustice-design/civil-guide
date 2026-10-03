@@ -81,6 +81,7 @@ export type Database = {
           last_verified_at: string | null
           name: string
           practice_areas: string[]
+          source_id: string | null
           source_type: string | null
           source_url: string | null
           state: string
@@ -106,6 +107,8 @@ export type Database = {
           last_verified_at?: string | null
           name: string
           practice_areas?: string[]
+          source_id?: string | null
+          source_id?: string | null
           source_type?: string | null
           source_url?: string | null
           state?: string
