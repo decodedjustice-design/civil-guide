@@ -13,11 +13,12 @@ export interface CaseSnapshot {
   evidence_mentions: any[];
   notes: any[];
   links: any[];
+  packets: any[];
 }
 
 const empty: CaseSnapshot = {
   evidence: [], timeline: [], issues: [], people: [], organizations: [],
-  communications: [], requests: [], record_gaps: [], evidence_mentions: [], notes: [], links: [],
+  communications: [], requests: [], record_gaps: [], evidence_mentions: [], notes: [], links: [], packets: [],
 };
 
 /** Canonical case snapshot used across workspace screens. */
@@ -28,37 +29,44 @@ export function useCaseSnapshot(caseId?: string) {
     queryFn: async (): Promise<CaseSnapshot> => {
       if (!caseId) return empty;
       const load = async (table: string, order: string) => {
-        try {
-          const { data, error } = await (supabase as any)
-            .from(table)
-            .select("*")
-            .eq("case_id", caseId)
-            .order(order, { ascending: true, nullsFirst: false });
-          if (error) return [];
-          return data ?? [];
-        } catch {
-          return [];
-        }
+        const { data, error } = await (supabase as any)
+          .from(table)
+          .select("*")
+          .eq("case_id", caseId)
+          .order(order, { ascending: true, nullsFirst: false });
+        if (error) throw error;
+        return data ?? [];
       };
 
-      const [evidence, timeline, issues, people, organizations, communications, requests, record_gaps, evidence_mentions, notes, links] =
+      const [documents, events, issues, people, organizations, communications, requests, tasks, evidence_mentions, links, packets] =
         await Promise.all([
-          load("evidence", "exhibit_number"),
-          load("timeline_entries", "event_date"),
-          load("case_issues", "created_at"),
-          load("case_people", "name"),
-          load("case_organizations", "name"),
-          load("case_communications", "occurred_on"),
-          load("case_records_requests", "due_date"),
-          load("case_record_gaps", "due_date"),
-          load("case_evidence_mentions", "created_at"),
-          load("notes", "created_at"),
-          load("case_links", "created_at"),
+          load("documents", "created_at"),
+          load("events", "occurred_at"),
+          load("issues", "created_at"),
+          load("people", "display_name"),
+          load("organizations", "name"),
+          load("communications", "occurred_at"),
+          load("record_requests", "due_at"),
+          load("tasks", "due_at"),
+          load("evidence_mentions", "created_at"),
+          load("case_relationships", "created_at"),
+          load("case_packets", "created_at"),
         ]);
 
+      const evidence = documents.map((doc: any) => ({
+        ...doc,
+        title: doc.title ?? doc.display_filename ?? "Untitled document",
+        exhibit_number: doc.exhibit_number ?? null,
+      }));
+      const timeline = events.map((event: any) => ({
+        ...event,
+        event_date: event.event_date ?? event.occurred_at ?? event.created_at,
+      }));
+      const record_gaps = tasks.filter((task: any) => task.task_type === "record_gap");
+      const notes: any[] = [];
       return {
         evidence, timeline, issues, people, organizations,
-        communications, requests, record_gaps, evidence_mentions, notes, links,
+        communications, requests, record_gaps, evidence_mentions, notes, links, packets,
       };
     },
   });
