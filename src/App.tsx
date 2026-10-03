@@ -40,6 +40,7 @@ import ProSeToolkit from "./pages/pro-se/ProSeToolkit";
 import ProSeDashboard from "./pages/pro-se/ProSeDashboard";
 import HousingNavigator from "./pages/HousingNavigator";
 import GuidedWorkflows from "./pages/GuidedWorkflows";
+import PathToJustice from "./pages/PathToJustice";
 import DeadlineCalculator from "./pages/DeadlineCalculator";
 import OAuthConsent from "./pages/OAuthConsent";
 import LawModules from "./pages/LawModules";
@@ -152,6 +153,7 @@ const App = () => {
               <Route path="/pro-se-toolkit/dashboard" element={<ProtectedRoute><ProSeDashboard /></ProtectedRoute>} />
               <Route path="/housing-navigator" element={<HousingNavigator />} />
               <Route path="/guided-workflows" element={<GuidedWorkflows />} />
+              <Route path="/path-to-justice" element={<PathToJustice />} />
               <Route path="/deadline-calculator" element={<DeadlineCalculator />} />
               <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
               <Route path="*" element={<NotFound />} />
