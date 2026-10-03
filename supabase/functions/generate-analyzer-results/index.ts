@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { detectPotentialViolations, type PotentialViolation } from "./violation-engine.ts";
 
 const corsHeaders = {
@@ -51,16 +50,27 @@ const CATEGORY_LABELS: Record<GapCategory, string> = {
 const hasText = (value?: string) => Boolean(value && value.trim().length > 0);
 const safeDate = (value?: string) => { if (!value) return null; const parsed = Date.parse(value); return Number.isNaN(parsed) ? null : parsed; };
 
+const inferSystemsFromNarrative = (narrative?: string): Array<{ id: string; label: string; signals: string[] }> => {
+  const text = (narrative || '').toLowerCase();
+  const matches: Array<{ id: string; label: string; signals: string[] }> = [];
+  const add = (id: string, label: string, terms: string[]) => {
+    const signals = terms.filter(term => text.includes(term));
+    if (signals.length) matches.push({ id, label, signals });
+  };
+  add('police', 'Police or Sheriff', ['police', 'sheriff', 'officer', 'arrest', 'detained', 'search', 'seized', 'body camera', 'use of force']);
+  add('housing', 'Housing / Landlord-Tenant', ['landlord', 'tenant', 'eviction', 'lease', 'rent', 'housing', 'apartment', 'reasonable accommodation']);
+  add('cps_dcyf', 'Child Welfare / DCYF', ['dcyf', 'cps', 'child protective', 'dependency', 'placement', 'removal', 'foster', 'caseworker']);
+  add('courts', 'Courts / Court Process', ['court', 'judge', 'hearing', 'arraignment', 'summons', 'notice of hearing', 'order']);
+  add('employer', 'Employment', ['employer', 'workplace', 'job', 'fired', 'termination', 'hr', 'employee', 'accommodation at work']);
+  add('school', 'School / Education', ['school', 'student', 'iep', '504 plan', 'discipline', 'attendance']);
+  add('healthcare', 'Healthcare', ['doctor', 'hospital', 'clinic', 'medical record', 'provider', 'medicaid', 'health insurance']);
+  add('government', 'Government Agency', ['agency', 'department', 'public records', 'records request', 'government office']);
+  return matches;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) return new Response(JSON.stringify({ error: 'Authentication required', success: false }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    const supabaseClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: authHeader } } });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) return new Response(JSON.stringify({ error: 'Invalid authentication', success: false }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-
     const input = await req.json() as AnalyzerInput;
     const { systemId, systemLabel, location, clarionNarrative, timelineEntries = [], evidenceItems = [], answeredQuestions = [], maxQuestions = 5 } = input;
     const gaps: GapQuestion[] = [];
@@ -94,7 +104,26 @@ serve(async (req) => {
 
     const answerMap: Record<string,string> = {};
     answeredQuestions.forEach(item => { if (item.questionId && item.answer) answerMap[item.questionId] = item.answer; });
-    const potentialViolations = detectPotentialViolations(systemId, answerMap, location);
+    const inferredSystems = inferSystemsFromNarrative(clarionNarrative);
+    const systemsToCheck = systemId === 'unsure' && inferredSystems.length
+      ? inferredSystems.slice(0, 3)
+      : [{ id: systemId, label: systemLabel, signals: [] }];
+    const potentialViolations = systemsToCheck.flatMap(system => detectPotentialViolations(
+      system.id,
+      {
+        ...answerMap,
+        'issue-type': answerMap['issue-type'] || (
+          /search|searched|seized|entered my home/i.test(clarionNarrative || '') ? 'search' :
+          /arrest|detained|stop|pulled me over/i.test(clarionNarrative || '') ? 'arrest' :
+          /retaliat|punished me|targeted me after/i.test(clarionNarrative || '') ? 'retaliation' :
+          /removal|removed|placement|investigation/i.test(clarionNarrative || '') ? 'removal' :
+          /evict|eviction|notice to vacate/i.test(clarionNarrative || '') ? 'eviction' :
+          /discriminat|treated differently/i.test(clarionNarrative || '') ? 'discrimination' :
+          ''
+        )
+      },
+      location
+    ));
 
     const knownFacts = [
       ...timelineEntries.filter(e => hasText(e.title)).slice(0, 4).map(e => {
@@ -128,9 +157,13 @@ serve(async (req) => {
       summary: { totalGapsFound: gaps.length, unresolvedGapCount: unresolved.length, resolvedByUserAnswers, potentialViolationCount: potentialViolations.length },
       categories, questions: sorted, nextQuestions, potentialViolations,
       safetyNotice: 'Potential violations are issue-spotting signals, not findings that a law was violated. Each result requires the applicable jurisdiction, exact facts, current law, and evidence to be verified.',
-      systemIdentification: `Issue-spotting analysis for ${systemLabel}, based on the facts and answers provided.`,
+      systemIdentification: systemId === 'unsure'
+        ? (inferredSystems.length
+          ? `The narrative contains signals associated with: ${inferredSystems.map(s => s.label).join(', ')}. These are classification leads, not legal conclusions.`
+          : 'The narrative did not contain enough system-specific signals to classify the matter yet. The follow-up questions are intended to narrow the context.')
+        : `Issue-spotting analysis for ${systemLabel}, based on the facts and answers provided.`,
       executiveSummary,
-      whatWeKnow: knownFacts,
+      whatWeKnow: [...knownFacts, ...(systemId === 'unsure' ? inferredSystems.slice(0, 3).map(s => `System signal: ${s.label} (${s.signals.slice(0, 3).join(', ')}).`) : [])].slice(0, 10),
       whatWeNeedToVerify: verifyItems,
       powerDynamics: { whoHasControl: ['The other party’s decisions and records', 'Agency/employer/provider processes'], whoDoesNotControl: ['The legal outcome', 'What another party ultimately decides'], decisionMakers: ['Courts, agencies, employers, providers, or other authorized decision-makers depending on the issue'] },
       usualProcess: ['Identify potential legal issues', 'Separate known facts from missing facts', 'Map each issue to the applicable legal framework', 'Preserve evidence that can confirm or defeat the issue', 'Verify current law before taking legal action'],

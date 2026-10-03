@@ -1659,6 +1659,7 @@ export default function Analyzer() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
   const [entityName, setEntityName] = useState("");
+  const [freeformNarrative, setFreeformNarrative] = useState("");
   const [caseLoaded, setCaseLoaded] = useState(false);
 
   // Entity-aware internal tags (NOT visible to users)
@@ -1767,6 +1768,26 @@ export default function Analyzer() {
     }
   }, [caseId, isCaseLoading, caseLoaded, activeCase, caseSnapshot, generateCaseResults]);
 
+  const handleBroadStart = async () => {
+    const narrative = freeformNarrative.trim();
+    if (!narrative) return;
+    setSelectedSystem("unsure");
+    setEntityName("");
+    setAnswers({ narrative: narrative });
+    setEntityTags(createEmptyEntityTags());
+    setShowEntityQuestions(false);
+    setShowResults(true);
+    resetAIResults();
+    await generateAIResults({
+      systemId: "unsure",
+      systemLabel: "General Rights & Procedure Review",
+      patternStrength: "none",
+      location: "Washington State",
+      clarionNarrative: narrative,
+      answeredQuestions: [{ questionId: "narrative", answer: narrative }],
+    });
+  };
+
   const handleSystemSelect = (systemId: SystemId) => {
     setSelectedSystem(systemId);
     setAnswers({});
@@ -1857,8 +1878,10 @@ export default function Analyzer() {
     setStep(0);
     setSelectedSystem(null);
     setAnswers({});
+    setFreeformNarrative("");
     setShowResults(false);
     setShowEntityQuestions(false);
+    setFreeformNarrative("");
     setEntityTags(createEmptyEntityTags());
     resetSaveState();
     resetAIResults();
@@ -1954,14 +1977,40 @@ export default function Analyzer() {
             </div>
           )}
 
-          {/* Step 0: System Selection */}
+          {/* Step 0: Broad-first intake */}
           {step === 0 && !showResults && !showEntityQuestions && (
-            <div className="space-y-4 animate-fade-up">
-              <h2 className="text-xl font-semibold text-foreground text-center mb-6">
-                Which system was involved in what you experienced?
-              </h2>
+            <div className="space-y-6 animate-fade-up">
+              <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <Search className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-semibold text-primary">Start with the facts</span>
+                </div>
+                <h2 className="text-2xl font-serif text-foreground sm:text-3xl">
+                  Tell us what happened
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  You do not need to know what law applies or which legal issue to choose. Describe the situation in your own words. The Analyzer will organize the facts, identify possible systems and issues to examine, and then ask targeted follow-up questions.
+                </p>
+                <textarea
+                  value={freeformNarrative}
+                  onChange={(e) => setFreeformNarrative(e.target.value)}
+                  placeholder="For example: Tell us who was involved, what happened, when it happened, what the agency or other person did, and what happened afterward. Include as much detail as you know."
+                  rows={8}
+                  className="mt-5 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm leading-6 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-y"
+                />
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs text-muted-foreground">You can be uncertain. Facts that are missing will be identified later.</p>
+                  <Button onClick={handleBroadStart} disabled={!freeformNarrative.trim()} className="gap-2">
+                    Analyze my situation <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">Or start with a system if you already know it</p>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {systemCategories.map((system) => (
+                {systemCategories.filter((system) => system.id !== "unsure").map((system) => (
                   <button
                     key={system.id}
                     onClick={() => handleSystemSelect(system.id)}
