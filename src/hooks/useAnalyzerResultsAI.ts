@@ -16,7 +16,16 @@ export interface PotentialViolation {
   nextStep: string;
 }
 
-export interface ExtractedFact {\n  id: string;\n  kind: 'event' | 'person_or_role' | 'organization' | 'evidence_mention' | 'outcome';\n  text: string;\n  date?: string;\n  source: 'narrative' | 'timeline' | 'answer';\n  verification: 'needs_user_verification';\n}\n\nexport interface AnalyzerResultsAI {
+export interface ExtractedFact {
+  id: string;
+  kind: 'event' | 'person_or_role' | 'organization' | 'evidence_mention' | 'outcome';
+  text: string;
+  date?: string;
+  source: 'narrative' | 'timeline' | 'answer';
+  verification: 'needs_user_verification';
+}
+
+export interface AnalyzerResultsAI {
   mode?: string;
   summary?: {
     totalGapsFound: number;
@@ -24,7 +33,8 @@ export interface ExtractedFact {\n  id: string;\n  kind: 'event' | 'person_or_ro
     resolvedByUserAnswers: string[];
     potentialViolationCount: number;
   };
-  potentialViolations?: PotentialViolation[];\n  extractedFacts?: ExtractedFact[];
+  potentialViolations?: PotentialViolation[];
+  extractedFacts?: ExtractedFact[];
   systemIdentification: string;
   executiveSummary?: string;
   whatWeKnow?: string[];
