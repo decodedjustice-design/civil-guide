@@ -18,7 +18,9 @@ const REVIEW_STATUSES = [
 ];
 
 export default function CaseEvidenceReview() {
-  const { id } = useParams();\n  const [searchParams] = useSearchParams();\n  const issueFromQuery = searchParams.get("issue") || "";
+  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const issueFromQuery = searchParams.get("issue") || "";
   const { snapshot } = useCaseSnapshot(id);
   const { items: reviews, add, update } = useCaseCollection<any>("evidence_reviews", id);
   const [documentId, setDocumentId] = useState("");
