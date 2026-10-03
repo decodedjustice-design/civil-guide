@@ -205,7 +205,7 @@ export function RecordManager({
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2 shrink-0">
+                  <div className="flex gap-2 shrink-0" aria-label="Record actions">
                     <Button variant="ghost" size="sm" onClick={() => setViewingItem(item)}><Eye className="w-4 h-4" /><span className="sr-only">View record</span></Button>
                     <Button variant="ghost" size="sm" onClick={() => openEdit(item)}><Pencil className="w-4 h-4" /><span className="sr-only">Edit</span></Button>
                     {customItemActions?.(item)}
