@@ -51,7 +51,13 @@ export default function CaseRecordGaps() {
         subtitleFields={["record_holder", "status", "due_at"]}
         badgeFields={["status"]}
         orderBy={{ column: "due_at", ascending: true }}
-        customItemActions={(gap) => !gap.related_request_id ? (\n          <Button variant="ghost" size="sm" onClick={() => void createRequestFromGap(gap)} aria-label="Create record request" title="Create draft request">\n            <FilePlus2 className="w-4 h-4 text-primary" />\n            <span className="sr-only">Create record request</span>\n          </Button>\n        ) : null}\n        fields={[
+        customItemActions={(gap) => !gap.related_request_id ? (
+          <Button variant="ghost" size="sm" onClick={() => void createRequestFromGap(gap)} aria-label="Create record request" title="Create draft request">
+            <FilePlus2 className="w-4 h-4 text-primary" />
+            <span className="sr-only">Create record request</span>
+          </Button>
+        ) : null}
+        fields={[
           { key: "title", label: "Record needed", type: "text", required: true, placeholder: "e.g. Complete CPS contact log" },
           { key: "task_type", label: "Task type", type: "text", defaultValue: "record_gap", help: "This workspace only displays tasks classified as record gaps." },
           { key: "description", label: "Why it matters", type: "textarea" },
