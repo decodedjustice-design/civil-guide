@@ -149,7 +149,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         missing_records: module.evidenceExamples.join("; "),
         next_action: module.questions.join("; "),
       })));
-      const createdIssueTaskCandidates: Array<{ issueId: string; item: string; kind: "record" | "fact" | "next_step" }> = [];
+      const createdIssueTaskCandidates: Array<{ issueId: string; item: string; kind: "record" | "fact" }> = [];
 
       if (findings.length) {
         for (const [index, finding] of findings.entries()) {
@@ -157,8 +157,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
           if (issueError) throw issueError;
           createdIssueIds.push(insertedIssue.id);
           [...finding.evidenceToLookFor.map((item) => ({ item, kind: "record" as const })),
-            ...finding.missingFacts.map((item) => ({ item, kind: "fact" as const })),
-            ...(finding.nextStep ? [{ item: finding.nextStep, kind: "next_step" as const }] : [])]
+            ...finding.missingFacts.map((item) => ({ item, kind: "fact" as const }))]
             .forEach(({ item, kind }) => {
               if (item?.trim()) createdIssueTaskCandidates.push({ issueId: insertedIssue.id, item: item.trim(), kind });
             });
@@ -215,16 +214,12 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
           .map((candidate) => ({
             case_id: targetCaseId,
             task_type: "record_gap",
-            title: candidate.kind === "record"
-              ? "Locate: " + candidate.item
-              : candidate.kind === "fact"
-                ? "Clarify: " + candidate.item
-                : "Next step: " + candidate.item,
+            title: candidate.kind === "record" ? "Locate: " + candidate.item : "Clarify: " + candidate.item,
             description: candidate.kind === "record"
               ? "A source or record identified by the Analyzer as useful for evaluating this issue."
               : candidate.kind === "fact"
                 ? "A fact the Analyzer identified as unresolved and worth confirming."
-                : "A practical follow-up identified by the Analyzer.",
+                : "A fact the Analyzer identified as unresolved and worth confirming.",
             status: "identified",
             identified_at: new Date().toISOString().slice(0, 10),
             related_issue_id: candidate.issueId,
