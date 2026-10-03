@@ -94,6 +94,11 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const ownerId = authUser.user?.id;
       if (!ownerId) throw new Error("Your session expired. Please sign in again.");
       let targetCaseId = caseId;
+      const createdNewCase = !targetCaseId;
+      const createdIssueIds: string[] = [];
+      let createdEventId: string | null = null;
+      let createdDocumentId: string | null = null;
+      let createdPacketId: string | null = null;
       if (!targetCaseId) {
         const { data: created, error } = await supabase.from("cases").insert({ owner_user_id: ownerId, title: `${systemLabel} case`, matter_type: systemId, jurisdiction: "Washington State" }).select("id").single();
         if (error) throw error;
@@ -128,7 +133,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         supporting_notes: f.whatWouldNeedToBeTrue.join("; "),
         missing_records: [...f.evidenceToLookFor, ...f.missingFacts].join("; "),
         next_action: f.nextStep,
-      })) : [{ case_id: targetCaseId, title: `${systemLabel} review`, category: systemId, description: "Analyzer result saved for further review.", classification: "unknown", status: "open", origin: "analyzer", source: "Decoded Justice Analyzer", supporting_notes: "", missing_records: "", next_action: "" }];
+      })) : [];
       if (selected.length) issueRows.push(...selected.map((module) => ({
         case_id: targetCaseId,
         legal_issue_id: knowledgeIdByAnalyzerId.get(module.id) ?? null,
@@ -143,8 +148,11 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         missing_records: module.evidenceExamples.join("; "),
         next_action: module.questions.join("; "),
       })));
-      const { error: issueError } = await supabase.from("issues").insert(issueRows);
-      if (issueError) throw issueError;
+      if (issueRows.length) {
+        const { data: insertedIssues, error: issueError } = await supabase.from("issues").insert(issueRows).select("id");
+        if (issueError) throw issueError;
+        createdIssueIds.push(...(insertedIssues ?? []).map((row) => row.id));
+      }
 
       const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");
       const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));
@@ -153,18 +161,30 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
 ${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\n")}`
         : "";
       const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
-      const { error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" });
+      const { data: insertedEvent, error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" }).select("id").single();
       if (timelineError) throw timelineError;
-      const { error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "txt", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true });
+      createdEventId = insertedEvent.id;
+      const { data: insertedDocument, error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "txt", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true }).select("id").single();
       if (evidenceError) throw evidenceError;
+      createdDocumentId = insertedDocument.id;
       const packetContent = { generated_at: new Date().toISOString(), source: "analyzer", system: systemLabel, answers: mergedTriageAnswers, selected_issue_modules: selected.map((m) => m.id), sections: ["overview", "issues", "timeline", "evidence"], note: "Draft organizational packet. It does not establish that a legal violation occurred." };
-      const { error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, title: `${systemLabel} triage packet`, purpose: "Preserve Analyzer triage results for case review.", requested_action: "Review the triage findings, timeline context, and records identified for follow-up.", packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: packetContent });
+      const { data: insertedPacket, error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, title: `${systemLabel} triage packet`, purpose: "Preserve Analyzer triage results for case review.", requested_action: "Review the triage findings, timeline context, and records identified for follow-up.", packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: packetContent }).select("id").single();
       if (packetError) throw packetError;
+      createdPacketId = insertedPacket.id;
 
       onStartOrganizing?.();
       navigate(`/cases/${targetCaseId}`);
     } catch (e: any) {
       console.error("Unable to create case from analyzer", e);
+      try {
+        if (createdPacketId) await supabase.from("case_packets").delete().eq("id", createdPacketId);
+        if (createdDocumentId) await supabase.from("documents").delete().eq("id", createdDocumentId);
+        if (createdEventId) await supabase.from("events").delete().eq("id", createdEventId);
+        if (createdIssueIds.length) await supabase.from("issues").delete().in("id", createdIssueIds);
+        if (createdNewCase && targetCaseId) await supabase.from("cases").delete().eq("id", targetCaseId);
+      } catch (cleanupError) {
+        console.error("Analyzer save cleanup failed", cleanupError);
+      }
     } finally { setCreatingCase(false); }
   };
 
