@@ -71,7 +71,12 @@ function LawIssueCard({ module, onAdd, missingFacts = [] }: { module: LawModule;
 export function AnalyzerResults({ systemId, systemLabel, location, patternStrength, tools, primaryGuideId, onSaveAnalysis, onStartOrganizing, isLoggedIn = false, isSaving = false, savedResult = null, saveError = null, aiResults, isGeneratingAI, aiError, onRetryGeneration, answers = {}, entityName, entityTags = {}, caseId, caseDataSource, onClarifyingAnswer, }: AnalyzerResultsProps) {
   const [printShareOpen, setPrintShareOpen] = useState(false);
   const [showClarifyingQuestions, setShowClarifyingQuestions] = useState(true);
-  const [creatingCase, setCreatingCase] = useState(false);\n  const [reviewedFacts, setReviewedFacts] = useState<Record<string, boolean>>({});\n  const [factEdits, setFactEdits] = useState<Record<string, string>>({});
+  const savedDraft = loadAnalyzerDraft();
+  const [creatingCase, setCreatingCase] = useState(false);
+  const [reviewedFacts, setReviewedFacts] = useState<Record<string, boolean>>(savedDraft?.reviewedFacts ?? {});
+  const [factEdits, setFactEdits] = useState<Record<string, string>>(savedDraft?.factEdits ?? {});
+  const [clarifyingAnswers, setClarifyingAnswers] = useState<Record<string, string>>(savedDraft?.clarifyingAnswers ?? {});
+  const [pendingCaseBuildModuleId, setPendingCaseBuildModuleId] = useState<string | undefined>(savedDraft?.pendingCaseBuildModuleId);
   const navigate = useNavigate();
   const patternAwareness = usePatternAwareness(entityTags, answers, patternStrength);
   const mergedTriageAnswers = useMemo(() => ({ ...answers, ...clarifyingAnswers }), [answers, clarifyingAnswers]);
@@ -83,6 +88,19 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     return [...base, ...police];
   }, [systemId, mergedTriageAnswers]);
   const analyzerFindings = useMemo(() => mergeAnalyzerFindings(aiResults), [aiResults]);
+
+  useEffect(() => {
+    if (!aiResults) return;
+    const existingDraft = loadAnalyzerDraft();
+    if (!existingDraft) return;
+    saveAnalyzerDraft({
+      ...existingDraft,
+      reviewedFacts,
+      factEdits,
+      clarifyingAnswers,
+      pendingCaseBuildModuleId,
+    });
+  }, [aiResults, reviewedFacts, factEdits, clarifyingAnswers, pendingCaseBuildModuleId]);
 
   const startCaseWorkspace = async (selectedModule?: LawModule) => {
     if (!isLoggedIn) {
@@ -162,8 +180,18 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const { error: issueError } = await supabase.from("issues").insert(issueRows);
       if (issueError) throw issueError;
 
-      const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");\n      const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));\n      const extractedFactSummary = confirmedExtractedFacts.length\n        ? `Confirmed extracted facts:\n${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\n")}`\n        : "";
-      const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
+      const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("
+");
+      const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));
+      const extractedFactSummary = confirmedExtractedFacts.length
+        ? `Confirmed extracted facts:
+${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("
+")}`
+        : "";
+      const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:
+${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("
+
+");
       const { error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" });
       if (timelineError) throw timelineError;
       const { error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "txt", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true });
@@ -212,7 +240,8 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     {isLoggedIn ? <div className="mb-6 flex items-center justify-center">{isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/60 text-muted-foreground text-sm"><Loader2 className="w-4 h-4 animate-spin" /><span>Saving to your file...</span></div>}{savedResult && !isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium"><Check className="w-4 h-4" /><span>Saved to your file</span></div>}{saveError && !isSaving && !savedResult && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 text-destructive text-sm"><span>Could not save · Please try again later</span></div>}</div> : <div className="mb-6 flex items-center justify-center"><Link to="/auth?redirect=/analyzer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"><LogIn className="w-4 h-4" /><span>Sign in to save & build a case — your Analyzer work will be preserved</span></Link></div>}
     <header className="mb-8 rounded-3xl border border-border bg-card px-5 py-6 text-left shadow-sm sm:px-7"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Analyzer workspace</p><h1 className="mt-2 font-serif text-3xl leading-tight text-foreground sm:text-4xl">Your results, organized</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{caseId && caseDataSource ? `This analysis uses ${caseDataSource.timelineCount} timeline event${caseDataSource.timelineCount === 1 ? "" : "s"}, ${caseDataSource.evidenceCount} exhibit${caseDataSource.evidenceCount === 1 ? "" : "s"}, and ${caseDataSource.issueCount} tracked issue${caseDataSource.issueCount === 1 ? "" : "s"} from your case, alongside your Analyzer answers.` : "Your answers have been organized into research leads, open questions, records to locate, and practical next steps."}</p></div><Button variant="outline" size="sm" onClick={() => setPrintShareOpen(true)} className="gap-2 shrink-0 print:hidden"><Share2 className="w-4 h-4" />Print or Share</Button></div></header>
     {showClarifyingQuestions && clarifyingQuestions.length > 0 && <ClarifyingQuestions questions={clarifyingQuestions} context={caseContext} onAnswer={(questionId, answer) => { setClarifyingAnswers(prev => ({ ...prev, [questionId]: answer })); onClarifyingAnswer?.(questionId, answer); }} onSkip={() => {}} onComplete={() => setShowClarifyingQuestions(false)} />}
-    {patternAwareness?.hasPattern && <PatternAwarenessBlock blocks={patternAwareness.patternBlocks} />}\n    {(aiResults.extractedFacts?.length ?? 0) > 0 && <section className="mb-8 rounded-3xl border border-border bg-card shadow-sm overflow-hidden">
+    {patternAwareness?.hasPattern && <PatternAwarenessBlock blocks={patternAwareness.patternBlocks} />}
+    {(aiResults.extractedFacts?.length ?? 0) > 0 && <section className="mb-8 rounded-3xl border border-border bg-card shadow-sm overflow-hidden">
       <div className="border-b border-border px-5 py-5 sm:px-7">
         <div className="flex items-start gap-3">
           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"><ClipboardList className="h-5 w-5 text-primary" /></div>
