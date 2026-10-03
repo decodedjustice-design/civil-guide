@@ -11,6 +11,7 @@ import { usePatternAwareness } from "@/hooks/usePatternAwareness";
 import { SafetyBanner } from "@/components/SafetyBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { FIRST_ISSUE_LIBRARY, getLawModulesForAnalyzer, type LawModule } from "@/lib/law/issueLibrary";
+import { clearAnalyzerDraft, loadAnalyzerDraft, saveAnalyzerDraft } from "@/lib/analyzerDraft";
 import { getPoliceLawModules } from "@/lib/law/policeIssueModules";
 
 import type { EntityTags } from "@/hooks/useEntityTags";
@@ -70,7 +71,6 @@ function LawIssueCard({ module, onAdd, missingFacts = [] }: { module: LawModule;
 export function AnalyzerResults({ systemId, systemLabel, location, patternStrength, tools, primaryGuideId, onSaveAnalysis, onStartOrganizing, isLoggedIn = false, isSaving = false, savedResult = null, saveError = null, aiResults, isGeneratingAI, aiError, onRetryGeneration, answers = {}, entityName, entityTags = {}, caseId, caseDataSource, onClarifyingAnswer, }: AnalyzerResultsProps) {
   const [printShareOpen, setPrintShareOpen] = useState(false);
   const [showClarifyingQuestions, setShowClarifyingQuestions] = useState(true);
-  const [clarifyingAnswers, setClarifyingAnswers] = useState<Record<string, string>>({});
   const [creatingCase, setCreatingCase] = useState(false);\n  const [reviewedFacts, setReviewedFacts] = useState<Record<string, boolean>>({});\n  const [factEdits, setFactEdits] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const patternAwareness = usePatternAwareness(entityTags, answers, patternStrength);
@@ -85,7 +85,25 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
   const analyzerFindings = useMemo(() => mergeAnalyzerFindings(aiResults), [aiResults]);
 
   const startCaseWorkspace = async (selectedModule?: LawModule) => {
-    if (!isLoggedIn) { navigate(`/auth?redirect=/analyzer`); return; }
+    if (!isLoggedIn) {
+      saveAnalyzerDraft({
+        selectedSystem,
+        answers,
+        freeformNarrative: answers.narrative ?? "",
+        entityName: entityName ?? "",
+        entityTags,
+        step: 0,
+        showResults: true,
+        showEntityQuestions: false,
+        reviewedFacts,
+        factEdits,
+        clarifyingAnswers,
+        pendingCaseBuildModuleId: selectedModule?.id,
+      });
+      navigate(`/auth?redirect=/analyzer`);
+      return;
+    }
+
     setCreatingCase(true);
     try {
       const { data: authUser } = await supabase.auth.getUser();
@@ -144,7 +162,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       const { error: issueError } = await supabase.from("issues").insert(issueRows);
       if (issueError) throw issueError;
 
-      const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");\n      const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));\n      const extractedFactSummary = confirmedExtractedFacts.length\n        ? `Confirmed extracted facts:\\n${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\\n")}`\n        : "";
+      const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");\n      const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));\n      const extractedFactSummary = confirmedExtractedFacts.length\n        ? `Confirmed extracted facts:\n${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\n")}`\n        : "";
       const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
       const { error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" });
       if (timelineError) throw timelineError;
@@ -155,6 +173,8 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       if (packetError) throw packetError;
 
       onStartOrganizing?.();
+      clearAnalyzerDraft();
+      setPendingCaseBuildModuleId(undefined);
       navigate(`/cases/${targetCaseId}`);
     } catch (e: any) {
       console.error("Unable to create case from analyzer", e);
@@ -166,7 +186,30 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
   if (!aiResults) return <div className="min-h-screen bg-gradient-hero flex items-center justify-center"><div className="text-center p-8"><Loader2 className="w-12 h-12 animate-spin text-accent mx-auto mb-4" /><p className="text-muted-foreground">Loading results...</p></div></div>;
   const policeMissingFacts = systemId === "police" ? getPoliceMissingFacts(mergedTriageAnswers) : [];
   return <div className="min-h-screen bg-background text-foreground"><div className="max-w-3xl mx-auto px-4 py-10 sm:px-6 lg:px-8"><SafetyBanner />
-    {isLoggedIn ? <div className="mb-6 flex items-center justify-center">{isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/60 text-muted-foreground text-sm"><Loader2 className="w-4 h-4 animate-spin" /><span>Saving to your file...</span></div>}{savedResult && !isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium"><Check className="w-4 h-4" /><span>Saved to your file</span></div>}{saveError && !isSaving && !savedResult && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 text-destructive text-sm"><span>Could not save · Please try again later</span></div>}</div> : <div className="mb-6 flex items-center justify-center"><Link to="/auth?redirect=/analyzer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"><LogIn className="w-4 h-4" /><span>Sign in to save this result</span></Link></div>}
+    {isLoggedIn && pendingCaseBuildModuleId && (
+      <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 px-5 py-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Your case-building request is saved.</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">You signed in without losing your Analyzer work. Continue when you're ready.</p>
+          </div>
+          <Button
+            size="sm"
+            className="gap-2 shrink-0"
+            disabled={creatingCase}
+            onClick={() => {
+              const pendingModule = [...lawModules, ...FIRST_ISSUE_LIBRARY].find((module) => module.id === pendingCaseBuildModuleId);
+              setPendingCaseBuildModuleId(undefined);
+              void startCaseWorkspace(pendingModule);
+            }}
+          >
+            {creatingCase ? <Loader2 className="w-4 h-4 animate-spin" /> : <BriefcaseBusiness className="w-4 h-4" />}
+            {creatingCase ? "Building case…" : "Continue building case"}
+          </Button>
+        </div>
+      </div>
+    ) : null}
+    {isLoggedIn ? <div className="mb-6 flex items-center justify-center">{isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/60 text-muted-foreground text-sm"><Loader2 className="w-4 h-4 animate-spin" /><span>Saving to your file...</span></div>}{savedResult && !isSaving && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium"><Check className="w-4 h-4" /><span>Saved to your file</span></div>}{saveError && !isSaving && !savedResult && <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 text-destructive text-sm"><span>Could not save · Please try again later</span></div>}</div> : <div className="mb-6 flex items-center justify-center"><Link to="/auth?redirect=/analyzer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"><LogIn className="w-4 h-4" /><span>Sign in to save & build a case — your Analyzer work will be preserved</span></Link></div>}
     <header className="mb-8 rounded-3xl border border-border bg-card px-5 py-6 text-left shadow-sm sm:px-7"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Analyzer workspace</p><h1 className="mt-2 font-serif text-3xl leading-tight text-foreground sm:text-4xl">Your results, organized</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{caseId && caseDataSource ? `This analysis uses ${caseDataSource.timelineCount} timeline event${caseDataSource.timelineCount === 1 ? "" : "s"}, ${caseDataSource.evidenceCount} exhibit${caseDataSource.evidenceCount === 1 ? "" : "s"}, and ${caseDataSource.issueCount} tracked issue${caseDataSource.issueCount === 1 ? "" : "s"} from your case, alongside your Analyzer answers.` : "Your answers have been organized into research leads, open questions, records to locate, and practical next steps."}</p></div><Button variant="outline" size="sm" onClick={() => setPrintShareOpen(true)} className="gap-2 shrink-0 print:hidden"><Share2 className="w-4 h-4" />Print or Share</Button></div></header>
     {showClarifyingQuestions && clarifyingQuestions.length > 0 && <ClarifyingQuestions questions={clarifyingQuestions} context={caseContext} onAnswer={(questionId, answer) => { setClarifyingAnswers(prev => ({ ...prev, [questionId]: answer })); onClarifyingAnswer?.(questionId, answer); }} onSkip={() => {}} onComplete={() => setShowClarifyingQuestions(false)} />}
     {patternAwareness?.hasPattern && <PatternAwarenessBlock blocks={patternAwareness.patternBlocks} />}\n    {(aiResults.extractedFacts?.length ?? 0) > 0 && <section className="mb-8 rounded-3xl border border-border bg-card shadow-sm overflow-hidden">
