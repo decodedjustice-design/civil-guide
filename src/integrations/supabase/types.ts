@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      directory_entries: {
+        Row: {
+          accepts_case_builder_summary: boolean
+          active_listing: boolean
+          bar_number: string | null
+          city: string
+          counties_served: string[]
+          county: string | null
+          created_at: string
+          entry_type: string
+          fee_types: string[]
+          firm_or_org: string | null
+          id: string
+          intake_email: string | null
+          intake_phone: string | null
+          last_verified_at: string | null
+          name: string
+          practice_areas: string[]
+          source_type: string | null
+          source_url: string | null
+          state: string
+          updated_at: string
+          verification_note: string | null
+          verification_status: string
+          website_url: string | null
+        }
+        Insert: {
+          accepts_case_builder_summary?: boolean
+          active_listing?: boolean
+          bar_number?: string | null
+          city: string
+          counties_served?: string[]
+          county?: string | null
+          created_at?: string
+          entry_type: string
+          fee_types?: string[]
+          firm_or_org?: string | null
+          id?: string
+          intake_email?: string | null
+          intake_phone?: string | null
+          last_verified_at?: string | null
+          name: string
+          practice_areas?: string[]
+          source_type?: string | null
+          source_url?: string | null
+          state?: string
+          updated_at?: string
+          verification_note?: string | null
+          verification_status?: string
+          website_url?: string | null
+        }
+        Update: {
+          accepts_case_builder_summary?: boolean
+          active_listing?: boolean
+          bar_number?: string | null
+          city?: string
+          counties_served?: string[]
+          county?: string | null
+          created_at?: string
+          entry_type?: string
+          fee_types?: string[]
+          firm_or_org?: string | null
+          id?: string
+          intake_email?: string | null
+          intake_phone?: string | null
+          last_verified_at?: string | null
+          name?: string
+          practice_areas?: string[]
+          source_type?: string | null
+          source_url?: string | null
+          state?: string
+          updated_at?: string
+          verification_note?: string | null
+          verification_status?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       analyzer_results: {
         Row: {
           answers: Json
