@@ -66,7 +66,7 @@ export default function CasePackets() {
         evidence: exportEvidence.map((r) => ({ id: r.id, label: `${exhibitLabel(r.exhibit_number)} — ${r.title || "Untitled document"}` })),
         people: [...snapshot.people, ...snapshot.organizations].map((r) => ({ id: r.id, label: r.name || "Unnamed person or organization" })),
         communications: snapshot.communications.map((r) => ({ id: r.id, label: r.subject || "Untitled communication" })),
-        requests: snapshot.requests.map((r) => ({ id: r.id, label: r.request_title || "Untitled request" })),
+        requests: snapshot.requests.map((r) => ({ id: r.id, label: r.title || "Untitled request" })),
         "record-gaps": snapshot.record_gaps.map((r) => ({ id: r.id, label: r.title || "Record gap" })),
         relationships: snapshot.links.map((r) => ({ id: r.id, label: `${r.from_type} → ${r.relation} → ${r.to_type}` })),
       };
