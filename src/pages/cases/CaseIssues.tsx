@@ -10,13 +10,57 @@ import { FileSearch, ChevronRight } from "lucide-react";
 
 export default function CaseIssues() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { snapshot } = useCaseSnapshot(id);
+  const { items: reviews } = useCaseCollection<any>("evidence_reviews", id);
+
+  const reviewStats = (issueId: string) => {
+    const linked = reviews.filter((r: any) => r.issue_id === issueId);
+    return {
+      total: linked.length,
+      needsReview: linked.filter((r: any) => r.review_status === "needs_review").length,
+    };
+  };
+
   return (
-    <CaseWorkspaceLayout title="Claims & issues"
-      description="The questions your record may raise. These are areas that may warrant closer review — not conclusions.">
+    <CaseWorkspaceLayout
+      title="Claims & issues"
+      description="The questions your record may raise. These are areas that may warrant closer review — not conclusions."
+    >
+      <div className="space-y-4 mb-6">
+        {snapshot.issues.map((issue: any) => {
+          const stats = reviewStats(issue.id);
+          return (
+            <Card key={issue.id}>
+              <CardContent className="p-4 flex items-center justify-between gap-4">
+                <div>
+                  <p className="font-medium">{issue.title}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {stats.total} evidence review{stats.total === 1 ? "" : "s"} · {stats.needsReview} needs review
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/cases/${id}/evidence-review?issue=${issue.id}`)}
+                >
+                  <FileSearch className="w-4 h-4 mr-2" />
+                  Review evidence
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
       <RecordManager
-        table="issues" caseId={id} addLabel="Add issue"
+        table="issues"
+        caseId={id}
+        addLabel="Add issue"
         emptyMessage="No issues tracked yet. Analyzer research leads arrive marked unknown — never as a settled fact."
-        titleField="title" subtitleFields={["description", "category"]}
+        titleField="title"
+        subtitleFields={["description", "category"]}
         badgeFields={["classification", "status", "origin"]}
         orderBy={{ column: "created_at", ascending: true }}
         fields={[
