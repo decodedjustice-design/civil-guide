@@ -18,7 +18,7 @@ export default function CaseRecordGaps() {
       const title = String(gap.title ?? "Record request").replace(/^(Locate|Clarify):\\s*/i, "");
       const { data: request, error: requestError } = await supabase
         .from("record_requests")
-        .insert({ case_id: id, title, record_holder: gap.record_holder ?? null, status: "draft", notes: gap.description ?? gap.notes ?? null })
+        .insert({ case_id: id, title, record_holder: gap.record_holder ?? null, status: "draft", notes: gap.description ?? gap.notes ?? null, related_issue_id: gap.related_issue_id ?? null })
         .select("id")
         .single();
       if (requestError) throw requestError;
@@ -31,7 +31,7 @@ export default function CaseRecordGaps() {
       await queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       await queryClient.invalidateQueries({ queryKey: ["record_requests", id] });
       await queryClient.invalidateQueries({ queryKey: ["case-snapshot", id] });
-      toast({ title: "Request created", description: "A draft record request is now linked to this gap." });
+      toast({ title: "Request created", description: "A draft request is linked to this record gap. Confirm the recipient and submission method before sending." });
     } catch (error: any) {
       toast({ title: "Could not create request", description: error.message, variant: "destructive" });
     }
