@@ -1,0 +1,44 @@
+-- Seed Washington substantive research modules from official primary-law registry sources.
+-- Sources: Washington Legislature RCW chapter pages.
+insert into public.legal_issues (issue_code,issue_name,legal_domain,description,jurisdiction,active,is_published,analyzer_issue_id)
+values
+('WA_PUBLIC_RECORDS_ACT','Washington Public Records Act','Washington Public Records','Research module for Washington public-records access, agency response duties, exemptions, copying/inspection, and enforcement research.','WA',true,true,'wa-public-records-act'),
+('WA_RESIDENTIAL_LANDLORD_TENANT','Washington Residential Landlord-Tenant Act','Washington Housing','Research module for residential landlord-tenant duties, notices, retaliation, source-of-income protections, and tenant remedies.','WA',true,true,'wa-residential-landlord-tenant'),
+('WA_DEPENDENCY_PROCEDURE','Washington Dependency Procedure','Washington Child Welfare','Research module for Washington juvenile dependency procedure, notice, shelter care, permanency, caregiver participation, and placement-related statutory research.','WA',true,true,'wa-dependency-procedure')
+on conflict (issue_code) do update set issue_name=excluded.issue_name,legal_domain=excluded.legal_domain,description=excluded.description,jurisdiction=excluded.jurisdiction,active=true,is_published=true,analyzer_issue_id=excluded.analyzer_issue_id,updated_at=now();
+
+insert into public.issue_elements (issue_id,element_code,element_name,element_description,required,sequence_no,jurisdiction,authority_note)
+select i.id,x.code,x.name,x.descr,true,x.seq,'WA',x.note
+from public.legal_issues i
+join (values
+('WA_PUBLIC_RECORDS_ACT','PRA_REQUEST','Identifiable public record or record category','Identify the record sought with enough specificity to evaluate whether the agency maintains a responsive record.',1,'RCW 42.56.080'),
+('WA_PUBLIC_RECORDS_ACT','AGENCY_RESPONSE','Agency response and production process','Track the agency response, clarification requests, production, withholding, exemptions, and timing.',2,'RCW 42.56.090 and related provisions'),
+('WA_PUBLIC_RECORDS_ACT','EXEMPTION_REVIEW','Claimed exemption','If records are withheld or redacted, identify the asserted exemption and evaluate it against the statute and applicable authority.',3,'RCW 42.56'),
+('WA_RESIDENTIAL_LANDLORD_TENANT','COVERAGE','Coverage under chapter 59.18','Determine whether the residential arrangement falls within the Residential Landlord-Tenant Act and whether an exemption applies.',1,'RCW 59.18.040'),
+('WA_RESIDENTIAL_LANDLORD_TENANT','DUTY_OR_NOTICE','Statutory duty, notice, or restriction','Identify the specific landlord or tenant duty, notice requirement, restriction, or remedy implicated by the facts.',2,'RCW 59.18.060 and related provisions'),
+('WA_RESIDENTIAL_LANDLORD_TENANT','REMEDY','Potential statutory remedy','Identify the remedy authorized by the applicable provision rather than assuming a general tenant remedy.',3,'Specific RCW provision controls'),
+('WA_DEPENDENCY_PROCEDURE','PROCEDURAL_STAGE','Dependency procedural stage','Identify whether the issue concerns custody, shelter care, adjudication, review, permanency, guardianship, or another statutory stage.',1,'RCW 13.34'),
+('WA_DEPENDENCY_PROCEDURE','NOTICE_RIGHTS','Notice or participation right','Identify the statute or rule governing notice, hearing, right to be heard, counsel, or other participation.',2,'RCW 13.34.062, .090, .092, .096 and related provisions'),
+('WA_DEPENDENCY_PROCEDURE','STATUTORY_DUTY','Agency or court duty','Identify the precise statutory duty and the actor responsible for performing it.',3,'RCW 13.34')
+) x(issue_code,code,name,descr,seq,note) on i.issue_code=x.issue_code
+on conflict (issue_id,element_code) do update set element_name=excluded.element_name,element_description=excluded.element_description,required=true,sequence_no=excluded.sequence_no,jurisdiction=excluded.jurisdiction,authority_note=excluded.authority_note;
+
+insert into public.decoded_explanations (issue_id,title,plain_language,what_it_means,what_it_does_not_mean,questions_to_ask,evidence_to_collect,common_misunderstandings,review_status,is_published)
+select i.id,x.title,x.plain,x.means,x.notmeans,x.questions,x.evidence,x.misunderstandings,'verified',true
+from public.legal_issues i
+join (values
+('WA_PUBLIC_RECORDS_ACT','Public Records Act — research guide','Washington law provides a statutory framework for access to identifiable public records held by state and local agencies. The Analyzer should start with the record requested, the agency response, and any claimed exemption.','Analyze the request against RCW 42.56 and applicable authority.','It does not mean every government record must be disclosed; exemptions, confidentiality rules, and other statutes can affect access.',ARRAY['What exact record or record category was requested?','Which agency holds or may hold it?','What response was received?','Were records withheld or redacted, and was an exemption identified?']::text[],ARRAY['Original request','Agency acknowledgment and response','Produced records','Withholding/redaction log']::text[],ARRAY['Assuming the PRA overrides every other confidentiality statute','Treating a broad subject request as automatically identifying a specific record']::text[]),
+('WA_RESIDENTIAL_LANDLORD_TENANT','Residential Landlord-Tenant Act — research guide','Chapter 59.18 RCW contains Washington rules governing many residential tenancies, including landlord duties, tenant duties, entry, retaliation, source-of-income protections, and remedies.','Identify the tenancy type and map the facts to the specific statutory provision.','It does not mean every housing dispute is governed by RCW 59.18 or that a general rule applies without checking exceptions.',ARRAY['What type of housing arrangement exists?','What event or notice triggered the dispute?','Which statutory duty or restriction is implicated?','Does an exemption apply?']::text[],ARRAY['Lease or rental agreement','Notices','Payment records','Inspection or repair records','Messages with landlord or property manager']::text[],ARRAY['Assuming all housing arrangements are covered','Treating every landlord action as retaliation','Ignoring exact notice and remedy provisions']::text[]),
+('WA_DEPENDENCY_PROCEDURE','Dependency Procedure — research guide','Chapter 13.34 RCW governs Washington juvenile dependency and termination proceedings and includes provisions addressing custody, shelter care, notice, rights, permanency, guardianship, and placement.','First identify the procedural stage, then identify the exact statutory notice, participation, duty, or hearing provision involved.','It does not mean a general dependency principle automatically establishes a violation; the applicable statute, court order, rule, and factual record must be checked.',ARRAY['What procedural stage was occurring?','What order or notice existed?','Who was the statutory decision-maker?','What notice or participation right is claimed?']::text[],ARRAY['Court orders','Notices','Hearing records','Case-plan documents','Agency correspondence','Placement records']::text[],ARRAY['Treating an agency practice as if it were itself a statute','Assuming a caregiver right applies identically at every procedural stage']::text[])
+) x(issue_code,title,plain,means,notmeans,questions,evidence,misunderstandings) on i.issue_code=x.issue_code
+on conflict (issue_id,title) do update set plain_language=excluded.plain_language,what_it_means=excluded.what_it_means,what_it_does_not_mean=excluded.what_it_does_not_mean,questions_to_ask=excluded.questions_to_ask,evidence_to_collect=excluded.evidence_to_collect,common_misunderstandings=excluded.common_misunderstandings,review_status='verified',is_published=true,updated_at=now();
+
+insert into public.issue_authorities(issue_id,source_id,relationship,priority,jurisdiction,note)
+select i.id,s.id,'controls',1,'WA',x.note
+from public.legal_issues i join public.legal_sources s on s.citation='RCW'
+join (values
+('WA_PUBLIC_RECORDS_ACT','Primary statutory source for the Public Records Act.'),
+('WA_RESIDENTIAL_LANDLORD_TENANT','Primary statutory source for residential landlord-tenant rules.'),
+('WA_DEPENDENCY_PROCEDURE','Primary statutory source for dependency procedure.')
+) x(issue_code,note) on i.issue_code=x.issue_code
+on conflict do nothing;
