@@ -125,7 +125,7 @@ const App = () => {
               <Route path="/cases/:id/timeline" element={<ProtectedRoute><CaseTimeline /></ProtectedRoute>} />
               <Route path="/cases/:id/people" element={<ProtectedRoute><CasePeople /></ProtectedRoute>} />
               <Route path="/cases/:id/issues" element={<ProtectedRoute><CaseIssues /></ProtectedRoute>} />
-              <Route path="/cases/:id/claims" element={<ProtectedRoute><CaseIssues /></ProtectedRoute>} />
+              <Route path="/cases/:id/claims" element={<ProtectedRoute><CaseClaims /></ProtectedRoute>} />
               <Route path="/cases/:id/communications" element={<ProtectedRoute><CaseCommunications /></ProtectedRoute>} />
               <Route path="/cases/:id/requests" element={<ProtectedRoute><CaseRequests /></ProtectedRoute>} />
               <Route path="/cases/:id/record-gaps" element={<ProtectedRoute><CaseRecordGaps /></ProtectedRoute>} />
