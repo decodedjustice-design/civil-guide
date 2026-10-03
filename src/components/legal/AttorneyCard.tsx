@@ -100,6 +100,26 @@ export function AttorneyCard({ attorney }: AttorneyCardProps) {
           </div>
         </div>
 
+        {/* Listing metadata */}
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          <Badge variant="outline" className="text-xs border-border">
+            {attorney.entryType || "Legal resource"}
+          </Badge>
+          {attorney.verificationStatus && (
+            <Badge
+              variant="outline"
+              className={cn(
+                "text-xs",
+                attorney.verificationStatus === "source_checked"
+                  ? "border-emerald-500/30 text-emerald-700"
+                  : "border-amber-500/30 text-amber-700"
+              )}
+            >
+              {attorney.verificationStatus === "source_checked" ? "Source checked" : "Verification pending"}
+            </Badge>
+          )}
+        </div>
+
         {/* Practice Areas */}
         <div className="flex flex-wrap gap-2 mt-3">
           {attorney.practiceAreas.slice(0, 3).map((area) => (
