@@ -178,6 +178,36 @@ export function AttorneyDetailModal({ attorney, isOpen, onClose }: AttorneyDetai
         )}
       </div>
 
+      {/* Source & verification */}
+      {(attorney.verificationStatus || attorney.sourceUrl || attorney.lastVerifiedAt) && (
+        <div className="rounded-xl bg-muted/40 border border-border p-4 space-y-2">
+          <h4 className="text-sm font-medium text-foreground">Directory source</h4>
+          {attorney.verificationStatus && (
+            <p className="text-xs text-muted-foreground">
+              Status: <span className="font-medium text-foreground">
+                {attorney.verificationStatus === "source_checked" ? "Source checked" : attorney.verificationStatus === "stale" ? "Needs refresh" : "Verification pending"}
+              </span>
+            </p>
+          )}
+          {attorney.lastVerifiedAt && (
+            <p className="text-xs text-muted-foreground">
+              Last checked: {new Date(attorney.lastVerifiedAt).toLocaleDateString()}
+            </p>
+          )}
+          {attorney.sourceUrl && (
+            <a
+              href={attorney.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs text-primary hover:underline"
+            >
+              View source
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      )}
+
       {/* Counties Served */}
       <div>
         <h4 className="text-sm font-medium text-foreground mb-2">Counties Served</h4>
