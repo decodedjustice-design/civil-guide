@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { FileSearch, Plus, Save } from "lucide-react";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,11 +18,11 @@ const REVIEW_STATUSES = [
 ];
 
 export default function CaseEvidenceReview() {
-  const { id } = useParams();
+  const { id } = useParams();\n  const [searchParams] = useSearchParams();\n  const issueFromQuery = searchParams.get("issue") || "";
   const { snapshot } = useCaseSnapshot(id);
   const { items: reviews, add, update } = useCaseCollection<any>("evidence_reviews", id);
   const [documentId, setDocumentId] = useState("");
-  const [issueId, setIssueId] = useState("");
+  const [issueId, setIssueId] = useState(issueFromQuery);
   const [status, setStatus] = useState("needs_review");
   const [locator, setLocator] = useState("");
   const [supports, setSupports] = useState("");
@@ -32,7 +32,7 @@ export default function CaseEvidenceReview() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const reset = () => {
-    setDocumentId(""); setIssueId(""); setStatus("needs_review"); setLocator("");
+    setDocumentId(""); setIssueId(issueFromQuery); setStatus("needs_review"); setLocator("");
     setSupports(""); setContradicts(""); setUnresolved(""); setNotes(""); setEditingId(null);
   };
 
