@@ -20,6 +20,41 @@ interface AnalyzerInput {
 }
 interface TimelineEntry { id?: string; title?: string; description?: string; date?: string; actors?: string[]; outcome?: string; }
 interface EvidenceItem { id?: string; type?: string; title?: string; description?: string; linkedTimelineEntryId?: string; linkedDate?: string; }
+type ExtractedFactKind = 'event' | 'person_or_role' | 'organization' | 'evidence_mention' | 'outcome';
+interface ExtractedFact { id: string; kind: ExtractedFactKind; text: string; date?: string; source: 'narrative' | 'timeline' | 'answer'; verification: 'needs_user_verification'; }
+
+const cleanSentence = (value: string) => value.replace(/\s+/g, ' ').trim().replace(/^[\s"'“”]+|[\s"'“”]+$/g, '');
+
+const extractFactsFromNarrative = (narrative?: string): ExtractedFact[] => {
+  const text = (narrative || '').trim();
+  if (!text) return [];
+  const facts: ExtractedFact[] = [];
+  const seen = new Set<string>();
+  const add = (kind: ExtractedFactKind, value: string, source: ExtractedFact['source'], date?: string) => {
+    const cleaned = cleanSentence(value);
+    if (!cleaned || cleaned.length < 8) return;
+    const key = kind + ':' + cleaned.toLowerCase();
+    if (seen.has(key) || facts.length >= 24) return;
+    seen.add(key);
+    facts.push({ id: 'fact_' + (facts.length + 1), kind, text: cleaned.slice(0, 280), ...(date ? { date } : {}), source, verification: 'needs_user_verification' });
+  };
+
+  const sentences = text.split(/(?<=[.!?])\s+|\n+/).map(cleanSentence).filter(Boolean);
+  const datePattern = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:,\s*\d{4})?|\b\d{1,2}\/\d{1,2}\/\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b/;
+  const eventSignals = /\b(?:happened|occurred|called|contacted|visited|came|went|left|entered|searched|seized|stopped|detained|arrested|removed|placed|evicted|terminated|fired|denied|requested|reported|filed|served|received|sent|met|heard|ordered|approved|rejected|investigated|interviewed|threatened|hit|injured|restrained|took|returned)\b/i;
+  const outcomeSignals = /\b(?:injured|hurt|hospitalized|arrested|detained|removed|placed|evicted|homeless|fired|terminated|denied|lost|damaged|charged|convicted|dismissed|approved|rejected|suspended|disciplined|missed|failed|received|no longer|resulted in)\b/i;
+  const evidenceSignals = /\b(?:photo|photos|video|body[- ]?camera|recording|text messages?|emails?|email|letter|report|police report|medical record|court order|order|notice|document|documents|records?|screenshot|screen shot|audio|voicemail|call log|dispatch|cad)\b/i;
+  const roleSignals = /\b(?:officer|deputy|sheriff|police|caseworker|social worker|investigator|supervisor|judge|attorney|lawyer|landlord|property manager|teacher|principal|doctor|nurse|employer|hr|agency|worker|caregiver|parent|child|son|daughter)\b/i;
+
+  sentences.forEach(sentence => {
+    const date = sentence.match(datePattern)?.[0];
+    if (eventSignals.test(sentence)) add('event', sentence, 'narrative', date);
+    if (outcomeSignals.test(sentence)) add('outcome', sentence, 'narrative', date);
+    if (evidenceSignals.test(sentence)) add('evidence_mention', sentence, 'narrative', date);
+    if (roleSignals.test(sentence)) add('person_or_role', sentence, 'narrative', date);
+  });
+  return facts.slice(0, 24);
+};
 type GapCategory = 'timeline' | 'evidence' | 'identity' | 'harm_outcome' | 'context';
 interface GapQuestion { id: string; category: GapCategory; priority: number; gapType: string; relatedEntryId?: string; prompt: string; rationale: string; }
 
@@ -40,6 +75,7 @@ interface AnalyzerResultsAI {
   commonStuckPoints: string[];
   priorityActions: Array<{ title: string; description: string }>;
   referenceAnchors: string[];
+  extractedFacts: ExtractedFact[];
   gentleRealityCheck: string;
   closingAffirmation: string;
 }
@@ -105,6 +141,7 @@ serve(async (req) => {
     const answerMap: Record<string,string> = {};
     answeredQuestions.forEach(item => { if (item.questionId && item.answer) answerMap[item.questionId] = item.answer; });
     const inferredSystems = inferSystemsFromNarrative(clarionNarrative);
+    const extractedFacts = extractFactsFromNarrative(clarionNarrative);
     const systemsToCheck = systemId === 'unsure' && inferredSystems.length
       ? inferredSystems.slice(0, 3)
       : [{ id: systemId, label: systemLabel, signals: [] }];
@@ -170,6 +207,7 @@ serve(async (req) => {
       commonStuckPoints: ['Missing dates', 'Unclear actors', 'Events without supporting evidence', 'Assuming a legal conclusion before checking the exact rule and facts'],
       priorityActions,
       referenceAnchors: potentialViolations.flatMap(v => v.legalFramework).filter((v,i,a) => a.indexOf(v) === i).slice(0, 12),
+      extractedFacts,
       gentleRealityCheck: 'A flagged issue is a lead to investigate, not proof of a violation. The engine is designed to show you exactly what facts and evidence would move an issue forward or rule it out.',
       closingAffirmation: 'You do not need to know the legal label before you document the facts. The analyzer helps connect the two.'
     };

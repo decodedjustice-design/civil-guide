@@ -16,6 +16,15 @@ export interface PotentialViolation {
   nextStep: string;
 }
 
+export interface ExtractedFact {
+  id: string;
+  kind: 'event' | 'person_or_role' | 'organization' | 'evidence_mention' | 'outcome';
+  text: string;
+  date?: string;
+  source: 'narrative' | 'timeline' | 'answer';
+  verification: 'needs_user_verification';
+}
+
 export interface AnalyzerResultsAI {
   mode?: string;
   summary?: {
@@ -25,6 +34,7 @@ export interface AnalyzerResultsAI {
     potentialViolationCount: number;
   };
   potentialViolations?: PotentialViolation[];
+  extractedFacts?: ExtractedFact[];
   systemIdentification: string;
   executiveSummary?: string;
   whatWeKnow?: string[];
