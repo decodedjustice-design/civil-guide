@@ -110,7 +110,7 @@ export function Header() {
       <button
         type="button"
         onClick={quickExit}
-        className="fixed bottom-4 right-4 z-[60] hidden items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-2 text-xs font-medium text-muted-foreground shadow-lg backdrop-blur-sm transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:flex"
+        className="fixed bottom-4 right-4 z-[60] flex items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-2 text-xs font-medium text-muted-foreground shadow-lg backdrop-blur-sm transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:flex"
         aria-label="Quick Exit"
         title="Leave Decoded Justice immediately"
       >
