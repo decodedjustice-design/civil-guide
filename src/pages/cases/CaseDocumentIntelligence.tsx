@@ -37,6 +37,9 @@ export default function CaseDocumentIntelligence() {
   const [selectedId, setSelectedId] = useState("");
   const [sourceText, setSourceText] = useState("");
   const [versionId, setVersionId] = useState<string | null>(null);
+  const [extractedTextId, setExtractedTextId] = useState<string | null>(null);
+  const [promoting, setPromoting] = useState<string | null>(null);
+  const [promoted, setPromoted] = useState<Record<string, string>>({});
   const [loadingText, setLoadingText] = useState(false);
   const [running, setRunning] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -108,6 +111,125 @@ export default function CaseDocumentIntelligence() {
     setResults(data.extractions || []);
     setNotice(data.notice || "");
     setRunning(false);
+  };
+
+  const promote = async (item: Extraction) => {
+    if (!id || !selectedId) return;
+    setPromoting(item.id);
+    setNotice("");
+
+    const locatorPayload: any = {
+      case_id: id,
+      document_version_id: versionId,
+      text_start: item.locator.start,
+      text_end: item.locator.end,
+      quoted_text: item.locator.quoted_text,
+      locator_hash: await crypto.subtle.digest("SHA-256", new TextEncoder().encode(
+        \`\${selectedId}|\${versionId || "source-text"}|\${item.locator.start}|\${item.locator.end}|\${item.locator.quoted_text}\`
+      )).then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("")),
+    };
+    if (extractedTextId) locatorPayload.extracted_text_id = extractedTextId;
+
+    const { data: locator, error: locatorError } = await (supabase as any)
+      .from("evidence_locators")
+      .insert(locatorPayload)
+      .select("id")
+      .single();
+
+    if (locatorError || !locator) {
+      setNotice(locatorError?.message || "Could not preserve the source locator.");
+      setPromoting(null);
+      return;
+    }
+
+    let createdId: string | null = null;
+    let label = "";
+    if (item.kind === "event") {
+      const parsedDate = item.normalized && /^\d{4}-\d{2}-\d{2}$/.test(item.normalized)
+        ? new Date(\`\${item.normalized}T12:00:00Z\`).toISOString()
+        : null;
+      const { data, error } = await (supabase as any).from("events").insert({
+        case_id: id,
+        occurred_at: parsedDate,
+        title: item.text.slice(0, 120),
+        description: item.text,
+        classification: "unknown",
+        category: "document-extracted",
+        importance: "normal",
+        reviewed: false,
+        disputed: false,
+        source_locator_id: locator.id,
+        source_type: "Document Intelligence",
+        reason: "Promoted from a reviewed source extraction; verify against the original document.",
+        review_status: "needs_review",
+      }).select("id").single();
+      createdId = data?.id || null;
+      label = "event";
+      if (error) setNotice(error.message);
+    } else if (item.kind === "claim") {
+      const { data, error } = await (supabase as any).from("claims").insert({
+        case_id: id,
+        statement: item.text,
+        classification: "unknown",
+        confidence: null,
+        who_made: null,
+        first_stated_at: null,
+        source_locator_id: locator.id,
+        notes: "Promoted from Document Intelligence. Speaker, classification, and factual status require review.",
+      }).select("id").single();
+      createdId = data?.id || null;
+      label = "claim";
+      if (error) setNotice(error.message);
+    } else if (item.kind === "person_or_role") {
+      const match = item.text.match(/^(?:Officer|Deputy|Detective|Sergeant|Lieutenant|Sheriff|Caseworker|Social Worker|Investigator|Supervisor|Judge|Attorney|Lawyer|Landlord|Property Manager|Teacher|Principal|Doctor|Nurse|Employer|HR|Agency|Worker|Caregiver)\s+/i);
+      const role = match?.[0]?.trim() || null;
+      const name = role ? item.text.slice(match![0].length).trim() : item.text;
+      const { data, error } = await (supabase as any).from("people").insert({
+        case_id: id,
+        display_name: name.slice(0, 200),
+        role_label: role,
+        source_type: "Document Intelligence",
+        review_status: "needs_review",
+        notes: \`Source extraction: \${item.text}. Verify identity and role before relying on this person record. Locator \${locator.id}.\`,
+      }).select("id").single();
+      createdId = data?.id || null;
+      label = "person";
+      if (error) setNotice(error.message);
+    } else if (item.kind === "organization") {
+      const { data, error } = await (supabase as any).from("organizations").insert({
+        case_id: id,
+        name: item.text.slice(0, 250),
+        org_type: "document-extracted",
+        source_type: "Document Intelligence",
+        review_status: "needs_review",
+        notes: \`Source locator: \${locator.id}. Verify the organization name and context against the original document.\`,
+      }).select("id").single();
+      createdId = data?.id || null;
+      label = "organization";
+      if (error) setNotice(error.message);
+    } else if (item.kind === "evidence_reference") {
+      const { data, error } = await (supabase as any).from("evidence_mentions").insert({
+        case_id: id,
+        evidence_type: "document-reference",
+        description: item.text,
+        approximate_date: item.normalized || null,
+        priority: "normal",
+        status: "needs_review",
+        source_type: "Document Intelligence",
+        review_status: "needs_review",
+      }).select("id").single();
+      createdId = data?.id || null;
+      label = "evidence reference";
+      if (error) setNotice(error.message);
+    }
+
+    if (createdId) {
+      setPromoted(prev => ({ ...prev, [item.id]: label }));
+      setNotice(\`Promoted to \${label}. The new record remains marked Needs review and retains source locator \${locator.id}.\`);
+    } else if (!notice) {
+      setNotice("This extraction type stays as a source signal until it has enough context to safely promote.");
+    }
+    setPromoting(null);
   };
 
   const saveRun = async () => {
@@ -238,7 +360,7 @@ export default function CaseDocumentIntelligence() {
                 </div>
                 <p className="text-sm leading-6">{item.text}</p>
                 <p className="text-[11px] text-muted-foreground mt-2">Source locator: characters {item.locator.start}–{item.locator.end}</p>
-                <p className="text-[11px] text-muted-foreground mt-1">{item.rationale}</p>
+                <p className="text-[11px] text-muted-foreground mt-1">{item.rationale}</p>\n                {["event", "claim", "person_or_role", "organization", "evidence_reference"].includes(item.kind) && !promoted[item.id] && (\n                  <Button size="sm" variant="outline" className="mt-3" onClick={() => promote(item)} disabled={promoting === item.id}>\n                    {promoting === item.id ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5 mr-2" />}\n                    Promote to case record\n                  </Button>\n                )}
               </div>
             ))}
           </CardContent>
