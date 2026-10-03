@@ -95,7 +95,7 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
       if (!ownerId) throw new Error("Your session expired. Please sign in again.");
       let targetCaseId = caseId;
       const createdNewCase = !targetCaseId;
-      const createdIssueIds: string[] = [];
+      const createdIssueIds: string[] = [];\n      const createdTaskIds: string[] = [];
       let createdEventId: string | null = null;
       let createdDocumentId: string | null = null;
       let createdPacketId: string | null = null;
@@ -148,12 +148,94 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
         missing_records: module.evidenceExamples.join("; "),
         next_action: module.questions.join("; "),
       })));
-      if (issueRows.length) {
-        const { data: insertedIssues, error: issueError } = await supabase.from("issues").insert(issueRows).select("id");
-        if (issueError) throw issueError;
-        createdIssueIds.push(...(insertedIssues ?? []).map((row) => row.id));
+      const createdIssueTaskCandidates: Array<{ issueId: string; item: string; kind: "record" | "fact" | "next_step" }> = [];
+
+      if (findings.length) {
+        for (const [index, finding] of findings.entries()) {
+          const { data: insertedIssue, error: issueError } = await supabase.from("issues").insert(issueRows[index]).select("id").single();
+          if (issueError) throw issueError;
+          createdIssueIds.push(insertedIssue.id);
+          [...finding.evidenceToLookFor.map((item) => ({ item, kind: "record" as const })),
+            ...finding.missingFacts.map((item) => ({ item, kind: "fact" as const })),
+            ...(finding.nextStep ? [{ item: finding.nextStep, kind: "next_step" as const }] : [])]
+            .forEach(({ item, kind }) => {
+              if (item?.trim()) createdIssueTaskCandidates.push({ issueId: insertedIssue.id, item: item.trim(), kind });
+            });
+        }
       }
 
+      if (selected.length) {
+        for (const module of selected) {
+          const issueRow = {
+            case_id: targetCaseId,
+            legal_issue_id: knowledgeIdByAnalyzerId.get(module.id) ?? null,
+            title: module.title,
+            category: module.category,
+            description: module.definition,
+            classification: "unknown",
+            status: "open",
+            origin: "issue-library",
+            source: "Decoded Justice Law Modules",
+            supporting_notes: module.elements.join("; "),
+            missing_records: module.evidenceExamples.join("; "),
+            next_action: module.questions.join("; "),
+          };
+          const { data: insertedIssue, error: issueError } = await supabase.from("issues").insert(issueRow).select("id").single();
+          if (issueError) throw issueError;
+          createdIssueIds.push(insertedIssue.id);
+          module.evidenceExamples.forEach((item) => {
+            if (item?.trim()) createdIssueTaskCandidates.push({ issueId: insertedIssue.id, item: item.trim(), kind: "record" });
+          });
+          module.questions.forEach((item) => {
+            if (item?.trim()) createdIssueTaskCandidates.push({ issueId: insertedIssue.id, item: item.trim(), kind: "fact" });
+          });
+        }
+      }
+
+      if (createdIssueTaskCandidates.length) {
+        const uniqueTasks = Array.from(
+          new Map(
+            createdIssueTaskCandidates.map((candidate) => [
+              candidate.issueId + "::" + candidate.kind + "::" + candidate.item.toLowerCase(),
+              candidate,
+            ])
+          ).values()
+        );
+        const { data: existingTasks, error: existingTaskError } = await supabase
+          .from("tasks")
+          .select("title, related_issue_id")
+          .eq("case_id", targetCaseId)
+          .eq("task_type", "record_gap");
+        if (existingTaskError) throw existingTaskError;
+        const existingKeys = new Set(
+          (existingTasks ?? []).map((task) => String(task.related_issue_id ?? "") + "::" + String(task.title ?? "").toLowerCase())
+        );
+        const taskRows = uniqueTasks
+          .map((candidate) => ({
+            case_id: targetCaseId,
+            task_type: "record_gap",
+            title: candidate.kind === "record"
+              ? "Locate: " + candidate.item
+              : candidate.kind === "fact"
+                ? "Clarify: " + candidate.item
+                : "Next step: " + candidate.item,
+            description: candidate.kind === "record"
+              ? "A source or record identified by the Analyzer as useful for evaluating this issue."
+              : candidate.kind === "fact"
+                ? "A fact the Analyzer identified as unresolved and worth confirming."
+                : "A practical follow-up identified by the Analyzer.",
+            status: "identified",
+            identified_at: new Date().toISOString().slice(0, 10),
+            related_issue_id: candidate.issueId,
+            notes: "Created from Analyzer triage. This is a review task, not a finding that a violation occurred.",
+          }))
+          .filter((task) => !existingKeys.has(String(task.related_issue_id) + "::" + task.title.toLowerCase()));
+        if (taskRows.length) {
+          const { data: insertedTasks, error: taskError } = await supabase.from("tasks").insert(taskRows).select("id");
+          if (taskError) throw taskError;
+          createdTaskIds.push(...(insertedTasks ?? []).map((row) => row.id));
+        }
+      }
       const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");
       const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));
       const extractedFactSummary = confirmedExtractedFacts.length
@@ -180,7 +262,7 @@ ${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.dat
         if (createdPacketId) await supabase.from("case_packets").delete().eq("id", createdPacketId);
         if (createdDocumentId) await supabase.from("documents").delete().eq("id", createdDocumentId);
         if (createdEventId) await supabase.from("events").delete().eq("id", createdEventId);
-        if (createdIssueIds.length) await supabase.from("issues").delete().in("id", createdIssueIds);
+        if (createdTaskIds.length) await supabase.from("tasks").delete().in("id", createdTaskIds);\n        if (createdIssueIds.length) await supabase.from("issues").delete().in("id", createdIssueIds);
         if (createdNewCase && targetCaseId) await supabase.from("cases").delete().eq("id", targetCaseId);
       } catch (cleanupError) {
         console.error("Analyzer save cleanup failed", cleanupError);
