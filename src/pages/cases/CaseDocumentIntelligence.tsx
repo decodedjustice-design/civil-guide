@@ -360,7 +360,13 @@ export default function CaseDocumentIntelligence() {
                 </div>
                 <p className="text-sm leading-6">{item.text}</p>
                 <p className="text-[11px] text-muted-foreground mt-2">Source locator: characters {item.locator.start}–{item.locator.end}</p>
-                <p className="text-[11px] text-muted-foreground mt-1">{item.rationale}</p>\n                {["event", "claim", "person_or_role", "organization", "evidence_reference"].includes(item.kind) && !promoted[item.id] && (\n                  <Button size="sm" variant="outline" className="mt-3" onClick={() => promote(item)} disabled={promoting === item.id}>\n                    {promoting === item.id ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5 mr-2" />}\n                    Promote to case record\n                  </Button>\n                )}
+                <p className="text-[11px] text-muted-foreground mt-1">{item.rationale}</p>
+                {["event", "claim", "person_or_role", "organization", "evidence_reference"].includes(item.kind) && !promoted[item.id] && (
+                  <Button size="sm" variant="outline" className="mt-3" onClick={() => promote(item)} disabled={promoting === item.id}>
+                    {promoting === item.id ? <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5 mr-2" />}
+                    Promote to case record
+                  </Button>
+                )}
               </div>
             ))}
           </CardContent>
