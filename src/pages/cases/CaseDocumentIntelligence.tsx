@@ -252,6 +252,47 @@ export default function CaseDocumentIntelligence() {
     }
 
     if (createdId) {
+      const relationshipSpecs: Array<{ toType: string; toId: string; relation: string; note: string }> = [
+        { toType: "document", toId: selectedId, relation: "source_document", note: "Extracted record originates from this source document." },
+      ];
+      if (item.kind === "issue_signal") {
+        relationshipSpecs.push({ toType: "issue", toId: createdId, relation: "document_extracted_issue", note: "Potential issue signal extracted from this source document; requires review." });
+      } else if (item.kind === "event") {
+        relationshipSpecs.push({ toType: "event", toId: createdId, relation: "document_extracted_event", note: "Event extracted from this source document; requires review." });
+      } else if (item.kind === "claim") {
+        relationshipSpecs.push({ toType: "claim", toId: createdId, relation: "document_extracted_claim", note: "Claim extracted from this source document; requires review." });
+      } else if (item.kind === "person_or_role") {
+        relationshipSpecs.push({ toType: "person", toId: createdId, relation: "document_mentions_person", note: "Person/role extracted from this source document; identity requires review." });
+      } else if (item.kind === "organization") {
+        relationshipSpecs.push({ toType: "organization", toId: createdId, relation: "document_mentions_organization", note: "Organization extracted from this source document; identity/context requires review." });
+      } else if (item.kind === "evidence_reference") {
+        relationshipSpecs.push({ toType: "evidence_mention", toId: createdId, relation: "document_mentions_evidence", note: "Evidence reference extracted from this source document; requires review." });
+      }
+
+      for (const rel of relationshipSpecs) {
+        const { data: existing } = await (supabase as any)
+          .from("case_relationships")
+          .select("id")
+          .eq("case_id", id)
+          .eq("from_type", rel.toType)
+          .eq("from_id", rel.toId)
+          .eq("to_type", rel.toType === "document" ? "document" : "document")
+          .eq("to_id", rel.toType === "document" ? selectedId : selectedId)
+          .eq("relation", rel.relation)
+          .limit(1);
+        if (!existing?.length) {
+          await (supabase as any).from("case_relationships").insert({
+            case_id: id,
+            from_type: rel.toType,
+            from_id: rel.toId,
+            to_type: "document",
+            to_id: selectedId,
+            relation: rel.relation,
+            note: rel.note,
+          });
+        }
+      }
+
       setPromoted(prev => ({ ...prev, [item.id]: label }));
       setNotice(`Promoted to ${label}. The new record remains marked Needs review and retains source locator ${locator.id}.`);
     } else if (!notice) {
