@@ -20,6 +20,11 @@ export interface Attorney {
   feeStructureDetails?: string;
   email?: string;
   phone?: string;
+  entryType?: string;
+  verificationStatus?: string;
+  sourceUrl?: string;
+  sourceType?: string;
+  lastVerifiedAt?: string;
 }
 
 export const WA_COUNTIES = [
