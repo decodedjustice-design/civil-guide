@@ -1,7 +1,12 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLayout";
 import { RecordManager } from "@/components/case-workspace/RecordManager";
 import { CLASSIFICATIONS, ISSUE_STATUSES } from "@/lib/case/classification";
+import { useCaseCollection } from "@/hooks/useCases";
+import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { FileSearch, ChevronRight } from "lucide-react";
 
 export default function CaseIssues() {
   const { id } = useParams();
