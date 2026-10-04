@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowRight, Clock, FileText, FolderOpen, Search, Users, Scale, Shield, Wrench, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,16 +10,6 @@ import { LegalGate } from "@/components/LegalGate";
 
 const Index = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user) {
-      const storedRedirect = localStorage.getItem("auth_redirect");
-      localStorage.removeItem("auth_redirect");
-      navigate(storedRedirect || "/dashboard", { replace: true });
-    }
-  }, [user, navigate]);
-
   const startCaseUrl = user ? "/case-builder" : "/auth?redirect=/case-builder";
 
   const issueAreas = [
