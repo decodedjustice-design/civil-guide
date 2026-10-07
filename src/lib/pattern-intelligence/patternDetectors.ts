@@ -37,6 +37,7 @@ export function detectRecurrence(
   if (occurrences.length < 2) return null;
 
   const sourceReferences = occurrences.flatMap((o) => o.sourceReferences);
+  if (occurrences.some((occurrence) => occurrence.sourceReferences.length === 0)) return null;
   const supportAssessment: SupportAssessment = {
     sourceFidelity: sourceReferences.length ? "supported" : "unknown",
     eventIdentification: occurrences.every((o) => Boolean(o.eventId)) ? "supported" : "partial",
@@ -104,6 +105,7 @@ export function detectPotentialInconsistency(
 
   const occurrences = toDistinctOccurrences(candidates);
   const sourceReferences = occurrences.flatMap((o) => o.sourceReferences);
+  if (occurrences.some((occurrence) => occurrence.sourceReferences.length === 0)) return null;
 
   return {
     caseId,
@@ -186,7 +188,7 @@ export function detectInformationGaps(
         overall: "needs_review" as const,
         explanation: record.expectationBasis,
       },
-      truthStatus: "INFERENCE" as const,
+      truthStatus: (record.sourceReferences?.length ? "INFERENCE" : "INSUFFICIENT_EVIDENCE") as const,
       workflowState: "candidate" as const,
       assessmentState: "not_assessed" as const,
       detectionBasis: {
