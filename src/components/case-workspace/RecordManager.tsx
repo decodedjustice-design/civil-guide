@@ -15,6 +15,7 @@ import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { classificationBadgeClass, classificationAccessibleLabel } from "@/lib/case/classification";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface FieldConfig {
   key: string;
@@ -64,6 +65,7 @@ export function RecordManager({
   enableFileUpload = false,
   customItemActions,
 }: RecordManagerProps) {
+  const { user } = useAuth();
   const { items: collectionItems, isLoading, add, update, remove } = useCaseCollection<any>(table, caseId, orderBy);
   const items = table === "tasks" ? collectionItems.filter((item: any) => item.task_type === "record_gap") : collectionItems;
   const { snapshot } = useCaseSnapshot(caseId);
@@ -90,27 +92,42 @@ export function RecordManager({
   };
 
   const uploadFile = async (file: File) => {
-    if (!caseId || !file) return;
+    if (!caseId || !user || !file) return;
     setUploading(true);
     try {
-      const path = `${caseId}/${crypto.randomUUID()}-${sanitizeName(file.name)}`;
-      const { error: uploadError } = await supabase.storage.from("evidence").upload(path, file, {
+      // evidence-files is private. Its storage policy expects the first
+      // path segment to be the authenticated user's id.
+      const path = `${user.id}/${caseId}/${crypto.randomUUID()}-${sanitizeName(file.name)}`;
+      const { error: uploadError } = await supabase.storage.from("evidence-files").upload(path, file, {
         upsert: false,
         contentType: file.type || "application/octet-stream",
       });
       if (uploadError) throw uploadError;
-      const { data: urlData } = supabase.storage.from("evidence").getPublicUrl(path);
+
+      // Store the private storage path, not a public URL. A signed URL is
+      // generated only when the user asks to open the file.
       setValues((v) => ({
         ...v,
-        title: v.display_filename || file.name,
-        file_url: urlData.publicUrl,
-        file_type: file.type || null,
+        display_filename: v.display_filename || file.name,
+        file_url: path,
       }));
       toast({ title: "File attached", description: "Save the exhibit to keep the attachment with this record." });
     } catch (e: any) {
       toast({ title: "Upload failed", description: e.message, variant: "destructive" });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const openStoredFile = async (filePath: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("evidence-files")
+        .createSignedUrl(filePath, 3600);
+      if (error) throw error;
+      window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    } catch (e: any) {
+      toast({ title: "Could not open file", description: e.message, variant: "destructive" });
     }
   };
 
@@ -186,7 +203,15 @@ export function RecordManager({
                       <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                         <FileText className="w-3.5 h-3.5" />
                         <span className="truncate">{decodeURIComponent(String(item.file_url).split("/").pop() ?? "Attached file")}</span>
-                        <a className="ml-auto inline-flex items-center gap-1 text-primary" href={item.file_url} target="_blank" rel="noreferrer"><Download className="w-3.5 h-3.5" /> Open</a>
+                        {String(item.file_url).startsWith("http") ? (
+                          <a className="ml-auto inline-flex items-center gap-1 text-primary" href={item.file_url} target="_blank" rel="noreferrer">
+                            <Download className="w-3.5 h-3.5" /> Open
+                          </a>
+                        ) : (
+                          <Button variant="ghost" size="sm" className="ml-auto h-7 px-2 text-primary" onClick={() => void openStoredFile(String(item.file_url))}>
+                            <Download className="w-3.5 h-3.5 mr-1" /> Open
+                          </Button>
+                        )}
                       </div>
                     )}
                     {badgeFields.length > 0 && (
