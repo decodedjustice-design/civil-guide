@@ -247,14 +247,14 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
   const refreshCaseCounts = useCallback(async () => {
     if (!caseId) return;
     const tables = [
-      ["timeline_entries", "timeline"],
-      ["case_people", "people"],
-      ["case_organizations", "organizations"],
-      ["case_issues", "issues"],
-      ["case_communications", "communications"],
-      ["evidence", "evidence"],
-      ["case_evidence_mentions", "evidenceMentions"],
-      ["case_record_gaps", "recordGaps"],
+      ["events", "timeline"],
+      ["people", "people"],
+      ["organizations", "organizations"],
+      ["issues", "issues"],
+      ["communications", "communications"],
+      ["documents", "evidence"],
+      ["evidence_mentions", "evidenceMentions"],
+      ["tasks", "recordGaps"],
     ] as const;
 
     const results = await Promise.all(
@@ -272,7 +272,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       return {
         ...current,
         ...next,
-        evidence: (next.evidence ?? current.evidence) + (next.evidenceMentions ?? current.evidenceMentions),
+        evidence: next.evidence ?? current.evidence,
       };
     });
   }, [caseId]);
@@ -290,10 +290,18 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       { data: existingIssues },
       { data: existingEvents },
     ] = await Promise.all([
-      (supabase as any).from("case_people").select("id,name,role,source_type,review_status").eq("case_id", caseId),
-      (supabase as any).from("case_organizations").select("id,name,org_type,source_type,review_status").eq("case_id", caseId),
-      (supabase as any).from("case_issues").select("id,title,origin,source,review_status").eq("case_id", caseId),
-      (supabase as any).from("timeline_entries").select("id,title,description,event_date,source_type,reviewed,review_status,reason").eq("case_id", caseId),
+      (supabase as any).from("people")
+        .select("id,display_name,role_label,source_type,review_status")
+        .eq("case_id", caseId),
+      (supabase as any).from("organizations")
+        .select("id,name,org_type,source_type,review_status")
+        .eq("case_id", caseId),
+      (supabase as any).from("issues")
+        .select("id,title,origin,source,review_status")
+        .eq("case_id", caseId),
+      (supabase as any).from("events")
+        .select("id,title,description,occurred_at,source_type,reviewed,review_status,reason")
+        .eq("case_id", caseId),
     ]);
 
     let people = existingPeople ?? [];
@@ -303,13 +311,16 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
     for (const actor of nextSignals.actors) {
       if (!actor.name.trim()) continue;
-      const exists = people.some((p) => normalize(p.name) === normalize(actor.name) && normalize(p.role) === normalize(actor.role));
+      const exists = people.some(
+        (p) =>
+          normalize(p.display_name) === normalize(actor.name) &&
+          normalize(p.role_label) === normalize(actor.role)
+      );
       if (!exists) {
-        await (supabase as any).from("case_people").insert({
+        await (supabase as any).from("people").insert({
           case_id: caseId,
-          user_id: user.id,
-          name: actor.name.trim(),
-          role: actor.role,
+          display_name: actor.name.trim(),
+          role_label: actor.role,
           notes: "Extracted from the user's narrative. Review before relying on this entry.",
           source_type: "user_narrative",
           review_status: "unreviewed",
@@ -321,9 +332,8 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (!actor.name.trim() || !["authority", "opposing_party"].includes(actor.role)) continue;
       const exists = organizations.some((o) => normalize(o.name) === normalize(actor.name));
       if (!exists) {
-        await (supabase as any).from("case_organizations").insert({
+        await (supabase as any).from("organizations").insert({
           case_id: caseId,
-          user_id: user.id,
           name: actor.name.trim(),
           org_type: actor.role === "authority" ? "Authority / agency" : "Opposing organization",
           notes: "Mentioned in the user's narrative. Confirm the organization's identity and role.",
@@ -337,12 +347,11 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (!issue.label.trim()) continue;
       const exists = issues.some((i) => normalize(i.title) === normalize(issue.label));
       if (!exists) {
-        await (supabase as any).from("case_issues").insert({
+        await (supabase as any).from("issues").insert({
           case_id: caseId,
-          user_id: user.id,
           title: issue.label.trim(),
           category: issue.id,
-          summary: issue.reason,
+          description: issue.reason,
           classification: "unknown",
           status: "open",
           source: "Case Signal Engine",
@@ -358,9 +367,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       const title = event.title.trim();
       if (!title) continue;
 
-      // Reconcile an existing narrative-derived event by title instead of
-      // inserting another row when the user edits its date or description.
-      // Only unreviewed narrative-derived rows are eligible for automatic updates.
       const existingNarrativeEvent = events.find(
         (e) =>
           normalize(e.title) === normalize(title) &&
@@ -371,10 +377,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
 
       if (existingNarrativeEvent) {
         await (supabase as any)
-          .from("timeline_entries")
+          .from("events")
           .update({
             description: event.description,
-            event_date: eventDate,
+            occurred_at: eventDate ? new Date(`${eventDate}T12:00:00Z`).toISOString() : null,
             reason: event.approximate_date,
           })
           .eq("id", existingNarrativeEvent.id)
@@ -383,19 +389,18 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         const duplicate = events.some(
           (e) =>
             normalize(e.title) === normalize(title) &&
-            (eventDate ? e.event_date === eventDate : !e.event_date)
+            (eventDate ? String(e.occurred_at ?? "").startsWith(eventDate) : !e.occurred_at)
         );
 
         if (!duplicate) {
-          await (supabase as any).from("timeline_entries").insert({
+          await (supabase as any).from("events").insert({
             case_id: caseId,
-            user_id: user.id,
             title,
             description: event.description,
-            event_date: eventDate,
+            occurred_at: eventDate ? new Date(`${eventDate}T12:00:00Z`).toISOString() : null,
             classification: "unknown",
             category: "Other significant event",
-            importance: "Medium",
+            importance: "normal",
             source_type: "user_narrative",
             reviewed: false,
             review_status: "unreviewed",
@@ -406,16 +411,14 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       }
     }
 
-    // Refresh canonical actors and issues after inserts so newly extracted records
-    // can be linked to communications, record gaps, and evidence mentions in this pass.
     const [
       { data: refreshedPeople },
       { data: refreshedOrganizations },
       { data: refreshedIssues },
     ] = await Promise.all([
-      (supabase as any).from("case_people").select("id,name,role,source_type,review_status").eq("case_id", caseId),
-      (supabase as any).from("case_organizations").select("id,name,org_type,source_type,review_status").eq("case_id", caseId),
-      (supabase as any).from("case_issues").select("id,title,origin,source,review_status").eq("case_id", caseId),
+      (supabase as any).from("people").select("id,display_name,role_label,source_type,review_status").eq("case_id", caseId),
+      (supabase as any).from("organizations").select("id,name,org_type,source_type,review_status").eq("case_id", caseId),
+      (supabase as any).from("issues").select("id,title,origin,source,review_status").eq("case_id", caseId),
     ]);
 
     people = refreshedPeople ?? people;
@@ -428,9 +431,6 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (match) issueBySignalId.set(issue.id, match.id);
     }
 
-    // Non-destructive reconciliation: AI-generated, unreviewed records that
-    // disappear from the latest narrative are flagged for review rather than deleted.
-    // Manually reviewed records are never changed automatically.
     const currentActorKeys = new Set(
       nextSignals.actors.map((actor) => normalize(actor.name) + "|" + normalize(actor.role))
     );
@@ -447,7 +447,9 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     );
     const currentCommunicationKeys = new Set(
       (nextSignals.communications ?? []).map((communication) =>
-        normalize(communication.method) + "|" + normalize(communication.subject || "Communication") + "|" + normalize(communication.summary)
+        normalize(communication.method) + "|" +
+        normalize(communication.subject || "Communication") + "|" +
+        normalize(communication.summary)
       )
     );
     const currentEvidenceKeys = new Set(
@@ -463,9 +465,12 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (
         person.source_type === "user_narrative" &&
         person.review_status === "unreviewed" &&
-        !currentActorKeys.has(normalize(person.name) + "|" + normalize(person.role))
+        !currentActorKeys.has(normalize(person.display_name) + "|" + normalize(person.role_label))
       ) {
-        await (supabase as any).from("case_people").update({ review_status: "needs_review" }).eq("id", person.id).eq("case_id", caseId);
+        await (supabase as any).from("people")
+          .update({ review_status: "needs_review" })
+          .eq("id", person.id)
+          .eq("case_id", caseId);
       }
     }
 
@@ -475,7 +480,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         organization.review_status === "unreviewed" &&
         !currentOrganizationNames.has(normalize(organization.name))
       ) {
-        await (supabase as any).from("case_organizations").update({ review_status: "needs_review" }).eq("id", organization.id).eq("case_id", caseId);
+        await (supabase as any).from("organizations")
+          .update({ review_status: "needs_review" })
+          .eq("id", organization.id)
+          .eq("case_id", caseId);
       }
     }
 
@@ -486,7 +494,10 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         issue.review_status === "unreviewed" &&
         !currentIssueLabels.has(normalize(issue.title))
       ) {
-        await (supabase as any).from("case_issues").update({ review_status: "needs_review" }).eq("id", issue.id).eq("case_id", caseId);
+        await (supabase as any).from("issues")
+          .update({ review_status: "needs_review" })
+          .eq("id", issue.id)
+          .eq("case_id", caseId);
       }
     }
 
@@ -494,30 +505,41 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       if (
         event.source_type === "user_narrative" &&
         event.review_status === "unreviewed" &&
-        !currentEventKeys.has(normalize(event.title) + "|" + normalize(event.event_date ?? event.reason))
+        !currentEventKeys.has(
+          normalize(event.title) + "|" + normalize(event.occurred_at?.slice(0, 10) ?? event.reason)
+        )
       ) {
-        await (supabase as any).from("timeline_entries").update({ review_status: "needs_review" }).eq("id", event.id).eq("case_id", caseId);
+        await (supabase as any).from("events")
+          .update({ review_status: "needs_review" })
+          .eq("id", event.id)
+          .eq("case_id", caseId);
       }
     }
 
     const { data: existingCommunications } = await (supabase as any)
-      .from("case_communications")
+      .from("communications")
       .select("id,method,subject,summary,source_type,review_status")
       .eq("case_id", caseId);
 
     for (const communication of existingCommunications ?? []) {
-      const key = normalize(communication.method) + "|" + normalize(communication.subject || "Communication") + "|" + normalize(communication.summary);
+      const key =
+        normalize(communication.method) + "|" +
+        normalize(communication.subject || "Communication") + "|" +
+        normalize(communication.summary);
       if (
         communication.source_type === "user_narrative" &&
         communication.review_status === "unreviewed" &&
         !currentCommunicationKeys.has(key)
       ) {
-        await (supabase as any).from("case_communications").update({ review_status: "needs_review" }).eq("id", communication.id).eq("case_id", caseId);
+        await (supabase as any).from("communications")
+          .update({ review_status: "needs_review" })
+          .eq("id", communication.id)
+          .eq("case_id", caseId);
       }
     }
 
     const { data: existingEvidenceMentions } = await (supabase as any)
-      .from("case_evidence_mentions")
+      .from("evidence_mentions")
       .select("id,evidence_type,description,source_type,review_status")
       .eq("case_id", caseId);
 
@@ -528,14 +550,18 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         mention.review_status === "unreviewed" &&
         !currentEvidenceKeys.has(key)
       ) {
-        await (supabase as any).from("case_evidence_mentions").update({ review_status: "needs_review" }).eq("id", mention.id).eq("case_id", caseId);
+        await (supabase as any).from("evidence_mentions")
+          .update({ review_status: "needs_review" })
+          .eq("id", mention.id)
+          .eq("case_id", caseId);
       }
     }
 
     const { data: existingRecordGaps } = await (supabase as any)
-      .from("case_record_gaps")
+      .from("tasks")
       .select("id,title,source_type,review_status")
-      .eq("case_id", caseId);
+      .eq("case_id", caseId)
+      .eq("task_type", "record_gap");
 
     for (const gap of existingRecordGaps ?? []) {
       if (
@@ -543,24 +569,28 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         gap.review_status === "unreviewed" &&
         !currentGapTitles.has(normalize(gap.title))
       ) {
-        await (supabase as any).from("case_record_gaps").update({ review_status: "needs_review" }).eq("id", gap.id).eq("case_id", caseId);
+        await (supabase as any).from("tasks")
+          .update({ review_status: "needs_review" })
+          .eq("id", gap.id)
+          .eq("case_id", caseId);
       }
     }
 
     for (const gap of nextSignals.record_gaps ?? []) {
       if (!gap.title.trim()) continue;
       const { data: existingGap } = await (supabase as any)
-        .from("case_record_gaps")
+        .from("tasks")
         .select("id")
         .eq("case_id", caseId)
+        .eq("task_type", "record_gap")
         .eq("title", gap.title.trim())
         .limit(1)
         .maybeSingle();
 
       if (!existingGap) {
-        await (supabase as any).from("case_record_gaps").insert({
+        await (supabase as any).from("tasks").insert({
           case_id: caseId,
-          user_id: user.id,
+          task_type: "record_gap",
           title: gap.title.trim(),
           description: gap.description,
           record_holder: gap.record_holder?.trim() || null,
@@ -569,6 +599,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
           notes: "Identified from the user narrative. Confirm the gap before requesting the record.",
           source_type: "user_narrative",
           review_status: "unreviewed",
+          status: "open",
         });
       }
     }
@@ -578,7 +609,7 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
       const occurredAt = safeDate(communication.iso_date);
       const subject = communication.subject?.trim() || "Communication";
       const duplicate = await (supabase as any)
-        .from("case_communications")
+        .from("communications")
         .select("id")
         .eq("case_id", caseId)
         .eq("method", communication.method.trim())
@@ -586,18 +617,15 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         .eq("summary", communication.summary.trim())
         .limit(1)
         .maybeSingle();
+
       if (!duplicate.data) {
-        await (supabase as any).from("case_communications").insert({
+        await (supabase as any).from("communications").insert({
           case_id: caseId,
-          user_id: user.id,
-          occurred_on: occurredAt,
-          person: communication.person_name?.trim() || null,
-          agency: communication.organization_name?.trim() || null,
+          occurred_at: occurredAt ? new Date(`${occurredAt}T12:00:00Z`).toISOString() : null,
           method: communication.method.trim(),
           subject,
           summary: communication.summary.trim(),
-          classification: "unknown",
-          follow_up_needed: communication.follow_up_required,
+          follow_up_required: communication.follow_up_required,
           related_issue_id: issueBySignalId.get(communication.related_issue || "") ?? null,
           source_type: "user_narrative",
           review_status: "unreviewed",
@@ -608,17 +636,17 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
     for (const mention of nextSignals.evidence_mentions ?? []) {
       if (!mention.type.trim() || !mention.description.trim()) continue;
       const duplicate = await (supabase as any)
-        .from("case_evidence_mentions")
+        .from("evidence_mentions")
         .select("id")
         .eq("case_id", caseId)
         .eq("evidence_type", mention.type.trim())
         .eq("description", mention.description.trim())
         .limit(1)
         .maybeSingle();
+
       if (!duplicate.data) {
-        await (supabase as any).from("case_evidence_mentions").insert({
+        await (supabase as any).from("evidence_mentions").insert({
           case_id: caseId,
-          user_id: user.id,
           evidence_type: mention.type.trim(),
           description: mention.description.trim(),
           approximate_date: mention.approximate_date?.trim() || "unknown",
@@ -630,7 +658,9 @@ export function NarrativeCaseBuilder({ onCaseReady }: NarrativeCaseBuilderProps)
         });
       }
     }
-  }, [caseId, user]);
+
+    await refreshCaseCounts();
+  }, [caseId, refreshCaseCounts, user]);
 
   const extractStory = useCallback(async (force = false, narrativeOverride?: string) => {
     const narrativeToAnalyze = narrativeOverride ?? story;
