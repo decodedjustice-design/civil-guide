@@ -160,11 +160,10 @@ test("AT-11 versioning: recomputation creates a new immutable version snapshot",
   assert.equal(signal.currentVersion, 1);
 });
 
-test("AT-12 provenance abstention: unsupported occurrence is not required to invent a source", () => {
+test("AT-12 provenance abstention: unsupported occurrence does not generate a substantive signal", () => {
   const signal = detectRecurrence("case-1", [
     { id: "event-1", summary: "A", similarityKey: "x", sourceReferences: [] },
     { id: "event-2", summary: "B", similarityKey: "x", sourceReferences: [] },
   ])!;
-  assert.equal(signal.supportAssessment.sourceFidelity, "unknown");
-  assert.equal(signal.truthStatus, "INFERENCE");
+  assert.equal(signal, null);
 });
