@@ -255,7 +255,7 @@ export function recomputeAfterChallenges(
         : signal.supportAssessment.explanation,
     },
     workflowState: weakened ? "challenged" : signal.workflowState,
-    assessmentState: overall,
+    assessmentState: overall === "needs_review" ? "not_assessed" : overall,
     currentVersion: signal.currentVersion + 1,
   };
 
