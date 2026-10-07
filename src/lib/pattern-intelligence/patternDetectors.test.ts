@@ -7,6 +7,8 @@ import {
   recomputeAfterChallenges,
 } from "../src/lib/pattern-intelligence/patternDetectors.ts";
 import type { DetectionEvent, PatternChallenge } from "../src/lib/pattern-intelligence/patternSignal.ts";
+import { exportPatternSignal } from "../src/lib/pattern-intelligence/patternExport.ts";
+import { applyChallenges } from "../src/lib/pattern-intelligence/patternVersioning.ts";
 
 const source = (text: string) => ({
   caseId: "case-1",
@@ -134,4 +136,35 @@ test("AT-10 research isolation: v1 detector output is private-case only", () => 
   ])!;
   assert.equal(signal.scope, "private_case");
   assert.equal(signal.permittedUse, "private_case");
+});
+
+
+test("AT-11 versioning: recomputation creates a new immutable version snapshot", () => {
+  const signal = detectRecurrence("case-1", [
+    { id: "event-1", summary: "A", similarityKey: "x", sourceReferences: [source("A")] },
+    { id: "event-2", summary: "B", similarityKey: "x", sourceReferences: [source("B")] },
+    { id: "event-3", summary: "C", similarityKey: "x", sourceReferences: [source("C")] },
+  ])!;
+  const challenge: PatternChallenge = {
+    id: "challenge-1",
+    patternSignalId: "signal-1",
+    occurrenceId: "event-3",
+    challengeType: "exclude_occurrence",
+    explanation: "Event 3 is unrelated.",
+    createdBy: "user-1",
+  };
+  const result = applyChallenges(signal, [challenge]);
+  assert.equal(result.version.versionNo, 2);
+  assert.equal(result.version.generatedFromChallengeId, "challenge-1");
+  assert.equal((result.version.snapshot as any).currentVersion, 2);
+  assert.equal(signal.currentVersion, 1);
+});
+
+test("AT-12 provenance abstention: unsupported occurrence is not required to invent a source", () => {
+  const signal = detectRecurrence("case-1", [
+    { id: "event-1", summary: "A", similarityKey: "x", sourceReferences: [] },
+    { id: "event-2", summary: "B", similarityKey: "x", sourceReferences: [] },
+  ])!;
+  assert.equal(signal.supportAssessment.sourceFidelity, "unknown");
+  assert.equal(signal.truthStatus, "INFERENCE");
 });
