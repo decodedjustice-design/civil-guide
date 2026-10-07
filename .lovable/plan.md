@@ -1,20 +1,23 @@
-# Education Library subject photography
+# Backend Identity Investigation — Findings (Read-Only)
 
-## Scope
-- Generate 11 distinct, realistic cinematic photographs, one for each requested Knowledge Center subject.
-- Keep every card's existing copy, icon, link, dimensions, overlay, typography, and responsive behavior.
-- Update only the Education Library's image imports and subject mapping.
+No code, database, or configuration changes were made or are proposed. This plan records the investigation results only.
 
-## Files
-- Add 11 optimized image assets under `src/assets/education-library/`.
-- Update `src/assets/index.ts` with a dedicated typed image map for these 11 subjects.
-- Update `src/pages/EducationLibrary.tsx` to use stable subject IDs and the dedicated image map.
+## Confirmed facts
 
-## Verification
-- Confirm all 11 source files exist, are unique, and resolve through valid imports.
-- Check the Education Library at desktop and phone widths for recognizable imagery, intact overlays, and no broken cards.
-- Check the generated preview diagnostics and TypeScript errors, separating any pre-existing unrelated errors from this change.
+1. **Published app runtime backend**: The live bundle at `https://decodedjustice.lovable.app/assets/index-DQ_in6E1.js` contains exactly one Supabase URL: `https://keeirvtfrvyqtmkonsru.supabase.co`, with the matching anon/publishable key for that ref.
+2. **Repository `.env`**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PROJECT_ID`, and `VITE_SUPABASE_PUBLISHABLE_KEY` all point to ref `keeirvtfrvyqtmkonsru`.
+3. **Lovable Cloud project info**: Live instance ref `keeirvtfrvyqtmkonsru` (Tiny, not paused, eu-west-1), managed by Lovable. Session tools bound to the same live instance.
 
-## Technical details
-- Photos will contain no added text, branding, legible documents, or embedded interface elements.
-- Image generation will use consistent editorial lighting and crop-safe 16:8 compositions while keeping each subject visually distinct.
+## Conclusion
+
+The published app, the editor preview, the repo `.env`, and the Lovable-managed database all use the **same single backend**: ref `keeirvtfrvyqtmkonsru`. No second environment exists.
+
+## Inference vs. fact
+
+- Vite inlines `VITE_*` values at build time, so a published build *could* differ from the repo `.env` — but bundle inspection proves it does not: the deployed artifact matches `.env` exactly.
+- Edge functions deploy to the same project ref and use its built-in server-side bindings.
+- Caveat: only the current bundle hash was inspected; a future publish with different env vars would change it.
+
+## Action
+
+None. No changes required — configuration is consistent across all surfaces.
