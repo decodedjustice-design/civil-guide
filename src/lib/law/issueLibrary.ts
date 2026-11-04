@@ -299,6 +299,69 @@ export const FIRST_ISSUE_LIBRARY: LawModule[] = [
       { citation: "Terry v. Ohio, 392 U.S. 1, 20–27 (1968)", title: "Reasonable suspicion for limited investigative stops and frisks", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/392/1/", note: "Supreme Court permits limited investigative detention and a protective frisk under the circumstances described in Terry; it is not a general warrant exception for every search." }
     ]
   }
+  ,
+  {
+    id: "section-1983-claim-elements",
+    category: "Civil Rights & Law Enforcement",
+    analyzerSystems: ["police", "government", "courts", "jail"],
+    title: "Building a claim under 42 U.S.C. § 1983",
+    definition: "Section 1983 is a vehicle for seeking relief for certain deprivations of federal rights by a person acting under color of state law. It is not itself a standalone constitutional right. Identify the specific right, each defendant's conduct, causation, and the remedy sought.",
+    elements: [
+      "Name the specific constitutional or federal statutory right allegedly violated; do not rely on the phrase 'civil rights' alone.",
+      "For each defendant, identify the act or omission attributed to that person and the evidence supporting it.",
+      "Assess whether the conduct occurred under color of state law; private-party liability requires a separate state-action analysis.",
+      "Connect the challenged conduct to the alleged injury and requested relief, including any intervening causes.",
+      "Research defenses, immunities, municipal-liability rules, exhaustion requirements if applicable, and the controlling limitations period."
+    ],
+    evidenceExamples: ["Incident and arrest reports", "Body-camera, dash-camera, surveillance, or phone video", "CAD/dispatch and radio records", "Medical records and documented expenses", "Witness contact information and statements", "Policies, training materials, and prior notice evidence where legally discoverable"],
+    questions: ["Which precise right is implicated by each act?", "What admissible evidence supports each element?", "Which defendant personally participated, directed, or caused the challenged conduct?", "What defenses or immunity issues could apply?", "What is the filing deadline in the controlling jurisdiction?"],
+    authorities: [
+      { citation: "42 U.S.C. § 1983", title: "Civil action for deprivation of rights", type: "statute", jurisdiction: "United States", url: "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title42-section1983&num=0&edition=prelim", note: "Read the current statutory text; the specific right generally comes from another constitutional or federal-law provision." },
+      { citation: "West v. Atkins, 487 U.S. 42 (1988)", title: "Action under color of state law", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/487/42/", note: "Supreme Court authority discussing the color-of-state-law requirement." }
+    ]
+  },
+  {
+    id: "municipal-liability-monell",
+    category: "Civil Rights & Law Enforcement",
+    analyzerSystems: ["police", "government", "courts", "jail"],
+    title: "Municipal liability: policy, custom, or failure to train",
+    definition: "A city or county is not automatically liable under § 1983 merely because it employed an individual who allegedly violated someone's rights. Municipal liability requires evidence connecting the constitutional injury to an official policy, a sufficiently established custom, a qualifying decision by an authorized policymaker, or a legally sufficient failure to train or supervise.",
+    elements: [
+      "Identify the underlying constitutional deprivation; a policy theory does not replace proof of an underlying violation.",
+      "Specify the policy, custom, policymaker decision, or training/supervision deficiency being alleged.",
+      "Develop facts showing the required causal connection between that municipal practice and the injury.",
+      "For failure-to-train theories, research the demanding deliberate-indifference standard and the particular training deficiency alleged.",
+      "Distinguish individual-capacity claims from official-capacity or municipal claims."
+    ],
+    evidenceExamples: ["Written policies and versions effective on the incident date", "Training curricula and attendance records if discoverable", "Prior similar incidents or complaints with reliable context", "Audits, corrective-action records, or public findings", "Policymaker decisions and relevant meeting minutes", "Deposition testimony or admissions establishing practice and causation"],
+    questions: ["What exact policy or custom is alleged?", "Is there evidence beyond the single incident?", "Who had final policymaking authority under applicable state law?", "How did the identified practice cause the specific injury?", "Are requested records discoverable and properly authenticated?"],
+    authorities: [
+      { citation: "Monell v. Department of Social Services, 436 U.S. 658 (1978)", title: "Local-government liability under § 1983", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/436/658/", note: "Foundational Supreme Court authority; local governments are not liable solely on a respondeat-superior theory." },
+      { citation: "Connick v. Thompson, 563 U.S. 51 (2011)", title: "Failure-to-train liability", type: "case", jurisdiction: "United States", url: "https://supreme.justia.com/cases/federal/us/563/51/", note: "Discusses the demanding deliberate-indifference standard for failure-to-train claims." }
+    ]
+  },
+  {
+    id: "civil-rights-evidence-preservation",
+    category: "Civil Rights & Law Enforcement",
+    analyzerSystems: ["police", "government", "courts", "jail"],
+    title: "Preserving and organizing civil-rights evidence",
+    definition: "A reliable case file links every factual assertion to its source, date, custodian, and legal significance. Preserve original records, track how copies were obtained, and separate firsthand facts from allegations, inferences, disputed points, and unknowns.",
+    elements: [
+      "Preserve original files and messages; keep an untouched source copy and make working copies for annotation or redaction.",
+      "Record the source, date received, file name, format, page count or duration, and any available metadata for each item.",
+      "Maintain a chronological event log that distinguishes event date from document creation and receipt dates.",
+      "Create an evidence matrix linking each claim element to supporting evidence, contrary evidence, gaps, and authentication needs.",
+      "Use lawful, specific preservation requests for potentially relevant video, audio, dispatch data, device records, and electronic communications.",
+      "Protect sensitive personal information and comply with court rules, protective orders, discovery obligations, and filing-redaction requirements."
+    ],
+    evidenceExamples: ["Original media files and metadata", "Documented public-records requests and production correspondence", "Evidence inventory with stable exhibit IDs", "Hash values where useful to show file integrity", "Contemporaneous notes identifying who created them and when", "A gap log listing missing records and follow-up actions"],
+    questions: ["Is this the original or a derivative copy?", "Who created or maintained the record?", "Can the date and context be independently verified?", "Does the evidence support or contradict the allegation?", "What evidence is missing, and what lawful step could obtain it?"],
+    authorities: [
+      { citation: "Federal Rule of Civil Procedure 26", title: "Duty to disclose; general provisions governing discovery", type: "regulation", jurisdiction: "United States federal courts", url: "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-civil-procedure", note: "Consult the current official rules and applicable scheduling or protective orders; preservation and discovery duties are fact-specific." },
+      { citation: "Federal Rule of Evidence 901", title: "Authenticating or identifying evidence", type: "regulation", jurisdiction: "United States federal courts", url: "https://www.law.cornell.edu/rules/fre/rule_901", note: "A starting point for understanding authentication; admissibility depends on the evidence and other applicable rules." }
+    ]
+  }
+
 ];
 
 export const getLawModulesForAnalyzer = (systemId: string): LawModule[] =>
