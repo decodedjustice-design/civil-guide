@@ -1,6 +1,6 @@
 import type { Tables } from "@/integrations/supabase/types";
 
-/** Explicit projections verified against live metadata on 2026-11-08. */
+/** Frontend column projections/allowlists. These are not proof of live database metadata; verify against the existing configured Supabase project before relying on runtime behavior. */
 export const CASE_COLUMNS = {
   evidence: "id,user_id,title,description,file_url,file_type,created_at,updated_at,document_date,source,system_involved,people_involved,relevance_notes,case_id,exhibit_number,classification,review_status,received_date,sensitive,include_in_export,tags,source_type,related_issue_id",
   timeline_entries: "id,user_id,title,description,event_date,created_at,updated_at,case_id,classification,category,importance,source_type,source_evidence_id,reviewed,disputed,reason,review_status",
