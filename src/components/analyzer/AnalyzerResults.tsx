@@ -9,6 +9,8 @@ import { PatternAwarenessBlock } from "./PatternAwarenessBlock";
 import { buildCaseContext, getRelevantQuestions, SystemType } from "@/hooks/useCaseContext";
 import { usePatternAwareness } from "@/hooks/usePatternAwareness";
 import { SafetyBanner } from "@/components/SafetyBanner";
+import { ANALYZER_CLASSIFICATION } from "@/lib/case/schema";
+import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { FIRST_ISSUE_LIBRARY, getLawModulesForAnalyzer, type LawModule } from "@/lib/law/issueLibrary";
 import { getPoliceLawModules } from "@/lib/law/policeIssueModules";
@@ -90,178 +92,44 @@ export function AnalyzerResults({ systemId, systemLabel, location, patternStreng
     if (!isLoggedIn) { navigate(`/auth?redirect=/analyzer`); return; }
     setCreatingCase(true);
     try {
-      const { data: authUser } = await supabase.auth.getUser();
-      const ownerId = authUser.user?.id;
-      if (!ownerId) throw new Error("Your session expired. Please sign in again.");
-      let targetCaseId = caseId;
-      const createdNewCase = !targetCaseId;
-      const createdIssueIds: string[] = [];
-      const createdTaskIds: string[] = [];
-      let createdEventId: string | null = null;
-      let createdDocumentId: string | null = null;
-      let createdPacketId: string | null = null;
-      if (!targetCaseId) {
-        const { data: created, error } = await supabase.from("cases").insert({ owner_user_id: ownerId, title: `${systemLabel} case`, matter_type: systemId, jurisdiction: "Washington State" }).select("id").single();
-        if (error) throw error;
-        targetCaseId = created.id;
-      }
       const { data: authData } = await supabase.auth.getUser();
       const userId = authData.user?.id;
       if (!userId) throw new Error("Your session expired. Please sign in again.");
-
-      const findings = analyzerFindings;
+      let targetCaseId = caseId;
+      if (targetCaseId) {
+        const { data, error } = await supabase.from("cases").select("id")
+          .eq("id", targetCaseId).eq("user_id", userId).single();
+        if (error || !data) throw error || new Error("Case unavailable");
+      } else {
+        const { data, error } = await supabase.from("cases").insert({ user_id: userId, name: `${systemLabel} case`, case_type: systemId, state: "WA" }).select("id").single();
+        if (error) throw error;
+        targetCaseId = data.id;
+      }
       const selected = selectedModule ? [selectedModule] : [];
-      const selectedKnowledgeIds = selected.map((module) => module.id);
-      const { data: knowledgeIssues, error: knowledgeIssueError } = selectedKnowledgeIds.length
-        ? await supabase
-            .from("legal_issues")
-            .select("id, analyzer_issue_id")
-            .in("analyzer_issue_id", selectedKnowledgeIds)
-        : { data: [], error: null };
-      if (knowledgeIssueError) throw knowledgeIssueError;
-      const knowledgeIdByAnalyzerId = new Map(
-        (knowledgeIssues ?? []).map((issue) => [issue.analyzer_issue_id, issue.id])
-      );
-      const issueRows = findings.length ? findings.map((f) => ({
-        case_id: targetCaseId,
-        title: f.title,
-        category: systemLabel,
-        description: f.whyFlagged,
-        classification: "unknown",
-        status: "open",
-        origin: "analyzer",
-        source: "Decoded Justice Analyzer",
-        supporting_notes: f.whatWouldNeedToBeTrue.join("; "),
-        missing_records: [...f.evidenceToLookFor, ...f.missingFacts].join("; "),
-        next_action: f.nextStep,
-      })) : [];
-      if (selected.length) issueRows.push(...selected.map((module) => ({
-        case_id: targetCaseId,
-        legal_issue_id: knowledgeIdByAnalyzerId.get(module.id) ?? null,
-        title: module.title,
-        category: module.category,
-        description: module.definition,
-        classification: "unknown",
-        status: "open",
-        origin: "issue-library",
-        source: "Decoded Justice Law Modules",
-        supporting_notes: module.elements.join("; "),
-        missing_records: module.evidenceExamples.join("; "),
-        next_action: module.questions.join("; "),
-      })));
-      const createdIssueTaskCandidates: Array<{ issueId: string; item: string; kind: "record" | "fact" }> = [];
-
-      if (findings.length) {
-        for (const [index, finding] of findings.entries()) {
-          const { data: insertedIssue, error: issueError } = await supabase.from("issues").insert(issueRows[index]).select("id").single();
-          if (issueError) throw issueError;
-          createdIssueIds.push(insertedIssue.id);
-          [...finding.evidenceToLookFor.map((item) => ({ item, kind: "record" as const })),
-            ...finding.missingFacts.map((item) => ({ item, kind: "fact" as const }))]
-            .forEach(({ item, kind }) => {
-              if (item?.trim()) createdIssueTaskCandidates.push({ issueId: insertedIssue.id, item: item.trim(), kind });
-            });
-        }
-      }
-
-      if (selected.length) {
-        for (const module of selected) {
-          const issueRow = {
-            case_id: targetCaseId,
-            legal_issue_id: knowledgeIdByAnalyzerId.get(module.id) ?? null,
-            title: module.title,
-            category: module.category,
-            description: module.definition,
-            classification: "unknown",
-            status: "open",
-            origin: "issue-library",
-            source: "Decoded Justice Law Modules",
-            supporting_notes: module.elements.join("; "),
-            missing_records: module.evidenceExamples.join("; "),
-            next_action: module.questions.join("; "),
-          };
-          const { data: insertedIssue, error: issueError } = await supabase.from("issues").insert(issueRow).select("id").single();
-          if (issueError) throw issueError;
-          createdIssueIds.push(insertedIssue.id);
-          module.evidenceExamples.forEach((item) => {
-            if (item?.trim()) createdIssueTaskCandidates.push({ issueId: insertedIssue.id, item: item.trim(), kind: "record" });
-          });
-          module.questions.forEach((item) => {
-            if (item?.trim()) createdIssueTaskCandidates.push({ issueId: insertedIssue.id, item: item.trim(), kind: "fact" });
-          });
-        }
-      }
-
-      if (createdIssueTaskCandidates.length) {
-        const uniqueTasks = Array.from(
-          new Map(
-            createdIssueTaskCandidates.map((candidate) => [
-              candidate.issueId + "::" + candidate.kind + "::" + candidate.item.toLowerCase(),
-              candidate,
-            ])
-          ).values()
-        );
-        const { data: existingTasks, error: existingTaskError } = await supabase
-          .from("tasks")
-          .select("title, related_issue_id")
-          .eq("case_id", targetCaseId)
-          .eq("task_type", "record_gap");
-        if (existingTaskError) throw existingTaskError;
-        const existingKeys = new Set(
-          (existingTasks ?? []).map((task) => String(task.related_issue_id ?? "") + "::" + String(task.title ?? "").toLowerCase())
-        );
-        const taskRows = uniqueTasks
-          .map((candidate) => ({
-            case_id: targetCaseId,
-            task_type: "record_gap",
-            title: candidate.kind === "record" ? "Locate: " + candidate.item : "Clarify: " + candidate.item,
-            description: candidate.kind === "record"
-              ? "A source or record identified by the Analyzer as useful for evaluating this issue."
-              : "A fact the Analyzer identified as unresolved and worth confirming.",
-            status: "identified",
-            identified_at: new Date().toISOString().slice(0, 10),
-            related_issue_id: candidate.issueId,
-            notes: "Created from Analyzer triage. This is a review task, not a finding that a violation occurred.",
-          }))
-          .filter((task) => !existingKeys.has(String(task.related_issue_id) + "::" + task.title.toLowerCase()));
-        if (taskRows.length) {
-          const { data: insertedTasks, error: taskError } = await supabase.from("tasks").insert(taskRows).select("id");
-          if (taskError) throw taskError;
-          createdTaskIds.push(...(insertedTasks ?? []).map((row) => row.id));
-        }
+      const rows = [
+        ...analyzerFindings.map((f) => ({ title: f.title, category: systemLabel, summary: f.whyFlagged, supporting_notes: f.whatWouldNeedToBeTrue.join("; "), missing_records: [...f.evidenceToLookFor, ...f.missingFacts].join("; "), next_action: f.nextStep, records: f.evidenceToLookFor, origin: "analyzer", source: "Decoded Justice Analyzer" })),
+        ...selected.map((m) => ({ title: m.title, category: m.category, summary: m.definition, supporting_notes: m.elements.join("; "), missing_records: m.evidenceExamples.join("; "), next_action: m.questions.join("; "), records: m.evidenceExamples, origin: "issue-library", source: "Decoded Justice Law Modules" })),
+      ];
+      for (const { records, ...row } of rows) {
+        const { data, error } = await supabase.from("case_issues").insert({ ...row, case_id: targetCaseId, user_id: userId, classification: ANALYZER_CLASSIFICATION, status: "open", review_status: "needs_review" }).select("id").single();
+        if (error) throw error;
+        const gaps = [...new Set(records.filter((r) => r.trim()))].map((record) => ({ case_id: targetCaseId, user_id: userId, title: `Locate: ${record}`, description: "A source identified during educational triage; not a legal finding.", related_issue_id: data.id, status: "identified", source_type: "Analyzer intake", review_status: "needs_review" }));
+        if (gaps.length) { const { error: gapError } = await supabase.from("case_record_gaps").insert(gaps); if (gapError) throw gapError; }
       }
       const answerSummary = Object.entries(mergedTriageAnswers).map(([key, value]) => `${key}: ${value}`).join("\n");
-      const confirmedExtractedFacts = (aiResults.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => ({ ...fact, text: factEdits[fact.id] ?? fact.text }));
-      const extractedFactSummary = confirmedExtractedFacts.length
-        ? `Confirmed extracted facts:
-${confirmedExtractedFacts.map((fact) => `- [${fact.kind}] ${fact.text}${fact.date ? ` (${fact.date})` : ""}`).join("\n")}`
-        : "";
-      const noteContent = [`Analyzer triage for ${systemLabel}.`, entityName ? `Subject: ${entityName}` : "", location ? `Location: ${location}` : "", answerSummary ? `Triage answers:\n${answerSummary}` : "", extractedFactSummary, selected.length ? `Issue library selection: ${selected.map((m) => m.title).join(", ")}` : ""].filter(Boolean).join("\n\n");
-      const { data: insertedEvent, error: timelineError } = await supabase.from("events").insert({ case_id: targetCaseId, title: "Triage completed", description: noteContent, occurred_at: new Date().toISOString(), classification: "unknown", source_type: "Analyzer intake", reason: "Preserve the analyzer triage context as a case event.", review_status: "needs_review" }).select("id").single();
+      const extracted = (aiResults?.extractedFacts ?? []).filter((fact) => reviewedFacts[fact.id]).map((fact) => `User-reported, verification required: ${factEdits[fact.id] ?? fact.text}`).join("\n");
+      const noteContent = [`Analyzer triage for ${systemLabel}.`, answerSummary, extracted].filter(Boolean).join("\n\n");
+      const { error: timelineError } = await supabase.from("timeline_entries").insert({ case_id: targetCaseId, user_id: userId, title: "Triage completed", description: noteContent, event_date: new Date().toISOString().slice(0, 10), classification: ANALYZER_CLASSIFICATION, source_type: "Analyzer intake", review_status: "needs_review" });
       if (timelineError) throw timelineError;
-      createdEventId = insertedEvent.id;
-      const { data: insertedDocument, error: evidenceError } = await supabase.from("documents").insert({ case_id: targetCaseId, created_by: userId, display_filename: "Triage response record", document_type: "txt", description: answerSummary || "No free-form triage answers were recorded.", source: "Decoded Justice Analyzer", relevance_notes: "User-provided triage responses. This is a record of the intake, not independent documentary proof.", review_status: "needs_review", classification: "unknown", include_in_export: true }).select("id").single();
+      const { error: evidenceError } = await supabase.from("evidence").insert({ case_id: targetCaseId, user_id: userId, title: "Triage response record", file_type: "txt", description: noteContent, source: "Decoded Justice Analyzer", relevance_notes: "Intake record, not independent documentary proof.", classification: ANALYZER_CLASSIFICATION, review_status: "needs_review" });
       if (evidenceError) throw evidenceError;
-      createdDocumentId = insertedDocument.id;
-      const packetContent = { generated_at: new Date().toISOString(), source: "analyzer", system: systemLabel, answers: mergedTriageAnswers, selected_issue_modules: selected.map((m) => m.id), sections: ["overview", "issues", "timeline", "evidence"], note: "Draft organizational packet. It does not establish that a legal violation occurred." };
-      const { data: insertedPacket, error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, title: `${systemLabel} triage packet`, purpose: "Preserve Analyzer triage results for case review.", requested_action: "Review the triage findings, timeline context, and records identified for follow-up.", packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: packetContent }).select("id").single();
+      const { error: packetError } = await supabase.from("case_packets").insert({ case_id: targetCaseId, user_id: userId, title: `${systemLabel} triage packet`, packet_type: "triage", sections: ["overview", "issues", "timeline", "evidence"], content: { generated_at: new Date().toISOString(), source: "analyzer", answers: mergedTriageAnswers, note: "Draft educational triage; does not establish a violation." } });
       if (packetError) throw packetError;
-      createdPacketId = insertedPacket.id;
-
       onStartOrganizing?.();
       navigate(`/cases/${targetCaseId}`);
-    } catch (e: any) {
-      console.error("Unable to create case from analyzer", e);
-      try {
-        if (createdPacketId) await supabase.from("case_packets").delete().eq("id", createdPacketId);
-        if (createdDocumentId) await supabase.from("documents").delete().eq("id", createdDocumentId);
-        if (createdEventId) await supabase.from("events").delete().eq("id", createdEventId);
-        if (createdTaskIds.length) await supabase.from("tasks").delete().in("id", createdTaskIds);
-        if (createdIssueIds.length) await supabase.from("issues").delete().in("id", createdIssueIds);
-        if (createdNewCase && targetCaseId) await supabase.from("cases").delete().eq("id", targetCaseId);
-      } catch (cleanupError) {
-        console.error("Analyzer save cleanup failed", cleanupError);
-      }
+    } catch (error) {
+      toast({ title: "Could not finish saving triage", description: "Some records may have saved. Review your case before retrying; existing records have not been deleted.", variant: "destructive" });
+      console.error("Unable to save analyzer triage", error);
     } finally { setCreatingCase(false); }
   };
 

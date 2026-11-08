@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { CASE_COLUMNS as COLLECTION_COLUMNS, casePayload, type CaseTable } from "@/lib/case/schema";
 import { useAuth } from "@/contexts/AuthContext";
 
 export interface CaseRow {
@@ -8,7 +9,7 @@ export interface CaseRow {
   user_id: string;
   name: string;
   description: string | null;
-  case_type: string;
+  case_type: string | null;
   status: string;
   county: string | null;
   state: string | null;
@@ -56,7 +57,7 @@ export function useCases() {
           state: payload.state ?? "WA",
           status: payload.status ?? "active",
         })
-        .select("*")
+        .select(CASE_COLUMNS)
         .single();
       if (error) throw error;
       return data as unknown as CaseRow;
@@ -66,11 +67,12 @@ export function useCases() {
 
   const updateCase = useMutation({
     mutationFn: async ({ id, ...patch }: CaseDraft & { id: string }) => {
+      if (!user) throw new Error("Not signed in");
       const { error } = await supabase
         .from("cases")
         .update(patch)
         .eq("id", id)
-        .eq("user_id", user?.id ?? "");
+        .eq("user_id", user.id);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cases"] }),
@@ -100,13 +102,13 @@ export function useActiveCaseId(caseIdFromRoute?: string) {
 }
 
 export function useCaseCollection<T extends { id: string }>(
-  table: string,
+  table: CaseTable,
   caseId: string | undefined,
   orderBy: { column: string; ascending?: boolean } = { column: "created_at", ascending: false }
 ) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const queryKey = [table, caseId];
+  const queryKey = [table, caseId, user?.id];
 
   const { data: items = [], isLoading } = useQuery({
     queryKey,
@@ -114,8 +116,9 @@ export function useCaseCollection<T extends { id: string }>(
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from(table)
-        .select("*")
+        .select(COLLECTION_COLUMNS[table])
         .eq("case_id", caseId)
+        .eq("user_id", user?.id)
         .order(orderBy.column, { ascending: orderBy.ascending ?? false });
       if (error) throw error;
       return (data ?? []) as T[];
@@ -132,7 +135,7 @@ export function useCaseCollection<T extends { id: string }>(
       if (!user || !caseId) throw new Error("No active case");
       const { error } = await (supabase as any)
         .from(table)
-        .insert({ ...values, case_id: caseId });
+        .insert(casePayload(table, values, caseId, user.id));
       if (error) throw error;
     },
     onSuccess: invalidate,
@@ -140,7 +143,8 @@ export function useCaseCollection<T extends { id: string }>(
 
   const update = useMutation({
     mutationFn: async ({ id, values }: { id: string; values: Record<string, unknown> }) => {
-      const { error } = await (supabase as any).from(table).update(values).eq("id", id).eq("case_id", caseId);
+      if (!user || !caseId) throw new Error("No active case");
+      const { error } = await (supabase as any).from(table).update(casePayload(table, values, caseId, user.id)).eq("id", id).eq("case_id", caseId).eq("user_id", user.id);
       if (error) throw error;
     },
     onSuccess: invalidate,
@@ -148,7 +152,8 @@ export function useCaseCollection<T extends { id: string }>(
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from(table).delete().eq("id", id).eq("case_id", caseId);
+      if (!user || !caseId) throw new Error("No active case");
+      const { error } = await (supabase as any).from(table).delete().eq("id", id).eq("case_id", caseId).eq("user_id", user.id);
       if (error) throw error;
     },
     onSuccess: invalidate,

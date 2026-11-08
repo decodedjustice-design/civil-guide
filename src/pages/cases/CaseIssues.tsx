@@ -12,10 +12,10 @@ export default function CaseIssues() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { snapshot } = useCaseSnapshot(id);
-  const { items: reviews } = useCaseCollection<any>("evidence_reviews", id);
+  const reviews = snapshot.evidence;
 
   const reviewStats = (issueId: string) => {
-    const linked = reviews.filter((r: any) => r.issue_id === issueId);
+    const linked = reviews.filter((r: any) => r.related_issue_id === issueId);
     return {
       total: linked.length,
       needsReview: linked.filter((r: any) => r.review_status === "needs_review").length,
@@ -36,7 +36,7 @@ export default function CaseIssues() {
                 <div>
                   <p className="font-medium">{issue.title}</p>
                   <p className="text-sm text-muted-foreground">
-                    {stats.total} evidence review{stats.total === 1 ? "" : "s"} · {stats.needsReview} needs review
+                    {stats.total} linked exhibit{stats.total === 1 ? "" : "s"} · {stats.needsReview} needs review
                   </p>
                 </div>
                 <Button
@@ -55,17 +55,17 @@ export default function CaseIssues() {
       </div>
 
       <RecordManager
-        table="issues"
+        table="case_issues"
         caseId={id}
         addLabel="Add issue"
         emptyMessage="No issues tracked yet. Analyzer research leads arrive marked unknown — never as a settled fact."
         titleField="title"
-        subtitleFields={["description", "category"]}
+        subtitleFields={["summary", "category"]}
         badgeFields={["classification", "status", "origin"]}
         orderBy={{ column: "created_at", ascending: true }}
         fields={[
           { key: "title", label: "Issue", type: "text", required: true },
-          { key: "description", label: "What this issue is about", type: "textarea", required: true },
+          { key: "summary", label: "What this issue is about", type: "textarea", required: true },
           { key: "classification", label: "How should this be treated?", type: "select", options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })), defaultValue: "unknown" },
           { key: "status", label: "Status", type: "select", options: ISSUE_STATUSES, defaultValue: "open" },
           { key: "category", label: "Category", type: "text" },

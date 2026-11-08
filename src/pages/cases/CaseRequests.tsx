@@ -4,6 +4,8 @@ import { CaseWorkspaceLayout } from "@/components/case-workspace/CaseWorkspaceLa
 import { RecordManager } from "@/components/case-workspace/RecordManager";
 import { CaseWorkspaceSummary } from "@/components/case-workspace/CaseWorkspaceSummary";
 import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 import { REQUEST_STATUSES } from "@/lib/case/classification";
 import { ClipboardCopy, ExternalLink, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,122 +21,35 @@ export default function CaseRequests() {
   const [linkingRequest, setLinkingRequest] = useState<any | null>(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState("");
 
-  const addBusinessDays = (start: Date, days: number) => { const d = new Date(start); let added = 0; while (added < days) { d.setDate(d.getDate() + 1); const day = d.getDay(); if (day !== 0 && day !== 6) added++; } return d; };
-
-  const markSent = async (request: any) => {
-    if (!id || request.status !== "draft") return;
-
-    const sent = new Date();
-    const sentDate = sent.toISOString().slice(0, 10);
-    const isWashingtonPRA = request.request_type === "washington_pra";
-    const checkpoint = isWashingtonPRA ? addBusinessDays(sent, 5) : null;
-
-    const { error } = await supabase
-      .from("record_requests")
-      .update({
-        status: "sent",
-        requested_at: sentDate,
-        due_at: checkpoint ? checkpoint.toISOString() : request.due_at ?? null,
-      })
-      .eq("id", request.id)
-      .eq("case_id", id);
-
-    if (error) {
-      toast({ title: "Could not mark sent", description: error.message, variant: "destructive" });
-      return;
-    }
-
-    if (isWashingtonPRA && checkpoint) {
-      const { data: existingTasks, error: taskLookupError } = await supabase
-        .from("tasks")
-        .select("id")
-        .eq("case_id", id)
-        .eq("related_request_id", request.id)
-        .eq("task_type", "follow_up")
-        .limit(1);
-
-      if (taskLookupError) {
-        toast({
-          title: "Request marked sent",
-          description: "The request was saved, but the follow-up task could not be checked. Review the request tracker.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!existingTasks?.length) {
-        const { error: taskError } = await supabase.from("tasks").insert({
-          case_id: id,
-          task_type: "follow_up",
-          title: `Check response: ${request.title}`,
-          description: "Check for the agency’s initial response to this records request. For Washington PRA requests, this is the five-business-day initial-response checkpoint; it is not necessarily a deadline for producing all records.",
-          status: "identified",
-          due_at: checkpoint.toISOString(),
-          related_request_id: request.id,
-          identified_at: sentDate,
-          notes: "Created automatically when the request was marked sent.",
-        });
-
-        if (taskError) {
-          toast({
-            title: "Request marked sent",
-            description: "The request was saved, but the follow-up task could not be created. You can add a follow-up task manually.",
-            variant: "destructive",
-          });
-          return;
-        }
-      }
-    }
-
-    toast({
-      title: "Request marked sent",
-      description: checkpoint
-        ? `Washington PRA initial-response checkpoint set for ${checkpoint.toLocaleDateString()}.`
-        : "The request was marked sent. No automatic five-business-day checkpoint was added for this request type.",
-    });
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const invalidate = () => {
+    void queryClient.invalidateQueries({ queryKey: ["case_records_requests", id] });
+    void queryClient.invalidateQueries({ queryKey: ["case-snapshot", id] });
   };
-
+  const markSent = async (request: any) => {
+    if (!id || !user || request.status !== "draft") return;
+    const { error } = await supabase.from("case_records_requests")
+      .update({ status: "sent", date_sent: new Date().toISOString().slice(0, 10) })
+      .eq("id", request.id).eq("case_id", id).eq("user_id", user.id);
+    if (error) { toast({ title: "Could not mark sent", description: error.message, variant: "destructive" }); return; }
+    invalidate();
+    toast({ title: "Request marked sent", description: "No automatic deadline or follow-up task was added." });
+  };
   const setRequestStatus = async (request: any, status: string) => {
-    if (!id || request.status === status) return;
-    const terminal = ["complete", "denied"].includes(request.status);
-    if (terminal) return;
-
-    const update: Record<string, any> = { status };
-    if (status === "partial" || status === "complete") {
-      update.received_at = request.received_at ?? new Date().toISOString().slice(0, 10);
-    }
-
-    const { error } = await supabase
-      .from("record_requests")
-      .update(update)
-      .eq("id", request.id)
-      .eq("case_id", id);
-
-    if (error) {
-      toast({ title: "Could not update request", description: error.message, variant: "destructive" });
-      return;
-    }
-
-    if (["acknowledged", "partial", "complete", "denied"].includes(status)) {
-      const taskStatus = status === "partial" ? "in_progress" : "completed";
-      const taskUpdate: Record<string, any> = { status: taskStatus };
-      if (status === "partial" || status === "complete") {
-        taskUpdate.received_at = request.received_at ?? new Date().toISOString().slice(0, 10);
-      }
-      await supabase
-        .from("tasks")
-        .update(taskUpdate)
-        .eq("case_id", id)
-        .eq("related_request_id", request.id)
-        .eq("task_type", "follow_up")
-        .in("status", ["identified", "in_progress"]);
-    }
-
-    toast({ title: "Request updated", description: `Status changed to ${status.replace("_", " ")}.` });
+    if (!id || !user || request.status === status || ["complete", "denied"].includes(request.status)) return;
+    const patch = status === "acknowledged"
+      ? { status, acknowledgement_date: request.acknowledgement_date || new Date().toISOString().slice(0, 10) }
+      : { status };
+    const { error } = await supabase.from("case_records_requests").update(patch)
+      .eq("id", request.id).eq("case_id", id).eq("user_id", user.id);
+    if (error) { toast({ title: "Could not update request", description: error.message, variant: "destructive" }); return; }
+    invalidate();
+    toast({ title: "Request updated" });
   };
 
   const linkDocument = async () => {
-    if (!id || !linkingRequest || !selectedDocumentId) return;
+    if (!id || !user || !linkingRequest || !snapshot.evidence.some((e) => e.id === selectedDocumentId)) return;
     const exists = snapshot.links.some((link: any) =>
       link.from_type === "request" && link.from_id === linkingRequest.id &&
       link.to_type === "document" && link.to_id === selectedDocumentId
@@ -144,8 +59,8 @@ export default function CaseRequests() {
       return;
     }
 
-    const { error } = await supabase.from("case_relationships").insert({
-      case_id: id,
+    const { error } = await supabase.from("case_links").insert({
+      case_id: id, user_id: user.id,
       from_type: "request",
       from_id: linkingRequest.id,
       to_type: "document",
@@ -159,13 +74,22 @@ export default function CaseRequests() {
       return;
     }
 
+    invalidate();
     setLinkingRequest(null);
     setSelectedDocumentId("");
     toast({ title: "Document linked", description: "The received record is now connected to this request." });
   };
 
   const copyRequest = async (request: any) => {
-    const body = `Records Request\\n\\nTo: ${request.contact_name || "Records Officer"}${request.record_holder ? `\\nOrganization: ${request.record_holder}` : ""}${request.contact_email ? `\\nEmail: ${request.contact_email}` : ""}\\n\\nI am requesting the following records: ${request.title}.\\n\\nPlease provide the records in an electronic format if available. If any portion is withheld, please identify the withheld material and the basis for withholding it.\\n\\nRequest tracking number: ${request.request_number || "To be assigned"}`;
+    const body = `Records Request
+
+To: ${request.agency}
+
+I am requesting the following records: ${request.request_title || request.description || "Records described in this request"}.
+
+Please provide the records in an electronic format if available. If any portion is withheld, please identify the withheld material and the basis for withholding it.
+
+Request tracking number: ${request.tracking_number || "To be assigned"}`;
     await navigator.clipboard.writeText(body);
     toast({ title: "Request copied", description: "The draft request is ready to paste into the verified submission channel." });
   };
@@ -176,7 +100,7 @@ export default function CaseRequests() {
     >
       <CaseWorkspaceSummary communications={snapshot.communications} requests={snapshot.requests} />
       <RecordManager
-        table="record_requests"
+        table="case_records_requests"
         caseId={id}
         addLabel="Add a request"
         customItemActions={(request) => (
@@ -185,38 +109,28 @@ export default function CaseRequests() {
             {request.status === "sent" ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "acknowledged")} aria-label="Mark request acknowledged" title="Mark acknowledged"><span className="text-xs">Ack</span></Button> : null}
             {request.status === "acknowledged" ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "partial")} aria-label="Mark partial response" title="Mark partial response"><span className="text-xs">Partial</span></Button> : null}
             {["acknowledged", "partial"].includes(request.status) ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "complete")} aria-label="Mark request complete" title="Mark complete"><span className="text-xs">Complete</span></Button> : null}
-            {["sent", "acknowledged"].includes(request.status) ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "denied")} aria-label="Mark request denied" title="Mark denied"><span className="text-xs">Denied</span></Button> : null}\n            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
+            {["sent", "acknowledged"].includes(request.status) ? <Button variant="ghost" size="sm" onClick={() => void setRequestStatus(request, "denied")} aria-label="Mark request denied" title="Mark denied"><span className="text-xs">Denied</span></Button> : null}
+            <Button variant="ghost" size="sm" onClick={() => void copyRequest(request)} aria-label="Copy request" title="Copy request"><ClipboardCopy className="w-4 h-4 text-primary" /></Button>
             {(request.status === "partial" || request.status === "complete") ? <Button variant="ghost" size="sm" onClick={() => { setLinkingRequest(request); setSelectedDocumentId(""); }} aria-label="Link response document" title="Link response document"><Link2 className="w-4 h-4 text-primary" /></Button> : null}
-            {request.submission_url ? <Button variant="ghost" size="sm" asChild><a href={request.submission_url} target="_blank" rel="noreferrer" aria-label="Open official request portal" title="Open official request portal"><ExternalLink className="w-4 h-4 text-primary" /></a></Button> : null}
           </>
         )}
         emptyMessage="No requests tracked yet."
-        titleField="title"
-        subtitleFields={["record_holder", "contact_email", "submission_method", "requested_at", "due_at", "notes"]}
+        titleField="request_title"
+        subtitleFields={["agency", "request_method", "date_sent", "due_date", "notes"]}
         badgeFields={["status"]}
-        orderBy={{ column: "due_at", ascending: true }}
+        orderBy={{ column: "due_date", ascending: true }}
         fields={[
-          { key: "title", label: "What you asked for", type: "text", required: true },
-          { key: "request_type", label: "Request type", type: "select", options: [{ value: "washington_pra", label: "Washington Public Records Act" }, { value: "other", label: "Other records request" }], defaultValue: "washington_pra", help: "For Washington PRA requests, the tracker calculates a five-business-day initial-response checkpoint. This is not a deadline for producing all records." },
-          { key: "record_holder", label: "Agency or organization", type: "text" },
-          { key: "contact_name", label: "Records contact", type: "text" },
-          { key: "contact_email", label: "Records email", type: "text" },
-          { key: "contact_phone", label: "Records phone", type: "text" },
-          { key: "submission_method", label: "Submission method", type: "text", placeholder: "Email, online portal, mail, fax" },
-          { key: "submission_url", label: "Official request portal", type: "text" },
-          { key: "mailing_address", label: "Mailing address", type: "textarea" },
-          { key: "routing_source", label: "Routing source", type: "text", placeholder: "Official agency records page" },
-          { key: "routing_verified_at", label: "Routing verified", type: "date" },
-          
+          { key: "request_title", label: "What you asked for", type: "text", required: true },
+          { key: "agency", label: "Agency or organization", type: "text", required: true },
+          { key: "description", label: "Records requested", type: "textarea" },
+          { key: "request_method", label: "Submission method", type: "text" },
           { key: "status", label: "Status", type: "select", options: REQUEST_STATUSES, defaultValue: "draft" },
-          
-          { key: "requested_at", label: "Date sent", type: "date" },
-          { key: "received_at", label: "Date response received", type: "date" },
-          
-          { key: "due_at", label: "Date you're watching", type: "text" },
-          { key: "request_number", label: "Reference or tracking number", type: "text" },
-          
-          { key: "notes", label: "Notes", type: "textarea" },
+          { key: "date_sent", label: "Date sent", type: "date" },
+          { key: "acknowledgement_date", label: "Date acknowledged", type: "date" },
+          { key: "due_date", label: "Date you're watching", type: "date" },
+          { key: "tracking_number", label: "Reference or tracking number", type: "text" },
+          { key: "outcome", label: "Outcome", type: "textarea" },
+          { key: "notes", label: "Notes / contact details", type: "textarea" },
         ]}
       />
       
@@ -225,7 +139,7 @@ export default function CaseRequests() {
           <DialogHeader>
             <DialogTitle>Link response document</DialogTitle>
             <DialogDescription>
-              Connect a document already stored in this case to “{linkingRequest?.title}”. Upload the record first from Evidence & exhibits if you do not see it here.
+              Connect a document already stored in this case to “{linkingRequest?.request_title}”. Upload the record first from Evidence & exhibits if you do not see it here.
             </DialogDescription>
           </DialogHeader>
           <Select value={selectedDocumentId} onValueChange={setSelectedDocumentId}>
@@ -234,7 +148,7 @@ export default function CaseRequests() {
               {snapshot.evidence.length === 0
                 ? <SelectItem value="__none" disabled>No documents yet</SelectItem>
                 : snapshot.evidence.map((doc: any) => (
-                  <SelectItem key={doc.id} value={doc.id}>{doc.display_filename || doc.title || "Untitled document"}</SelectItem>
+                  <SelectItem key={doc.id} value={doc.id}>{doc.title || "Untitled document"}</SelectItem>
                 ))}
             </SelectContent>
           </Select>

@@ -17,6 +17,8 @@ type Snapshot = {
 };
 
 const collections: Record<string, keyof Snapshot> = {
+  event: "timeline",
+  document: "evidence",
   timeline: "timeline",
   evidence: "evidence",
   issue: "issues",
@@ -42,7 +44,9 @@ const labels: Record<string, string> = {
 
 const pathFor = (caseId: string, type: string) => {
   const map: Record<string, string> = {
-    timeline: "timeline",
+    event: "timeline",
+  document: "evidence",
+  timeline: "timeline",
     evidence: "evidence",
     issue: "issues",
     person: "people",

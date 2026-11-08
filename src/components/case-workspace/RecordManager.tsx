@@ -15,6 +15,7 @@ import { useCaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { classificationBadgeClass, classificationAccessibleLabel } from "@/lib/case/classification";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { CaseTable } from "@/lib/case/schema";
 import { useAuth } from "@/contexts/AuthContext";
 
 export interface FieldConfig {
@@ -29,7 +30,7 @@ export interface FieldConfig {
 }
 
 interface RecordManagerProps {
-  table: string;
+  table: CaseTable;
   caseId?: string;
   fields: FieldConfig[];
   titleField: string;
@@ -67,7 +68,7 @@ export function RecordManager({
 }: RecordManagerProps) {
   const { user } = useAuth();
   const { items: collectionItems, isLoading, add, update, remove } = useCaseCollection<any>(table, caseId, orderBy);
-  const items = table === "tasks" ? collectionItems.filter((item: any) => item.task_type === "record_gap") : collectionItems;
+  const items = collectionItems;
   const { snapshot } = useCaseSnapshot(caseId);
   const [viewingItem, setViewingItem] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
@@ -108,7 +109,8 @@ export function RecordManager({
       // generated only when the user asks to open the file.
       setValues((v) => ({
         ...v,
-        display_filename: v.display_filename || file.name,
+        title: v.title || file.name,
+        file_type: file.type || "application/octet-stream",
         file_url: path,
       }));
       toast({ title: "File attached", description: "Save the exhibit to keep the attachment with this record." });
@@ -145,6 +147,7 @@ export function RecordManager({
       } else acc[f.key] = raw;
       return acc;
     }, {});
+    if (enableFileUpload && values.file_url) { payload.file_url = values.file_url; payload.file_type = values.file_type || payload.file_type; }
     try {
       if (editingId) await update.mutateAsync({ id: editingId, values: payload });
       else await add.mutateAsync(payload);
@@ -258,7 +261,7 @@ export function RecordManager({
                   </div>
                 ))}
               </div>
-              {table === "documents" && (
+              {table === "evidence" && (
                 <div className="rounded-lg border p-4">
                   <p className="text-sm font-medium flex items-center gap-2"><FileText className="h-4 w-4" />Packet status</p>
                   <p className="text-xs text-muted-foreground mt-1">{viewingItem.include_in_export === false ? "Excluded from packet exports by current setting." : "Included in packet exports when the Exhibit Index section is selected."}</p>

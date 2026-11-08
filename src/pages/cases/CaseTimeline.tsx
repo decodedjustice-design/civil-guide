@@ -26,7 +26,7 @@ export default function CaseTimeline() {
 
     snapshot.timeline.forEach((event: any) => items.push({
       id: `event-${event.id}`,
-      date: event.event_date ?? event.occurred_at ?? event.created_at,
+      date: event.event_date,
       type: "Event",
       title: event.title,
       description: event.description,
@@ -37,7 +37,7 @@ export default function CaseTimeline() {
 
     snapshot.communications.forEach((communication: any) => items.push({
       id: `communication-${communication.id}`,
-      date: communication.occurred_at ?? communication.created_at,
+      date: communication.occurred_on ?? communication.created_at,
       type: "Communication",
       title: communication.subject || communication.method || "Communication",
       description: communication.summary,
@@ -48,20 +48,20 @@ export default function CaseTimeline() {
 
     snapshot.requests.forEach((request: any) => items.push({
       id: `request-${request.id}`,
-      date: request.requested_at ?? request.created_at,
+      date: request.date_sent ?? request.created_at,
       type: "Records request",
-      title: request.title,
-      description: request.record_holder ? `Records holder: ${request.record_holder}` : request.notes,
-      source: request.request_number ? `Request ${request.request_number}` : "Records request",
+      title: request.request_title || request.agency,
+      description: request.agency ? `Records holder: ${request.agency}` : request.notes,
+      source: request.tracking_number ? `Request ${request.tracking_number}` : "Records request",
       sourceId: request.id,
       status: request.status,
     }));
 
     snapshot.evidence.forEach((document: any) => items.push({
       id: `document-${document.id}`,
-      date: document.document_date ?? document.received_at ?? document.created_at,
+      date: document.document_date ?? document.received_date ?? document.created_at,
       type: "Document",
-      title: document.title ?? document.display_filename ?? "Document",
+      title: document.title ?? "Document",
       description: document.description,
       source: document.source,
       sourceId: document.id,
@@ -121,21 +121,21 @@ export default function CaseTimeline() {
       </div>
 
       <RecordManager
-        table="events" caseId={id} addLabel="Add event"
+        table="timeline_entries" caseId={id} addLabel="Add event"
         emptyMessage="No events yet. Start with the dates you're most sure about."
-        titleField="title" subtitleFields={["occurred_at", "description"]}
+        titleField="title" subtitleFields={["event_date", "description"]}
         badgeFields={["classification", "category", "importance"]}
-        orderBy={{ column: "occurred_at", ascending: true }}
+        orderBy={{ column: "event_date", ascending: true }}
         fields={[
           { key: "title", label: "What happened", type: "text", required: true },
-          { key: "occurred_at", label: "Date / time", type: "datetime-local", required: true },
+          { key: "event_date", label: "Date", type: "date", required: true },
           { key: "description", label: "Details", type: "textarea" },
           { key: "classification", label: "How should this be treated?", type: "select", options: CLASSIFICATIONS.map((c) => ({ value: c.value, label: c.label })), defaultValue: "unknown" },
           { key: "category", label: "Category", type: "select", options: TIMELINE_CATEGORIES },
           { key: "importance", label: "Importance", type: "select", options: IMPORTANCE_LEVELS },
           { key: "reviewed", label: "Reviewed", type: "checkbox", placeholder: "I've checked this against a record" },
           { key: "disputed", label: "Disputed", type: "checkbox", placeholder: "Accounts conflict on this" },
-          { key: "source_locator_id", label: "Source locator ID", type: "text", help: "Use the locator when a specific document passage supports this event." },
+          { key: "source_evidence_id", label: "Source exhibit", type: "select", options: snapshot.evidence.map((e) => ({ value: e.id, label: e.title })) },
           { key: "source_type", label: "Source type", type: "text", placeholder: "Report, email, order, recording, firsthand account" },
           { key: "reason", label: "Why this matters", type: "textarea" },
         ]}

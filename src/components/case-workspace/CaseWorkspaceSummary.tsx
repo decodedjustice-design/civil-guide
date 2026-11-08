@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function CaseWorkspaceSummary({ communications = [], requests = [] }: Props) {
-  const followUps = communications.filter((c) => c.follow_up_required);
+  const followUps = communications.filter((c) => c.follow_up_needed);
 
   const pendingRequests = requests.filter((r) => !["complete", "denied"].includes(r.status));
   const overdueRequests = requests.filter((r) => r.status === "overdue");

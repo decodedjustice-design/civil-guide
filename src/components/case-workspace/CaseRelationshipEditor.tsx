@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import type { CaseSnapshot } from "@/hooks/useCaseSnapshot";
 import { toast } from "sonner";
 
-type RecordType = "event" | "document" | "issue" | "person" | "organization" | "communication" | "request" | "note";
+type RecordType = "timeline" | "evidence" | "issue" | "person" | "organization" | "communication" | "request" | "note";
 const TYPE_LABELS: Record<RecordType, string> = {
-  event: "Timeline event",
-  document: "Exhibit",
+  timeline: "Timeline event",
+  evidence: "Exhibit",
   issue: "Issue",
   person: "Person",
   organization: "Organization",
@@ -20,20 +21,18 @@ const TYPE_LABELS: Record<RecordType, string> = {
   request: "Request",
   note: "Note",
 };
-const COLLECTIONS: Record<RecordType, keyof ReturnType<typeof useEmptySnapshot>> = {
-  event: "timeline", document: "evidence", issue: "issues", person: "people",
+const COLLECTIONS: Record<RecordType, keyof CaseSnapshot> = {
+  timeline: "timeline", evidence: "evidence", issue: "issues", person: "people",
   organization: "organizations", communication: "communications", request: "requests", note: "notes",
 };
-function useEmptySnapshot() { return { timeline: [], evidence: [], issues: [], people: [], organizations: [], communications: [], requests: [], notes: [], links: [] }; }
-
-interface Props { caseId?: string; snapshot: ReturnType<typeof useEmptySnapshot>; }
+interface Props { caseId?: string; snapshot: CaseSnapshot; }
 
 export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [fromType, setFromType] = useState<RecordType>("event");
+  const [fromType, setFromType] = useState<RecordType>("timeline");
   const [fromId, setFromId] = useState("");
-  const [toType, setToType] = useState<RecordType>("document");
+  const [toType, setToType] = useState<RecordType>("evidence");
   const [toId, setToId] = useState("");
   const [relation, setRelation] = useState("supports");
   const [saving, setSaving] = useState(false);
@@ -61,13 +60,16 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
   };
 
   const removeLink = async (id: string) => {
-    const { error } = await supabase.from("case_links").delete().eq("id", id).eq("case_id", caseId);
+    if (!caseId || !user) return;
+    const { error } = await supabase.from("case_links").delete().eq("id", id).eq("case_id", caseId).eq("user_id", user.id);
     if (error) toast.error("Could not remove relationship");
     else { toast.success("Relationship removed"); await queryClient.invalidateQueries({ queryKey: ["case-snapshot", caseId] }); }
   };
 
   const labelFor = (type: string, id: string) => {
-    const rows = snapshot[COLLECTIONS[type as RecordType]] as any[];
+    const canonicalType = type === "event" ? "timeline" : type === "document" ? "evidence" : type;
+    const key = COLLECTIONS[canonicalType as RecordType];
+    const rows = key ? snapshot[key] : [];
     const row = rows.find((r) => r.id === id);
     return row?.title || row?.name || row?.subject || row?.request_title || "Untitled record";
   };

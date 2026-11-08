@@ -61,13 +61,13 @@ export default function CasePackets() {
       const labels: Record<string, string> = Object.fromEntries(sectionOptions.map((s) => [s.key, s.label]));
       const sourceRows: Record<string, { id: string; label: string }[]> = {
         overview: id ? [{ id, label: activeCase?.name ?? "Case" }] : [],
-        issues: snapshot.issues.map((r) => ({ id: r.id, label: r.title || "Untitled issue" })),
-        timeline: snapshot.timeline.map((r) => ({ id: r.id, label: r.title || "Untitled timeline entry" })),
-        evidence: exportEvidence.map((r) => ({ id: r.id, label: `${exhibitLabel(r.exhibit_number)} — ${r.title || "Untitled document"}` })),
+        issues: snapshot.issues.map((r) => ({ id: r.id, label: r.request_title || r.agency || "Untitled issue" })),
+        timeline: snapshot.timeline.map((r) => ({ id: r.id, label: r.request_title || r.agency || "Untitled timeline entry" })),
+        evidence: exportEvidence.map((r) => ({ id: r.id, label: `${exhibitLabel(r.exhibit_number)} — ${r.request_title || r.agency || "Untitled document"}` })),
         people: [...snapshot.people, ...snapshot.organizations].map((r) => ({ id: r.id, label: r.name || "Unnamed person or organization" })),
         communications: snapshot.communications.map((r) => ({ id: r.id, label: r.subject || "Untitled communication" })),
-        requests: snapshot.requests.map((r) => ({ id: r.id, label: r.title || "Untitled request" })),
-        "record-gaps": snapshot.record_gaps.map((r) => ({ id: r.id, label: r.title || "Record gap" })),
+        requests: snapshot.requests.map((r) => ({ id: r.id, label: r.request_title || r.agency })),
+        "record-gaps": snapshot.record_gaps.map((r) => ({ id: r.id, label: r.request_title || r.agency || "Record gap" })),
         relationships: snapshot.links.map((r) => ({ id: r.id, label: `${r.from_type} → ${r.relation} → ${r.to_type}` })),
       };
       return { key: key, label: labels[key] ?? key, record_type: key, record_ids: sourceIds[key] ?? [], source_records: sourceRows[key] ?? [], record_count: (sourceIds[key] ?? []).length };
@@ -98,12 +98,12 @@ export default function CasePackets() {
       : "<p class='empty'>Nothing recorded.</p>";
     const parts: string[] = [];
     if (selected.includes("overview")) parts.push(`<section><h2>Case overview</h2><p><strong>${esc(activeCase?.name)}</strong></p><p>${esc(`${activeCase?.case_type ?? ""} · ${activeCase?.county ?? ""} ${activeCase?.state ?? ""}`)}</p><p>${esc(activeCase?.description ?? "")}</p></section>`);
-    if (selected.includes("issues")) parts.push(`<section><h2>Claims &amp; issues</h2>${rows(snapshot.issues, (i) => `<div class="item"><h3>${esc(i.title)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[i.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")} · ${esc(i.status)}</p><p>${esc(i.description)}</p><p><strong>Supporting:</strong> ${esc(i.supporting_notes)}</p><p><strong>Still unknown:</strong> ${esc(i.missing_records)}</p></div>`)}</section>`);
+    if (selected.includes("issues")) parts.push(`<section><h2>Claims &amp; issues</h2>${rows(snapshot.issues, (i) => `<div class="item"><h3>${esc(i.title)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[i.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")} · ${esc(i.status)}</p><p>${esc(i.summary)}</p><p><strong>Supporting:</strong> ${esc(i.supporting_notes)}</p><p><strong>Still unknown:</strong> ${esc(i.missing_records)}</p></div>`)}</section>`);
     if (selected.includes("timeline")) parts.push(`<section><h2>Chronology</h2>${rows(snapshot.timeline, (t) => `<div class="item"><h3>${esc(t.event_date)} — ${esc(t.title)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[t.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")}${t.category ? ` · ${esc(t.category)}` : ""}</p><p>${esc(t.description)}</p></div>`)}</section>`);
     if (selected.includes("evidence")) parts.push(`<section><h2>Exhibit index</h2>${rows(snapshot.evidence.filter((e) => e.include_in_export !== false), (e) => `<div class="item"><h3>${esc(exhibitLabel(e.exhibit_number))} — ${esc(e.title)}</h3><p class="meta">${esc(CLASSIFICATION_LABELS[e.classification as keyof typeof CLASSIFICATION_LABELS] ?? "Unknown")}${e.source ? ` · Source: ${esc(e.source)}` : ""}${e.document_date ? ` · ${esc(e.document_date)}` : ""}${e.review_status ? ` · Review: ${esc(e.review_status)}` : ""}</p><p>${esc(e.description)}</p>${e.file_url ? `<p class="meta">File: ${esc(e.file_url)}</p>` : ""}</div>`)}</section>`);
     if (selected.includes("people")) parts.push(`<section><h2>People &amp; organizations</h2>${rows([...snapshot.people, ...snapshot.organizations], (p) => `<div class="item"><h3>${esc(p.name)}</h3><p class="meta">${esc(p.role || p.org_type || p.organization || "")}</p></div>`)}</section>`);
-    if (selected.includes("communications")) parts.push(`<section><h2>Communications log</h2>${rows(snapshot.communications, (c) => `<div class="item"><h3>${esc(c.occurred_at)} — ${esc(c.subject)}</h3><p class="meta">${esc(c.method)}${c.person_id ? ` · Person ${esc(c.person_id)}` : ""}</p><p>${esc(c.summary)}</p></div>`)}</section>`);
-    if (selected.includes("requests")) parts.push(`<section><h2>Requests &amp; deadlines</h2>${rows(snapshot.requests, (r) => `<div class="item"><h3>${esc(r.title)}</h3><p class="meta">${esc(r.status)}${r.due_at ? ` · due ${esc(r.due_at)}` : ""}</p><p>${esc(r.notes)}</p></div>`)}</section>`);
+    if (selected.includes("communications")) parts.push(`<section><h2>Communications log</h2>${rows(snapshot.communications, (c) => `<div class="item"><h3>${esc(c.occurred_on)} — ${esc(c.subject)}</h3><p class="meta">${esc(c.method)}${c.person ? ` · Person ${esc(c.person)}` : ""}</p><p>${esc(c.summary)}</p></div>`)}</section>`);
+    if (selected.includes("requests")) parts.push(`<section><h2>Requests &amp; deadlines</h2>${rows(snapshot.requests, (r) => `<div class="item"><h3>${esc(r.request_title || r.agency)}</h3><p class="meta">${esc(r.status)}${r.due_date ? ` · due ${esc(r.due_date)}` : ""}</p><p>${esc(r.notes)}</p></div>`)}</section>`);
     if (selected.includes("record-gaps")) parts.push(`<section><h2>Record gaps / unresolved questions</h2>${rows(snapshot.record_gaps, (g) => `<div class="item"><h3>${esc(g.title)}</h3><p class="meta">${esc(g.status)}</p><p>${esc(g.description)}</p></div>`)}</section>`);
     if (selected.includes("relationships")) parts.push(`<section><h2>Record relationships</h2>${rows(snapshot.links, (l) => `<div class="item"><h3>${esc(l.from_type)} → ${esc(l.relation)} → ${esc(l.to_type)}</h3><p class="meta">${esc(l.from_id)} · ${esc(l.to_id)}</p></div>`)}</section>`);
     parts.push(`<section><h2>Packet provenance</h2><p class="notice">This audit trail records which case records were included when this packet was generated. It does not establish the truth of any record or legal conclusion.</p>${provenanceRows()}</section>`);
@@ -123,7 +123,7 @@ export default function CasePackets() {
         const { error } = await supabase.from("case_packets").update(payload).eq("id", savedPacketId).eq("case_id", id);
         if (error) throw error;
       } else {
-        const { data, error } = await supabase.from("case_packets").insert({ ...payload, case_id: id }).select("id").single();
+        const { data, error } = await supabase.from("case_packets").insert({ ...payload, case_id: id, user_id: authData.user.id }).select("id").single();
         if (error) throw error;
         setSavedPacketId(data.id);
       }
