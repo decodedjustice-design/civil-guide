@@ -61,13 +61,13 @@ export default function CasePackets() {
       const labels: Record<string, string> = Object.fromEntries(sectionOptions.map((s) => [s.key, s.label]));
       const sourceRows: Record<string, { id: string; label: string }[]> = {
         overview: id ? [{ id, label: activeCase?.name ?? "Case" }] : [],
-        issues: snapshot.issues.map((r) => ({ id: r.id, label: r.request_title || r.agency || "Untitled issue" })),
-        timeline: snapshot.timeline.map((r) => ({ id: r.id, label: r.request_title || r.agency || "Untitled timeline entry" })),
-        evidence: exportEvidence.map((r) => ({ id: r.id, label: `${exhibitLabel(r.exhibit_number)} — ${r.request_title || r.agency || "Untitled document"}` })),
+        issues: snapshot.issues.map((r) => ({ id: r.id, label: r.title || "Untitled issue" })),
+        timeline: snapshot.timeline.map((r) => ({ id: r.id, label: r.title || "Untitled timeline entry" })),
+        evidence: exportEvidence.map((r) => ({ id: r.id, label: `${exhibitLabel(r.exhibit_number)} — ${r.title || "Untitled document"}` })),
         people: [...snapshot.people, ...snapshot.organizations].map((r) => ({ id: r.id, label: r.name || "Unnamed person or organization" })),
         communications: snapshot.communications.map((r) => ({ id: r.id, label: r.subject || "Untitled communication" })),
         requests: snapshot.requests.map((r) => ({ id: r.id, label: r.request_title || r.agency })),
-        "record-gaps": snapshot.record_gaps.map((r) => ({ id: r.id, label: r.request_title || r.agency || "Record gap" })),
+        "record-gaps": snapshot.record_gaps.map((r) => ({ id: r.id, label: r.title || "Record gap" })),
         relationships: snapshot.links.map((r) => ({ id: r.id, label: `${r.from_type} → ${r.relation} → ${r.to_type}` })),
       };
       return { key: key, label: labels[key] ?? key, record_type: key, record_ids: sourceIds[key] ?? [], source_records: sourceRows[key] ?? [], record_count: (sourceIds[key] ?? []).length };

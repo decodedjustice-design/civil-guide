@@ -38,6 +38,11 @@ import { cn } from "@/lib/utils";
 
 const caseTabs = [
   { slug: "", label: "Overview", icon: LayoutDashboard },
+  { slug: "accountability", label: "Accountability Tracker", icon: ClipboardCheck },
+  { slug: "studio", label: "Document Studio", icon: FileText },
+  { slug: "tasks", label: "Tasks & Deadlines", icon: CalendarClock },
+  { slug: "notes", label: "Notes", icon: FileText },
+  { slug: "research", label: "Research Notes", icon: BookOpen },
   { slug: "timeline", label: "Timeline", icon: CalendarClock },
   { slug: "evidence", label: "Evidence & Exhibits", icon: FolderArchive },
   { slug: "issues", label: "Claims & Issues", icon: ListTree },
@@ -56,6 +61,10 @@ const caseTabs = [
 ];
 
 const learnLinks = [
+  { to: "/legal-pathways", label: "Legal Pathways", icon: Compass },
+  { to: "/clarion", label: "Clarion Legal Research", icon: Search },
+  { to: "/transcription", label: "Transcription", icon: FileText },
+  { to: "/settings", label: "Settings & Privacy", icon: ClipboardCheck },
   { to: "/analyzer", label: "Analyzer", icon: Compass },
   { to: "/legal-decoder", label: "Legal Decoder", icon: Scale },
   { to: "/education-library", label: "Education Library", icon: BookOpen },

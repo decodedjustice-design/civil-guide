@@ -28,3 +28,10 @@
 - [ ] Generate 11 distinct, realistic, subject-matched card photographs
 - [ ] Wire a dedicated image map into `/education-library` without changing card content or behavior
 - [ ] Verify all assets, imports, desktop layout, and mobile layout
+
+## Washington-first platform upgrade
+- [ ] Repair current frontend errors and preserve existing modules
+- [ ] Add case-owned Accountability Tracker, source review, matrix, policy review, lifecycle, audit and exports
+- [ ] Add persistent Document Studio and tasks; connect navigation and legal pathways
+- [ ] Verify synthetic case/evidence/timeline/request/document/tracker/task workflows and access controls
+- [ ] Record exact changes, connected services, limitations and publication readiness

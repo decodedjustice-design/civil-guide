@@ -30,7 +30,7 @@ export function useCaseSnapshot(caseId?: string) {
     queryFn: async (): Promise<CaseSnapshot> => {
       if (!caseId || !user) return empty;
       const load = async <T extends CaseTable>(table: T, order: string): Promise<Tables<T>[]> => {
-        const { data, error } = await supabase.from(table).select(CASE_COLUMNS[table])
+        const { data, error } = await (supabase as any).from(table).select(CASE_COLUMNS[table])
           .eq("case_id", caseId).eq("user_id", user.id)
           .order(order, { ascending: true, nullsFirst: false });
         if (error) throw error;

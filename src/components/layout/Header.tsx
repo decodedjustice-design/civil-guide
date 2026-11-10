@@ -8,14 +8,7 @@ import { MobileNavMenu } from "./MobileNavMenu";
 import decodedJusticeLogo from "@/assets/decoded-justice-scales-logo.png";
 
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Case Builder", href: "/case-builder" },
-  { name: "Templates", href: "/templates" },
-  { name: "Learn Your Rights", href: "/education-library" },
-  { name: "Find Help", href: "/find-help" },
-  { name: "About", href: "/about" },
-  { name: "Founder's Story", href: "/founders-story" },
+ {name:"Home",href:"/"}, {name:"My Cases",href:"/cases"}, {name:"Legal Pathways",href:"/legal-pathways"}, {name:"Accountability",href:"/accountability-tracker"}, {name:"Resources",href:"/education-library"}, {name:"Find Help",href:"/find-help"}
 ];
 
 function quickExit() {
@@ -50,7 +43,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden xl:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.name}
@@ -68,7 +61,7 @@ export function Header() {
           </div>
 
           {/* Desktop Auth / CTA */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-3">
             {user ? (
               <>
                 <span className="text-xs text-muted-foreground truncate max-w-[180px] tracking-wide">
@@ -86,7 +79,7 @@ export function Header() {
             ) : (
               <Button
                 size="sm"
-                className="text-xs h-9 px-6 bg-primary hover:bg-maroon-light text-white tracking-wide"
+                className="text-xs h-9 px-6 bg-primary hover:bg-maroon-light text-primary-foreground tracking-wide"
                 asChild
               >
                 <Link to="/case-builder">Start Your Case</Link>
@@ -97,7 +90,7 @@ export function Header() {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className="md:hidden p-2.5 rounded text-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-colors"
+            className="xl:hidden p-2.5 rounded text-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-colors"
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open menu"
           >

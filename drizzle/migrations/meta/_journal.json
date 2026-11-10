@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794277540311,
+      "tag": "0000_washington_case_work_records",
+      "breakpoints": true
+    }
+  ]
+}

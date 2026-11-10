@@ -11,15 +11,8 @@ interface MobileNavMenuProps {
 }
 
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Case Builder", href: "/case-builder" },
-  { name: "Templates", href: "/templates" },
-  { name: "Learn Your Rights", href: "/education-library" },
-  { name: "Find Help", href: "/find-help" },
-  { name: "About", href: "/about" },
-  { name: "Founder's Story", href: "/founders-story" },
-];
+ ["Home","/"],["Dashboard","/dashboard"],["My Cases","/cases"],["Legal Pathways","/legal-pathways"],["Case Analyzer","/analyzer"],["Legal Decoder","/legal-decoder"],["Clarion Legal Research","/clarion"],["Case Builder","/case-builder"],["Evidence Vault","/evidence-vault"],["Timeline Creator","/timeline"],["Document Studio","/document-studio"],["Transcription","/transcription"],["Accountability Tracker","/accountability-tracker"],["Public Request Rights","/public-request-rights"],["Legal Templates","/legal-templates"],["Notes / Research","/notes"],["Justice Place","/justice-place"],["Tasks / Deadlines","/tasks"],["Settings / Privacy","/settings"],["How It Works","/how-it-works"],["Features","/features"],["Washington Legal Resources","/washington-legal-resources"],["Find Help","/find-help"],["Pricing / Access","/pricing"],["About","/about"],["Accessibility","/accessibility"],["Privacy","/privacy"],["Terms","/terms"],["Sign In","/signin"],["Create Account","/signup"]
+].map(([name,href])=>({name,href}));
 
 export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMenuProps) {
   const location = useLocation();
@@ -38,7 +31,7 @@ export function MobileNavMenu({ isOpen, onClose, user, onSignOut }: MobileNavMen
       {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-black/60 transition-opacity duration-300",
+          "fixed inset-0 z-40 bg-foreground/60 transition-opacity duration-300",
           isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         )}
         onClick={onClose}

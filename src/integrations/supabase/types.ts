@@ -773,6 +773,94 @@ export type Database = {
           },
         ]
       }
+      case_work_audit: {
+        Row: {
+          action: string
+          after_record: Json | null
+          before_record: Json | null
+          case_id: string
+          created_at: string
+          id: string
+          kind: string
+          record_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          after_record?: Json | null
+          before_record?: Json | null
+          case_id: string
+          created_at?: string
+          id?: string
+          kind: string
+          record_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          after_record?: Json | null
+          before_record?: Json | null
+          case_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          record_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_work_audit_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_work_records: {
+        Row: {
+          case_id: string
+          created_at: string
+          data: Json
+          id: string
+          kind: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          data?: Json
+          id?: string
+          kind: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          kind?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_work_records_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cases: {
         Row: {
           case_type: string | null

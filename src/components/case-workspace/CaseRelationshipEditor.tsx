@@ -71,7 +71,7 @@ export function CaseRelationshipEditor({ caseId, snapshot }: Props) {
     const key = COLLECTIONS[canonicalType as RecordType];
     const rows = key ? snapshot[key] : [];
     const row = rows.find((r) => r.id === id);
-    return row?.title || row?.name || row?.subject || row?.request_title || "Untitled record";
+    return row ? options(canonicalType as RecordType).find((item) => item.id === id)?.label ?? "Untitled record" : "Untitled record";
   };
 
   return (

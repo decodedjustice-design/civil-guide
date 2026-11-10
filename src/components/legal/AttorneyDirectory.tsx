@@ -120,43 +120,10 @@ export function AttorneyDirectory() {
       setLoading(true);
       setLoadError(null);
 
-      let query = supabase
-        .from("directory_entries")
-        .select("*")
-        .eq("active_listing", true)
-        .order("firm_or_org", { ascending: true })
-        .order("name", { ascending: true });
-
-      if (practiceFilters.length) {
-        query = query.overlaps("practice_areas", practiceFilters);
-      }
-
-      if (countyFilters.length) {
-        query = query.overlaps("counties_served", [...countyFilters, "Statewide"]);
-      }
-
-      if (feeFilters.length) {
-        query = query.overlaps("fee_types", feeFilters);
-      }
-
-      const normalizedSearch = searchQuery.trim().replace(/[(),]/g, " ");
-      if (normalizedSearch) {
-        query = query.or(
-          `name.ilike.%${normalizedSearch}%,firm_or_org.ilike.%${normalizedSearch}%,city.ilike.%${normalizedSearch}%`,
-        );
-      }
-
-      const { data, error } = await query;
-
+      // No directory_entries table exists in the connected schema. Do not invent listings.
       if (cancelled) return;
-
-      if (error) {
-        console.error("Error fetching directory:", error);
-        setLoadError("The directory could not be loaded right now.");
-        setEntries([]);
-      } else {
-        setEntries((data as DirectoryRow[]).map(toAttorney));
-      }
+      setEntries([]);
+      setLoadError("Live attorney listings are not connected. Official legal-service navigation remains available below.");
 
       setLoading(false);
     }

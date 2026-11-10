@@ -66,6 +66,9 @@ import AttorneySearch from "./pages/AttorneySearch";
 import JusticeResearchEngine from "./pages/JusticeResearchEngine";
 import Notes from "./pages/Notes";
 
+import CaseAccountability from "./pages/cases/CaseAccountability";
+import CaseWork from "./pages/cases/CaseWork";
+import PlatformPages, { CaseToolEntry } from "./pages/PlatformPages";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -77,11 +80,22 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
+              {["/how-it-works","/features","/pricing","/accessibility","/legal-pathways"].map(path=><Route key={path} path={path} element={<PlatformPages/>}/>)}
+              <Route path="/settings" element={<ProtectedRoute><PlatformPages/></ProtectedRoute>}/>
+              <Route path="/accountability-tracker" element={<CaseToolEntry slug="accountability" title="Accountability Tracker"/>}/>
+              <Route path="/document-studio" element={<ProtectedRoute><CaseToolEntry slug="studio" title="Document Studio"/></ProtectedRoute>}/>
+              <Route path="/tasks" element={<ProtectedRoute><CaseToolEntry slug="tasks" title="Tasks & Deadlines"/></ProtectedRoute>}/>
+              <Route path="/evidence-intelligence" element={<CaseToolEntry slug="content-check" title="Evidence Intelligence"/>}/>
+              <Route path="/washington-legal-resources" element={<JusticeResearchEngine/>}/>
+              <Route path="/cases/:id/accountability" element={<ProtectedRoute><CaseAccountability/></ProtectedRoute>}/>
+              <Route path="/cases/:id/studio" element={<ProtectedRoute><CaseWork/></ProtectedRoute>}/>
+              <Route path="/cases/:id/tasks" element={<ProtectedRoute><CaseWork kind="task"/></ProtectedRoute>}/>
+              <Route path="/cases/:id/research" element={<ProtectedRoute><CaseWork kind="research"/></ProtectedRoute>}/>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/analyzer" element={<ProtectedRoute><Analyzer /></ProtectedRoute>} />
               <Route path="/justice-place" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
-              <Route path="/clarion" element={<ProtectedRoute><Navigate to="/case-builder" replace /></ProtectedRoute>} />
+              <Route path="/clarion" element={<ProtectedRoute><JusticeResearchEngine /></ProtectedRoute>} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/legal-decoder" element={<LegalDecoder />} />
               <Route path="/self-help" element={<SelfHelpTools />} />
@@ -96,9 +110,9 @@ const App = () => {
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/signin" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
-              <Route path="/notes" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
-              <Route path="/evidence-vault" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
-              <Route path="/timeline" element={<ProtectedRoute><Navigate to="/cases" replace /></ProtectedRoute>} />
+              <Route path="/notes" element={<ProtectedRoute><CaseToolEntry slug="notes" title="Notes & Research"/></ProtectedRoute>} />
+              <Route path="/evidence-vault" element={<ProtectedRoute><CaseToolEntry slug="evidence" title="Evidence Vault"/></ProtectedRoute>} />
+              <Route path="/timeline" element={<ProtectedRoute><CaseToolEntry slug="timeline" title="Timeline Creator"/></ProtectedRoute>} />
               <Route path="/guide/government-full-guide" element={<GovernmentBenefitsGuide />} />
               <Route path="/guide/:guideId" element={<FullGuide />} />
               <Route path="/library" element={<Navigate to="/education-library" replace />} />
